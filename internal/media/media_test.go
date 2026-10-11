@@ -263,3 +263,20 @@ func TestRealEncodedFLACRoundTrip(t *testing.T) {
 		t.Fatal("real FLAC restoration differs")
 	}
 }
+
+func TestRestoreRefusesDifferentStreamInfo(t *testing.T) {
+	src := filepath.Join("..", "..", "tests", "testdata", "tone.flac")
+	before, err := Inspect(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	metadata := append([]byte(nil), before.Metadata...)
+	metadata[8] ^= 1
+	temp := filepath.Join(t.TempDir(), "restore.flac")
+	if _, err = StageRestore(src, temp, metadata); err == nil {
+		t.Fatal("accepted metadata describing different audio")
+	}
+	if _, err = os.Stat(temp); !os.IsNotExist(err) {
+		t.Fatal("refused restore created an output")
+	}
+}

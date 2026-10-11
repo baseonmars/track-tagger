@@ -44,7 +44,7 @@ Recognized partial-download extensions, zero-length files, macOS dataless files,
 
 ## Write and recovery guarantees
 
-Copy mode mirrors paths relative to `SOURCE`, including each recording's accompanying files. It rejects overlapping trees and symlinks, creates independent files, refuses unrelated destination collisions, and updates application-owned outputs only while their recorded hashes match. Sources stay byte-identical. Collection-level files outside discovered recordings are not copied.
+Copy mode mirrors paths relative to `SOURCE`, including each recording's accompanying files. It rejects overlapping trees and symlinks, creates independent files, refuses unrelated destination collisions, and updates application-owned outputs only while their recorded hashes match. Sources stay byte-identical. Replacing an existing copy with different audio is refused; select a new destination for changed audio. Collection-level files outside discovered recordings are not copied.
 
 FLAC processing streams audio. The adapter bounds metadata lengths, preserves unknown blocks and unrelated comments, and verifies SHA-256 identity of the exact audio payload. It stages beside the destination, syncs, rechecks source/evidence and destination hashes, and replaces through a platform adapter. A SQLite journal records intent before each replacement and recovers interrupted file commits on the next write command. A process lock serializes writers using the same state directory.
 

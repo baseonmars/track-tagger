@@ -476,6 +476,9 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 				if x != nil {
 					return id, x
 				}
+				if prior.AudioHash != in.AudioHash {
+					return id, errors.New("source audio differs from the existing copy; use a new destination")
+				}
 				original = prior.Metadata
 			}
 		}

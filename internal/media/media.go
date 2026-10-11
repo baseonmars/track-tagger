@@ -371,6 +371,9 @@ func StageRestore(src, temp string, metadata []byte) (Info, error) {
 	if len(raw) != len(metadata) {
 		return Info{}, errors.New("trailing restoration metadata")
 	}
+	if !bytes.Equal(blocks[0].Data, original.Metadata[8:42]) {
+		return Info{}, errors.New("restoration STREAMINFO does not match the current audio")
+	}
 	return stage(src, temp, blocks, original)
 }
 

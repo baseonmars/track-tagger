@@ -284,3 +284,47 @@ func TestConcurrentWriterLock(t *testing.T) {
 	}
 	release()
 }
+
+func TestCopyUpdateRefusesChangedSourceAudio(t *testing.T) {
+	e, source := engineFixture(t, Copy)
+	plan := fixturePlan(t, e)
+	jobs, err := e.Apply(plan)
+	if err != nil || len(jobs) != 1 {
+		t.Fatalf("initial copy: jobs=%v err=%v", jobs, err)
+	}
+	target := filepath.Join(e.Destination, filepath.Base(source))
+	outputBefore := checkedHash(t, target)
+	f, err := os.OpenFile(source, os.O_APPEND|os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = f.Write([]byte{0xff, 0xf8, 9, 8, 7, 6}); err != nil {
+		f.Close()
+		t.Fatal(err)
+	}
+	if err = f.Close(); err != nil {
+		t.Fatal(err)
+	}
+	sourceChanged := checkedHash(t, source)
+	sourceInfo, err := media.Inspect(source)
+	if err != nil {
+		t.Fatal(err)
+	}
+	targetInfo, err := media.Inspect(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if sourceInfo.AudioHash == targetInfo.AudioHash {
+		t.Fatal("fixture failed to change source audio payload")
+	}
+	fresh := fixturePlan(t, e)
+	if _, err = e.Apply(fresh); err == nil {
+		t.Fatal("copy update accepted changed source audio")
+	}
+	if checkedHash(t, target) != outputBefore {
+		t.Fatal("refused copy update changed existing output")
+	}
+	if checkedHash(t, source) != sourceChanged {
+		t.Fatal("refused copy update changed source audio")
+	}
+}
