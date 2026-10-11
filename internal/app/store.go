@@ -96,12 +96,17 @@ func (s *Store) known(path string) (string, error) {
 	}
 	return h, err
 }
-func (s *Store) Files(job string) ([]FileJournal, error) {
+func (s *Store) Files(job string) ([]FileJournal, error) { return s.files(job, false) }
+func (s *Store) pendingFiles() ([]FileJournal, error)    { return s.files("", true) }
+func (s *Store) files(job string, pending bool) ([]FileJournal, error) {
 	q := "SELECT id,job,source,target,before_hash,after_hash,metadata,status,undo_of FROM files"
 	args := []any{}
 	if job != "" {
 		q += " WHERE job=?"
 		args = append(args, job)
+	}
+	if pending {
+		q += " WHERE status IN ('staged','undo-staged')"
 	}
 	q += " ORDER BY id DESC"
 	rows, err := s.db.Query(q, args...)

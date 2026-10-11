@@ -604,7 +604,7 @@ func copyFile(src, dst string) error {
 	return out.Close()
 }
 func (e *Engine) recover() error {
-	files, err := e.store.Files("")
+	files, err := e.store.pendingFiles()
 	if err != nil {
 		return err
 	}

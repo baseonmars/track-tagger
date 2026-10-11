@@ -445,9 +445,19 @@ func chooseArt(r *Recording) {
 	}
 }
 func checkManifest(r *Recording, path string) {
-	b, err := os.ReadFile(path)
+	f, err := os.Open(path)
 	if err != nil {
 		reason(r, "cannot read checksum manifest")
+		return
+	}
+	defer f.Close()
+	b, err := io.ReadAll(io.LimitReader(f, (4<<20)+1))
+	if err != nil {
+		reason(r, "cannot read checksum manifest")
+		return
+	}
+	if len(b) > 4<<20 {
+		reason(r, "checksum manifest exceeds 4 MiB")
 		return
 	}
 	for _, line := range strings.Split(string(b), "\n") {
