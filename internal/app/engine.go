@@ -557,7 +557,7 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 		return id, err
 	}
 	if item.Reviewed {
-		rs, x := catalog.Scan(e.Source)
+		rs, x := catalog.Scan(item.Path)
 		if x != nil {
 			return id, x
 		}
@@ -740,7 +740,7 @@ func sameProposal(a, b catalog.Recording) bool {
 	return a.Artist == b.Artist && a.Album == b.Album && a.Date == b.Date && a.Artwork == b.Artwork && reflect.DeepEqual(a.Tracks, b.Tracks)
 }
 func (e *Engine) revalidate(item Item, temp string) error {
-	rs, err := catalog.Scan(e.Source)
+	rs, err := catalog.Scan(item.Path)
 	if err != nil {
 		return err
 	}
