@@ -1,0 +1,7 @@
+/dist/
+/track-tagger
+/track-tagger.exe
+*.test
+coverage.out
+.DS_Store
+/.playwright-mcp/

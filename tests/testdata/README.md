@@ -1,0 +1,1 @@
+`tone.flac` is a locally generated one-second, 440Hz sine wave, mono 44.1kHz/16-bit PCM, encoded with macOS `afconvert -f flac -d flac`. It contains no third-party recording. Other fixture audio payloads in tests are deliberately synthetic for malformed-input and exact byte-preservation checks.
