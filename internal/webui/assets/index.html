@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Track Tagger</title><link rel="stylesheet" href="/style.css"></head>
+<body><header><a class="brand" href="/">Track Tagger</a><nav><a href="/">Recordings</a><a href="/history">History &amp; undo</a></nav><span class="mode">{{if .Writable}}Media writing enabled{{else}}Preview only{{end}}</span></header><main>
+{{if .Recording}}{{$r := .Recording}}
+<h1>{{$r.Path}}</h1><p class="status">{{$r.Status}}</p>
+{{if $r.Reasons}}<section><h2>Needs your attention</h2><ul>{{range $r.Reasons}}<li>{{.}}</li>{{end}}</ul></section>{{end}}
+{{if $r.Notes}}<section><h2>Concert notes</h2><p>Check the original notes while correcting the proposed tags.</p>{{range $r.Notes}}<details open><summary>{{.Path}}</summary><pre>{{.Text}}</pre></details>{{end}}</section>{{end}}
+<form action="/review" method="post">
+<input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="id" value="{{$r.ID}}"><input type="hidden" name="fingerprint" value="{{$r.Fingerprint}}">
+<section><h2>Album details</h2><p>These values apply to every track in this recording.</p><div class="album-fields">
+<label for="artist">Artist<input id="artist" name="artist" value="{{index $r.Metadata "ARTIST"}}" required></label>
+<label for="date">Concert date<input id="date" name="date" type="date" value="{{index $r.Metadata "DATE"}}" required></label>
+<label class="wide" for="album">Album<input id="album" name="album" value="{{index $r.Metadata "ALBUM"}}" required></label>
+</div></section>
+<section><h2>Match files to titles</h2><p>Keep every file mapped. Change the title, disc, and track number for each file; unmatched recordings are never shifted automatically.</p>
+<table class="mapping"><thead><tr><th>Audio file</th><th>Disc</th><th>Track</th><th>Track title</th></tr></thead><tbody>{{range $i,$t := $r.Tracks}}<tr>
+<td class="filename">{{$t.File}}<input type="hidden" name="track_file" value="{{$t.File}}"></td>
+<td><input aria-label="Disc for {{$t.File}}" name="track_disc" type="number" min="1" value="{{$t.Disc}}" required></td>
+<td><input aria-label="Track number for {{$t.File}}" name="track_number" type="number" min="1" value="{{$t.Track}}" required></td>
+<td><input aria-label="Title for {{$t.File}}" name="track_title" value="{{$t.Title}}" required></td></tr>{{end}}</tbody></table></section>
+<section><h2>Artwork</h2><label for="artwork">Local image<select id="artwork" name="artwork"><option value="">Keep existing artwork / no new image</option>{{range $r.Artwork}}<option value="{{.}}" {{if eq . $r.SelectedArtwork}}selected{{end}}>{{.}}</option>{{end}}</select></label>{{if not $r.Artwork}}<p>No local images were found beside this recording.</p>{{end}}</section>
+<section><h2>Save your review</h2><p>Saving records these corrections with the current source evidence. Preview mode only saves decisions. In write or copy mode, the watcher can apply approved corrections after the quiet interval.</p><label class="acknowledge"><input type="checkbox" name="approve" value="yes" required> I reviewed the notes and file mappings, and approve replacing conflicting metadata or artwork.</label><p><button>Save review</button></p></section>
+</form>
+{{if .Writable}}<form action="/apply" method="post"><input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="id" value="{{$r.ID}}"><button>Apply saved review / plan</button><p>Save any edits above before applying.</p></form>{{else}}<p>Preview mode can save review decisions. Restart with an explicit write or copy mode to apply metadata.</p>{{end}}
+{{if $r.Evidence}}<section><details><summary>Source files and fingerprints</summary>{{range $r.Evidence}}<pre>{{.}}</pre>{{end}}</details></section>{{end}}
+{{else}}
+<h1>Recording workspace</h1><p>Review exceptions before applying metadata. Audio stays local.</p><div class="legend">waiting · ready · needs-review · completed · failed</div><section><table><thead><tr><th>Recording</th><th>Status</th><th>Review reasons</th></tr></thead><tbody>{{range .Recordings}}<tr><td><a href="/recording?id={{.ID}}">{{.Path}}</a></td><td>{{.Status}}</td><td>{{range .Reasons}}<div>{{.}}</div>{{end}}</td></tr>{{else}}<tr><td colspan="3">No recordings in this view.</td></tr>{{end}}</tbody></table></section>
+{{if .Jobs}}<section><h2>History</h2><table><thead><tr><th>Job</th><th>Status</th><th>Summary</th><th>Restore metadata</th></tr></thead><tbody>{{range .Jobs}}<tr><td>{{.ID}}</td><td>{{.Status}}</td><td>{{.Summary}}</td><td>{{if $.Writable}}<form action="/undo" method="post"><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="id" value="{{.ID}}"><button>Undo metadata changes</button></form>{{else}}Preview mode{{end}}</td></tr>{{end}}</tbody></table><p>Undo refuses to overwrite subsequent external edits.</p></section>{{end}}{{end}}
+</main><footer>Offline-first FLAC metadata · Original checksum documents are preserved. Metadata edits change whole-file checksums while retaining audio payloads.</footer></body></html>

@@ -1,0 +1,21 @@
+services:
+  track-tagger:
+    build:
+      context: ..
+    # Set to the UID/GID that owns your music and state directories.
+    user: "${TRACK_TAGGER_UID:-1000}:${TRACK_TAGGER_GID:-1000}"
+    command: ["watch", "/music", "--write", "--state", "/state", "--poll"]
+    restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    volumes:
+      - type: bind
+        source: ${TRACK_TAGGER_MUSIC:?Set TRACK_TAGGER_MUSIC to your recording collection}
+        target: /music
+      - type: bind
+        source: ${TRACK_TAGGER_STATE:?Set TRACK_TAGGER_STATE to persistent application storage}
+        target: /state

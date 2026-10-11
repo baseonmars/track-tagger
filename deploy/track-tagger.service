@@ -1,0 +1,21 @@
+[Unit]
+Description=Track Tagger FLAC library watcher
+After=local-fs.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=track-tagger
+Group=track-tagger
+StateDirectory=track-tagger
+ExecStart=/usr/local/bin/track-tagger serve /srv/music --write --state /var/lib/track-tagger --addr 127.0.0.1:8787
+Restart=on-failure
+RestartSec=15
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/srv/music /var/lib/track-tagger
+
+[Install]
+WantedBy=multi-user.target
