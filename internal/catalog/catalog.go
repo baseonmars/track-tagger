@@ -72,6 +72,7 @@ var weekdayPrefix = regexp.MustCompile(`(?i)^(?:Monday|Tuesday|Wednesday|Thursda
 var weekdaySuffix = regexp.MustCompile(`(?i)^(?:,?\s*(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)|\s*\((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\))$`)
 var otherPerformer = regexp.MustCompile(`(?i)\b(?:opening|support)\s+set\b`)
 var leadingT = regexp.MustCompile(`^(\d+)[ ._-]`)
+var suffixedT = regexp.MustCompile(`^[a-zA-Z]+[-_](\d{2,3})$`)
 var noteT = regexp.MustCompile(`^\s*(\d{1,3})\s*[.):_-]\s*(.+)$`)
 var noteSpaceT = regexp.MustCompile(`^\s*(\d{1,3})[ \t]+(\S.*)$`)
 var reportDuration = regexp.MustCompile(`^\d+:\d{2}(?:[.:]\d+)?\s`)
@@ -375,6 +376,13 @@ func fileNumber(path string) (int, int) {
 		}
 	}
 	if m := leadingT.FindStringSubmatch(base); m != nil {
+		n, _ := strconv.Atoi(m[1])
+		return d, n
+	}
+	// A letter-only recording prefix with a terminal, padded number is an
+	// identifier such as ericburdon-01. Exclude dates and descriptive names
+	// with additional numeric tokens rather than interpreting their last number.
+	if m := suffixedT.FindStringSubmatch(stem); m != nil {
 		n, _ := strconv.Atoi(m[1])
 		return d, n
 	}
