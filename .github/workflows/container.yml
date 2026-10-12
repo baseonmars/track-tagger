@@ -24,11 +24,16 @@ jobs:
       - run: go test -race ./...
       - run: go vet ./...
       - uses: docker/setup-qemu-action@v4
-      - uses: docker/setup-buildx-action@v3
-      - name: Select lowercase image name
+      - uses: docker/setup-buildx-action@v4
+      - name: Select image name and valid reference tag
         id: image
         shell: bash
-        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+          tag="${GITHUB_REF_NAME//[^a-zA-Z0-9_.-]/-}"
+          tag="${tag:0:128}"
+          if [[ ! "$tag" =~ ^[a-zA-Z0-9_] ]]; then tag="ref-${tag:0:124}"; fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
       - uses: docker/login-action@v3
         if: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.publish }}
         with:
@@ -43,6 +48,6 @@ jobs:
           push: ${{ startsWith(github.ref, 'refs/tags/v') || inputs.publish }}
           tags: |
             ${{ steps.image.outputs.name }}:${{ github.sha }}
-            ${{ steps.image.outputs.name }}:${{ github.ref_name }}
+            ${{ steps.image.outputs.name }}:${{ steps.image.outputs.tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
