@@ -79,7 +79,8 @@ var noteDT = regexp.MustCompile(`(?i)^\s*(?:d|s)(\d+)t(\d+)\s*[ .):_-]*\s*(.+)$`
 var section = regexp.MustCompile(`(?i)^\s*(?:disc|disk|cd|set)\s*(\d+|I|II|III|IV|V|VI|VII|VIII|IX|X)\s*[:.-]?\s*$`)
 var isoDate = regexp.MustCompile(`\b(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\b`)
 var numericDate = regexp.MustCompile(`\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b`)
-var namedDate = regexp.MustCompile(`(?i)\b(?:\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}|(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},?\s+\d{4})\b`)
+var namedDate = regexp.MustCompile(`(?i)\b(?:\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}|(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4})\b`)
+var ordinalDay = regexp.MustCompile(`(?i)(\d{1,2})(?:st|nd|rd|th)([,\s])`)
 
 // IsAudio reports whether a path has a supported playback extension. The browser
 // determines whether the actual codec in the file can be decoded.
@@ -559,6 +560,7 @@ func parseDates(r *Recording, line string, dates map[string]bool) {
 		}
 	}
 	for _, v := range namedDate.FindAllString(line, -1) {
+		v = ordinalDay.ReplaceAllString(v, "${1}${2}")
 		for _, layout := range []string{"2 January 2006", "2 Jan 2006", "January 2, 2006", "Jan 2, 2006", "January 2 2006", "Jan 2 2006"} {
 			if t, e := time.Parse(layout, v); e == nil {
 				dates[t.Format("2006-01-02")] = true
