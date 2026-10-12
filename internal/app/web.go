@@ -16,7 +16,7 @@ import (
 type WebBackend struct{ E *Engine }
 
 func (w WebBackend) List(ctx context.Context) ([]webui.Recording, error) {
-	p, err := w.E.Scan()
+	p, err := w.E.browse()
 	if err != nil {
 		return nil, err
 	}
@@ -39,14 +39,15 @@ func (w WebBackend) List(ctx context.Context) ([]webui.Recording, error) {
 		if wr.Status == "ready" && latest[r.ID] == "failed" {
 			wr.Status = "failed"
 		}
+		w.E.registerPlayback(&wr)
 		rs = append(rs, wr)
 	}
 	return rs, nil
 }
 func webRecord(r Item) webui.Recording {
-	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
+	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, PlaybackOnly: r.PlaybackOnly, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
 	for _, t := range r.Tracks {
-		out.Tracks = append(out.Tracks, webui.Track{File: t.Path, Title: t.Title, Track: t.Number, Disc: t.Disc})
+		out.Tracks = append(out.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Track: t.Number, Disc: t.Disc})
 	}
 	for _, ev := range r.Evidence {
 		out.Evidence = append(out.Evidence, fmt.Sprintf("%s · SHA256 %s", ev.Path, ev.SHA256))
@@ -73,14 +74,32 @@ func webRecord(r Item) webui.Recording {
 	return out
 }
 func (w WebBackend) Get(ctx context.Context, id string) (webui.Recording, error) {
-	rs, err := w.List(ctx)
+	p, err := w.E.browse()
 	if err != nil {
 		return webui.Recording{}, err
 	}
-	for _, r := range rs {
-		if r.ID == id {
-			return r, nil
+	for _, item := range p.Recordings {
+		if item.ID != id {
+			continue
 		}
+		r := webRecord(item)
+		w.E.mu.Lock()
+		if r.Status == "ready" && w.E.store != nil {
+			jobs, err := w.E.store.History()
+			if err == nil {
+				for _, job := range jobs {
+					if job.RecordingID == id {
+						if job.Status == "failed" {
+							r.Status = "failed"
+						}
+						break
+					}
+				}
+			}
+		}
+		w.E.mu.Unlock()
+		w.E.registerPlayback(&r)
+		return r, nil
 	}
 	return webui.Recording{}, errors.New("recording not found")
 }
@@ -114,6 +133,7 @@ func (w WebBackend) SaveReview(ctx context.Context, id string, v webui.Review) e
 		for i, t := range v.Tracks {
 			r.Tracks[i].Path = t.File
 			r.Tracks[i].Title = t.Title
+			r.Tracks[i].Artist = t.Artist
 			r.Tracks[i].Disc = t.Disc
 			r.Tracks[i].Number = t.Track
 		}
