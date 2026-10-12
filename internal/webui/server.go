@@ -14,7 +14,10 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
+
+	"track-tagger/internal/catalog"
 )
 
 type Config struct {
@@ -26,6 +29,7 @@ type Config struct {
 
 type Recording struct {
 	PlaybackOnly      bool
+	DateUnknown       bool
 	ID, Path, Status  string
 	Fingerprint       string
 	Metadata          map[string]string
@@ -45,6 +49,7 @@ type Track struct {
 type Review struct {
 	Fingerprint string `json:"-"`
 	Approve     bool
+	DateUnknown bool
 	Metadata    map[string]string
 	Tracks      []Track
 	Artwork     string
@@ -108,7 +113,7 @@ func New(cfg Config, backend Backend) (http.Handler, error) {
 	if _, err := rand.Read(b); err != nil {
 		return nil, err
 	}
-	t, err := template.New("index.html").Funcs(template.FuncMap{"base": displayBase, "title": recordingTitle, "status": statusLabel, "issues": issueSummary, "action": recordingAction, "performerReview": performerReview}).ParseFS(assets, "assets/index.html")
+	t, err := template.New("index.html").Funcs(template.FuncMap{"base": displayBase, "title": recordingTitle, "status": statusLabel, "issues": issueSummary, "action": recordingAction, "performerReview": performerReview, "googleSearchURL": googleSearchURL}).ParseFS(assets, "assets/index.html")
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +251,23 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 	var err error
 	switch r.URL.Path {
 	case "/review":
-		review := Review{Metadata: map[string]string{"ARTIST": r.PostForm.Get("artist"), "ALBUM": r.PostForm.Get("album"), "DATE": r.PostForm.Get("date")}, Artwork: r.PostForm.Get("artwork")}
+		date := strings.TrimSpace(r.PostForm.Get("date"))
+		dateUnknown := r.PostForm.Get("date_unknown") == "yes"
+		if dateUnknown && date != "" {
+			http.Error(w, "clear the concert date or uncheck Date unknown", http.StatusBadRequest)
+			return
+		}
+		if !dateUnknown && date == "" {
+			http.Error(w, "enter a concert date or mark Date unknown", http.StatusBadRequest)
+			return
+		}
+		if !dateUnknown {
+			if err := catalog.ValidateDate(date); err != nil {
+				http.Error(w, "concert date must be YYYY, YYYY-MM, or a valid YYYY-MM-DD date", http.StatusBadRequest)
+				return
+			}
+		}
+		review := Review{DateUnknown: dateUnknown, Metadata: map[string]string{"ARTIST": strings.TrimSpace(r.PostForm.Get("artist")), "ALBUM": strings.TrimSpace(r.PostForm.Get("album")), "DATE": date}, Artwork: r.PostForm.Get("artwork")}
 		files, titles := r.PostForm["track_file"], r.PostForm["track_title"]
 		discs, numbers := r.PostForm["track_disc"], r.PostForm["track_number"]
 		artists := r.PostForm["track_artist"]

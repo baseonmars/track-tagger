@@ -216,3 +216,44 @@ func TestHTTPReviewApplyHistoryAndUndo(t *testing.T) {
 		t.Fatal("undo not recorded in history")
 	}
 }
+
+func TestHTTPUnknownDatePreservesExistingMetadata(t *testing.T) {
+	e, audio := engineFixture(t, Write)
+	stage := filepath.Join(t.TempDir(), "existing.flac")
+	if _, err := media.Stage(audio, stage, map[string]string{"DATE": "1969-12-31"}, "", true); err != nil {
+		t.Fatal(err)
+	}
+	if err := media.Replace(stage, audio); err != nil {
+		t.Fatal(err)
+	}
+	before, err := media.Inspect(audio)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := realWeb(t, e, true)
+	path, page := s.recordingPage()
+	v := renderedForm(t, page, "/review")
+	v.Set("date", "")
+	s.request(http.MethodPost, "/review", v, http.StatusBadRequest)
+	v.Set("date_unknown", "yes")
+	s.request(http.MethodPost, "/review", v, http.StatusSeeOther)
+	saved := s.request(http.MethodGet, path, nil, http.StatusOK)
+	if !regexp.MustCompile(`<input[^>]*name="date_unknown"[^>]*checked`).MatchString(saved) {
+		t.Fatal("unknown acknowledgment not rendered as checked")
+	}
+	p, err := e.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !p.Recordings[0].Reviewed || !p.Recordings[0].DateUnknown || p.Recordings[0].Date != "" {
+		t.Fatal("HTTP review lost unknown state")
+	}
+	s.request(http.MethodPost, "/apply", renderedForm(t, saved, "/apply"), http.StatusSeeOther)
+	after, err := media.Inspect(audio)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if after.Tags["DATE"] != "1969-12-31" || after.AudioHash != before.AudioHash {
+		t.Fatalf("unknown review altered date/audio: %+v", after)
+	}
+}

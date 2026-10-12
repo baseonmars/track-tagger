@@ -263,8 +263,18 @@ func validateReview(base catalog.Recording, item *Item) error {
 	if strings.TrimSpace(item.Artist) == "" || strings.TrimSpace(item.Album) == "" {
 		return errors.New("artist and album are required")
 	}
-	if _, err := time.Parse("2006-01-02", item.Date); err != nil {
-		return errors.New("date must be YYYY-MM-DD")
+	item.Date = strings.TrimSpace(item.Date)
+	if item.DateUnknown {
+		if item.Date != "" {
+			return errors.New("date must be empty when Date unknown is selected")
+		}
+	} else {
+		if item.Date == "" {
+			return errors.New("enter a date or explicitly select Date unknown")
+		}
+		if err := catalog.ValidateDate(item.Date); err != nil {
+			return err
+		}
 	}
 	for _, t := range item.Tracks {
 		if !files[t.Path] {
@@ -777,7 +787,7 @@ func (e *Engine) Undo(job string, write bool) ([]FileJournal, error) {
 func SameInputs(a, b catalog.Recording) bool { return reflect.DeepEqual(a.Evidence, b.Evidence) }
 
 func sameProposal(a, b catalog.Recording) bool {
-	return a.Artist == b.Artist && a.Album == b.Album && a.Date == b.Date && a.Artwork == b.Artwork && reflect.DeepEqual(a.Tracks, b.Tracks)
+	return a.Artist == b.Artist && a.Album == b.Album && a.Date == b.Date && a.DateUnknown == b.DateUnknown && a.Artwork == b.Artwork && reflect.DeepEqual(a.Tracks, b.Tracks)
 }
 func (e *Engine) revalidate(item Item, temp string) error {
 	rs, err := catalog.Scan(item.Path)

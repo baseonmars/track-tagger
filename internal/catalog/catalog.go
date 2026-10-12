@@ -51,6 +51,7 @@ type Recording struct {
 	Artist            string     `json:"artist"`
 	Album             string     `json:"album"`
 	Date              string     `json:"date"`
+	DateUnknown       bool       `json:"date_unknown,omitempty"`
 	Venue             string     `json:"venue"`
 	City              string     `json:"city"`
 	Tracks            []Track    `json:"tracks"`
@@ -313,7 +314,10 @@ func build(root, dir string, files []string, fingerprint func(string) (Evidence,
 	chooseArt(&r)
 	r.Album = r.Date
 	if r.Venue != "" {
-		r.Album += " - " + r.Venue
+		if r.Album != "" {
+			r.Album += " - "
+		}
+		r.Album += r.Venue
 		if r.City != "" {
 			r.Album += ", " + r.City
 		}
@@ -645,6 +649,9 @@ func RefreshPlan(r *Recording) {
 			artist = r.Artist
 		}
 		t.Tags = map[string]string{"ARTIST": artist, "ALBUMARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date, "TITLE": t.Title, "TRACKNUMBER": strconv.Itoa(t.Number), "TRACKTOTAL": strconv.Itoa(t.TrackTotal), "DISCNUMBER": strconv.Itoa(t.Disc), "DISCTOTAL": strconv.Itoa(t.DiscTotal)}
+		if r.DateUnknown {
+			delete(t.Tags, "DATE")
+		}
 	}
 }
 func Fingerprint(path string) (Evidence, error) {

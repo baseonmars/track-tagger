@@ -63,3 +63,16 @@ func TestWatchCancellation(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestWatchScheduleObservesDateUnknownChange(t *testing.T) {
+	now := time.Unix(100, 0)
+	s := watchSchedule{}
+	item := Item{Recording: catalog.Recording{ID: "one", Path: "/music/show"}}
+	first := s.observe(item, now)
+	first.done = true
+	item.DateUnknown = true
+	next := s.observe(item, now.Add(time.Second))
+	if next == first || next.done || !next.since.Equal(now.Add(time.Second)) {
+		t.Fatal("unknown acknowledgment did not reset observation")
+	}
+}

@@ -45,7 +45,7 @@ func (w WebBackend) List(ctx context.Context) ([]webui.Recording, error) {
 	return rs, nil
 }
 func webRecord(r Item) webui.Recording {
-	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, PlaybackOnly: r.PlaybackOnly, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
+	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
 	for _, t := range r.Tracks {
 		out.Tracks = append(out.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Track: t.Number, Disc: t.Disc})
 	}
@@ -126,6 +126,7 @@ func (w WebBackend) SaveReview(ctx context.Context, id string, v webui.Review) e
 		r.Artist = v.Metadata["ARTIST"]
 		r.Album = v.Metadata["ALBUM"]
 		r.Date = v.Metadata["DATE"]
+		r.DateUnknown = v.DateUnknown
 		r.Artwork = v.Artwork
 		if len(v.Tracks) != len(r.Tracks) {
 			return errors.New("map every file")

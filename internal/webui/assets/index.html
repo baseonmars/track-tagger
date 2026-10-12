@@ -4,6 +4,8 @@
 {{if not .Writable}}<aside class="preview"><strong>Your music is unchanged.</strong> Preview mode lets you check tags and save corrections for later.</aside>{{end}}
 {{if .Recording}}{{$r := .Recording}}
 <a class="back" href="/">← All recordings</a><div class="heading"><div><p class="eyebrow">RECORDING REVIEW</p><h1>{{title $r}}</h1></div><span class="status">{{status $r.Status}}</span></div>
+{{if not $r.PlaybackOnly}}{{if $r.DateUnknown}}<section class="attention"><strong>Date unknown.</strong> Existing date tags will be preserved.</section>{{else if not (index $r.Metadata "DATE")}}<section class="attention"><strong>Concert date needs attention.</strong> Enter a date or mark it unknown.</section>{{end}}{{end}}
+{{with googleSearchURL $r}}<p><a href="{{.}}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Search Google for concert date (opens in new tab)</a></p>{{end}}
 {{if and (not $r.PlaybackOnly) $r.Reasons}}<section class="attention"><h2>What needs checking</h2><ul>{{range issues $r}}<li>{{.}}</li>{{end}}</ul>{{range $r.Tracks}}{{if performerReview $r .}}<a class="review-track" href="#track-{{.Disc}}-{{.Track}}">Check track {{.Track}} (disc {{.Disc}}) ↓</a>{{end}}{{end}}<a href="#track-list">All track titles ↓</a></section>{{end}}
 {{if $r.Notes}}<section class="notes"><details><summary>Read the original concert notes <span>· {{len $r.Notes}} file(s)</span></summary><p>Use these notes to check the proposed tags below.</p>{{range $r.Notes}}<h3>{{base .Path}}</h3><pre>{{.Text}}</pre>{{end}}</details></section>{{end}}
 <section class="listening" aria-label="Recording player">
@@ -19,7 +21,9 @@
 <input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="id" value="{{$r.ID}}"><input type="hidden" name="fingerprint" value="{{$r.Fingerprint}}">
 <section><h2><span class="step">1</span> Album information</h2><p>Shared by every track unless you enter a different track artist below.</p><div class="album-fields">
 <label for="artist">Artist<input id="artist" name="artist" value="{{index $r.Metadata "ARTIST"}}" required></label>
-<label for="date">Concert date<input id="date" name="date" type="date" value="{{index $r.Metadata "DATE"}}" required></label>
+<div class="date-field"><label for="date">Concert date<input id="date" name="date" type="text" maxlength="10" aria-describedby="date-hint" value="{{if not $r.DateUnknown}}{{index $r.Metadata "DATE"}}{{end}}"></label>
+<p id="date-hint" class="count">Use YYYY, YYYY-MM, or YYYY-MM-DD. Mark Date unknown if the concert date is not known.</p>
+<label class="date-unknown"><input id="date-unknown" name="date_unknown" type="checkbox" value="yes" {{if $r.DateUnknown}}checked{{end}}> Date unknown</label></div>
 <label class="wide" for="album">Album<input id="album" name="album" value="{{index $r.Metadata "ALBUM"}}" required></label>
 </div><div class="artwork"><label for="artwork">Artwork<select id="artwork" name="artwork"><option value="">Keep existing artwork</option>{{range $r.Artwork}}<option value="{{.}}" {{if eq . $r.SelectedArtwork}}selected{{end}}>{{base .}}</option>{{end}}</select></label>{{if not $r.Artwork}}<p>No local cover image found.</p>{{end}}</div></section>
 <section id="track-list"><h2><span class="step">2</span> Track titles <span class="count">{{len $r.Tracks}} files</span></h2><p>Each row is one audio file. Check its title and numbering against the notes.</p>

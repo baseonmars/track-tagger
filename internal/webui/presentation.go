@@ -2,9 +2,11 @@ package webui
 
 import (
 	"fmt"
+	"net/url"
 	"path"
 	"strconv"
 	"strings"
+	"unicode"
 )
 
 // Format display paths portably; form submissions retain the original paths.
@@ -24,6 +26,42 @@ func recordingTitle(r Recording) string {
 	}
 	return displayBase(r.Path)
 }
+
+// googleSearchURL includes only bounded descriptive metadata. The recording
+// path is reduced to its basename and used only when artist and album are both
+// absent; no request is made unless the user follows the returned link.
+func googleSearchURL(r Recording) string {
+	artist := searchTerm(r.Metadata["ARTIST"])
+	album := searchTerm(r.Metadata["ALBUM"])
+	query := strings.TrimSpace(strings.Join([]string{artist, album}, " "))
+	if query == "" {
+		query = searchTerm(displayBase(r.Path))
+	}
+	query = truncateRunes(query, 240)
+	if query == "" {
+		return ""
+	}
+	return "https://www.google.com/search?q=" + url.QueryEscape(query)
+}
+
+func searchTerm(value string) string {
+	value = strings.Map(func(r rune) rune {
+		if unicode.IsControl(r) || r == '/' || r == '\\' {
+			return ' '
+		}
+		return r
+	}, value)
+	return strings.Join(strings.Fields(value), " ")
+}
+
+func truncateRunes(value string, limit int) string {
+	runes := []rune(value)
+	if len(runes) > limit {
+		return string(runes[:limit])
+	}
+	return value
+}
+
 func statusLabel(s string) string {
 	switch s {
 	case "needs-review":
