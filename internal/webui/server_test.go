@@ -2,6 +2,7 @@ package webui
 
 import (
 	"context"
+	"html"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -13,12 +14,16 @@ import (
 type fakeBackend struct {
 	applied, undone, saved int
 	review                 Review
+	recording              *Recording
 }
 
 func (b *fakeBackend) List(context.Context) ([]Recording, error) {
 	return []Recording{{ID: "one", Path: "concert", Status: "needs-review"}}, nil
 }
 func (b *fakeBackend) Get(context.Context, string) (Recording, error) {
+	if b.recording != nil {
+		return *b.recording, nil
+	}
 	return Recording{ID: "one", Path: "concert", Fingerprint: "source-version-1", Metadata: map[string]string{"ARTIST": "<script>alert(1)</script>"}, Tracks: []Track{{File: "t01.flac", Title: "Opening [intro]", Disc: 1, Track: 1}}, Artwork: []string{"cover.jpg"}, SelectedArtwork: "cover.jpg", Notes: []Note{{Path: "notes.txt", Text: "Original notes <script>unsafe</script>"}}}, nil
 }
 func (b *fakeBackend) SaveReview(_ context.Context, _ string, r Review) error {
@@ -177,6 +182,115 @@ func TestReviewRejectsIncompleteOrInvalidTrackFields(t *testing.T) {
 	}
 	if b.saved != 0 {
 		t.Fatal("saved malformed track mapping")
+	}
+}
+
+func TestReviewAcceptsFlexibleDatesOrExplicitUnknown(t *testing.T) {
+	for _, tc := range []struct {
+		name, date string
+		unknown    bool
+		wantStatus int
+	}{
+		{name: "year", date: "1970", wantStatus: http.StatusSeeOther},
+		{name: "month", date: "1970-04", wantStatus: http.StatusSeeOther},
+		{name: "day", date: "1970-04-03", wantStatus: http.StatusSeeOther},
+		{name: "trim date", date: " 1970-04 ", wantStatus: http.StatusSeeOther},
+		{name: "unknown", unknown: true, wantStatus: http.StatusSeeOther},
+		{name: "blank", wantStatus: http.StatusBadRequest},
+		{name: "unknown with date", date: "1970", unknown: true, wantStatus: http.StatusBadRequest},
+		{name: "invalid month", date: "1970-13", wantStatus: http.StatusBadRequest},
+		{name: "invalid day", date: "1970-02-30", wantStatus: http.StatusBadRequest},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			b := &fakeBackend{}
+			h, _ := New(Config{}, b)
+			v := url.Values{
+				"csrf":         {csrfFrom(t, h)},
+				"id":           {"one"},
+				"artist":       {"Artist"},
+				"album":        {"Album"},
+				"date":         {tc.date},
+				"date_unknown": {""},
+				"approve":      {"yes"},
+				"fingerprint":  {"source-version-1"},
+				"track_file":   {"t01.flac"},
+				"track_title":  {"Opening"},
+				"track_disc":   {"1"},
+				"track_number": {"1"},
+			}
+			if tc.unknown {
+				v.Set("date_unknown", "yes")
+			}
+			w := post(h, "/review", v, "http://localhost")
+			if w.Code != tc.wantStatus {
+				t.Fatalf("status %d, want %d: %s", w.Code, tc.wantStatus, w.Body.String())
+			}
+			if tc.wantStatus == http.StatusSeeOther {
+				if b.review.DateUnknown != tc.unknown || b.review.Metadata["DATE"] != strings.TrimSpace(tc.date) {
+					t.Fatalf("saved date state: %+v", b.review)
+				}
+			} else if b.saved != 0 {
+				t.Fatal("saved invalid date state")
+			}
+		})
+	}
+}
+
+func TestDateAttentionAndGoogleSearchAreExplicitAndBounded(t *testing.T) {
+	b := &fakeBackend{recording: &Recording{
+		ID:          "one",
+		Path:        `/Users/dan/private/Concert folder`,
+		Fingerprint: "source-version-1",
+		Metadata:    map[string]string{"ARTIST": "Artist & <Band>", "ALBUM": "Venue, City"},
+		Notes:       []Note{{Path: "private.txt", Text: "PRIVATE NOTE CONTENT"}},
+	}}
+	h, _ := New(Config{}, b)
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/recording?id=one", nil))
+	body := w.Body.String()
+	if !strings.Contains(body, "Concert date needs attention") || !strings.Contains(body, "Enter a date or mark it unknown") {
+		t.Fatal("missing attention cue for blank date")
+	}
+	if !strings.Contains(body, `name="date_unknown"`) || !strings.Contains(body, `name="date" type="text" maxlength="10" aria-describedby="date-hint"`) || !strings.Contains(body, "Use YYYY, YYYY-MM, or YYYY-MM-DD") || strings.Contains(body, `name="date" type="date"`) {
+		t.Fatal("date form does not expose flexible date and unknown controls")
+	}
+	if !strings.Contains(body, `target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"`) || !strings.Contains(body, "Search Google for concert date (opens in new tab)") {
+		t.Fatal("Google search link is not explicitly safe or labeled")
+	}
+	m := regexp.MustCompile(`href="(https://www\.google\.com/search\?q=[^"]+)" target="_blank"`).FindStringSubmatch(body)
+	if len(m) != 2 {
+		t.Fatal("missing Google search URL")
+	}
+	u, err := url.Parse(html.UnescapeString(m[1]))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, want := u.Query().Get("q"), "Artist & <Band> Venue, City"; got != want {
+		t.Fatalf("query %q, want %q, URL %q", got, want, m[1])
+	}
+	for _, private := range []string{"/Users/dan", "Concert folder", "PRIVATE NOTE CONTENT", "private.txt"} {
+		if strings.Contains(m[1], private) {
+			t.Fatalf("search URL leaked %q", private)
+		}
+	}
+	if strings.Contains(body, "https://www.google.com/search") && strings.Contains(body, "<img") {
+		t.Fatal("Google search must not load automatically")
+	}
+}
+
+func TestDateUnknownCuePreservesExistingDates(t *testing.T) {
+	b := &fakeBackend{recording: &Recording{ID: "one", Path: "concert", DateUnknown: true, Metadata: map[string]string{"DATE": "1970-01-20"}}}
+	h, _ := New(Config{}, b)
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/recording?id=one", nil))
+	if !strings.Contains(w.Body.String(), "Date unknown.") || !strings.Contains(w.Body.String(), "Existing date tags will be preserved.") {
+		t.Fatal("missing acknowledged unknown-date cue")
+	}
+	if !strings.Contains(w.Body.String(), `name="date" type="text" maxlength="10" aria-describedby="date-hint" value=""`) {
+		t.Fatal("unknown date should leave the editable field blank even when existing tags are preserved")
+	}
+	if !strings.Contains(w.Body.String(), "Search Google for concert date (opens in new tab)") {
+		t.Fatal("Google search should remain available after marking the date unknown")
 	}
 }
 

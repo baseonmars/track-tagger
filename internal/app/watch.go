@@ -28,9 +28,10 @@ func (s watchSchedule) observe(item Item, now time.Time) *watchEntry {
 	b, _ := json.Marshal(struct {
 		Fingerprint                  string
 		Reviewed                     bool
+		DateUnknown                  bool
 		Tracks                       any
 		Artwork, Artist, Album, Date string
-	}{item.Fingerprint, item.Reviewed, item.Tracks, item.Artwork, item.Artist, item.Album, item.Date})
+	}{item.Fingerprint, item.Reviewed, item.DateUnknown, item.Tracks, item.Artwork, item.Artist, item.Album, item.Date})
 	h := sha256.Sum256(b)
 	key := hex.EncodeToString(h[:])
 	entry := s[item.ID]
