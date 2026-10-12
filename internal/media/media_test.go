@@ -163,7 +163,7 @@ func TestEmptyDuplicateDoesNotDiscardPopulatedTag(t *testing.T) {
 }
 
 // failingSink writes real bytes to the staging file up to its limit, then
-// simulates a full disk or a broken writer. No existing source is modified.
+// simulates a full disk or a broken writer.
 type failingSink struct {
 	*os.File
 	remaining int

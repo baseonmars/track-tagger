@@ -21,9 +21,9 @@ type playbackFile struct {
 
 func playbackKey(recording, track string) string { return recording + ":" + track }
 
-// Only files from an observed recording page can be streamed. A range request
-// never rescans or hashes the collection; file identity/stat checks detect
-// replaced or modified sources and ask the listener to refresh the page.
+// Stream files registered by recording pages. Range requests validate file
+// identity, size, and modification time against that registration; changes
+// require the listener to refresh the page.
 func (e *Engine) registerPlayback(r *webui.Recording) {
 	e.streamMu.Lock()
 	defer e.streamMu.Unlock()

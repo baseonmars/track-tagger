@@ -9,7 +9,7 @@ import (
 
 // Audio is a locally available, validated media file. The handler owns Content
 // and closes it after serving. Backends must resolve identifiers against their
-// recording inventory rather than treating them as paths supplied by clients.
+// recording inventory.
 type Audio struct {
 	Content     io.ReadSeekCloser
 	Name        string

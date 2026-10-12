@@ -195,7 +195,7 @@ func encodeComments(vendor string, vals []string) []byte {
 }
 
 // InspectMetadata reads and validates only the bounded FLAC metadata and checks
-// that an audio payload exists. Hashes are deliberately absent; writes must use Inspect.
+// that an audio payload exists. Use Inspect for the integrity hashes required by writes.
 func InspectMetadata(path string) (Info, error) { return inspect(path, false) }
 
 func Inspect(path string) (Info, error) { return inspect(path, true) }

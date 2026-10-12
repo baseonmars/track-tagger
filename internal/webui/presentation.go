@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// Display paths portably without changing the exact paths submitted by forms.
+// Format display paths portably; form submissions retain the original paths.
 func displayBase(p string) string {
 	return path.Base(strings.TrimRight(strings.ReplaceAll(p, `\`, "/"), "/"))
 }
