@@ -188,6 +188,7 @@ func TestHTTPReviewApplyHistoryAndUndo(t *testing.T) {
 	v.Set("artist", "Reviewed Band")
 	v.Set("album", "1970-01-20 - Reviewed Hall, London")
 	v.Set("track_title", "Reviewed song [encore]")
+	v.Set("track_artist", "Guest Artist")
 	s.request(http.MethodPost, "/review", v, http.StatusSeeOther)
 	saved := s.request(http.MethodGet, path, nil, http.StatusOK)
 	s.request(http.MethodPost, "/apply", renderedForm(t, saved, "/apply"), http.StatusSeeOther)
@@ -195,11 +196,11 @@ func TestHTTPReviewApplyHistoryAndUndo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if after.Tags["ARTIST"] != "Reviewed Band" || after.Tags["TITLE"] != "Reviewed song [encore]" || after.AudioHash != before.AudioHash {
+	if after.Tags["ARTIST"] != "Guest Artist" || after.Tags["ALBUMARTIST"] != "Reviewed Band" || after.Tags["TITLE"] != "Reviewed song [encore]" || after.AudioHash != before.AudioHash {
 		t.Fatalf("applied wrong metadata or altered audio: %+v", after)
 	}
 	history := s.request(http.MethodGet, "/history", nil, http.StatusOK)
-	if !strings.Contains(history, "completed") {
+	if !strings.Contains(strings.ToLower(history), "completed") {
 		t.Fatal("completed job absent from history")
 	}
 	undo := renderedForm(t, history, "/undo")

@@ -11,6 +11,7 @@ RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath -ldflags=
 
 FROM scratch
 COPY --from=build /track-tagger /track-tagger
+COPY LICENSE /LICENSE
 ENV XDG_CONFIG_HOME=/state
 USER 65532:65532
 ENTRYPOINT ["/track-tagger"]

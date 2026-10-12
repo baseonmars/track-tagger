@@ -194,7 +194,13 @@ func encodeComments(vendor string, vals []string) []byte {
 	return b.Bytes()
 }
 
-func Inspect(path string) (Info, error) {
+// InspectMetadata reads and validates only the bounded FLAC metadata and checks
+// that an audio payload exists. Hashes are deliberately absent; writes must use Inspect.
+func InspectMetadata(path string) (Info, error) { return inspect(path, false) }
+
+func Inspect(path string) (Info, error) { return inspect(path, true) }
+
+func inspect(path string, hashes bool) (Info, error) {
 	var info Info
 	if err := CheckLocal(path); err != nil {
 		return info, err
@@ -209,7 +215,10 @@ func Inspect(path string) (Info, error) {
 		return info, err
 	}
 	full := sha256.New()
-	r := io.TeeReader(f, full)
+	var r io.Reader = f
+	if hashes {
+		r = io.TeeReader(f, full)
+	}
 	blocks, raw, err := readMetadata(r)
 	if err != nil {
 		return info, err
@@ -236,7 +245,18 @@ func Inspect(path string) (Info, error) {
 		}
 	}
 	audio := sha256.New()
-	n, err := io.Copy(audio, r)
+	var n int64
+	if hashes {
+		n, err = io.Copy(audio, r)
+	} else {
+		var sample [1]byte
+		var count int
+		count, err = r.Read(sample[:])
+		n = int64(count)
+		if err == io.EOF {
+			err = nil
+		}
+	}
 	if err != nil {
 		return Info{}, err
 	}
@@ -250,8 +270,10 @@ func Inspect(path string) (Info, error) {
 	if before.Size() != after.Size() || !before.ModTime().Equal(after.ModTime()) {
 		return Info{}, errors.New("source changed during inspection")
 	}
-	info.AudioHash = hex.EncodeToString(audio.Sum(nil))
-	info.FileHash = hex.EncodeToString(full.Sum(nil))
+	if hashes {
+		info.AudioHash = hex.EncodeToString(audio.Sum(nil))
+		info.FileHash = hex.EncodeToString(full.Sum(nil))
+	}
 	return info, nil
 }
 

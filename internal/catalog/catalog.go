@@ -31,6 +31,7 @@ type Evidence struct {
 	ModTime int64  `json:"mod_time"`
 }
 type Track struct {
+	Artist       string            `json:"artist,omitempty"`
 	Path         string            `json:"path"`
 	RelativePath string            `json:"relative_path"`
 	Title        string            `json:"title"`
@@ -46,6 +47,7 @@ type Recording struct {
 	Path              string     `json:"path"`
 	RelativePath      string     `json:"relative_path"`
 	Status            string     `json:"status"`
+	PlaybackOnly      bool       `json:"playback_only"`
 	Artist            string     `json:"artist"`
 	Album             string     `json:"album"`
 	Date              string     `json:"date"`
@@ -63,15 +65,40 @@ var discDir = regexp.MustCompile(`(?i)^(?:disc|disk|cd|set)[ _-]*(\d+)$`)
 var fileDT = regexp.MustCompile(`(?i)(?:^|[^a-z0-9])(?:d|disc|cd|s|set)[ _-]*(\d+)[ _.-]*t?(\d+)(?:[^0-9]|$)`)
 var fileNumericDT = regexp.MustCompile(`^(\d{1,2})[-_.](\d{2,3})(?:[^0-9]|$)`)
 var fileT = regexp.MustCompile(`(?i)(?:^|[^a-z0-9])t(\d+)(?:[^0-9]|$)`)
+var datedFileT = regexp.MustCompile(`(?i)(?:^|[^0-9])(\d{4}-\d{2}-\d{2})t(\d{1,3})$`)
+var datedFileDT = regexp.MustCompile(`(?i)(?:^|[^0-9])(\d{4}-\d{2}-\d{2})(?:s|d)(\d{1,2})t(\d{1,3})$`)
+var weekdayPrefix = regexp.MustCompile(`(?i)^(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday),?\s+`)
+var weekdaySuffix = regexp.MustCompile(`(?i)^(?:,?\s*(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)|\s*\((?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\))$`)
+var otherPerformer = regexp.MustCompile(`(?i)\b(?:opening|support)\s+set\b`)
 var leadingT = regexp.MustCompile(`^(\d+)[ ._-]`)
 var noteT = regexp.MustCompile(`^\s*(\d{1,3})\s*[.):_-]\s*(.+)$`)
+var noteSpaceT = regexp.MustCompile(`^\s*(\d{1,3})[ \t]+(\S.*)$`)
+var reportDuration = regexp.MustCompile(`^\d+:\d{2}(?:[.:]\d+)?\s`)
 var noteDT = regexp.MustCompile(`(?i)^\s*(?:d|s)(\d+)t(\d+)\s*[ .):_-]*\s*(.+)$`)
-var section = regexp.MustCompile(`(?i)^\s*(?:disc|disk|cd|set)\s*(\d+)\s*[:.-]?\s*$`)
+var section = regexp.MustCompile(`(?i)^\s*(?:disc|disk|cd|set)\s*(\d+|I|II|III|IV|V|VI|VII|VIII|IX|X)\s*[:.-]?\s*$`)
 var isoDate = regexp.MustCompile(`\b(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\b`)
 var numericDate = regexp.MustCompile(`\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b`)
 var namedDate = regexp.MustCompile(`(?i)\b(?:\d{1,2}\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}|(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},?\s+\d{4})\b`)
 
-func Scan(source string) ([]Recording, error) {
+// IsAudio reports whether a path has a supported playback extension. The browser
+// determines whether the actual codec in the file can be decoded.
+func IsAudio(path string) bool {
+	switch strings.ToLower(filepath.Ext(path)) {
+	case ".flac", ".wav", ".mp3", ".ogg", ".oga", ".opus":
+		return true
+	default:
+		return false
+	}
+}
+
+// CanTag reports whether a path uses the only currently writable format, FLAC.
+func CanTag(path string) bool {
+	return strings.EqualFold(filepath.Ext(path), ".flac")
+}
+
+func Scan(source string) ([]Recording, error) { return scan(source, Fingerprint) }
+
+func scan(source string, fingerprint func(string) (Evidence, error)) ([]Recording, error) {
 	root, err := filepath.Abs(source)
 	if err != nil {
 		return nil, err
@@ -97,7 +124,7 @@ func Scan(source string) ([]Recording, error) {
 		if d.IsDir() {
 			return nil
 		}
-		if strings.EqualFold(filepath.Ext(path), ".flac") {
+		if IsAudio(path) {
 			dir := filepath.Dir(path)
 			if discDir.MatchString(filepath.Base(dir)) && dir != root {
 				dir = filepath.Dir(dir)
@@ -116,7 +143,7 @@ func Scan(source string) ([]Recording, error) {
 	sort.Strings(dirs)
 	var out []Recording
 	for _, dir := range dirs {
-		r, err := build(root, dir, groups[dir])
+		r, err := build(root, dir, groups[dir], fingerprint)
 		if err != nil {
 			return nil, err
 		}
@@ -132,7 +159,7 @@ func reason(r *Recording, s string) {
 	}
 	r.ReviewReasons = append(r.ReviewReasons, s)
 }
-func build(root, dir string, files []string) (Recording, error) {
+func build(root, dir string, files []string, fingerprint func(string) (Evidence, error)) (Recording, error) {
 	rel, _ := filepath.Rel(root, dir)
 	id := sha256.Sum256([]byte(dir))
 	r := Recording{ID: hex.EncodeToString(id[:12]), Path: dir, RelativePath: rel, Status: "ready"}
@@ -161,6 +188,7 @@ func build(root, dir string, files []string) (Recording, error) {
 		return r, err
 	}
 	titles := map[string]string{}
+	listedTitles := 0
 	dates := map[string]bool{}
 	artists := map[string]bool{}
 	for _, p := range paths {
@@ -193,7 +221,7 @@ func build(root, dir string, files []string) (Recording, error) {
 			if !utf8.Valid(b) {
 				s, _ = charmap.Windows1252.NewDecoder().String(s)
 			}
-			parseNotes(&r, s, titles, dates, artists)
+			listedTitles += parseNotes(&r, s, titles, dates, artists)
 		case ".jpg", ".jpeg", ".png":
 			r.ArtworkCandidates = append(r.ArtworkCandidates, p)
 		case ".part", ".partial", ".tmp", ".download", ".icloud":
@@ -208,7 +236,7 @@ func build(root, dir string, files []string) (Recording, error) {
 			r.Status = "waiting"
 			reason(&r, "empty file: "+filepath.Base(p))
 		}
-		e, err := Fingerprint(p)
+		e, err := fingerprint(p)
 		if err != nil {
 			return r, err
 		}
@@ -242,10 +270,17 @@ func build(root, dir string, files []string) (Recording, error) {
 	}
 	seen := map[string]bool{}
 	for _, p := range files {
+		if !CanTag(p) {
+			r.PlaybackOnly = true
+		}
 		d, n := fileNumber(p)
 		key := fmt.Sprintf("%d:%d", d, n)
 		rp, _ := filepath.Rel(root, p)
-		t := Track{Path: p, RelativePath: rp, Disc: d, Number: n, Title: titles[key]}
+		t := Track{Path: p, RelativePath: rp, Disc: d, Number: n}
+		// Zero means the filename has no recognized identifier, never track zero.
+		if n > 0 {
+			t.Title = titles[key]
+		}
 		if n == 0 {
 			reason(&r, "unmatched file without explicit track number: "+filepath.Base(p))
 		} else if seen[key] {
@@ -262,8 +297,8 @@ func build(root, dir string, files []string) (Recording, error) {
 			reason(&r, "listed track has no audio file: "+key)
 		}
 	}
-	if len(titles) != len(files) {
-		reason(&r, fmt.Sprintf("track count mismatch: %d listed titles, %d audio files", len(titles), len(files)))
+	if listedTitles != len(files) {
+		reason(&r, fmt.Sprintf("track count mismatch: %d listed titles, %d audio files", listedTitles, len(files)))
 	}
 	sort.Slice(r.Tracks, func(i, j int) bool {
 		a, b := r.Tracks[i], r.Tracks[j]
@@ -318,13 +353,32 @@ func fileNumber(path string) (int, int) {
 		n, _ := strconv.Atoi(m[1])
 		return d, n
 	}
+	// A date immediately followed by tNN is a common taper convention. Only
+	// accept a valid complete date and a terminal track token, not arbitrary
+	// embedded tNN fragments in descriptive names.
+	stem := strings.TrimSuffix(base, filepath.Ext(base))
+	if m := datedFileDT.FindStringSubmatch(stem); m != nil {
+		if _, err := time.Parse("2006-01-02", m[1]); err == nil {
+			disc, _ := strconv.Atoi(m[2])
+			n, _ := strconv.Atoi(m[3])
+			return disc, n
+		}
+	}
+	if m := datedFileT.FindStringSubmatch(stem); m != nil {
+		if _, err := time.Parse("2006-01-02", m[1]); err == nil {
+			n, _ := strconv.Atoi(m[2])
+			return d, n
+		}
+	}
 	if m := leadingT.FindStringSubmatch(base); m != nil {
 		n, _ := strconv.Atoi(m[1])
 		return d, n
 	}
 	return d, 0
 }
-func parseNotes(r *Recording, s string, titles map[string]string, dates, artists map[string]bool) {
+func parseNotes(r *Recording, s string, titles map[string]string, dates, artists map[string]bool) int {
+	count := 0
+	parseUnlabelledHeader(r, s, artists)
 	disc := 1
 	header := true
 	for _, raw := range strings.Split(strings.ReplaceAll(s, "\r\n", "\n"), "\n") {
@@ -333,8 +387,20 @@ func parseNotes(r *Recording, s string, titles map[string]string, dates, artists
 			continue
 		}
 		lower := strings.ToLower(line)
+		// shntool duration rows are reports, not numbered song titles.
+		if reportDuration.MatchString(line) {
+			continue
+		}
 		if m := section.FindStringSubmatch(line); m != nil {
 			disc, _ = strconv.Atoi(m[1])
+			if disc == 0 {
+				for i, roman := range []string{"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"} {
+					if strings.EqualFold(m[1], roman) {
+						disc = i + 1
+						break
+					}
+				}
+			}
 			header = false
 			continue
 		}
@@ -344,12 +410,24 @@ func parseNotes(r *Recording, s string, titles map[string]string, dates, artists
 		if m := noteDT.FindStringSubmatch(line); m != nil {
 			d, _ := strconv.Atoi(m[1])
 			n, _ := strconv.Atoi(m[2])
+			count++
 			addTitle(r, titles, d, n, m[3])
 			header = false
 			continue
 		}
-		if m := noteT.FindStringSubmatch(line); m != nil {
+		// A day-first date also starts with a number followed by whitespace.
+		date := namedDate.FindString(line)
+		if header && date != "" && strings.HasPrefix(line, date) && (date == line || weekdaySuffix.MatchString(strings.TrimPrefix(line, date))) {
+			parseDates(r, line, dates)
+			continue
+		}
+		m := noteT.FindStringSubmatch(line)
+		if m == nil {
+			m = noteSpaceT.FindStringSubmatch(line)
+		}
+		if m != nil {
 			n, _ := strconv.Atoi(m[1])
+			count++
 			addTitle(r, titles, disc, n, m[2])
 			header = false
 			continue
@@ -366,21 +444,86 @@ func parseNotes(r *Recording, s string, titles map[string]string, dates, artists
 			}
 		}
 		if strings.HasPrefix(lower, "venue:") {
-			r.Venue = strings.TrimSpace(line[6:])
+			setLocation(r, "venue", &r.Venue, strings.TrimSpace(line[6:]))
 		}
 		if strings.HasPrefix(lower, "city:") {
-			r.City = strings.TrimSpace(line[5:])
+			setLocation(r, "city", &r.City, strings.TrimSpace(line[5:]))
 		}
 		if header || strings.HasPrefix(lower, "date:") || strings.HasPrefix(lower, "concert date:") {
 			parseDates(r, line, dates)
 		}
-		// Unlabelled headings can be useful evidence, but cannot safely identify an artist.
+	}
+	return count
+}
+
+// Recognize complete artist/date/city @ venue or artist/venue/city/date
+// headers. A lone first line could instead be a recording or transfer label.
+func parseUnlabelledHeader(r *Recording, s string, artists map[string]bool) {
+	var lines []string
+	for _, raw := range strings.Split(s, "\n") {
+		line := strings.TrimSpace(strings.TrimPrefix(raw, "\ufeff"))
+		if line != "" {
+			lines = append(lines, line)
+			if len(lines) == 4 {
+				break
+			}
+		}
+	}
+	if len(lines) < 3 || technical(strings.ToLower(lines[0])) || strings.ContainsAny(lines[0], ":@>") || noteT.MatchString(lines[0]) || noteSpaceT.MatchString(lines[0]) || noteDT.MatchString(lines[0]) || section.MatchString(lines[0]) {
+		return
+	}
+	// A second common taper header has separate artist, venue, city and
+	// date lines. An ambiguous numeric date still identifies the structure;
+	// parseDates keeps that ambiguity for review without discarding the artist.
+	if len(lines) == 4 && (isoDate.FindString(lines[3]) == lines[3] || numericDate.FindString(lines[3]) == lines[3] || namedDate.FindString(lines[3]) == lines[3]) && strings.Contains(lines[2], ",") {
+		venue := strings.TrimSpace(strings.TrimSuffix(lines[1], ","))
+		city := lines[2]
+		if venue != "" && !strings.ContainsAny(venue+city, ":@>") && !technical(strings.ToLower(venue)) && !noteT.MatchString(venue) && !noteSpaceT.MatchString(venue) {
+			artists[lines[0]] = true
+			setLocation(r, "venue", &r.Venue, venue)
+			setLocation(r, "city", &r.City, city)
+			return
+		}
+	}
+	date := weekdayPrefix.ReplaceAllString(lines[1], "")
+	if isoDate.FindString(date) != date && numericDate.FindString(date) != date && namedDate.FindString(date) != date {
+		return
+	}
+	parsed := map[string]bool{}
+	probe := Recording{}
+	parseDates(&probe, date, parsed)
+	if len(parsed) != 1 || len(probe.ReviewReasons) != 0 || strings.Count(lines[2], " @ ") != 1 {
+		return
+	}
+	location := strings.SplitN(lines[2], " @ ", 2)
+	city, venue := strings.TrimSpace(location[0]), strings.TrimSpace(location[1])
+	if city == "" || venue == "" || strings.ContainsAny(city+venue, ":>") {
+		return
+	}
+	artists[lines[0]] = true
+	setLocation(r, "city", &r.City, city)
+	setLocation(r, "venue", &r.Venue, venue)
+}
+
+func setLocation(r *Recording, field string, target *string, value string) {
+	if *target != "" && value != "" && *target != value {
+		reason(r, "conflicting "+field+" in concert notes")
+	}
+	if value != "" {
+		*target = value
 	}
 }
+
 func addTitle(r *Recording, titles map[string]string, d, n int, title string) {
+	if otherPerformer.MatchString(title) {
+		reason(r, "possible other performer in track "+fmt.Sprintf("%d:%d", d, n)+": "+strings.TrimSpace(title))
+	}
 	key := fmt.Sprintf("%d:%d", d, n)
 	if _, ok := titles[key]; ok {
 		reason(r, "duplicate numbering in notes: "+key)
+		// Neither title has stronger evidence. Leave the mapping unresolved.
+		titles[key] = ""
+		return
 	}
 	titles[key] = strings.TrimSpace(title)
 }
@@ -497,7 +640,11 @@ func RefreshPlan(r *Recording) {
 		t := &r.Tracks[i]
 		t.TrackTotal = counts[t.Disc]
 		t.DiscTotal = maxDisc
-		t.Tags = map[string]string{"ARTIST": r.Artist, "ALBUMARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date, "TITLE": t.Title, "TRACKNUMBER": strconv.Itoa(t.Number), "TRACKTOTAL": strconv.Itoa(t.TrackTotal), "DISCNUMBER": strconv.Itoa(t.Disc), "DISCTOTAL": strconv.Itoa(t.DiscTotal)}
+		artist := t.Artist
+		if artist == "" {
+			artist = r.Artist
+		}
+		t.Tags = map[string]string{"ARTIST": artist, "ALBUMARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date, "TITLE": t.Title, "TRACKNUMBER": strconv.Itoa(t.Number), "TRACKTOTAL": strconv.Itoa(t.TrackTotal), "DISCNUMBER": strconv.Itoa(t.Disc), "DISCTOTAL": strconv.Itoa(t.DiscTotal)}
 	}
 }
 func Fingerprint(path string) (Evidence, error) {
