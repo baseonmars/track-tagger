@@ -42,8 +42,12 @@ type Plan struct {
 }
 type Engine struct {
 	Options
-	store *Store
-	mu    sync.Mutex
+	store       *Store
+	streams     map[string]playbackFile
+	browseCache catalog.BrowseCache
+	outputCache catalog.BrowseCache
+	mu          sync.Mutex
+	streamMu    sync.Mutex
 }
 
 func New(o Options) (*Engine, error) {
@@ -119,9 +123,20 @@ func evidence(r catalog.Recording) string {
 	h := sha256.Sum256(b)
 	return hex.EncodeToString(h[:])
 }
-func (e *Engine) Scan() (Plan, error) { e.mu.Lock(); defer e.mu.Unlock(); return e.scan() }
-func (e *Engine) scan() (Plan, error) {
-	rs, err := catalog.Scan(e.Source)
+func (e *Engine) Scan() (Plan, error) { e.mu.Lock(); defer e.mu.Unlock(); return e.scan(false) }
+func (e *Engine) browse() (Plan, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	return e.scan(true)
+}
+func (e *Engine) scan(browse bool) (Plan, error) {
+	var rs []catalog.Recording
+	var err error
+	if browse {
+		rs, err = catalog.ScanCached(e.Source, &e.browseCache)
+	} else {
+		rs, err = catalog.Scan(e.Source)
+	}
 	p := Plan{Version: 1, Source: e.Source}
 	if err != nil {
 		return p, err
@@ -135,7 +150,7 @@ func (e *Engine) scan() (Plan, error) {
 				return p, err
 			}
 			if ok {
-				if ev == evidence(r) {
+				if ev == evidence(r) && sameTrackFiles(saved.Tracks, r.Tracks) {
 					item = saved
 					item.Evidence = r.Evidence
 				} else {
@@ -151,7 +166,10 @@ func (e *Engine) scan() (Plan, error) {
 			}
 		}
 		for _, t := range item.Tracks {
-			info, err := media.Inspect(t.Path)
+			if !catalog.CanTag(t.Path) {
+				continue
+			}
+			info, err := media.InspectMetadata(t.Path)
 			if err != nil {
 				waiting = true
 				item.ReviewReasons = append(item.ReviewReasons, filepath.Base(t.Path)+": "+err.Error())
@@ -193,7 +211,13 @@ func (e *Engine) scan() (Plan, error) {
 						unchanged = false
 						break
 					}
-					h, x := media.Hash(target)
+					var h string
+					if browse {
+						ev, err := e.outputCache.Fingerprint(target)
+						h, x = ev.SHA256, err
+					} else {
+						h, x = media.Hash(target)
+					}
 					known, y := e.store.known(target)
 					if x != nil || y != nil || h != known || known == "" {
 						unchanged = false
@@ -213,11 +237,21 @@ func (e *Engine) scan() (Plan, error) {
 				item.ReviewReasons = append(item.ReviewReasons, "metadata was undone; review to resume tagging")
 			}
 		}
+		if r.PlaybackOnly {
+			item.PlaybackOnly = true
+			item.Reviewed = false
+			if !waiting {
+				item.Status = "playback-only"
+			}
+		}
 		p.Recordings = append(p.Recordings, item)
 	}
 	return p, nil
 }
 func validateReview(base catalog.Recording, item *Item) error {
+	if base.PlaybackOnly {
+		return errors.New("this recording is playback-only; metadata writing currently supports FLAC-only recordings")
+	}
 	if len(base.Tracks) != len(item.Tracks) {
 		return errors.New("review must map every discovered audio file")
 	}
@@ -256,6 +290,9 @@ func validateReview(base catalog.Recording, item *Item) error {
 		if !found {
 			return errors.New("artwork must be a discovered image")
 		}
+	}
+	for i := range item.Tracks {
+		item.Tracks[i].Artist = strings.TrimSpace(item.Tracks[i].Artist)
 	}
 	catalog.RefreshPlan(&item.Recording)
 	return nil
@@ -764,4 +801,23 @@ func (e *Engine) revalidate(item Item, temp string) error {
 		return nil
 	}
 	return errors.New("recording disappeared")
+}
+
+// A parser upgrade may discover additional formats without changing file
+// evidence. Such a review must not hide newly discovered tracks.
+func sameTrackFiles(a, b []catalog.Track) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	paths := map[string]bool{}
+	for _, t := range a {
+		paths[t.Path] = true
+	}
+	for _, t := range b {
+		if !paths[t.Path] {
+			return false
+		}
+		delete(paths, t.Path)
+	}
+	return len(paths) == 0
 }

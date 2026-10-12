@@ -120,7 +120,8 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 	tick := time.NewTicker(time.Second)
 	defer tick.Stop()
 	scan := func(now time.Time) {
-		plan, err := e.Scan()
+		// Observation may reuse unchanged evidence; Apply always rehashes before writes.
+		plan, err := e.browse()
 		lastScan = now
 		dirty = false
 		if err != nil {

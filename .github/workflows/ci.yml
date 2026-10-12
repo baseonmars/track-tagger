@@ -16,7 +16,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -28,6 +28,11 @@ jobs:
           if [ -n "$unformatted" ]; then printf '%s\n' "$unformatted"; exit 1; fi
       - run: go test -race ./...
       - run: go vet ./...
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Test audio player behavior
+        run: node --test internal/webui/testdata/player.test.cjs
   binaries:
     needs: test
     runs-on: ubuntu-latest
@@ -36,7 +41,7 @@ jobs:
         goos: [linux, darwin, windows]
         goarch: [amd64, arm64]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
@@ -54,12 +59,13 @@ jobs:
           if [ "$GOOS" = windows ]; then name=track-tagger.exe; fi
           go build -trimpath -ldflags="-s -w -X main.version=$BUILD_VERSION" -o "dist/$name" ./cmd/track-tagger
           base="track-tagger-$GOOS-$GOARCH"
+          cp LICENSE README.md dist/
           if [ "$GOOS" = windows ]; then
-            (cd dist && zip "$base.zip" "$name")
+            (cd dist && zip "$base.zip" "$name" LICENSE README.md)
           else
-            tar -czf "dist/$base.tar.gz" -C dist "$name"
+            tar -czf "dist/$base.tar.gz" -C dist "$name" LICENSE README.md
           fi
-          rm "dist/$name"
+          rm "dist/$name" dist/LICENSE dist/README.md
       - uses: actions/upload-artifact@v4
         with:
           name: track-tagger-${{ matrix.goos }}-${{ matrix.goarch }}
@@ -73,7 +79,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/download-artifact@v4
         with:
           pattern: track-tagger-*

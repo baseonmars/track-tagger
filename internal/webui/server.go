@@ -25,6 +25,7 @@ type Config struct {
 }
 
 type Recording struct {
+	PlaybackOnly      bool
 	ID, Path, Status  string
 	Fingerprint       string
 	Metadata          map[string]string
@@ -37,8 +38,9 @@ type Recording struct {
 type Note struct{ Path, Text string }
 
 type Track struct {
-	File, Title string
-	Track, Disc int
+	PlaybackID          string
+	File, Title, Artist string
+	Track, Disc         int
 }
 type Review struct {
 	Fingerprint string `json:"-"`
@@ -72,6 +74,7 @@ type page struct {
 	Recordings []Recording
 	Recording  *Recording
 	Jobs       []Job
+	History    bool
 }
 
 func validate(c Config) (Config, error) {
@@ -105,7 +108,7 @@ func New(cfg Config, backend Backend) (http.Handler, error) {
 	if _, err := rand.Read(b); err != nil {
 		return nil, err
 	}
-	t, err := template.ParseFS(assets, "assets/index.html")
+	t, err := template.New("index.html").Funcs(template.FuncMap{"base": displayBase, "title": recordingTitle, "status": statusLabel, "issues": issueSummary, "action": recordingAction, "performerReview": performerReview}).ParseFS(assets, "assets/index.html")
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +148,7 @@ func Serve(ctx context.Context, cfg Config, backend Backend) error {
 
 func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'")
+	w.Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; script-src 'self'; media-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'")
 	w.Header().Set("Cache-Control", "no-store")
 	if !s.cfg.Remote {
 		host := r.Host
@@ -165,6 +168,10 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "authentication required", http.StatusUnauthorized)
 			return
 		}
+	}
+	if r.URL.Path == "/audio" {
+		s.audio(w, r)
+		return
 	}
 	if r.Method == http.MethodPost {
 		if origin := r.Header.Get("Origin"); origin != "" {
@@ -191,6 +198,16 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
+	if r.URL.Path == "/player.js" {
+		b, err := assets.ReadFile("assets/player.js")
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "text/javascript; charset=utf-8")
+		_, _ = w.Write(b)
+		return
+	}
 	if r.URL.Path == "/style.css" {
 		b, _ := assets.ReadFile("assets/style.css")
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")
@@ -207,6 +224,7 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		rec, err = s.backend.Get(r.Context(), r.URL.Query().Get("id"))
 		p.Recording = &rec
 	case "/history":
+		p.History = true
 		p.Jobs, err = s.backend.History(r.Context())
 		if p.Jobs == nil {
 			p.Jobs = []Job{}
@@ -231,6 +249,11 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 		review := Review{Metadata: map[string]string{"ARTIST": r.PostForm.Get("artist"), "ALBUM": r.PostForm.Get("album"), "DATE": r.PostForm.Get("date")}, Artwork: r.PostForm.Get("artwork")}
 		files, titles := r.PostForm["track_file"], r.PostForm["track_title"]
 		discs, numbers := r.PostForm["track_disc"], r.PostForm["track_number"]
+		artists := r.PostForm["track_artist"]
+		if len(artists) != 0 && len(artists) != len(files) {
+			http.Error(w, "incomplete track artists", http.StatusBadRequest)
+			return
+		}
 		if len(files) != len(titles) || len(files) != len(discs) || len(files) != len(numbers) {
 			http.Error(w, "incomplete track mapping", http.StatusBadRequest)
 			return
@@ -242,7 +265,11 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, "disc and track numbers must be positive integers", http.StatusBadRequest)
 				return
 			}
-			review.Tracks = append(review.Tracks, Track{File: file, Title: titles[i], Disc: disc, Track: number})
+			artist := ""
+			if len(artists) != 0 {
+				artist = artists[i]
+			}
+			review.Tracks = append(review.Tracks, Track{File: file, Title: titles[i], Artist: artist, Disc: disc, Track: number})
 		}
 		review.Approve = r.PostForm.Get("approve") == "yes"
 		review.Fingerprint = r.PostForm.Get("fingerprint")
