@@ -36,7 +36,7 @@ func usage() {
 
 Common: --state DIR --settle 2m --reconcile 5m
 Remote UI: --remote --addr 0.0.0.0:8787 and TRACK_TAGGER_TOKEN (16+ characters).
-Preview is the default. Configuration never enables media writes.`)
+Preview is the default. Select --write or --copy DEST to apply tags.`)
 }
 func run(args []string) error {
 	if len(args) == 0 || args[0] == "help" || args[0] == "--help" {

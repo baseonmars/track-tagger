@@ -1,6 +1,6 @@
 # Deployment examples
 
-These examples are templates, not installers run by the application. They explicitly enable in-place writes. Start with a disposable recording copy, inspect a dry-run of the collection, resolve review items, and keep backups before installing a watcher. No service has been enabled by adding these files.
+Use these templates to install a background watcher for your platform. They enable in-place writes. Start with a disposable recording copy, inspect a dry-run of the collection, resolve review items, and keep backups before installing a watcher.
 
 ```sh
 track-tagger scan /path/to/recordings
@@ -54,11 +54,11 @@ Stop-ScheduledTask TrackTagger
 Unregister-ScheduledTask TrackTagger
 ```
 
-The task runs under the current interactive user at logon, with polling and without elevation. For shares, use UNC paths available to that user. Mapped drive letters may be unavailable to scheduled tasks. The UI binds to localhost. The example does not store a password or create an unattended system account task.
+The task runs at logon under the current interactive user, using that user’s permissions and polling for changes. For shares, use UNC paths available to that user. Mapped drive letters may be unavailable to scheduled tasks. The UI binds to localhost.
 
 ## Docker Compose
 
-The image is a single static executable and defaults to preview (`scan /music`). The supplied Compose file explicitly runs an in-place polling watcher and publishes no ports.
+The image is a single static executable and defaults to preview (`scan /music`). The supplied Compose file runs an in-place polling watcher.
 
 Create writable music and state directories before starting; set your own UID/GID:
 
@@ -75,16 +75,16 @@ docker compose -f deploy/compose.yml up -d
 docker compose -f deploy/compose.yml down
 ```
 
-Container metadata history persists in the state bind mount. Staged media uses the music mount, so the read-only container root does not prevent writes. A remote UI needs `serve /music --write --state /state --poll --remote --addr 0.0.0.0:8787` as its command, an explicitly set `TRACK_TAGGER_TOKEN` environment secret of at least 16 characters, and a host port binding such as `127.0.0.1:8787:8787`. Do not commit the token; connect with an authenticated client. If exposing the service beyond the host, use TLS termination and authentication; prefer SSH tunneling to a host-local published port.
+Container metadata history persists in the state bind mount. Staged media is written to the writable music mount; the container root remains read-only. A remote UI needs `serve /music --write --state /state --poll --remote --addr 0.0.0.0:8787` as its command, an explicitly set `TRACK_TAGGER_TOKEN` environment secret of at least 16 characters, and a host port binding such as `127.0.0.1:8787:8787`. Do not commit the token; connect with an authenticated client. If exposing the service beyond the host, use TLS termination and authentication; prefer SSH tunneling to a host-local published port.
 
 ## Proxmox and Synology
 
-For Proxmox, use a Linux VM with the matching amd64/arm64 executable or Docker. Keep SQLite state on the VM's local disk; mount the recording share into the VM, grant the service account write access, and use `--poll`. Start with the systemd or Compose example. This repository does not provision the VM or mount shares.
+For Proxmox, use a Linux VM with the matching amd64/arm64 executable or Docker. Keep SQLite state on the VM's local disk; mount the recording share into the VM, grant the service account write access, and use `--poll`. Start with the systemd or Compose example.
 
-On Synology models supporting Container Manager/Docker and Linux amd64 or arm64, use the Compose layout with host paths such as `/volume1/music` and `/volume1/docker/track-tagger`. Match the NAS user's numeric UID/GID and ACLs. Keep state on a local volume, use polling, and verify replacement behavior on disposable files first. Other CPU architectures and NAS platforms without compatible containers are not covered; run Track Tagger in a Linux VM with the share mounted instead.
+On Synology models supporting Container Manager/Docker and Linux amd64 or arm64, use the Compose layout with host paths such as `/volume1/music` and `/volume1/docker/track-tagger`. Match the NAS user's numeric UID/GID and ACLs. Keep state on a local volume, use polling, and verify replacement behavior on disposable files first. For other NAS platforms, run Track Tagger in a compatible Linux VM with the share mounted.
 
 ## Automated artifacts and releases
 
-GitHub CI checks formatting, runs `go vet` and race-enabled tests natively on Linux, Windows, and macOS, then builds CGo-free binaries for all six OS/architecture combinations. Each build publishes downloadable workflow archives. Pushing a `v*` tag creates a GitHub Release with those archives and a combined SHA-256 checksum file; the container workflow publishes a Linux amd64/arm64 manifest to GHCR for version tags. Manual container runs default to build-only unless publication is explicitly selected. No release tag is created by these examples.
+GitHub CI checks formatting, runs `go vet` and race-enabled tests natively on Linux, Windows, and macOS, then builds CGo-free binaries for all six OS/architecture combinations. Each build publishes downloadable workflow archives. Pushing a `v*` tag creates a GitHub Release with those archives and a combined SHA-256 checksum file; the container workflow publishes a Linux amd64/arm64 manifest to GHCR for version tags. Manual container runs default to build-only unless publication is explicitly selected.
 
-The Docker base Go version must stay aligned with `go.mod`; Dependabot opens dependency and action update PRs. CI is the source of evidence for native platform checks: cross-compilation alone does not establish runtime compatibility. Release archives are not code-signed or notarized.
+The Docker base Go version must stay aligned with `go.mod`; Dependabot opens dependency and action update PRs. CI is the source of evidence for native platform checks: cross-compilation alone does not establish runtime compatibility. Release binaries are unsigned.
