@@ -519,3 +519,30 @@ func TestLetterPrefixMappingDoesNotShiftMissingTracks(t *testing.T) {
 		}
 	}
 }
+
+func TestOrdinalConcertHeader(t *testing.T) {
+	for _, date := range []string{"August 27th, 1992", "27th August 1992", "Aug 27TH 1992"} {
+		t.Run(date, func(t *testing.T) {
+			r := only(t, fixture(t, "csn", 1, "Crosby, Stills and Nash\r\nOrpheum Theatre\r\nMinneapolis, MN\r\n"+date+"\r\n\r\nSource: SBD > DAT\r\nTransfer: January 1st, 2019\r\n01   //Wasted On The Way\r\n"))
+			if r.Artist != "Crosby, Stills and Nash" || r.Date != "1992-08-27" || r.Album != "1992-08-27 - Orpheum Theatre, Minneapolis, MN" {
+				t.Fatalf("header: %+v", r)
+			}
+			if len(r.Tracks) != 1 || r.Tracks[0].Title != "//Wasted On The Way" || hasReason(r, "concert date") || hasReason(r, "artist is missing") {
+				t.Fatalf("mapping or metadata: %+v", r)
+			}
+		})
+	}
+}
+
+func TestOrdinalConcertDatesRetainValidation(t *testing.T) {
+	for _, date := range []string{"February 30th, 1992", "August 327th, 1992"} {
+		r := only(t, fixture(t, "invalid", 1, "Artist: Band\nVenue: Hall\nDate: "+date+"\n01 Song\n"))
+		if r.Date != "" || !hasReason(r, "concert date is missing") {
+			t.Fatalf("accepted invalid date %q: %+v", date, r)
+		}
+	}
+	r := only(t, fixture(t, "conflicts", 1, "Crosby, Stills and Nash\nOrpheum Theatre\nMinneapolis, MN\nAugust 27th, 1992\nArtist: Other Band\nDate: August 28th, 1992\n01 Song\n"))
+	if !hasReason(r, "conflicting concert dates") || !hasReason(r, "conflicting artist") {
+		t.Fatalf("lost conflicts: %+v", r)
+	}
+}
