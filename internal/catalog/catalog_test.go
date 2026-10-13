@@ -475,6 +475,51 @@ func TestUnknownFilenameNeverMatchesZeroTitle(t *testing.T) {
 	}
 }
 
+func TestLetterPrefixTrackNumbers(t *testing.T) {
+	for _, tc := range []struct {
+		name        string
+		disc, track int
+	}{
+		{"ericburdon-01.flac", 1, 1},
+		{"ERICBURDON-07.FLAC", 1, 7},
+		{"disc 2/ericburdon_03.flac", 2, 3},
+		{"band-123.flac", 1, 123},
+		{"band-00.flac", 1, 0},
+		{"band-1.flac", 1, 0},
+		{"band-1967.flac", 1, 0},
+		{"band1967-01.flac", 1, 0},
+		{"band-1967-01-20.flac", 1, 0},
+		{"band-01extra.flac", 1, 0},
+		{"band-title-01.flac", 1, 0},
+		{"band title-01.flac", 1, 0},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			d, n := fileNumber(filepath.FromSlash(tc.name))
+			if d != tc.disc || n != tc.track {
+				t.Fatalf("got %d:%d, want %d:%d", d, n, tc.disc, tc.track)
+			}
+		})
+	}
+}
+
+func TestLetterPrefixMappingDoesNotShiftMissingTracks(t *testing.T) {
+	dir := fixture(t, "show", 0, notes("Eric Burdon", 3))
+	for _, n := range []int{1, 3} {
+		if err := os.WriteFile(filepath.Join(dir, fmt.Sprintf("ericburdon-%02d.flac", n)), []byte("fixture audio"), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	r := only(t, dir)
+	if len(r.Tracks) != 2 || r.Status != "needs-review" || !hasReason(r, "listed track has no audio file: 1:2") {
+		t.Fatalf("missing track lost review: %+v", r)
+	}
+	for _, tr := range r.Tracks {
+		if tr.Number == 0 || tr.Title != fmt.Sprintf("Title %d [annotation]", tr.Number) {
+			t.Fatalf("filename identifier lost or title shifted: %+v", tr)
+		}
+	}
+}
+
 func TestOrdinalConcertHeader(t *testing.T) {
 	for _, date := range []string{"August 27th, 1992", "27th August 1992", "Aug 27TH 1992"} {
 		t.Run(date, func(t *testing.T) {
