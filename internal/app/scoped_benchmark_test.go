@@ -93,6 +93,7 @@ func scopedBenchmarkFixture(b *testing.B, recordings int) (*Engine, string, stri
 	if err != nil {
 		b.Fatal(err)
 	}
+	selected = filepath.Join(e.Source, "show-00", "t01.flac")
 	if err := e.OpenStorage(); err != nil {
 		b.Fatal(err)
 	}

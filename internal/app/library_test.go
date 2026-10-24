@@ -29,15 +29,15 @@ func libraryFixture(t *testing.T, count int) (*Engine, []catalog.Discovery) {
 			t.Fatal(err)
 		}
 	}
-	ds, err := catalog.Discover(source)
-	if err != nil || len(ds) != count {
-		t.Fatalf("discovery = %+v, %v", ds, err)
-	}
 	e, err := New(Options{Source: source, State: filepath.Join(root, "state"), Mode: DryRun})
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = e.Close() })
+	ds, err := catalog.Discover(e.Source)
+	if err != nil || len(ds) != count {
+		t.Fatalf("discovery = %+v, %v", ds, err)
+	}
 	return e, ds
 }
 
