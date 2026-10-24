@@ -35,6 +35,10 @@ jobs:
           node-version: '24'
       - name: Test audio player behavior
         run: node --test internal/webui/testdata/player.test.cjs internal/webui/testdata/review.test.cjs
+      - name: Test Windows signing safeguards
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./tools/release/sign-windows.test.ps1
       - name: Test release planning tools
         shell: bash
         run: |
@@ -117,16 +121,16 @@ jobs:
           cp LICENSE README.md dist/
           if [ "$GOOS" = windows ]; then
             mkdir -p dist/docs
-            cp docs/windows.md dist/docs/windows.md
-            (cd dist && zip "$base.zip" "$name" track-tagger-gui.exe LICENSE README.md docs/windows.md)
+            cp docs/windows.md docs/windows-signing.md dist/docs/
+            (cd dist && zip "$base.zip" "$name" track-tagger-gui.exe LICENSE README.md docs/windows.md docs/windows-signing.md)
           else
             tar -czf "dist/$base.tar.gz" -C dist "$name" LICENSE README.md
           fi
           rm "dist/$name" dist/LICENSE dist/README.md
-          if [ "$GOOS" = windows ]; then rm dist/track-tagger-gui.exe dist/docs/windows.md; rmdir dist/docs; fi
+          if [ "$GOOS" = windows ]; then rm dist/track-tagger-gui.exe dist/docs/windows.md dist/docs/windows-signing.md; rmdir dist/docs; fi
       - uses: actions/upload-artifact@v7
         with:
-          name: track-tagger-${{ matrix.goos }}-${{ matrix.goarch }}
+          name: ${{ matrix.goos == 'windows' && 'unsigned' || 'release' }}-${{ matrix.goos }}-${{ matrix.goarch }}
           path: dist/*
           if-no-files-found: error
 
@@ -149,16 +153,7 @@ jobs:
       - name: Install pinned Inno Setup compiler
         shell: pwsh
         run: |
-          $ErrorActionPreference = 'Stop'
-          $installer = Join-Path $env:RUNNER_TEMP 'innosetup-6.4.3.exe'
-          $installDir = Join-Path $env:RUNNER_TEMP 'InnoSetup'
-          Invoke-WebRequest -Uri 'https://github.com/jrsoftware/issrc/releases/download/is-6_4_3/innosetup-6.4.3.exe' -OutFile $installer
-          $expectedHash = 'F3C42116542C4CC57263C5BA6C4FEABFC49FE771F2F98A79D2F7628B8762723B'
-          $actualHash = (Get-FileHash -LiteralPath $installer -Algorithm SHA256).Hash
-          if ($actualHash -ne $expectedHash) { throw "Inno Setup SHA-256 mismatch: $actualHash" }
-          New-Item -ItemType Directory -Force $installDir | Out-Null
-          $process = Start-Process -FilePath $installer -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', "/DIR=$installDir") -Wait -PassThru -WindowStyle Hidden
-          if ($process.ExitCode -ne 0) { throw "Inno Setup install failed with exit code $($process.ExitCode)" }
+          ./tools/release/install-inno.ps1
       - name: Derive installer version
         id: version
         shell: pwsh
@@ -202,23 +197,110 @@ jobs:
           $iscc = Join-Path $env:RUNNER_TEMP 'InnoSetup\ISCC.exe'
           & $iscc "/DAppVersion=$env:APP_VERSION" "/DAppArch=$arch" "/DBuildDir=$((Resolve-Path dist).Path)" "/O$((Resolve-Path dist).Path)" ".\packaging\windows\track-tagger.iss"
           if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE" }
+      - name: Record packaging version
+        shell: pwsh
+        env:
+          APP_VERSION: ${{ steps.version.outputs.installer }}
+        run: Set-Content -LiteralPath dist/installer-version.txt -Value $env:APP_VERSION
       - uses: actions/upload-artifact@v7
         with:
-          name: track-tagger-windows-${{ matrix.goarch }}-installer
-          path: dist/track-tagger-*-setup.exe
+          name: unsigned-windows-${{ matrix.goarch }}-installer
+          path: |
+            dist/*.exe
+            dist/installer-version.txt
           if-no-files-found: error
 
   authorize-release:
-    if: always() && ((github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.plan-release.result == 'success' && needs.plan-release.outputs.release == 'true' && needs.binaries.result == 'success' && needs.windows-installers.result == 'success') || (startsWith(github.ref, 'refs/tags/v') && needs.test.result == 'success' && needs.binaries.result == 'success' && needs.windows-installers.result == 'success'))
+    if: always() && ((github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.plan-release.result == 'success' && needs.plan-release.outputs.release == 'true' && needs.binaries.result == 'success' && needs.windows-installers.result == 'success') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && needs.test.result == 'success' && needs.binaries.result == 'success' && needs.windows-installers.result == 'success'))
     needs: [test, plan-release, binaries, windows-installers]
     runs-on: ubuntu-latest
     environment: github-release
     steps:
       - run: echo "Release publication approved."
 
+  sign-windows:
+    needs: [authorize-release]
+    if: always() && !cancelled() && needs.authorize-release.result == 'success'
+    runs-on: windows-latest
+    environment: github-release
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        goarch: [amd64, arm64]
+    env:
+      AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      ARTIFACT_SIGNING_ENDPOINT: ${{ vars.ARTIFACT_SIGNING_ENDPOINT }}
+      ARTIFACT_SIGNING_ACCOUNT: ${{ vars.ARTIFACT_SIGNING_ACCOUNT }}
+      ARTIFACT_SIGNING_PROFILE: ${{ vars.ARTIFACT_SIGNING_PROFILE }}
+      ARTIFACT_SIGNING_PUBLISHER: ${{ vars.ARTIFACT_SIGNING_PUBLISHER }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: unsigned-windows-${{ matrix.goarch }}-installer
+          path: unsigned
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+      - name: Validate configuration and install pinned signing tools
+        shell: pwsh
+        run: ./tools/release/prepare-signing.ps1
+      - name: Authenticate signing identity through GitHub OIDC
+        uses: azure/login@v3
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Install pinned Inno Setup compiler
+        shell: pwsh
+        run: ./tools/release/install-inno.ps1
+      - name: Sign executables and package signed Windows release
+        shell: pwsh
+        env:
+          TARGET_ARCH: ${{ matrix.goarch }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force dist, payload, payload/docs | Out-Null
+          Copy-Item unsigned/track-tagger.exe,unsigned/track-tagger-gui.exe payload/
+          foreach ($file in @('payload/track-tagger.exe', 'payload/track-tagger-gui.exe')) {
+            ./tools/release/sign-windows.ps1 -File $file
+          }
+          Copy-Item LICENSE,README.md payload/
+          Copy-Item docs/windows.md,docs/windows-signing.md payload/docs/
+          Compress-Archive -Path payload/* -DestinationPath "dist/track-tagger-windows-$env:TARGET_ARCH.zip"
+          $version = (Get-Content -LiteralPath unsigned/installer-version.txt -Raw).Trim()
+          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw "Invalid installer version: $version" }
+          $arch = if ($env:TARGET_ARCH -eq 'amd64') { 'x64' } else { 'arm64' }
+          $iscc = Join-Path $env:RUNNER_TEMP 'InnoSetup/ISCC.exe'
+          $signScript = (Resolve-Path tools/release/sign-windows.ps1).Path
+          # Inno's $q and $f substitute a quote and the generated file path.
+          # The wrapper signs and verifies BOTH Setup and its embedded uninstaller.
+          $env:SIGNING_UNINSTALLER_EVIDENCE = Join-Path $env:RUNNER_TEMP 'signed-uninstaller.exe'
+          $signCommand = 'pwsh.exe -NoLogo -NoProfile -NonInteractive -File $q' + $signScript + '$q -File $f'
+          & $iscc "/DAppVersion=$version" "/DAppArch=$arch" /DProductionSigning "/DBuildDir=$((Resolve-Path payload).Path)" "/O$((Resolve-Path dist).Path)" "/Sazure=$signCommand" ./packaging/windows/track-tagger.iss
+          if ($LASTEXITCODE -ne 0) { throw "Signed installer build failed: $LASTEXITCODE" }
+          ./tools/release/sign-windows.ps1 -VerifyOnly -File "dist/track-tagger-windows-$arch-setup.exe"
+          ./tools/release/sign-windows.ps1 -VerifyOnly -File $env:SIGNING_UNINSTALLER_EVIDENCE
+      - name: Accept signed x64 install and uninstall on disposable runner
+        if: matrix.goarch == 'amd64'
+        shell: pwsh
+        run: ./tools/release/test-installed-windows.ps1 -Installer dist/track-tagger-windows-x64-setup.exe
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-windows-${{ matrix.goarch }}
+          path: dist/*
+          if-no-files-found: error
+
   publish-main-container:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.plan-release.outputs.release == 'true'
-    needs: [test, plan-release, binaries, windows-installers, authorize-release]
+    needs: [test, plan-release, binaries, windows-installers, authorize-release, sign-windows]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -254,8 +336,8 @@ jobs:
           cache-to: type=gha,mode=max
 
   publish-manual-container:
-    if: always() && !cancelled() && startsWith(github.ref, 'refs/tags/v') && needs.test.result == 'success' && needs.binaries.result == 'success' && needs.windows-installers.result == 'success' && needs.authorize-release.result == 'success'
-    needs: [test, binaries, windows-installers, authorize-release]
+    if: always() && !cancelled() && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && needs.test.result == 'success' && needs.binaries.result == 'success' && needs.windows-installers.result == 'success' && needs.authorize-release.result == 'success' && needs.sign-windows.result == 'success'
+    needs: [test, binaries, windows-installers, authorize-release, sign-windows]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -296,7 +378,7 @@ jobs:
 
   publish-main-release:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.plan-release.outputs.release == 'true'
-    needs: [test, plan-release, binaries, windows-installers, authorize-release, publish-main-container]
+    needs: [test, plan-release, binaries, windows-installers, authorize-release, sign-windows, publish-main-container]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -318,7 +400,7 @@ jobs:
       - name: Download archives and installers
         uses: actions/download-artifact@v8
         with:
-          pattern: track-tagger-*
+          pattern: release-*-*
           merge-multiple: true
           path: dist
       - name: Install pinned release tooling
@@ -331,8 +413,8 @@ jobs:
         run: node tools/release/publish.mjs
 
   release:
-    if: always() && !cancelled() && startsWith(github.ref, 'refs/tags/v') && needs.binaries.result == 'success' && needs.windows-installers.result == 'success' && needs.authorize-release.result == 'success' && needs.publish-manual-container.result == 'success'
-    needs: [binaries, windows-installers, authorize-release, publish-manual-container]
+    if: always() && !cancelled() && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && needs.binaries.result == 'success' && needs.windows-installers.result == 'success' && needs.authorize-release.result == 'success' && needs.sign-windows.result == 'success' && needs.publish-manual-container.result == 'success'
+    needs: [binaries, windows-installers, authorize-release, sign-windows, publish-manual-container]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -348,7 +430,7 @@ jobs:
           cache-dependency-path: tools/release/package-lock.json
       - uses: actions/download-artifact@v8
         with:
-          pattern: track-tagger-*
+          pattern: release-*-*
           merge-multiple: true
           path: dist
       - name: Install pinned release tooling

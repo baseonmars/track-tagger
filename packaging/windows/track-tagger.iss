@@ -35,6 +35,10 @@ UninstallDisplayName=Track Tagger
 UninstallDisplayIcon={app}\track-tagger-gui.exe
 LicenseFile=..\..\LICENSE
 SetupLogging=yes
+#ifdef ProductionSigning
+SignTool=azure
+SignedUninstaller=yes
+#endif
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"; Flags: unchecked
@@ -45,6 +49,7 @@ Source: "{#BuildDir}\track-tagger-gui.exe"; DestDir: "{app}"; Flags: ignoreversi
 Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\docs\windows.md"; DestDir: "{app}\docs"; DestName: "windows.md"; Flags: ignoreversion
+Source: "..\..\docs\windows-signing.md"; DestDir: "{app}\docs"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Track Tagger"; Filename: "{app}\track-tagger-gui.exe"
