@@ -1,4 +1,6 @@
 /dist/
+node_modules/
+/release-plan.json
 /track-tagger
 /track-tagger.exe
 *.test

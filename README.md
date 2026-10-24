@@ -13,6 +13,23 @@ go build -o track-tagger ./cmd/track-tagger
 
 Open http://127.0.0.1:8787. Review source notes, metadata, file-to-title mappings, and artwork. Explicitly acknowledge replacements when saving corrections. The default server runs in preview mode and saves review decisions in application storage. Select `--write` or `--copy DEST` to apply metadata changes.
 
+## Windows desktop app
+
+Download the Windows x64 installer for Windows 10/11 x64, or the ARM64 installer for Windows 11 ARM64. Each installer includes the desktop app and `track-tagger.exe` command line tool. The standalone Windows ZIPs include both executables. Installers are per-user and place the application in `%LOCALAPPDATA%\Programs\Track Tagger`; they do not require administrator access. Windows may show an unsigned-app warning because release executables are not code-signed. Continue only if you obtained the installer from this project's GitHub Release.
+
+- [Windows x64 installer](https://github.com/baseonmars/track-tagger/releases/latest/download/track-tagger-windows-x64-setup.exe)
+- [Windows ARM64 installer](https://github.com/baseonmars/track-tagger/releases/latest/download/track-tagger-windows-arm64-setup.exe)
+
+On first launch, choose a music folder, optional copy destination, and mode. Preview is selected initially; Write and Copy require an explicit choice. The app saves folder, mode, and polling choices when you press Start or Quit, but always starts stopped after launch or restart. Press **Start** to begin. Track Tagger opens the local review page in your browser for the selected mode. Use the tray menu's **Stop** to stop processing while leaving the app open, or **Quit** to close it; closing the browser does not stop the watcher.
+
+The app checks GitHub for the latest stable release at startup when **Check automatically at startup** is enabled (default). You can also use **Check for updates** at any time. It retrieves release information only; it does not send your music paths, audio, or review data. **Install update** asks for confirmation, downloads and verifies the matching installer, safely stops active work, then reopens with processing stopped. Portable copies open the release page for a manual download; development builds also require manual installation. Turn off the startup check for fully offline use. Releases are unsigned, so Windows may show its unsigned-app warning during installation.
+
+Network shares can use polling instead of filesystem notifications; choose the polling option in the desktop app and allow the watcher to observe changes at its configured interval. After an interrupted write, start the app with the same state directory: recovery runs when a write operation resumes. Recovery is per file, so review the queue and rerun if an album was interrupted partway through.
+
+The application stores configuration and history under `%APPDATA%\track-tagger`. Keep that data to retain review decisions, job history, and original metadata for undo. Upgrading replaces application files and retains this data. To uninstall, stop and quit Track Tagger first, then use Windows **Installed apps**. Uninstall removes the application but keeps configuration and history.
+
+See the [Windows guide](docs/windows.md) for the full install, operating, recovery, and uninstall steps.
+
 ```sh
 track-tagger scan SOURCE --dry-run
 track-tagger scan SOURCE --write
@@ -88,7 +105,7 @@ go test ./internal/media -fuzz FuzzMetadata -fuzztime 10s
 
 Fixtures cover Miles Davis's 10-title/9-file mismatch, Ringo Starr's 25-title/26-file mismatch, Ramblin' Jack's conflicting dates, Hendrix's unnumbered partial setlist, and failure/recovery cases. Fixtures include synthetic cases and text regressions shaped from local Snarky Puppy and Miles Davis notes.
 
-GitHub Actions checks formatting, vet, and native race/unit/e2e tests on Linux, macOS, and Windows. Successful runs upload amd64/arm64 archives for all three platforms. Pushing a `v*` tag automatically creates a GitHub Release with archives and SHA-256 checksums, and publishes Linux amd64/arm64 images to GHCR. Manual container runs default to build-only. Release binaries are unsigned.
+GitHub Actions checks formatting, vet, and native race/unit/e2e tests on Linux, macOS, and Windows. Successful runs upload amd64/arm64 archives for all three platforms. On `main`, Conventional Commits determine release versions: `feat` creates a minor release, `fix` and `perf` create a patch release, and breaking changes create a major release. Documentation-only changes do not create a version. After tests, archives, and installers build, CI waits for approval in the protected GitHub `github-release` environment. It then pushes the matching container image, creates a draft, attaches all archives, Windows installers, and SHA-256 checksums, verifies the attachments, and publishes the release. The same approval gate applies to manual `v*` releases and manual GHCR publication. A merge does not by itself publish a release. Generated release tags do not trigger a second workflow; the main workflow builds and publishes the matching container image directly. Manual container workflow runs default to build-only. Release binaries and installers are unsigned.
 
 ## License
 

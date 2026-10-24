@@ -132,19 +132,29 @@ func Serve(ctx context.Context, cfg Config, backend Backend) error {
 	if err != nil {
 		return err
 	}
-	s := &http.Server{Addr: cfg.Addr, Handler: h, ReadHeaderTimeout: 10 * time.Second, ReadTimeout: 30 * time.Second, WriteTimeout: 2 * time.Minute, IdleTimeout: 60 * time.Second}
+	listener, err := net.Listen("tcp", cfg.Addr)
+	if err != nil {
+		return err
+	}
+	return ServeListener(ctx, listener, h)
+}
+
+// ServeListener owns listener and waits for all active requests before returning.
+// Cancellation stops accepting requests without interrupting media transactions.
+func ServeListener(ctx context.Context, listener net.Listener, h http.Handler) error {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	s := &http.Server{Handler: h, ReadHeaderTimeout: 10 * time.Second, ReadTimeout: 30 * time.Second, WriteTimeout: 2 * time.Minute, IdleTimeout: 60 * time.Second}
 	done := make(chan struct{})
 	go func() {
-		select {
-		case <-ctx.Done():
-			shutdown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-			defer cancel()
-			_ = s.Shutdown(shutdown)
-		case <-done:
-		}
+		<-ctx.Done()
+		// A timeout must not let the owner close storage beneath an active write.
+		_ = s.Shutdown(context.Background())
+		close(done)
 	}()
-	err = s.ListenAndServe()
-	close(done)
+	err := s.Serve(listener)
+	cancel()
+	<-done
 	if errors.Is(err, http.ErrServerClosed) {
 		return nil
 	}
