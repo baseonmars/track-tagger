@@ -31,6 +31,14 @@ func (b *fakeBackend) SaveReview(_ context.Context, _ string, r Review) error {
 	b.review = r
 	return nil
 }
+func (b *fakeBackend) ApplyReview(ctx context.Context, id string, r Review) error {
+	if r.Approve {
+		if err := b.SaveReview(ctx, id, r); err != nil {
+			return err
+		}
+	}
+	return b.Apply(ctx, id)
+}
 func (b *fakeBackend) Apply(context.Context, string) error { b.applied++; return nil }
 func (b *fakeBackend) Undo(context.Context, string) error  { b.undone++; return nil }
 func (b *fakeBackend) History(context.Context) ([]Job, error) {
@@ -139,7 +147,7 @@ func TestCSRFDNSRebindingAndEscaping(t *testing.T) {
 	if strings.Contains(w.Body.String(), "<script>alert") {
 		t.Fatal("unescaped metadata")
 	}
-	if w := post(h, "/apply", url.Values{"csrf": {csrf}, "id": {"one"}}, "http://localhost"); w.Code != 303 {
+	if w := post(h, "/apply", url.Values{"csrf": {csrf}, "id": {"one"}, "fingerprint": {"source-version-1"}, "date": {"1970"}, "approve": {"yes"}}, "http://localhost"); w.Code != 303 {
 		t.Fatalf("valid apply %d", w.Code)
 	}
 	if b.applied != 1 {
@@ -301,6 +309,37 @@ func TestEditableMetadataMappingsArtworkAndNotes(t *testing.T) {
 	for _, field := range []string{`name="artist"`, `name="album"`, `name="date"`, `name="track_file" value="t01.flac"`, `name="track_title" value="Opening [intro]"`, `name="track_disc"`, `name="track_number"`, `<select id="artwork"`, `<option value="cover.jpg" selected>`, `Original notes &lt;script&gt;unsafe&lt;/script&gt;`} {
 		if !strings.Contains(w.Body.String(), field) {
 			t.Errorf("rendered form missing %s", field)
+		}
+	}
+}
+
+func TestUnifiedReviewFormAndApproval(t *testing.T) {
+	for _, writable := range []bool{false, true} {
+		b := &fakeBackend{}
+		h, err := New(Config{Writable: writable}, b)
+		if err != nil {
+			t.Fatal(err)
+		}
+		page := httptest.NewRecorder()
+		h.ServeHTTP(page, httptest.NewRequest("GET", "http://localhost/recording?id=one", nil))
+		body := page.Body.String()
+		if strings.Count(body, "<form ") != 1 || strings.Contains(body, `action="/apply" method=`) {
+			t.Fatal("expected one review form")
+		}
+		if strings.Contains(body, `id="apply-review"`) != writable {
+			t.Fatal("apply visible in wrong mode")
+		}
+		if strings.Contains(body, `name="approve" value="yes" checked`) || !strings.Contains(body, `id="save-review" type="submit" disabled`) {
+			t.Fatal("approval must begin unchecked and save disabled")
+		}
+		v := url.Values{"csrf": {csrfFrom(t, h)}, "id": {"one"}, "date": {"1970"}, "fingerprint": {"source-version-1"}}
+		post(h, "/review", v, "http://localhost")
+		if b.saved != 0 {
+			t.Fatal("unapproved review reached backend")
+		}
+		post(h, "/apply", url.Values{"csrf": {v.Get("csrf")}, "id": {"one"}}, "http://localhost")
+		if b.applied != 0 {
+			t.Fatal("bare apply reached backend")
 		}
 	}
 }

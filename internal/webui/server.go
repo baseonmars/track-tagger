@@ -28,6 +28,7 @@ type Config struct {
 }
 
 type Recording struct {
+	Reviewed          bool
 	PlaybackOnly      bool
 	DateUnknown       bool
 	ID, Path, Status  string
@@ -60,6 +61,7 @@ type Backend interface {
 	Get(context.Context, string) (Recording, error)
 	SaveReview(context.Context, string, Review) error
 	Apply(context.Context, string) error
+	ApplyReview(context.Context, string, Review) error
 	Undo(context.Context, string) error
 	History(context.Context) ([]Job, error)
 }
@@ -213,8 +215,8 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	if r.URL.Path == "/player.js" {
-		b, err := assets.ReadFile("assets/player.js")
+	if r.URL.Path == "/player.js" || r.URL.Path == "/review.js" {
+		b, err := assets.ReadFile("assets" + r.URL.Path)
 		if err != nil {
 			http.NotFound(w, r)
 			return
@@ -260,71 +262,43 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 	id := r.PostForm.Get("id")
 	var err error
 	switch r.URL.Path {
-	case "/review":
-		date := strings.TrimSpace(r.PostForm.Get("date"))
-		dateUnknown := r.PostForm.Get("date_unknown") == "yes"
-		if dateUnknown && date != "" {
-			http.Error(w, "clear the concert date or uncheck Date unknown", http.StatusBadRequest)
+	case "/review", "/apply":
+		if r.URL.Path == "/apply" && !s.cfg.Writable {
+			http.Error(w, "preview mode cannot change media; restart with --write or --copy", http.StatusForbidden)
 			return
 		}
-		if !dateUnknown && date == "" {
-			http.Error(w, "enter a concert date or mark Date unknown", http.StatusBadRequest)
+		review, parseErr := parseReview(r.PostForm)
+		if parseErr != nil {
+			http.Error(w, parseErr.Error(), http.StatusBadRequest)
 			return
 		}
-		if !dateUnknown {
-			if err := catalog.ValidateDate(date); err != nil {
-				http.Error(w, "concert date must be YYYY, YYYY-MM, or a valid YYYY-MM-DD date", http.StatusBadRequest)
+		if r.URL.Path == "/review" {
+			if !review.Approve {
+				http.Error(w, "explicit review acknowledgment required", http.StatusConflict)
 				return
 			}
+			err = s.backend.SaveReview(r.Context(), id, review)
+		} else {
+			err = s.backend.ApplyReview(r.Context(), id, review)
 		}
-		review := Review{DateUnknown: dateUnknown, Metadata: map[string]string{"ARTIST": strings.TrimSpace(r.PostForm.Get("artist")), "ALBUM": strings.TrimSpace(r.PostForm.Get("album")), "DATE": date}, Artwork: r.PostForm.Get("artwork")}
-		files, titles := r.PostForm["track_file"], r.PostForm["track_title"]
-		discs, numbers := r.PostForm["track_disc"], r.PostForm["track_number"]
-		artists := r.PostForm["track_artist"]
-		if len(artists) != 0 && len(artists) != len(files) {
-			http.Error(w, "incomplete track artists", http.StatusBadRequest)
-			return
-		}
-		if len(files) != len(titles) || len(files) != len(discs) || len(files) != len(numbers) {
-			http.Error(w, "incomplete track mapping", http.StatusBadRequest)
-			return
-		}
-		for i, file := range files {
-			disc, de := strconv.Atoi(discs[i])
-			number, ne := strconv.Atoi(numbers[i])
-			if de != nil || ne != nil || disc < 1 || number < 1 {
-				http.Error(w, "disc and track numbers must be positive integers", http.StatusBadRequest)
-				return
-			}
-			artist := ""
-			if len(artists) != 0 {
-				artist = artists[i]
-			}
-			review.Tracks = append(review.Tracks, Track{File: file, Title: titles[i], Artist: artist, Disc: disc, Track: number})
-		}
-		review.Approve = r.PostForm.Get("approve") == "yes"
-		review.Fingerprint = r.PostForm.Get("fingerprint")
-		if review.Fingerprint == "" {
-			http.Error(w, "missing source fingerprint; refresh before reviewing", http.StatusBadRequest)
-			return
-		}
-		err = s.backend.SaveReview(r.Context(), id, review)
-	case "/apply", "/undo":
+	case "/undo":
 		if !s.cfg.Writable {
 			http.Error(w, "preview mode cannot change media; restart with --write or --copy", http.StatusForbidden)
 			return
 		}
-		if r.URL.Path == "/apply" {
-			err = s.backend.Apply(r.Context(), id)
-		} else {
-			err = s.backend.Undo(r.Context(), id)
-		}
+		err = s.backend.Undo(r.Context(), id)
 	default:
 		http.NotFound(w, r)
 		return
 	}
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusConflict)
+		if r.URL.Path == "/undo" {
+			http.Error(w, err.Error(), http.StatusConflict)
+			return
+		}
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.WriteHeader(http.StatusConflict)
+		fmt.Fprintf(w, "<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><title>Review action needs attention</title><h1>Review action needs attention</h1><p>%s</p><p><a href=\"/recording?id=%s\">Return to recording to review or retry</a></p></html>", template.HTMLEscapeString(err.Error()), template.HTMLEscapeString(url.QueryEscape(id)))
 		return
 	}
 	if r.URL.Path == "/review" {
@@ -332,4 +306,48 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 	} else {
 		http.Redirect(w, r, "/history", http.StatusSeeOther)
 	}
+}
+
+func parseReview(form url.Values) (Review, error) {
+	date := strings.TrimSpace(form.Get("date"))
+	dateUnknown := form.Get("date_unknown") == "yes"
+	if dateUnknown && date != "" {
+		return Review{}, fmt.Errorf("clear the concert date or uncheck Date unknown")
+	}
+	if !dateUnknown && date == "" {
+		return Review{}, fmt.Errorf("enter a concert date or mark Date unknown")
+	}
+	if !dateUnknown {
+		if err := catalog.ValidateDate(date); err != nil {
+			return Review{}, fmt.Errorf("concert date must be YYYY, YYYY-MM, or a valid YYYY-MM-DD date")
+		}
+	}
+	review := Review{DateUnknown: dateUnknown, Metadata: map[string]string{"ARTIST": strings.TrimSpace(form.Get("artist")), "ALBUM": strings.TrimSpace(form.Get("album")), "DATE": date}, Artwork: form.Get("artwork")}
+	files, titles := form["track_file"], form["track_title"]
+	discs, numbers := form["track_disc"], form["track_number"]
+	artists := form["track_artist"]
+	if len(artists) != 0 && len(artists) != len(files) {
+		return Review{}, fmt.Errorf("incomplete track artists")
+	}
+	if len(files) != len(titles) || len(files) != len(discs) || len(files) != len(numbers) {
+		return Review{}, fmt.Errorf("incomplete track mapping")
+	}
+	for i, file := range files {
+		disc, de := strconv.Atoi(discs[i])
+		number, ne := strconv.Atoi(numbers[i])
+		if de != nil || ne != nil || disc < 1 || number < 1 {
+			return Review{}, fmt.Errorf("disc and track numbers must be positive integers")
+		}
+		artist := ""
+		if len(artists) != 0 {
+			artist = artists[i]
+		}
+		review.Tracks = append(review.Tracks, Track{File: file, Title: titles[i], Artist: artist, Disc: disc, Track: number})
+	}
+	review.Approve = form.Get("approve") == "yes"
+	review.Fingerprint = form.Get("fingerprint")
+	if review.Fingerprint == "" {
+		return Review{}, fmt.Errorf("missing source fingerprint; refresh before reviewing")
+	}
+	return review, nil
 }

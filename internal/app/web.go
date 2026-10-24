@@ -7,6 +7,8 @@ import (
 	"golang.org/x/text/encoding/charmap"
 	"io"
 	"os"
+	"reflect"
+	"strings"
 	"track-tagger/internal/media"
 	"unicode/utf8"
 
@@ -45,7 +47,7 @@ func (w WebBackend) List(ctx context.Context) ([]webui.Recording, error) {
 	return rs, nil
 }
 func webRecord(r Item) webui.Recording {
-	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
+	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, Reviewed: r.Reviewed, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
 	for _, t := range r.Tracks {
 		out.Tracks = append(out.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Track: t.Number, Disc: t.Disc})
 	}
@@ -175,4 +177,58 @@ func (w WebBackend) History(ctx context.Context) ([]webui.Job, error) {
 		out = append(out, webui.Job{ID: j.ID, RecordingID: j.RecordingID, Status: j.Status, Summary: j.Summary})
 	}
 	return out, err
+}
+
+// ApplyReview binds both actions to the submitted page and fresh source evidence.
+func (w WebBackend) ApplyReview(ctx context.Context, id string, v webui.Review) error {
+	if w.E.Mode == DryRun {
+		return errors.New("preview mode cannot change media; restart with --write or --copy")
+	}
+	saved := false
+	if v.Approve {
+		if err := w.SaveReview(ctx, id, v); err != nil {
+			return err
+		}
+		saved = true
+	}
+	err := w.applySubmitted(ctx, id, v)
+	if err != nil && saved {
+		return fmt.Errorf("review saved but not applied: %w; reopen the recording and use Apply saved review to retry", err)
+	}
+	return err
+}
+func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Review) error {
+	p, err := w.E.Scan()
+	if err != nil {
+		return err
+	}
+	for _, r := range p.Recordings {
+		if r.ID != id {
+			continue
+		}
+		if v.Fingerprint != r.Fingerprint {
+			return errors.New("inputs changed since this page was loaded; refresh and review again")
+		}
+		if !r.Reviewed {
+			return errors.New("save an approved review before applying")
+		}
+		expected := webui.Review{DateUnknown: r.DateUnknown, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.Artwork}
+		for _, t := range r.Tracks {
+			expected.Tracks = append(expected.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Disc: t.Disc, Track: t.Number})
+		}
+		tracks := append([]webui.Track(nil), v.Tracks...)
+		for i := range tracks {
+			tracks[i].Artist = strings.TrimSpace(tracks[i].Artist)
+		}
+		if v.DateUnknown != expected.DateUnknown || !reflect.DeepEqual(v.Metadata, expected.Metadata) || v.Artwork != expected.Artwork || !reflect.DeepEqual(tracks, expected.Tracks) {
+			return errors.New("submitted values differ from the saved review; approve and save your edits before applying")
+		}
+		if r.Status != "ready" {
+			return fmt.Errorf("recording is %s; refresh before applying", r.Status)
+		}
+		p.Recordings = []Item{r}
+		_, err = w.E.Apply(p)
+		return err
+	}
+	return errors.New("recording not found")
 }

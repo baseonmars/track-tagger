@@ -11,7 +11,7 @@ go build -o track-tagger ./cmd/track-tagger
 ./track-tagger serve /music/concerts
 ```
 
-Open http://127.0.0.1:8787. Review source notes, metadata, file-to-title mappings, and artwork. Explicitly acknowledge replacements when saving corrections. The default server runs in preview mode and saves review decisions in application storage. Select `--write` or `--copy DEST` to apply metadata changes.
+Open http://127.0.0.1:8787. Review source notes, metadata, file-to-title mappings, and artwork. Check the approval box after reviewing your changes, then choose **Save review** or, in write/copy mode, **Save and apply**. An unchanged saved review can be applied with **Apply saved review** without checking approval again. Editing any field requires approval again; restoring all fields to their saved values restores the saved-review action. Saving in write/copy mode also allows the watcher to apply approved corrections after the quiet interval. Waiting recordings must settle before applying; completed recordings need an approved change to apply again. If applying fails after saving, the review remains saved: reopen the recording, address the reported problem, and retry **Apply saved review**. The default server runs in preview mode and saves review decisions in application storage. Select `--write` or `--copy DEST` to apply metadata changes.
 
 ## Windows desktop app
 
@@ -99,7 +99,7 @@ For Roon, inspect its metadata preferences for the album and prefer file metadat
 ```sh
 go test -race ./...            # unit, integration, and CLI/HTTP end-to-end tests
 go vet ./...
-node --test internal/webui/testdata/player.test.cjs  # development only; Node 24
+node --test internal/webui/testdata/player.test.cjs internal/webui/testdata/review.test.cjs  # development only; Node 24
 go test ./internal/catalog -fuzz FuzzNotes -fuzztime 10s
 go test ./internal/media -fuzz FuzzMetadata -fuzztime 10s
 ```

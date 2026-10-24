@@ -331,11 +331,15 @@ func (e *Engine) SaveReview(id string, item Item) error {
 			item.Evidence = r.Evidence
 			item.Reviewed = true
 			item.Status = "ready"
-			if err = e.store.saveReview(id, evidence(r), item); err != nil {
-				return err
+			var previous Item
+			_, existed, readErr := e.store.review(id, &previous)
+			if readErr != nil {
+				return readErr
 			}
-			_, err = e.store.db.Exec("DELETE FROM holds WHERE id=?", id)
-			return err
+			if !existed {
+				previous = Item{Recording: r}
+			}
+			return e.store.saveReviewDecision(id, evidence(r), item, e.completionKey(id), !sameProposal(previous.Recording, item.Recording))
 		}
 	}
 	return errors.New("recording not found")
