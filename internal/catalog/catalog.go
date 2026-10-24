@@ -77,7 +77,6 @@ var noteT = regexp.MustCompile(`^\s*(\d{1,3})\s*[.):_-]\s*(.+)$`)
 var noteSpaceT = regexp.MustCompile(`^\s*(\d{1,3})[ \t]+(\S.*)$`)
 var reportDuration = regexp.MustCompile(`^\d+:\d{2}(?:[.:]\d+)?\s`)
 var noteDT = regexp.MustCompile(`(?i)^\s*(?:d|s)(\d+)t(\d+)\s*[ .):_-]*\s*(.+)$`)
-var section = regexp.MustCompile(`(?i)^\s*(?:disc|disk|cd|set)\s*(\d+|I|II|III|IV|V|VI|VII|VIII|IX|X)\s*[:.-]?\s*$`)
 var isoDate = regexp.MustCompile(`\b(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\b`)
 var numericDate = regexp.MustCompile(`\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b`)
 var namedDate = regexp.MustCompile(`(?i)\b(?:\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}|(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4})\b`)
@@ -389,91 +388,13 @@ func fileNumber(path string) (int, int) {
 	}
 	return d, 0
 }
-func parseNotes(r *Recording, s string, titles map[string]string, dates, artists map[string]bool) int {
-	count := 0
-	parseUnlabelledHeader(r, s, artists)
-	disc := 1
-	header := true
-	for _, raw := range strings.Split(strings.ReplaceAll(s, "\r\n", "\n"), "\n") {
-		line := strings.TrimSpace(strings.TrimPrefix(raw, "\ufeff"))
-		if line == "" {
-			continue
-		}
-		lower := strings.ToLower(line)
-		// shntool duration rows are reports, not numbered song titles.
-		if reportDuration.MatchString(line) {
-			continue
-		}
-		if m := section.FindStringSubmatch(line); m != nil {
-			disc, _ = strconv.Atoi(m[1])
-			if disc == 0 {
-				for i, roman := range []string{"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"} {
-					if strings.EqualFold(m[1], roman) {
-						disc = i + 1
-						break
-					}
-				}
-			}
-			header = false
-			continue
-		}
-		if strings.EqualFold(strings.TrimSuffix(line, ":"), "encore") {
-			continue
-		}
-		if m := noteDT.FindStringSubmatch(line); m != nil {
-			d, _ := strconv.Atoi(m[1])
-			n, _ := strconv.Atoi(m[2])
-			count++
-			addTitle(r, titles, d, n, m[3])
-			header = false
-			continue
-		}
-		// A day-first date also starts with a number followed by whitespace.
-		date := namedDate.FindString(line)
-		if header && date != "" && strings.HasPrefix(line, date) && (date == line || weekdaySuffix.MatchString(strings.TrimPrefix(line, date))) {
-			parseDates(r, line, dates)
-			continue
-		}
-		m := noteT.FindStringSubmatch(line)
-		if m == nil {
-			m = noteSpaceT.FindStringSubmatch(line)
-		}
-		if m != nil {
-			n, _ := strconv.Atoi(m[1])
-			count++
-			addTitle(r, titles, disc, n, m[2])
-			header = false
-			continue
-		}
-		if technical(lower) {
-			continue
-		}
-		for _, label := range []string{"artist:", "performer:", "band:"} {
-			if strings.HasPrefix(lower, label) {
-				a := strings.TrimSpace(line[len(label):])
-				if a != "" {
-					artists[a] = true
-				}
-			}
-		}
-		if strings.HasPrefix(lower, "venue:") {
-			setLocation(r, "venue", &r.Venue, strings.TrimSpace(line[6:]))
-		}
-		if strings.HasPrefix(lower, "city:") {
-			setLocation(r, "city", &r.City, strings.TrimSpace(line[5:]))
-		}
-		if header || strings.HasPrefix(lower, "date:") || strings.HasPrefix(lower, "concert date:") {
-			parseDates(r, line, dates)
-		}
-	}
-	return count
-}
 
 // Recognize complete artist/date/city @ venue or artist/venue/city/date
 // headers. A lone first line could instead be a recording or transfer label.
-func parseUnlabelledHeader(r *Recording, s string, artists map[string]bool) {
+func parseUnlabelledHeader(r *Recording, source []noteLine, artists map[string]bool) {
 	var lines []string
-	for _, raw := range strings.Split(s, "\n") {
+	for _, item := range source {
+		raw := item.text
 		line := strings.TrimSpace(strings.TrimPrefix(raw, "\ufeff"))
 		if line != "" {
 			lines = append(lines, line)
@@ -482,7 +403,7 @@ func parseUnlabelledHeader(r *Recording, s string, artists map[string]bool) {
 			}
 		}
 	}
-	if len(lines) < 3 || technical(strings.ToLower(lines[0])) || strings.ContainsAny(lines[0], ":@>") || noteT.MatchString(lines[0]) || noteSpaceT.MatchString(lines[0]) || noteDT.MatchString(lines[0]) || section.MatchString(lines[0]) {
+	if len(lines) < 3 || technical(strings.ToLower(lines[0])) || strings.ContainsAny(lines[0], ":@>") || noteT.MatchString(lines[0]) || noteSpaceT.MatchString(lines[0]) || noteDT.MatchString(lines[0]) || notesSection.MatchString(lines[0]) {
 		return
 	}
 	// A second common taper header has separate artist, venue, city and
