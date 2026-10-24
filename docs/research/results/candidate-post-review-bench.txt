@@ -1,0 +1,16 @@
+goos: windows
+goarch: amd64
+pkg: track-tagger/internal/catalog
+cpu: AMD Ryzen 7 9800X3D 8-Core Processor
+BenchmarkNotesCorpus/development         	      50	   7277888 ns/op	   5.40 MB/s	  458760 B/op	    7911 allocs/op
+BenchmarkNotesCorpus/development         	      49	   7474102 ns/op	   5.26 MB/s	  458771 B/op	    7911 allocs/op
+BenchmarkNotesCorpus/development         	      50	   7369916 ns/op	   5.33 MB/s	  458769 B/op	    7911 allocs/op
+BenchmarkNotesCorpus/development         	      49	   7301322 ns/op	   5.38 MB/s	  458772 B/op	    7911 allocs/op
+BenchmarkNotesCorpus/development         	      51	   7597812 ns/op	   5.17 MB/s	  458770 B/op	    7911 allocs/op
+BenchmarkNotesCorpus/held-out            	     121	   2902174 ns/op	   5.31 MB/s	  180982 B/op	    3127 allocs/op
+BenchmarkNotesCorpus/held-out            	     120	   3326720 ns/op	   4.64 MB/s	  180981 B/op	    3127 allocs/op
+BenchmarkNotesCorpus/held-out            	     122	   2957030 ns/op	   5.22 MB/s	  180983 B/op	    3127 allocs/op
+BenchmarkNotesCorpus/held-out            	     123	   2921872 ns/op	   5.28 MB/s	  180983 B/op	    3127 allocs/op
+BenchmarkNotesCorpus/held-out            	     121	   2889218 ns/op	   5.34 MB/s	  180980 B/op	    3127 allocs/op
+PASS
+ok  	track-tagger/internal/catalog	5.578s
