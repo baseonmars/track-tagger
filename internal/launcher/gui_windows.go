@@ -5,6 +5,7 @@ package launcher
 import (
 	"context"
 	"fmt"
+	"os"
 	"runtime"
 	"strings"
 	"sync"
@@ -262,6 +263,16 @@ func openBrowser() {
 		}
 	}
 }
+func showHelp() {
+	if err := openHelp(os.UserCacheDir, func(path string) error {
+		if call(shell, "ShellExecuteW", win, ptr("open"), ptr(path), 0, 0, 1) <= 32 {
+			return fmt.Errorf("Windows could not open the browser")
+		}
+		return nil
+	}); err != nil {
+		box("Could not open Help: " + err.Error())
+	}
+}
 func readSettings() {
 	config.Source = strings.TrimSpace(get(1))
 	config.Destination = strings.TrimSpace(get(2))
@@ -513,6 +524,8 @@ func proc(h uintptr, m uint32, w, l uintptr) uintptr {
 			stop(true)
 		case 15:
 			toggleDetails()
+		case 16:
+			showHelp()
 		case 41:
 			if updates != nil {
 				updates.Check()
@@ -677,6 +690,7 @@ func Run(version string) {
 	add(20, "STATIC", "Stopped", 0, 20, 418, 700, 24)
 	add(21, "EDIT", "Choose folders and click Start.", 0x808080, 20, 447, 700, 36)
 	add(15, "BUTTON", "Show details", 0x10000, 20, 492, 140, 28)
+	add(16, "BUTTON", "Help", 0x10000, 170, 492, 100, 28)
 	add(22, "EDIT", "", 0xa10844, 20, 530, 700, 65)
 	add(13, "BUTTON", "Copy details", 0x10000, 580, 603, 140, 28)
 	call(user, "ShowWindow", controls[22], 0)
