@@ -126,6 +126,18 @@ func issueSummary(r Recording) []string {
 			label = "Add the artist name."
 		case reason == "venue is missing":
 			label = "Check the venue and album name."
+		case strings.HasPrefix(reason, "ambiguous numeric concert date: "):
+			if r.Metadata["DATE"] != "" {
+				label = "The proposed concert date uses month/day order. Check the notes and correct the date if needed."
+			} else {
+				label = "The numeric concert date could use month/day or day/month order. Check the notes and enter the date."
+			}
+		case reason == "conflicting filename evidence for concert date":
+			if r.Metadata["DATE"] != "" {
+				label = "Filename dates disagree. Check the proposed concert date against the notes and audio filenames."
+			} else {
+				label = "Filename dates disagree. Check the notes and audio filenames, then enter the concert date."
+			}
 		case strings.Contains(reason, "date"):
 			label = "Confirm the concert date against the notes."
 		case strings.Contains(reason, "existing") && strings.Contains(reason, "conflicts"):

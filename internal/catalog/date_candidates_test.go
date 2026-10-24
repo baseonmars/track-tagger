@@ -35,6 +35,15 @@ func dateNotes(date string) string {
 	return "Artist: Example Band\nVenue: Example Hall\nDate: " + date + "\n01. Song\n"
 }
 
+func TestReedCollegeNumericDateSuggestion(t *testing.T) {
+	// The concert header is four unlabelled lines, without a Date field.
+	notes := "Grateful Dead\nReed College\nPortland, OR\n10/09/1969\n01. Song\n"
+	r := dateFixture(t, "show", map[string]string{"notes.txt": notes}, "t01.flac")
+	if r.Date != "1969-10-09" || !strings.HasPrefix(r.Album, "1969-10-09") || r.Status != "needs-review" || !hasReason(r, "ambiguous numeric concert date: 10/09/1969") {
+		t.Fatalf("Reed College date was not proposed for review: date=%q, album=%q, status=%s, reasons=%v", r.Date, r.Album, r.Status, r.ReviewReasons)
+	}
+}
+
 func TestCorroboratedNumericConcertDates(t *testing.T) {
 	for _, tc := range []struct {
 		date, want, audio string
@@ -58,30 +67,35 @@ func TestCorroboratedNumericConcertDates(t *testing.T) {
 func TestNumericDateCorroborationSourcesAndConflicts(t *testing.T) {
 	for _, tc := range []struct {
 		name, dir, notesName, audio, want string
+		ambiguous, conflict               bool
 	}{
-		{"folder only", "show1989-09-05", "notes.txt", "t01.flac", "1989-09-05"},
-		{"notes only", "show", "show1989-09-05.nfo", "t01.flac", "1989-09-05"},
-		{"all agree", "show1989-09-05", "show1989-09-05.txt", "example1989-09-05t01.flac", "1989-09-05"},
-		{"no evidence", "show", "notes.txt", "t01.flac", ""},
-		{"wrong date", "show1989-01-01", "notes.txt", "t01.flac", ""},
-		{"folder audio conflict", "show1989-05-09", "notes.txt", "example1989-09-05t01.flac", ""},
-		{"notes audio conflict", "show", "show1989-05-09.txt", "example1989-09-05t01.flac", ""},
-		{"two dates in name", "show1989-05-09_and_1989-09-05", "notes.txt", "t01.flac", ""},
-		{"numeric filename excluded", "show09-05-1989", "notes.txt", "t01.flac", ""},
-		{"invalid filename excluded", "show1989-02-29", "notes.txt", "t01.flac", ""},
-		{"invalid and valid", "show1989-02-29", "notes.txt", "example1989-09-05t01.flac", "1989-09-05"},
-		{"ancestor excluded", "1989-09-05/show", "notes.txt", "t01.flac", ""},
+		{"folder only", "show1989-09-05", "notes.txt", "t01.flac", "1989-09-05", false, false},
+		{"notes only", "show", "show1989-09-05.nfo", "t01.flac", "1989-09-05", false, false},
+		{"all agree", "show1989-09-05", "show1989-09-05.txt", "example1989-09-05t01.flac", "1989-09-05", false, false},
+		{"no evidence", "show", "notes.txt", "t01.flac", "1989-09-05", true, false},
+		{"wrong date", "show1989-01-01", "notes.txt", "t01.flac", "1989-09-05", true, true},
+		{"folder audio conflict", "show1989-05-09", "notes.txt", "example1989-09-05t01.flac", "1989-09-05", true, true},
+		{"notes audio conflict", "show", "show1989-05-09.txt", "example1989-09-05t01.flac", "1989-09-05", true, true},
+		{"two dates in name", "show1989-05-09_and_1989-09-05", "notes.txt", "t01.flac", "1989-09-05", true, true},
+		{"numeric filename excluded", "show09-05-1989", "notes.txt", "t01.flac", "1989-09-05", true, false},
+		{"invalid filename excluded", "show1989-02-29", "notes.txt", "t01.flac", "1989-09-05", true, false},
+		{"invalid and valid", "show1989-02-29", "notes.txt", "example1989-09-05t01.flac", "1989-09-05", false, false},
+		{"ancestor excluded", "1989-09-05/show", "notes.txt", "t01.flac", "1989-09-05", true, false},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			r := dateFixture(t, tc.dir, map[string]string{tc.notesName: dateNotes("09/05/1989")}, tc.audio)
-			if r.Date != tc.want || (tc.want == "" && !hasReason(r, "ambiguous numeric concert date")) || (tc.want != "" && hasReason(r, "concert date")) {
-				t.Fatalf("date = %q, want %q; reasons = %v", r.Date, tc.want, r.ReviewReasons)
+			if r.Date != tc.want || hasReason(r, "ambiguous numeric concert date") != tc.ambiguous || hasReason(r, "conflicting filename evidence") != tc.conflict || (tc.ambiguous || tc.conflict) != (r.Status == "needs-review") || !strings.HasPrefix(r.Album, tc.want) {
+				t.Fatalf("date = %q, album = %q, status = %s, want %q; reasons = %v", r.Date, r.Album, r.Status, tc.want, r.ReviewReasons)
 			}
 		})
 	}
 	r := dateFixture(t, "show", map[string]string{"notes.txt": dateNotes("09/05/1989") + "02. Last\n"}, "example1989-09-05t01.flac", "example1989-05-09t02.flac")
-	if r.Date != "" || !hasReason(r, "conflicting filename evidence") {
-		t.Fatalf("conflicting audio dates accepted: %q, %v", r.Date, r.ReviewReasons)
+	if r.Date != "1989-09-05" || !hasReason(r, "ambiguous numeric concert date") || !hasReason(r, "conflicting filename evidence") || r.Status != "needs-review" {
+		t.Fatalf("conflicting audio dates lost suggestion or review: %q, %v", r.Date, r.ReviewReasons)
+	}
+	r = dateFixture(t, "jack1905-08-11", map[string]string{"jack1905-08-11.txt": dateNotes("08/11/1995")}, "jack1995-11-08t01.flac")
+	if r.Date != "1995-11-08" || r.Status != "needs-review" || !hasReason(r, "conflicting filename evidence") || hasReason(r, "ambiguous numeric concert date") {
+		t.Fatalf("unique day-first evidence was not selected despite unrelated year: date=%q, status=%s, reasons=%v", r.Date, r.Status, r.ReviewReasons)
 	}
 }
 
@@ -134,8 +148,8 @@ func TestDateEvidenceNeverCreatesOrOverridesNotes(t *testing.T) {
 		})
 	}
 	r := dateFixture(t, "jack1905-08-11", map[string]string{"jack1905-08-11.txt": dateNotes("08/11/1995")}, "jack1995-08-11t01.flac")
-	if r.Date != "" || !hasReason(r, "ambiguous numeric concert date") || !hasReason(r, "conflicting filename evidence") {
-		t.Fatalf("conflicting year evidence accepted: %q, %v", r.Date, r.ReviewReasons)
+	if r.Date != "1995-08-11" || !hasReason(r, "conflicting filename evidence") || r.Status != "needs-review" || !strings.HasPrefix(r.Album, "1995-08-11") {
+		t.Fatalf("conflicting year evidence lost suggestion or review: %q, %v", r.Date, r.ReviewReasons)
 	}
 	r = dateFixture(t, "show1989-09-05", nil, "t01.flac")
 	if r.Date != "" || !hasReason(r, "no local concert notes") {
@@ -162,8 +176,8 @@ func TestAllNotesDateCandidatesParticipate(t *testing.T) {
 	}
 	// A separate unambiguous note must not hide an unresolved numeric note.
 	r := dateFixture(t, "show", map[string]string{"a.txt": dateNotes("1989-09-05"), "z.txt": "Date: 09/05/1989\n"}, "t01.flac")
-	if r.Date != "" || !hasReason(r, "ambiguous numeric concert date") {
-		t.Fatalf("unresolved candidate hidden: %q, %v", r.Date, r.ReviewReasons)
+	if r.Date != "1989-09-05" || !hasReason(r, "ambiguous numeric concert date") || r.Status != "needs-review" {
+		t.Fatalf("ambiguous candidate hidden: %q, %v", r.Date, r.ReviewReasons)
 	}
 }
 

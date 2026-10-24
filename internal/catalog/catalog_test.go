@@ -349,8 +349,8 @@ func TestMilesStyleWhitespaceNotesKeepDuplicateUnresolved(t *testing.T) {
 	if r.Artist != "Example Jazz Ensemble" || r.Venue != "Outdoor Hall" || r.City != "Vienna, VA" {
 		t.Fatalf("header lost: %+v", r)
 	}
-	if r.Date != "" || r.Status != "needs-review" {
-		t.Fatalf("ambiguous date silently accepted: %+v", r)
+	if r.Date != "1989-09-05" || r.Status != "needs-review" || !strings.HasPrefix(r.Album, "1989-09-05") {
+		t.Fatalf("ambiguous date suggestion lost review: %+v", r)
 	}
 	for _, want := range []string{"ambiguous numeric concert date", "duplicate numbering in notes: 1:2", "track count mismatch: 10 listed titles, 9 audio files"} {
 		if !hasReason(r, want) {

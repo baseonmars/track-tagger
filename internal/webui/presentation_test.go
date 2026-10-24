@@ -20,6 +20,45 @@ func TestIssueSummaryGroupsOverlappingTrackDiagnostics(t *testing.T) {
 	}
 }
 
+func TestIssueSummaryExplainsSuggestedAndMissingNumericDates(t *testing.T) {
+	reasons := []string{"ambiguous numeric concert date: 10/09/1969", "conflicting filename evidence for concert date"}
+	for _, tc := range []struct {
+		name, date, ambiguity, conflict string
+	}{
+		{"suggested", "1969-10-09", "proposed concert date uses month/day order", "Check the proposed concert date"},
+		{"missing", "", "could use month/day or day/month order", "then enter the concert date"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			got := issueSummary(Recording{Metadata: map[string]string{"DATE": tc.date}, Reasons: reasons})
+			joined := strings.Join(got, " ")
+			if len(got) != 2 || !strings.Contains(joined, tc.ambiguity) || !strings.Contains(joined, tc.conflict) {
+				t.Fatalf("date guidance = %v", got)
+			}
+		})
+	}
+}
+
+func TestReviewFormShowsSuggestedDateAndWarning(t *testing.T) {
+	b := &fakeBackend{recording: &Recording{
+		ID: "one", Path: "show", Fingerprint: "fp", Status: "needs-review",
+		Metadata: map[string]string{"ARTIST": "Grateful Dead", "DATE": "1969-10-09", "ALBUM": "1969-10-09 - Reed College, Portland, OR"},
+		Reasons:  []string{"ambiguous numeric concert date: 10/09/1969"},
+		Tracks:   []Track{{File: "t01.flac", Disc: 1, Track: 1, Title: "Song"}},
+	}}
+	h, err := New(Config{}, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/recording?id=one", nil))
+	body := w.Body.String()
+	for _, want := range []string{`id="date" name="date" type="text" maxlength="10" aria-describedby="date-hint" value="1969-10-09"`, `id="album" name="album" value="1969-10-09 - Reed College, Portland, OR"`, "The proposed concert date uses month/day order. Check the notes and correct the date if needed."} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("rendered suggestion missing %q", want)
+		}
+	}
+}
+
 type displayBackend struct{ fakeBackend }
 
 func (*displayBackend) List(context.Context) ([]Recording, error) {
