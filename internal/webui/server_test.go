@@ -51,6 +51,31 @@ func TestStatusEndpointIsAuthenticatedAndOmitsPrivateDetails(t *testing.T) {
 	}
 }
 
+func TestStatusIncludesRawCodeAndExactCachedTimestamp(t *testing.T) {
+	b := &progressBackend{status: Status{Recordings: []Recording{{ID: "one", Path: "concert", Status: "completed", LastModified: 1700000000123456789}}}}
+	h, err := New(Config{}, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/status", nil))
+	if w.Code != http.StatusOK {
+		t.Fatal(w.Code)
+	}
+	var result statusResponse
+	if err := json.Unmarshal(w.Body.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if len(result.Recordings) != 1 || result.Recordings[0].StatusCode != "completed" || result.Recordings[0].Status != "Completed" || result.Recordings[0].LastModified != 1700000000123456789 || !strings.Contains(w.Body.String(), `"lastModified":"1700000000123456789"`) {
+		t.Fatalf("status response: %s", w.Body.String())
+	}
+	page := httptest.NewRecorder()
+	h.ServeHTTP(page, httptest.NewRequest("GET", "http://localhost/", nil))
+	if !strings.Contains(page.Body.String(), `data-status-code="completed" data-last-modified="1700000000123456789"`) {
+		t.Fatalf("initial card data missing: %s", page.Body.String())
+	}
+}
+
 func TestPendingReviewActionsRenderDisabled(t *testing.T) {
 	b := &progressBackend{fakeBackend: fakeBackend{recording: &Recording{ID: "one", Status: "loading"}}, status: Status{Phase: "validating", Total: 2}}
 	h, err := New(Config{Writable: true}, b)
@@ -162,6 +187,25 @@ func TestPreviewGatesMediaButSavesReview(t *testing.T) {
 	}
 	if b.applied != 0 || b.undone != 0 || b.saved != 1 || !b.review.Approve || b.review.Fingerprint != "source-version-1" {
 		t.Fatalf("bad mutation counts: %+v", b)
+	}
+}
+
+func TestSuccessfulReviewAndApplyReturnToRecordings(t *testing.T) {
+	b := &fakeBackend{}
+	h, err := New(Config{Writable: true}, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	v := url.Values{"csrf": {csrfFrom(t, h)}, "id": {"one"}, "fingerprint": {"source-version-1"}, "date": {"1970"}, "approve": {"yes"}}
+	for _, path := range []string{"/review", "/apply"} {
+		w := post(h, path, v, "http://localhost")
+		if w.Code != http.StatusSeeOther || w.Header().Get("Location") != "/" {
+			t.Fatalf("%s: %d %s", path, w.Code, w.Header().Get("Location"))
+		}
+	}
+	w := post(h, "/undo", url.Values{"csrf": {v.Get("csrf")}, "id": {"job"}}, "http://localhost")
+	if w.Code != http.StatusSeeOther || w.Header().Get("Location") != "/history" {
+		t.Fatalf("undo: %d %s", w.Code, w.Header().Get("Location"))
 	}
 }
 func TestRemoteRequiresAuthentication(t *testing.T) {
