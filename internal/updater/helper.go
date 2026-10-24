@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -70,11 +71,18 @@ func regularStageFile(path string) error {
 	if !st.Mode().IsRegular() {
 		return errors.New("update file is not a regular file")
 	}
-	resolved, e := filepath.EvalSymlinks(path)
+	parent, e := resolvePath(filepath.Dir(path))
 	if e != nil {
 		return e
 	}
-	if !samePath(resolved, path) {
+	resolved, e := resolvePath(path)
+	if e != nil {
+		return e
+	}
+	// System-managed ancestors may be aliases (macOS /var, Windows runner
+	// temporary paths). Only the file itself must remain unredirected; stage
+	// containment is checked independently against the canonical cache root.
+	if !samePath(resolved, filepath.Join(parent, filepath.Base(path))) {
 		return errors.New("update file contains a redirected path")
 	}
 	return nil
@@ -104,7 +112,13 @@ func readerHash(r io.Reader, max int64) (string, error) {
 	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
-func samePath(a, b string) bool { return strings.EqualFold(filepath.Clean(a), filepath.Clean(b)) }
+func samePath(a, b string) bool {
+	a, b = filepath.Clean(a), filepath.Clean(b)
+	if runtime.GOOS == "windows" {
+		return strings.EqualFold(a, b)
+	}
+	return a == b
+}
 
 // safeStage requires an immediate random child of the private update root and
 // rejects junctions/symlinks before reading or removing any handoff files.
@@ -120,11 +134,24 @@ func safeStage(dir, root string) error {
 	if !samePath(filepath.Dir(dir), root) || !strings.HasPrefix(filepath.Base(dir), "update-") {
 		return errors.New("update staging directory is outside application cache")
 	}
-	resolved, err := filepath.EvalSymlinks(dir)
+	st, err := os.Lstat(dir)
 	if err != nil {
 		return err
 	}
-	if !samePath(resolved, dir) {
+	if !st.IsDir() || st.Mode()&os.ModeSymlink != 0 {
+		return errors.New("update staging child is not an unredirected directory")
+	}
+	canonicalRoot, err := resolvePath(root)
+	if err != nil {
+		return err
+	}
+	resolved, err := resolvePath(dir)
+	if err != nil {
+		return err
+	}
+	// Resolve the trusted root's ancestor aliases on both sides. A redirect
+	// introduced by the owned child itself must still fail containment.
+	if !samePath(resolved, filepath.Join(canonicalRoot, filepath.Base(dir))) {
 		return errors.New("update staging directory contains a redirected path")
 	}
 	return nil

@@ -254,7 +254,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   publish-manual-container:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: always() && !cancelled() && startsWith(github.ref, 'refs/tags/v') && needs.test.result == 'success' && needs.binaries.result == 'success' && needs.windows-installers.result == 'success' && needs.authorize-release.result == 'success'
     needs: [test, binaries, windows-installers, authorize-release]
     runs-on: ubuntu-latest
     permissions:
@@ -331,7 +331,7 @@ jobs:
         run: node tools/release/publish.mjs
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: always() && !cancelled() && startsWith(github.ref, 'refs/tags/v') && needs.binaries.result == 'success' && needs.windows-installers.result == 'success' && needs.authorize-release.result == 'success' && needs.publish-manual-container.result == 'success'
     needs: [binaries, windows-installers, authorize-release, publish-manual-container]
     runs-on: ubuntu-latest
     permissions:

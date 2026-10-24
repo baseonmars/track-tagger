@@ -113,3 +113,55 @@ func TestCompletedStageCleanupHonorsActiveGuard(t *testing.T) {
 		t.Fatalf("completed stage retained: %v", e)
 	}
 }
+
+func TestStageAllowsAncestorJunctionButRejectsChildJunction(t *testing.T) {
+	base := t.TempDir()
+	realRoot := filepath.Join(base, "real-cache")
+	if e := os.Mkdir(realRoot, 0700); e != nil {
+		t.Fatal(e)
+	}
+	junction := func(link, target string) {
+		t.Helper()
+		cmd := exec.Command("cmd.exe", "/d", "/c", "mklink", "/J", link, target)
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		if b, e := cmd.CombinedOutput(); e != nil {
+			t.Fatalf("create disposable directory junction: %v: %s", e, b)
+		}
+	}
+	alias := filepath.Join(base, "cache-alias")
+	junction(alias, realRoot)
+	aliasInfo, e := os.Stat(alias)
+	if e != nil {
+		t.Fatal(e)
+	}
+	realInfo, e := os.Stat(realRoot)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if !os.SameFile(aliasInfo, realInfo) {
+		t.Fatal("fixture junction does not refer to real cache directory")
+	}
+	dir := filepath.Join(alias, "update-safe")
+	if e := os.Mkdir(dir, 0700); e != nil {
+		t.Fatal(e)
+	}
+	file := filepath.Join(dir, "helper.exe")
+	if e := os.WriteFile(file, []byte("synthetic bytes"), 0600); e != nil {
+		t.Fatal(e)
+	}
+	if b, e := os.ReadFile(filepath.Join(realRoot, "update-safe", "helper.exe")); e != nil || string(b) != "synthetic bytes" {
+		t.Fatalf("fixture junction did not write into expected target: %q %v", b, e)
+	}
+	if e := safeStage(dir, alias); e != nil {
+		t.Fatalf("ancestor junction rejected: %v", e)
+	}
+	if _, e := fileHash(file, maxInstaller); e != nil {
+		t.Fatalf("file below ancestor junction rejected: %v", e)
+	}
+	outside := t.TempDir()
+	child := filepath.Join(alias, "update-redirected")
+	junction(child, outside)
+	if e := safeStage(child, alias); e == nil {
+		t.Fatal("owned child junction accepted")
+	}
+}

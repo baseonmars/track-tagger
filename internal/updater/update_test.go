@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -284,6 +285,58 @@ func TestHelperArgumentsAndStaging(t *testing.T) {
 		if validHash(s) {
 			t.Fatalf("accepted hash %q", s)
 		}
+	}
+}
+
+func TestStageAllowsAncestorAliasButRejectsOwnedRedirects(t *testing.T) {
+	base := t.TempDir()
+	realRoot := filepath.Join(base, "real-cache")
+	if e := os.Mkdir(realRoot, 0700); e != nil {
+		t.Fatal(e)
+	}
+	alias := filepath.Join(base, "cache-alias")
+	if e := os.Symlink(realRoot, alias); e != nil {
+		t.Skipf("directory symlinks unavailable: %v", e)
+	}
+	dir := filepath.Join(alias, "update-safe")
+	if e := os.Mkdir(dir, 0700); e != nil {
+		t.Fatal(e)
+	}
+	file := filepath.Join(dir, "helper.exe")
+	if e := os.WriteFile(file, []byte("synthetic bytes"), 0600); e != nil {
+		t.Fatal(e)
+	}
+	if e := safeStage(dir, alias); e != nil {
+		t.Fatalf("ancestor alias rejected: %v", e)
+	}
+	if _, e := fileHash(file, maxInstaller); e != nil {
+		t.Fatalf("file below ancestor alias rejected: %v", e)
+	}
+	outside := t.TempDir()
+	stageLink := filepath.Join(alias, "update-redirect")
+	if e := os.Symlink(outside, stageLink); e != nil {
+		t.Fatal(e)
+	}
+	if e := safeStage(stageLink, alias); e == nil {
+		t.Fatal("owned stage redirect accepted")
+	}
+	fileLink := filepath.Join(dir, "redirect.exe")
+	if e := os.Symlink(file, fileLink); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := fileHash(fileLink, maxInstaller); e == nil {
+		t.Fatal("owned file redirect accepted")
+	}
+	if e := safeStage(filepath.Join(outside, "update-unowned"), alias); e == nil {
+		t.Fatal("unrelated tree accepted")
+	}
+}
+
+func TestPathComparisonUsesPlatformCaseRules(t *testing.T) {
+	a, b := filepath.Join(t.TempDir(), "CACHE"), ""
+	b = filepath.Join(filepath.Dir(a), "cache")
+	if samePath(a, b) != (runtime.GOOS == "windows") {
+		t.Fatal("path comparison uses the wrong filesystem case rules")
 	}
 }
 

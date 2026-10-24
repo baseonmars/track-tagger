@@ -94,27 +94,27 @@ func installedAt(exe string) (bool, error) {
 	if name != "Track Tagger" || !filepath.IsAbs(location) {
 		return false, nil
 	}
+	canonicalLocation, err := resolvePath(location)
+	if err != nil {
+		return false, err
+	}
 	args, err := windows.DecomposeCommandLine(uninstall)
-	if err != nil || len(args) != 1 || !samePath(filepath.Dir(args[0]), location) || !strings.EqualFold(filepath.Base(args[0]), "unins000.exe") {
+	if err != nil || len(args) != 1 || !strings.EqualFold(filepath.Base(args[0]), "unins000.exe") {
 		return false, nil
 	}
 	for _, path := range []string{exe, args[0]} {
-		st, err := os.Lstat(path)
+		if err := regularStageFile(path); err != nil {
+			return false, err
+		}
+		resolved, err := resolvePath(path)
 		if err != nil {
 			return false, err
 		}
-		if !st.Mode().IsRegular() {
-			return false, nil
-		}
-		resolved, err := filepath.EvalSymlinks(path)
-		if err != nil {
-			return false, err
-		}
-		if !samePath(resolved, path) {
+		if !samePath(filepath.Dir(resolved), canonicalLocation) {
 			return false, nil
 		}
 	}
-	return samePath(filepath.Dir(exe), location), nil
+	return true, nil
 }
 
 // Installed verifies that this executable is the registered per-user install.
@@ -133,6 +133,13 @@ func Install(s *Staged) error {
 		return errors.New("missing verified update")
 	}
 	exe, err := os.Executable()
+	if err != nil {
+		return err
+	}
+	if err := regularStageFile(exe); err != nil {
+		return err
+	}
+	exe, err = resolvePath(exe)
 	if err != nil {
 		return err
 	}
@@ -259,7 +266,22 @@ func runHelper(args []string, acknowledged *bool) error {
 	if err != nil {
 		return err
 	}
-	if !samePath(exe, filepath.Join(dir, "update-helper.exe")) {
+	if err := regularStageFile(exe); err != nil {
+		return err
+	}
+	exe, err = resolvePath(exe)
+	if err != nil {
+		return err
+	}
+	expectedHelper := filepath.Join(dir, "update-helper.exe")
+	if err := regularStageFile(expectedHelper); err != nil {
+		return err
+	}
+	canonicalHelper, err := resolvePath(expectedHelper)
+	if err != nil {
+		return err
+	}
+	if !samePath(exe, canonicalHelper) {
 		return errors.New("helper is not running from its staging directory")
 	}
 	guard, err := stageGuard(dir)
@@ -276,11 +298,25 @@ func runHelper(args []string, acknowledged *bool) error {
 		return errors.New("update parent handle does not match handoff")
 	}
 	original := filepath.Join(h.InstallDir, "track-tagger-gui.exe")
+	if err := regularStageFile(original); err != nil {
+		return err
+	}
+	canonicalOriginal, err := resolvePath(original)
+	if err != nil {
+		return err
+	}
 	parentPath, err := processPath(parent)
 	if err != nil {
 		return err
 	}
-	if !samePath(parentPath, original) {
+	if err := regularStageFile(parentPath); err != nil {
+		return err
+	}
+	parentPath, err = resolvePath(parentPath)
+	if err != nil {
+		return err
+	}
+	if !samePath(parentPath, canonicalOriginal) {
 		return errors.New("update parent is not the installed launcher")
 	}
 	installed, err := installedAt(original)
