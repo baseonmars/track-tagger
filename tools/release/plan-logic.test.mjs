@@ -101,7 +101,10 @@ test('planned semantic-release commit must equal the checked out SHA', () => {
 test('release lookup treats only HTTP 404 as missing and fails closed otherwise', async (t) => {
   const base = { repository: 'example/track-tagger', tag: 'v1.0.0', token: 'test-token' };
   await t.test('404 means missing release', async () => {
-    const result = await getReleaseByTag({ ...base, fetcher: async () => new Response('', { status: 404 }) });
+    const fetcher = async (input) => String(input).includes('/releases/tags/')
+      ? new Response('', { status: 404 })
+      : new Response('[]', { status: 200, headers: { 'content-type': 'application/json' } });
+    const result = await getReleaseByTag({ ...base, fetcher });
     assert.equal(result, null);
   });
   for (const status of [401, 403, 429, 500]) {
@@ -114,5 +117,78 @@ test('release lookup treats only HTTP 404 as missing and fails closed otherwise'
   }
   await t.test('network errors propagate', async () => {
     await assert.rejects(getReleaseByTag({ ...base, fetcher: async () => { throw new Error('network unavailable'); } }), /network unavailable/);
+  });
+  await t.test('an authenticated paginated releases list finds a draft hidden by tag lookup', async () => {
+    const calls = [];
+    const draft = {
+      id: 422741579,
+      tag_name: 'v1.0.0',
+      html_url: 'https://github.com/baseonmars/track-tagger/releases/tag/untagged-ed976092880ba6e2ef77',
+      draft: true,
+      prerelease: false,
+      assets: [
+        'SHA256SUMS',
+        'track-tagger-darwin-amd64.tar.gz',
+        'track-tagger-darwin-arm64.tar.gz',
+        'track-tagger-linux-amd64.tar.gz',
+        'track-tagger-linux-arm64.tar.gz',
+        'track-tagger-windows-amd64.zip',
+        'track-tagger-windows-arm64-setup.exe',
+        'track-tagger-windows-arm64.zip',
+        'track-tagger-windows-x64-setup.exe',
+      ].map((name) => ({ name })),
+    };
+    const fetcher = async (input, options) => {
+      const url = new URL(input);
+      calls.push(url);
+      assert.equal(options.headers.authorization, 'Bearer test-token');
+      if (url.pathname.endsWith('/releases/tags/v1.0.0')) return new Response('', { status: 404 });
+      assert.equal(url.searchParams.get('per_page'), '100');
+      if (url.searchParams.get('page') === '1') {
+        return new Response(JSON.stringify([{ id: 10, tag_name: 'v0.9.0', draft: false, prerelease: false }]), {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+            link: '<https://api.github.com/repos/example/track-tagger/releases?per_page=100&page=2>; rel="next", <https://api.github.com/repos/example/track-tagger/releases?per_page=100&page=8>; rel="last"',
+          },
+        });
+      }
+      assert.equal(url.searchParams.get('page'), '2');
+      return new Response(JSON.stringify([draft]), { status: 200, headers: { 'content-type': 'application/json' } });
+    };
+    const result = await getReleaseByTag({ ...base, fetcher });
+    assert.equal(result.databaseId, draft.id);
+    assert.equal(result.isDraft, true);
+    assert.equal(result.isPrerelease, false);
+    assert.equal(result.tagName, 'v1.0.0');
+    assert.equal(result.assets.length, 9);
+    assert.equal(calls.length, 3);
+  });
+  await t.test('draft-list errors fail closed after a tag lookup 404', async () => {
+    const fetcher = async (input) => String(input).includes('/releases/tags/')
+      ? new Response('', { status: 404 })
+      : new Response('', { status: 403 });
+    await assert.rejects(getReleaseByTag({ ...base, fetcher }), /release list lookup.*HTTP 403/);
+  });
+  await t.test('a missing or inaccessible release list is not treated as an absent tag', async () => {
+    const fetcher = async (input) => String(input).includes('/releases/tags/')
+      ? new Response('', { status: 404 })
+      : new Response('', { status: 404 });
+    await assert.rejects(getReleaseByTag({ ...base, fetcher }), /release list lookup.*HTTP 404/);
+  });
+  await t.test('pagination links cannot redirect the token to another host', async () => {
+    const fetcher = async (input) => String(input).includes('/releases/tags/')
+      ? new Response('', { status: 404 })
+      : new Response('[]', {
+        status: 200,
+        headers: { 'content-type': 'application/json', link: '<https://evil.example/releases?page=2>; rel="next"' },
+      });
+    await assert.rejects(getReleaseByTag({ ...base, fetcher }), /unexpected URL/);
+  });
+  await t.test('malformed release list responses fail closed', async () => {
+    const fetcher = async (input) => String(input).includes('/releases/tags/')
+      ? new Response('', { status: 404 })
+      : new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } });
+    await assert.rejects(getReleaseByTag({ ...base, fetcher }), /not an array/);
   });
 });
