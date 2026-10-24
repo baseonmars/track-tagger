@@ -55,5 +55,11 @@ test('production configuration is mandatory and Azure CLI is the sole credential
   assert.match(script, /throw "Missing production signing configuration/);
   const excluded = script.match(/ExcludeCredentials = @\(([^\n]+)\)/)[1];
   assert.doesNotMatch(excluded, /AzureCliCredential/);
-  for (const credential of ['EnvironmentCredential', 'WorkloadIdentityCredential', 'ManagedIdentityCredential', 'InteractiveBrowserCredential']) assert.ok(excluded.includes(credential));
+  // This pinned client rejects unknown values, even newer Azure.Identity names.
+  assert.deepEqual([...excluded.matchAll(/'([^']+)'/g)].map((match) => match[1]).sort(), [
+    'EnvironmentCredential', 'WorkloadIdentityCredential', 'ManagedIdentityCredential',
+    'SharedTokenCacheCredential', 'VisualStudioCredential', 'VisualStudioCodeCredential',
+    'AzurePowerShellCredential', 'AzureDeveloperCliCredential', 'InteractiveBrowserCredential',
+  ].sort());
+  assert.match(script, /WriteAllText\(\$metadata, \$metadataContent, \[Text.UTF8Encoding\]::new\(\$false\)\)/);
 });

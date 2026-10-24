@@ -20,15 +20,16 @@ foreach ($package in $packages) {
     Expand-Archive -LiteralPath $archive -DestinationPath (Join-Path $root $name)
 }
 $metadata = Join-Path $root 'metadata.json'
-@{
+$metadataContent = @{
     Endpoint = $env:ARTIFACT_SIGNING_ENDPOINT
     CodeSigningAccountName = $env:ARTIFACT_SIGNING_ACCOUNT
     CertificateProfileName = $env:ARTIFACT_SIGNING_PROFILE
     CorrelationId = "$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
     # azure/login obtains an Azure CLI session through GitHub OIDC. No other
     # credential source may silently substitute a different signing identity.
-    ExcludeCredentials = @('EnvironmentCredential', 'WorkloadIdentityCredential', 'ManagedIdentityCredential', 'SharedTokenCacheCredential', 'VisualStudioCredential', 'VisualStudioCodeCredential', 'AzurePowerShellCredential', 'AzureDeveloperCliCredential', 'InteractiveBrowserCredential', 'BrokerCredential')
-} | ConvertTo-Json | Set-Content -LiteralPath $metadata -Encoding utf8
+    ExcludeCredentials = @('EnvironmentCredential', 'WorkloadIdentityCredential', 'ManagedIdentityCredential', 'SharedTokenCacheCredential', 'VisualStudioCredential', 'VisualStudioCodeCredential', 'AzurePowerShellCredential', 'AzureDeveloperCliCredential', 'InteractiveBrowserCredential')
+} | ConvertTo-Json
+[IO.File]::WriteAllText($metadata, $metadataContent, [Text.UTF8Encoding]::new($false))
 "SIGNTOOL_PATH=$(Join-Path $root 'microsoft.windows.sdk.buildtools/bin/10.0.26100.0/x64/signtool.exe')" >> $env:GITHUB_ENV
 "SIGNING_DLIB_PATH=$(Join-Path $root 'microsoft.artifactsigning.client/bin/x64/Azure.CodeSigning.Dlib.dll')" >> $env:GITHUB_ENV
 "SIGNING_METADATA_PATH=$metadata" >> $env:GITHUB_ENV
