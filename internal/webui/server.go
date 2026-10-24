@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"track-tagger/internal/catalog"
+	"track-tagger/internal/manual"
 )
 
 type Config struct {
@@ -256,6 +257,18 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/style.css" {
 		b, _ := assets.ReadFile("assets/style.css")
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")
+		_, _ = w.Write(b)
+		return
+	}
+	if r.URL.Path == "/help" {
+		b, err := manual.Render(true)
+		if err != nil {
+			http.Error(w, "help unavailable", http.StatusInternalServerError)
+			return
+		}
+		// The manual is a single document with inline CSS and embedded PNGs.
+		w.Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; img-src data:; frame-ancestors 'none'; base-uri 'none'")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		_, _ = w.Write(b)
 		return
 	}

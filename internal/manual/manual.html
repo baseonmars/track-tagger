@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Track Tagger user manual</title>
+<style>
+:root{color-scheme:light;--ink:#293b35;--muted:#637269;--line:#d9ded5;--paper:#fff;--wash:#f5f3ed;--accent:#254e43;--accent-dark:#183b31;--warn:#f5efdc}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.6 "Avenir Next",Avenir,"Segoe UI",sans-serif}
+a{color:var(--accent);text-underline-offset:.14em}a:hover{color:var(--accent-dark)}a:focus-visible,button:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+.skip{position:absolute;left:-999px;top:0;background:#fff;padding:.5rem}.skip:focus{left:.5rem;z-index:10}
+.masthead{background:var(--accent);color:#fff}.masthead-inner{max-width:1100px;margin:auto;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}.brand{font:1.45rem/1.3 Georgia,serif}.masthead nav{display:flex;gap:1.2rem;flex-wrap:wrap}.masthead a{color:#fff}
+main{max-width:1100px;margin:auto;background:var(--paper);padding:clamp(1.25rem,4vw,3rem)}.eyebrow{text-transform:uppercase;letter-spacing:.16em;color:var(--muted);font-size:.7rem;font-weight:700;margin:0}.hero h1{font:normal clamp(2rem,5vw,3.25rem)/1.15 Georgia,serif;margin:.3rem 0}.lede{font-size:1.2rem;max-width:47rem;color:var(--muted)}
+.callout{padding:1rem 1.25rem;border-left:4px solid #839876;background:#e8eee5;margin:1.5rem 0}.callout.warning{border-color:#ac8d49;background:var(--warn)}
+.toc{border:1px solid var(--line);border-radius:3px;background:#f7f7f2;padding:1.1rem 1.4rem;margin:2rem 0}.toc h2{margin:0 0 .5rem;font-size:1.1rem}.toc ol{columns:2;column-gap:2rem;margin:.3rem 0;padding-left:1.3rem}.toc li{break-inside:avoid;margin:.2rem 0}
+section{padding-top:1.2rem;margin-top:2.2rem;border-top:1px solid var(--line)}h2{font-size:1.65rem;line-height:1.25;margin:.3rem 0 1rem}h3{font-size:1.13rem;margin:1.45rem 0 .35rem}p,ul,ol{max-width:75ch}li{margin:.25rem 0}figure{margin:1.3rem 0 1.8rem;padding:1rem;border:1px solid var(--line);border-radius:3px;background:#f7f7f2}figure img{display:block;width:100%;height:auto;max-height:650px;object-fit:contain;border:1px solid var(--line);border-radius:3px;background:#fff}figcaption{color:var(--muted);font-size:.91rem;margin-top:.7rem}.steps{counter-reset:step;list-style:none;padding:0}.steps>li{counter-increment:step;position:relative;padding-left:2.6rem;margin:1rem 0}.steps>li:before{content:counter(step);position:absolute;left:0;top:0;background:var(--accent);color:#fff;font-weight:700;display:grid;place-items:center;width:1.7rem;height:1.7rem;border-radius:50%}
+table{border-collapse:collapse;width:100%;min-width:34rem}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:.6rem .7rem}th{background:#e8eee5}.table-wrap{overflow-x:auto}pre{overflow:auto;background:#f7f7f2;color:var(--ink);border-radius:3px;padding:1rem}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.9em}p code,li code,td code{background:#f1f1e9;padding:.08rem .25rem;border-radius:3px}.end{margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+@media(max-width:650px){.masthead-inner{padding:.8rem 1.1rem}.toc ol{columns:1}main{box-shadow:none}figure{padding:.5rem}table{font-size:.9rem}}
+@media print{body{background:#fff;font-size:10.5pt}main{max-width:none;padding:0;box-shadow:none}.masthead{background:#fff;color:#000;border-bottom:1px solid #aaa}.masthead a{color:#000}.skip,.masthead nav{display:none}.toc{break-after:page}section,figure{break-inside:avoid}figure img{max-height:5in}a{color:#000;text-decoration:none}a[href^="http"]:after{content:" (" attr(href) ")";font-size:8pt}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to manual</a>
+<header class="masthead"><div class="masthead-inner"><span class="brand">Track Tagger · User manual</span><nav aria-label="Main navigation">{{if .Web}}<a href="/">Recordings</a><a href="/history">History &amp; undo</a><a href="/help" aria-current="page">Help</a>{{else}}<a href="#contents">Contents</a>{{end}}</nav></div></header>
+<main id="main">
+<div class="hero"><p class="eyebrow">Offline illustrated guide</p><h1>Review your recordings with confidence</h1><p class="lede">Track Tagger reads concert notes and FLAC files on your computer, proposes metadata, and gives you a chance to check uncertain matches before anything is written.</p></div>
+<div class="callout"><strong>Start in Preview.</strong> It leaves music unchanged while you inspect the proposals and save corrections. Choose Copy when you want tagged duplicates, or Update originals only when you are ready to change the source files.</div>
+<p>Use your browser’s <strong>Find</strong> command (<kbd>Ctrl+F</kbd> on Windows/Linux or <kbd>Cmd+F</kbd> on macOS) to find a topic or error message in this guide. Use <strong>Print</strong> (<kbd>Ctrl+P</kbd> or <kbd>Cmd+P</kbd>) to print or save it as a PDF for later reading.</p>
+<nav class="toc" id="contents" aria-label="Manual contents"><h2>Contents</h2><ol>
+<li><a href="#install">Install and start</a></li><li><a href="#modes">Choose folders and mode</a></li><li><a href="#library">Find a recording</a></li><li><a href="#review">Review metadata and artwork</a></li><li><a href="#mapping">Check track mappings</a></li><li><a href="#apply">Save and apply</a></li><li><a href="#playback">Listen while reviewing</a></li><li><a href="#history">History and undo</a></li><li><a href="#updates">Updates and offline use</a></li><li><a href="#recovery">Recovery and safeguards</a></li><li><a href="#troubleshooting">Troubleshooting</a></li><li><a href="#cli">Command line quick reference</a></li></ol></nav>
+
+<section id="install"><h2>1. Install and start</h2>
+<p>On Windows 10/11 x64, install the x64 release; on Windows 11 ARM64, install the ARM64 release. The per-user installer places the desktop app and <code>track-tagger.exe</code> under <code>%LOCALAPPDATA%\Programs\Track Tagger</code> without an administrator prompt. A matching standalone ZIP contains both executables. Download from this project's <a href="https://github.com/baseonmars/track-tagger/releases">GitHub Releases</a>. If Windows warns about an unsigned installer, check the release and its signature status before continuing.</p>
+<p>Open <strong>Track Tagger</strong> from the Start menu. Each launch starts stopped, even after an upgrade. Choose your folders and mode, then press <strong>Start</strong>; the local browser page opens. The launcher’s <strong>Help</strong> button opens this offline manual even while processing is stopped. The running browser interface also has a Help link. Closing the browser does not stop processing. Closing the desktop window hides it in the notification area. Use the tray menu to <strong>Show</strong>, <strong>Stop</strong>, or <strong>Quit</strong>.</p>
+<figure><img src="{{index .Images "launcher"}}" alt="Track Tagger Windows launcher with music folder, Preview, Copy, Update originals, polling, and Start controls"><figcaption>The desktop launcher saves folder, mode, and polling choices when you start or quit. It still waits for you to press Start on the next launch.</figcaption></figure>
+</section>
+
+<section id="modes"><h2>2. Choose folders and mode</h2>
+<div class="table-wrap"><table><thead><tr><th>Mode</th><th>What it does</th><th>When to use it</th></tr></thead><tbody>
+<tr><td><strong>Preview</strong></td><td>Reads local files and saves review decisions in application storage. Does not change music.</td><td>First inspection and review.</td></tr>
+<tr><td><strong>Copy to another folder</strong></td><td>Copies each recording and its accompanying files to a separate destination, then tags eligible FLAC copies. Sources stay byte-identical.</td><td>Test the result while keeping originals untouched.</td></tr>
+<tr><td><strong>Update originals</strong></td><td>Changes approved metadata in source FLAC files.</td><td>After you have checked the plan and have an independent backup.</td></tr>
+</tbody></table></div>
+<p>Choose a music folder containing one recording or a collection. Copy mode needs a separate destination; source and destination cannot overlap. The app stores reviews, history, and recovery data under <code>%APPDATA%\track-tagger</code>. Keep that directory outside the music trees. On a network share, UNC paths select polling automatically; use <strong>Use polling</strong> for mapped drives that do not report changes reliably. Stop or quit before disconnecting a drive or moving the collection.</p>
+<p>Copy and Update originals automatically process eligible recordings after they have been quiet for two minutes. Recordings with ambiguous evidence wait for review. New or changing files may be shown as waiting until they settle.</p>
+</section>
+
+<section id="library"><h2>3. Find a recording</h2>
+<p>The Recordings page discovers folders first, then validates them one at a time. Progress and cards update as it works. Open a recording to prioritize it after the current validation finishes. A failed recording does not stop the others.</p>
+<p>Filter <strong>All</strong>, <strong>Needs review</strong>, <strong>Ready</strong>, or <strong>Completed</strong>. Sort by newest source modification time or title; optionally keep Needs review first or group by status. These display choices stay in this browser. Open a card to see notes, proposed album details, artwork, and track titles. The page returns here after saving or applying so you can pick the next recording.</p>
+<figure><img src="{{index .Images "library"}}" alt="Recordings library showing Needs review and Ready cards, status filter, sorting, and grouping controls"><figcaption>Use status filters to focus on recordings that need a decision. A waiting recording may still be settling or awaiting local files.</figcaption></figure>
+</section>
+
+<section id="review"><h2>4. Review metadata and artwork</h2>
+<ol class="steps"><li>Read <strong>What needs checking</strong> and the source notes. Look for conflicting dates, performers, numbering, missing titles, or uncertain artwork.</li><li>Confirm artist, album, and concert date. Dates can be a year, year and month, or full date. Use <strong>Date unknown</strong> when the concert date cannot be established; existing date tags are preserved.</li><li>Choose local artwork only when it belongs to this recording. <strong>Keep existing artwork</strong> is the safe choice when you are unsure.</li></ol>
+<p>Track Tagger proposes an album such as <code>YYYY-MM-DD - Venue, City</code> when evidence supports it. It preserves populated tags and artwork unless your reviewed decision explicitly approves replacement. Ambiguous dates are never silently guessed. A recording with a non-FLAC or mixed audio format is playback-only and cannot be tagged.</p>
+<figure><img src="{{index .Images "review"}}" alt="Album information fields for artist, concert date, album, and artwork selection"><figcaption>Compare each proposal with the notes and current metadata before approving replacements.</figcaption></figure>
+</section>
+
+<section id="mapping"><h2>5. Check track mappings</h2>
+<p>In <strong>Track titles</strong>, compare each audio filename with its disc, track number, title, and optional per-track performer. A guest or bonus performer can differ from the album artist. Use the links under <strong>What needs checking</strong> to jump to a questioned row.</p>
+<p>Track Tagger matches conservative file identifiers, such as <code>t01</code>, <code>s1t01</code>, <code>d1t01</code>, and <code>1-01</code>. It does not shift titles into place by list order. Missing files or titles, duplicate numbers, and unclear continuations need your decision. If the notes and files cannot establish a correct match, leave the recording for further review rather than inventing a title.</p>
+<figure><img src="{{index .Images "mapping"}}" alt="Track mapping table with audio files, disc and track numbers, title and performer fields, followed by the review approval checkbox"><figcaption>Check every file-to-title row, especially when the number of files differs from the number of titles in the notes.</figcaption></figure>
+</section>
+
+<section id="apply"><h2>6. Save and apply</h2>
+<ol class="steps"><li>After checking notes, titles, performers, and artwork, select the approval checkbox.</li><li>Press <strong>Save review</strong> to store the decision. In Copy or Update originals mode, press <strong>Save and apply</strong> to write immediately.</li><li>If a previously saved review is unchanged, use <strong>Apply saved review</strong> in a writing mode. Changing any field requires approval again. The watcher can also apply an approved saved review after the quiet interval.</li></ol>
+<p>If an apply fails after saving, the review remains saved. Reopen the recording, resolve the reported problem, then retry Apply saved review. Completed recordings need an approved change before they are processed again. An old browser form, plan, or review is rejected when its inputs have changed; refresh and review current evidence.</p>
+<div class="callout warning"><strong>Before writing:</strong> Keep an independent backup of important recordings. Metadata edits change whole-file checksums even though Track Tagger verifies that the exact FLAC audio payload is unchanged. Existing checksum documents are not rewritten.</div>
+</section>
+
+<section id="playback"><h2>7. Listen while reviewing</h2>
+<p>Press <strong>Play</strong> beside a track. The shared player supports pause, seeking, volume, and previous/next. Audio loads only after you press Play and streams from local files without changing them. FLAC, ordinary PCM WAV, MP3, and Ogg files (<code>.ogg</code>, <code>.oga</code>, <code>.opus</code>) can play when the browser supports their codecs. Any recording containing non-FLAC audio is playback-only.</p>
+<p>Playback is limited to locally available files in the current recording collection. If a file changes after the page loads, refresh the page before trying it again.</p>
+<figure><img src="{{index .Images "playback"}}" alt="Playback-only MP3 recording with an idle shared audio player, previous and next controls, and a Play button beside the track"><figcaption>This playback-only example shows the controls before a track is selected. Tag editing is unavailable for its MP3 file.</figcaption></figure>
+</section>
+
+<section id="history"><h2>8. History and undo</h2>
+<p>Open <strong>History &amp; undo</strong> to see tagging jobs. In Copy or Update originals mode, <strong>Undo metadata changes</strong> restores the metadata recorded before a job; Preview shows the history but cannot make that change. Undo does not remove copied companion files. It refuses to overwrite later external edits or later tagging jobs, and it pauses automatic tagging of that recording until you review it again.</p>
+<p>Keep the application state directory: it contains original metadata, review decisions, job history, copy ownership, and the recovery journal. Uninstalling the Windows app retains <code>%APPDATA%\track-tagger</code> so undo history remains available.</p>
+<figure><img src="{{index .Images "history"}}" alt="History and undo page in Preview mode listing a synthetic completed job; restoration is available only in Copy or Update originals mode"><figcaption>The example job represents an earlier change. Preview can display its history but cannot restore metadata; switch to a writing mode to use Undo.</figcaption></figure>
+</section>
+
+<section id="updates"><h2>9. Updates and offline use</h2>
+<p>The Windows launcher checks GitHub for the latest stable release at startup when <strong>Check automatically at startup</strong> is on. <strong>Check for updates</strong> runs an on-demand check. The check retrieves public release information; it sends no music paths, audio, settings, or review data. Turn off the startup check for fully offline operation.</p>
+<p>When an update is available, read <strong>Release notes</strong>. <strong>Install update</strong> asks for confirmation, downloads the matching installer, verifies it against <code>SHA256SUMS</code>, stops active work safely, and reopens with processing stopped. Press Start when ready. Portable and development builds open the release page for manual installation.</p>
+<figure><img src="{{index .Images "updates"}}" alt="Windows launcher update controls including automatic checks, release notes, and install update"><figcaption>Updating replaces program files while retaining reviews and job history in application storage.</figcaption></figure>
+</section>
+
+<section id="recovery"><h2>10. Recovery and safeguards</h2>
+<p>Track Tagger stages each replacement beside its destination, checks fresh source and destination content, verifies the exact FLAC audio payload, and records journal intent before replacing a file. On an interrupted write, restart with the same folders, mode, and state directory so recovery can run when writing resumes. Recovery is per file: inspect the queue and rerun if an album was only partly completed. Do not delete state files to clear an interrupted job.</p>
+<p>Copy mode rejects overlapping trees, symlinks, unrelated destination collisions, and changed owned outputs. It refuses to replace an existing copy with different audio; select a new destination in that case. The reserved <code>.track-tagger-</code> prefix marks temporary stages. An abandoned stage can be removed while the app is stopped. Different state directories do not coordinate writers, so do not run competing write processes against one music tree.</p>
+<p>Cloud placeholders, zero-length files, and recognized partial downloads wait for availability. Pin cloud recordings locally before processing. Track Tagger verifies audio payload identity without decoding FLAC frames; that check cannot prove that a nonempty download is complete.</p>
+</section>
+
+<section id="troubleshooting"><h2>11. Troubleshooting</h2>
+<div class="table-wrap"><table><thead><tr><th>What you see</th><th>What to do</th></tr></thead><tbody>
+<tr><td>A recording stays waiting.</td><td>Let changes settle for two minutes. Confirm files are fully downloaded and available locally. On a network share, enable polling.</td></tr>
+<tr><td>Needs review or disabled save controls.</td><td>Wait for that recording to finish validation. Read the stated issues, check titles and artwork, then select the approval checkbox.</td></tr>
+<tr><td>A stale form or changed-file error.</td><td>Refresh the recording, compare the new evidence, and save a new approval. External file changes invalidate old decisions.</td></tr>
+<tr><td>Playback fails.</td><td>Confirm the file is locally available, refresh after any file change, and check whether your browser supports its codec.</td></tr>
+<tr><td>Copy or apply is refused.</td><td>Read the specific error. Check folder permissions, destination overlap or collisions, changed audio, and source edits. Saved reviews remain available after a failed apply.</td></tr>
+<tr><td>Processing stopped unexpectedly.</td><td>Open the launcher details, verify folders and permissions, then start again with the same state directory for recovery.</td></tr>
+<tr><td>Cannot find the browser page.</td><td>Press <strong>Open browser</strong> in the launcher, or copy the local URL shown there. The CLI server defaults to <code>http://127.0.0.1:8787</code>.</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="cli"><h2>12. Command line quick reference</h2>
+<p>The desktop installer and ZIP include <code>track-tagger.exe</code>. On other platforms, build the Go command. Preview is the default for every processing command: omit all mode flags or use <code>--dry-run</code> explicitly. To change media, select either <code>--write</code> or <code>--copy DEST</code>; these mode flags are mutually exclusive. Use explicit <code>--write</code> for undo.</p>
+<pre><code>track-tagger scan SOURCE --dry-run
+track-tagger scan SOURCE --json --plan PLAN.json
+track-tagger serve SOURCE
+track-tagger serve SOURCE --copy DEST
+track-tagger watch SOURCE --write --poll
+track-tagger apply PLAN.json --write
+track-tagger undo JOB_ID
+track-tagger undo JOB_ID --write</code></pre>
+<p><code>scan</code> makes a one-time plan, <code>serve</code> opens the local review service, and <code>watch</code> observes new changes. <code>apply</code> reads a saved plan and revalidates it. Save plans outside music trees. A hand-edited JSON plan must explicitly set <code>Reviewed</code> to <code>true</code> and still pass evidence checks. <code>undo JOB_ID</code> previews restoration unless <code>--write</code> is supplied.</p>
+<p>Use <code>--state DIR</code> for application storage outside source and destination trees. <code>--settle</code> defaults to <code>2m</code>; <code>--reconcile</code> defaults to <code>5m</code>. <code>--poll</code> observes network shares every 15 seconds. The server binds to localhost by default.</p>
+<h3>Remote browser access</h3>
+<p>Remote access requires <code>--remote</code>, a listening address, and a <code>TRACK_TAGGER_TOKEN</code> of at least 16 characters. Use any Basic Auth username and the token as the password. Set the token in the environment rather than a command argument. The examples below stay in Preview mode; choose Copy or Update originals only when you intend to write. Put remote access behind HTTPS or an encrypted private tunnel.</p>
+<p>PowerShell:</p>
+<pre><code>$env:TRACK_TAGGER_TOKEN = 'replace-with-a-long-random-secret'
+track-tagger serve SOURCE --remote --addr 0.0.0.0:8787</code></pre>
+<p>POSIX shell:</p>
+<pre><code>export TRACK_TAGGER_TOKEN='replace-with-a-long-random-secret'
+track-tagger serve SOURCE --remote --addr 0.0.0.0:8787</code></pre>
+<p>For deployment examples and platform service setup, see the <a href="https://github.com/baseonmars/track-tagger/tree/main/deploy">deployment guide</a>. For more technical detail, see the <a href="https://github.com/baseonmars/track-tagger#readme">project README</a>.</p>
+</section>
+<p class="end">Track Tagger user manual · This document includes its styling and screenshots and can be saved for offline reading. <a href="#contents">Back to contents ↑</a></p>
+</main></body></html>
