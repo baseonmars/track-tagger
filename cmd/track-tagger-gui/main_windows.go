@@ -1,7 +1,17 @@
 package main
 
-import "track-tagger/internal/launcher"
+import (
+	"os"
+
+	"track-tagger/internal/launcher"
+	"track-tagger/internal/updater"
+)
 
 var version = "dev"
 
-func main() { launcher.Run(version) }
+func main() {
+	if handled, _ := updater.RunHelper(os.Args[1:]); handled {
+		return
+	}
+	launcher.Run(version)
+}

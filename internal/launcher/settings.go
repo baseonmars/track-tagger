@@ -12,12 +12,13 @@ import (
 
 // Settings contains preferences only. A saved preference never starts a service.
 type Settings struct {
-	Source         string   `json:"source"`
-	Destination    string   `json:"destination"`
-	Mode           app.Mode `json:"mode"`
-	Poll           bool     `json:"poll"`
-	PollOverride   bool     `json:"pollOverride"`
-	CloseExplained bool     `json:"closeExplained"`
+	Source           string   `json:"source"`
+	Destination      string   `json:"destination"`
+	Mode             app.Mode `json:"mode"`
+	Poll             bool     `json:"poll"`
+	PollOverride     bool     `json:"pollOverride"`
+	CloseExplained   bool     `json:"closeExplained"`
+	AutoCheckUpdates bool     `json:"autoCheckUpdates"`
 }
 
 func ConfigDir() (string, error) {
@@ -25,7 +26,7 @@ func ConfigDir() (string, error) {
 	return filepath.Join(d, "track-tagger"), e
 }
 func Load(dir string) (Settings, error) {
-	s := Settings{Mode: app.DryRun}
+	s := Settings{Mode: app.DryRun, AutoCheckUpdates: true}
 	b, e := os.ReadFile(filepath.Join(dir, "launcher.json"))
 	if os.IsNotExist(e) {
 		return s, nil
@@ -34,7 +35,7 @@ func Load(dir string) (Settings, error) {
 		return s, e
 	}
 	if e = json.Unmarshal(b, &s); e != nil {
-		return Settings{Mode: app.DryRun}, fmt.Errorf("read launcher settings: %w", e)
+		return Settings{Mode: app.DryRun, AutoCheckUpdates: true}, fmt.Errorf("read launcher settings: %w", e)
 	}
 	if s.Mode != app.DryRun && s.Mode != app.Copy && s.Mode != app.Write {
 		s.Mode = app.DryRun

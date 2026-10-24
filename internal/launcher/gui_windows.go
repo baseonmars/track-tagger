@@ -114,6 +114,7 @@ var scrollPosition, scrollMaximum int
 var trayOK bool
 var details bool
 var appVersion = "dev"
+var updates *updateController
 
 func diagnosticDetails() string {
 	mode := app.DryRun
@@ -123,7 +124,11 @@ func diagnosticDetails() string {
 	if checked(6) {
 		mode = app.Write
 	}
-	return fmt.Sprintf("Track Tagger %s (windows/%s)\r\nStatus: %s\r\nMode: %s\r\nMusic folder: %s\r\nCopy destination: %s\r\nPolling: %v\r\nURL / details: %s\r\n\r\nRecent activity:\r\n%s", appVersion, runtime.GOARCH, status, mode, get(1), get(2), checked(7), get(21), get(22))
+	updateStatus := "Not checked"
+	if updates != nil {
+		updateStatus = updates.message
+	}
+	return fmt.Sprintf("Track Tagger %s (windows/%s)\r\nStatus: %s\r\nMode: %s\r\nMusic folder: %s\r\nCopy destination: %s\r\nPolling: %v\r\nURL / details: %s\r\nUpdate status: %s\r\n\r\nRecent activity:\r\n%s", appVersion, runtime.GOARCH, status, mode, get(1), get(2), checked(7), get(21), updateStatus, get(22))
 }
 
 func toggleDetails() {
@@ -142,9 +147,9 @@ func toggleDetails() {
 	set(15, title)
 	var bounds rect
 	call(user, "GetWindowRect", win, unsafe.Pointer(&bounds))
-	height := int(570 * scale)
+	height := int(650 * scale)
 	if details {
-		height = int(700 * scale)
+		height = int(780 * scale)
 	}
 	available := int(call(user, "GetSystemMetrics", 1)) - 60
 	if height > available {
@@ -160,9 +165,9 @@ func toggleDetails() {
 	call(user, "SetWindowPos", win, 0, int(bounds.left), y, int(bounds.right-bounds.left), height, 0x14)
 	var client rect
 	call(user, "GetClientRect", win, unsafe.Pointer(&client))
-	content := 525
+	content := 605
 	if details {
-		content = 650
+		content = 730
 	}
 	scrollMaximum = int(float64(content)*scale) - int(client.bottom)
 	if scrollMaximum < 0 {
@@ -209,7 +214,7 @@ func check(id int, b bool) {
 func box(s string) { call(user, "MessageBoxW", win, ptr(s), ptr("Track Tagger"), 0x40) }
 func refresh() {
 	set(20, status)
-	active := session != nil || busy
+	active := session != nil || busy || updates != nil && updates.installing
 	for _, id := range []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10} {
 		v := uintptr(1)
 		if active {
@@ -225,7 +230,7 @@ func refresh() {
 		call(user, "EnableWindow", controls[id], v)
 	}
 	v := uintptr(0)
-	if active && (!busy || session == nil) {
+	if (session != nil || busy) && (!busy || session == nil) {
 		v = 1
 	}
 	call(user, "EnableWindow", controls[11], v)
@@ -234,6 +239,7 @@ func refresh() {
 		v = 1
 	}
 	call(user, "EnableWindow", controls[12], v)
+	refreshUpdates()
 }
 func logline(s string) {
 	post(func() {
@@ -267,9 +273,10 @@ func readSettings() {
 		config.Mode = app.Write
 	}
 	config.Poll = checked(7)
+	config.AutoCheckUpdates = checked(42)
 }
 func start() {
-	if busy || session != nil {
+	if busy || session != nil || updates != nil && updates.installing {
 		return
 	}
 	readSettings()
@@ -340,6 +347,10 @@ func start() {
 	}()
 }
 func stop(quit bool) {
+	if quit && updates != nil && updates.busy {
+		updates.CancelThen(func() { stop(true) })
+		return
+	}
 	if quit {
 		quitting = true
 		if session == nil && !busy {
@@ -502,6 +513,19 @@ func proc(h uintptr, m uint32, w, l uintptr) uintptr {
 			stop(true)
 		case 15:
 			toggleDetails()
+		case 41:
+			if updates != nil {
+				updates.Check()
+			}
+		case 42:
+			config.AutoCheckUpdates = checked(42)
+			if e := Save(directory, config); e != nil {
+				set(43, "Could not save update preference: "+e.Error())
+			}
+		case 44:
+			openReleaseNotes()
+		case 45:
+			confirmInstallUpdate()
 		case 13:
 			if call(user, "OpenClipboard", h) != 0 {
 				call(user, "EmptyClipboard")
@@ -544,7 +568,7 @@ func Run(version string) {
 	var e error
 	config, e = Load(directory)
 	if e != nil {
-		config = Settings{Mode: app.DryRun}
+		config = Settings{Mode: app.DryRun, AutoCheckUpdates: true}
 	}
 	sid := "user"
 	if token, err := windows.OpenCurrentProcessToken(); err == nil {
@@ -591,7 +615,7 @@ func Run(version string) {
 	scale = float64(call(gdi, "GetDeviceCaps", dc, 88)) / 96
 	call(user, "ReleaseDC", 0, dc)
 	px := func(n int) uintptr { return uintptr(float64(n) * scale) }
-	height := px(570)
+	height := px(650)
 	screen := call(user, "GetSystemMetrics", 1)
 	if height > screen-60 {
 		height = screen - 60
@@ -604,10 +628,20 @@ func Run(version string) {
 	font := call(gdi, "CreateFontW", uintptr(int32(-int32(16*scale))), 0, 0, 0, 400, 0, 0, 0, 1, 0, 0, 0, 0, ptr("Segoe UI"))
 	defer call(gdi, "DeleteObject", font)
 	add := func(id int, kind, text string, style uintptr, x, y, width, height int) {
+		if id < 40 {
+			y += 80
+		}
 		h := call(user, "CreateWindowExW", 0, ptr(kind), ptr(text), 0x50000000|style, px(x), px(y), px(width), px(height), win, uintptr(id), instance, 0)
 		controls[id] = h
 		call(user, "SendMessageW", h, 0x30, font, 1)
 	}
+	add(40, "STATIC", "Version "+appVersion, 0, 20, 15, 165, 25)
+	add(41, "BUTTON", "Check for updates", 0x10000, 190, 10, 165, 30)
+	add(42, "BUTTON", "Check automatically at startup", 0x10003, 370, 12, 350, 27)
+	check(42, config.AutoCheckUpdates)
+	add(43, "STATIC", "Updates are installed only when you choose Install update.", 0, 20, 48, 430, 38)
+	add(44, "BUTTON", "Release notes", 0x10000, 460, 48, 125, 30)
+	add(45, "BUTTON", "Install update", 0x10000, 595, 48, 125, 30)
 	add(30, "STATIC", "Music folder", 0, 20, 15, 650, 22)
 	add(1, "EDIT", config.Source, 0x810080, 20, 40, 590, 27)
 	add(3, "BUTTON", "Browse…", 0x10000, 620, 40, 100, 28)
@@ -649,16 +683,20 @@ func Run(version string) {
 	call(user, "ShowWindow", controls[13], 0)
 	var client rect
 	call(user, "GetClientRect", win, unsafe.Pointer(&client))
-	scrollMaximum = int(px(525)) - int(client.bottom)
+	scrollMaximum = int(px(605)) - int(client.bottom)
 	if scrollMaximum < 0 {
 		scrollMaximum = 0
 	}
 	call(user, "SetScrollRange", win, 1, 0, scrollMaximum, 1)
 	taskbar = uint32(call(user, "RegisterWindowMessageW", ptr("TaskbarCreated")))
 	addTray()
+	initializeUpdates()
 	refresh()
 	call(user, "ShowWindow", win, 1)
 	call(user, "UpdateWindow", win)
+	if config.AutoCheckUpdates {
+		updates.Check()
+	}
 	if e != nil {
 		box(fmt.Sprint("Settings could not be loaded; Preview selected. ", e))
 	}
