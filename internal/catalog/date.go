@@ -74,22 +74,27 @@ func (c noteDateCandidates) resolve(r *Recording, dates, filenames map[string]bo
 			dates[candidate.options[0]] = true
 		default:
 			match := ""
-			if len(filenames) == 1 {
-				for _, date := range candidate.options {
-					if filenames[date] {
-						match = date
-					}
+			matches := 0
+			for _, date := range candidate.options {
+				if filenames[date] {
+					match = date
+					matches++
 				}
 			}
-			if match != "" {
+			if matches == 1 {
 				dates[match] = true
+				if len(filenames) > 1 {
+					reason(r, "conflicting filename evidence for concert date")
+				}
 				continue
 			}
+			// Keep the month-first interpretation as a reviewable suggestion.
+			// Filename evidence alone cannot settle a tie or supply a date.
+			dates[candidate.options[0]] = true
 			reason(r, "ambiguous numeric concert date: "+candidate.text)
 			if len(filenames) > 0 {
 				reason(r, "conflicting filename evidence for concert date")
 			}
-			resolved = false
 		}
 	}
 	return resolved

@@ -475,54 +475,71 @@ func fileNumber(path string) (int, int) {
 	return d, 0
 }
 
-// Recognize complete artist/date/city @ venue or artist/venue/city/date
-// headers. A lone first line could instead be a recording or transfer label.
+// Recognize complete artist/date/city @ venue, artist/venue/city/date, or
+// artist/event/venue/city/date headers. A lone first line could instead be a
+// recording or transfer label.
 func parseUnlabelledHeader(r *Recording, source []noteLine, artists map[string]bool) {
-	var lines []string
+	var lines []noteLine
 	for _, item := range source {
-		raw := item.text
-		line := strings.TrimSpace(strings.TrimPrefix(raw, "\ufeff"))
-		if line != "" {
-			lines = append(lines, line)
-			if len(lines) == 4 {
+		if item.text != "" {
+			lines = append(lines, item)
+			if len(lines) == 5 {
 				break
 			}
 		}
 	}
-	if len(lines) < 3 || technical(strings.ToLower(lines[0])) || strings.ContainsAny(lines[0], ":@>") || noteT.MatchString(lines[0]) || noteSpaceT.MatchString(lines[0]) || noteDT.MatchString(lines[0]) || notesSection.MatchString(lines[0]) {
+	if len(lines) < 3 || !plainHeaderLine(lines[0]) {
 		return
+	}
+	if len(lines) == 5 && headerDate(lines[4]) && plainHeaderLine(lines[1]) && plainHeaderLine(lines[2]) && plainHeaderLine(lines[3]) && strings.Contains(lines[3].text, ",") {
+		event := strings.TrimSpace(strings.TrimSuffix(lines[1].text, ","))
+		venue := strings.TrimSpace(strings.TrimSuffix(lines[2].text, ","))
+		if event != "" && venue != "" {
+			artists[lines[0].text] = true
+			setLocation(r, "venue", &r.Venue, event+", "+venue)
+			setLocation(r, "city", &r.City, lines[3].text)
+			return
+		}
 	}
 	// A second common taper header has separate artist, venue, city and
 	// date lines. An ambiguous numeric date still identifies the structure;
 	// parseDates keeps that ambiguity for review without discarding the artist.
-	if len(lines) == 4 && (isoDate.FindString(lines[3]) == lines[3] || numericDate.FindString(lines[3]) == lines[3] || namedDate.FindString(lines[3]) == lines[3]) && strings.Contains(lines[2], ",") {
-		venue := strings.TrimSpace(strings.TrimSuffix(lines[1], ","))
-		city := lines[2]
-		if venue != "" && !strings.ContainsAny(venue+city, ":@>") && !technical(strings.ToLower(venue)) && !noteT.MatchString(venue) && !noteSpaceT.MatchString(venue) {
-			artists[lines[0]] = true
+	if len(lines) >= 4 && headerDate(lines[3]) && plainHeaderLine(lines[1]) && plainHeaderLine(lines[2]) && strings.Contains(lines[2].text, ",") {
+		venue := strings.TrimSpace(strings.TrimSuffix(lines[1].text, ","))
+		city := lines[2].text
+		if venue != "" {
+			artists[lines[0].text] = true
 			setLocation(r, "venue", &r.Venue, venue)
 			setLocation(r, "city", &r.City, city)
 			return
 		}
 	}
-	date := weekdayPrefix.ReplaceAllString(lines[1], "")
+	date := weekdayPrefix.ReplaceAllString(lines[1].text, "")
 	if isoDate.FindString(date) != date && numericDate.FindString(date) != date && namedDate.FindString(date) != date {
 		return
 	}
 	parsed := map[string]bool{}
 	probe := Recording{}
 	parseDates(&probe, date, parsed)
-	if len(parsed) != 1 || len(probe.ReviewReasons) != 0 || strings.Count(lines[2], " @ ") != 1 {
+	if len(parsed) != 1 || len(probe.ReviewReasons) != 0 || strings.Count(lines[2].text, " @ ") != 1 || lines[2].kind != noteText {
 		return
 	}
-	location := strings.SplitN(lines[2], " @ ", 2)
+	location := strings.SplitN(lines[2].text, " @ ", 2)
 	city, venue := strings.TrimSpace(location[0]), strings.TrimSpace(location[1])
 	if city == "" || venue == "" || strings.ContainsAny(city+venue, ":>") {
 		return
 	}
-	artists[lines[0]] = true
+	artists[lines[0].text] = true
 	setLocation(r, "city", &r.City, city)
 	setLocation(r, "venue", &r.Venue, venue)
+}
+
+func plainHeaderLine(line noteLine) bool {
+	return line.kind == noteText && line.text != "" && !strings.ContainsAny(line.text, ":@>") && !technical(strings.ToLower(line.text)) && !standaloneNoteDate(line.text)
+}
+
+func headerDate(line noteLine) bool {
+	return isoDate.FindString(line.text) == line.text || numericDate.FindString(line.text) == line.text || namedDate.FindString(line.text) == line.text
 }
 
 func setLocation(r *Recording, field string, target *string, value string) {

@@ -122,8 +122,8 @@ func parseNotes(r *Recording, s string, titles map[string]string, dates, artists
 }
 
 func parseNotesCandidates(r *Recording, s string, titles map[string]string, dates *noteDateCandidates, artists map[string]bool) int {
-	// Preserve line boundaries and indentation; header inference only looks at
-	// the first four nonempty lines of this same classified representation.
+	// Preserve line boundaries and indentation; header inference looks at
+	// the first five nonempty lines of this same classified representation.
 	lines := make([]noteLine, 0, strings.Count(s, "\n")+1)
 	for number, raw := range strings.Split(s, "\n") {
 		lines = append(lines, classifyNoteLine(raw, number+1))

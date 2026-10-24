@@ -338,6 +338,78 @@ func TestUnlabelledHeaderRequiresStructureAndPreservesConflicts(t *testing.T) {
 	}
 }
 
+func TestFiveLineEventVenueHeaderKeepsPartialSetUnresolved(t *testing.T) {
+	s := "Jimi Hendrix\nIsle of Wight Festival\nEast Afton Farm,\nIsle Of Wight, England\n08/30/1970\n\nSource: microphone > reel\nPurple Haze\nHey Joe\n[MISSING] Foxy Lady\n\nPersonnel: Jimi Hendrix - guitar\nTransfer: reel > wav\n"
+	r := only(t, fixture(t, "hendrix", 3, s))
+	if r.Artist != "Jimi Hendrix" || r.Date != "1970-08-30" || r.Venue != "Isle of Wight Festival, East Afton Farm" || r.City != "Isle Of Wight, England" || r.Album != "1970-08-30 - Isle of Wight Festival, East Afton Farm, Isle Of Wight, England" {
+		t.Fatalf("five-line header: %+v", r)
+	}
+	if r.Status != "needs-review" || !hasReason(r, "title") {
+		t.Fatalf("partial set needs review: %+v", r)
+	}
+	for _, tr := range r.Tracks {
+		if tr.Title != "" {
+			t.Fatalf("invented title from unnumbered set: %+v", tr)
+		}
+	}
+}
+
+func TestDayFirstNamedDateInStructuredHeaders(t *testing.T) {
+	for _, tc := range []struct {
+		name, notes, venue string
+	}{
+		{"four lines", "Jimi Hendrix\nEast Afton Farm,\nIsle Of Wight, England\n30 August 1970\n", "East Afton Farm"},
+		{"five lines", "Jimi Hendrix\nIsle of Wight Festival\nEast Afton Farm,\nIsle Of Wight, England\n30 August 1970\n", "Isle of Wight Festival, East Afton Farm"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			r := only(t, fixture(t, "show", 1, tc.notes+"01. Song\n"))
+			if r.Artist != "Jimi Hendrix" || r.Date != "1970-08-30" || r.Venue != tc.venue || r.City != "Isle Of Wight, England" {
+				t.Fatalf("day-first header: %+v", r)
+			}
+		})
+	}
+}
+
+func TestFiveLineHeaderRejectsNonHeaderComponents(t *testing.T) {
+	base := []string{"Jimi Hendrix", "Isle of Wight Festival", "East Afton Farm,", "Isle Of Wight, England", "08/30/1970"}
+	for _, tc := range []struct {
+		name, replacement string
+		index             int
+	}{
+		{"technical event", "Source: microphone", 1},
+		{"numbered event", "01. Purple Haze", 1},
+		{"section event", "Set I", 1},
+		{"labelled event", "Venue: East Afton Farm", 1},
+		{"technical venue", "Transfer: reel to DAT", 2},
+		{"numbered venue", "02 Hey Joe", 2},
+		{"section venue", "Disc 1", 2},
+		{"labelled venue", "Venue: East Afton Farm", 2},
+		{"technical city", "Lineage: cassette > DAT", 3},
+		{"numbered city", "03. Foxy Lady", 3},
+		{"section city", "Set II", 3},
+		{"labelled city", "City: Isle Of Wight, England", 3},
+		{"city without separator", "Isle Of Wight England", 3},
+		{"malformed date", "August 1970", 4},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			lines := append([]string(nil), base...)
+			lines[tc.index] = tc.replacement
+			r := only(t, fixture(t, "show", 1, strings.Join(lines, "\n")+"\n01. Song\n"))
+			if r.Artist != "" || r.Venue == "Isle of Wight Festival, East Afton Farm" || !hasReason(r, "artist is missing") {
+				t.Fatalf("accepted malformed five-line header: %+v", r)
+			}
+		})
+	}
+}
+
+func TestFiveLineHeaderPreservesLabelledConflicts(t *testing.T) {
+	s := "Jimi Hendrix\nIsle of Wight Festival\nEast Afton Farm,\nIsle Of Wight, England\n08/30/1970\nArtist: Other Band\nVenue: Other Hall\n01. Song\n"
+	r := only(t, fixture(t, "show", 1, s))
+	if !hasReason(r, "conflicting artist") || !hasReason(r, "conflicting venue") {
+		t.Fatalf("lost labelled conflicts: %+v", r)
+	}
+}
+
 func TestMilesStyleWhitespaceNotesKeepDuplicateUnresolved(t *testing.T) {
 	// Minimal shape of the reported taper notes, including the duplicated 02.
 	s := "Example Jazz Ensemble\r\nOutdoor Hall,\r\nVienna, VA\r\n09/05/1989\r\n\r\nLate show\r\nSource: microphone > DAT\r\nTransfer: DAT > wav\r\n\r\n01   crowd\r\n02   First Tune\r\n02   Second Tune (annotation)\r\n03   Third Tune\r\n04   Fourth / Fifth\r\n05   Sixth\r\n06   Seventh\r\n07   Eighth\r\n08   Ninth\r\n09   Last Tune//\r\n[MISSING] Another Tune\r\n\r\nMusician - trumpet\r\nshntool output:\r\n  0:38.053 7306284 B cxx -- ---xx flac 0.4895 band1989-09-05t01.flac\r\n  10:32.027 121349164 B cxx -- ---xx flac 0.4905 band1989-09-05t03.flac\r\n  84:40.853 975524236 B 0.5375 (9 files)\r\n"
@@ -349,8 +421,8 @@ func TestMilesStyleWhitespaceNotesKeepDuplicateUnresolved(t *testing.T) {
 	if r.Artist != "Example Jazz Ensemble" || r.Venue != "Outdoor Hall" || r.City != "Vienna, VA" {
 		t.Fatalf("header lost: %+v", r)
 	}
-	if r.Date != "" || r.Status != "needs-review" {
-		t.Fatalf("ambiguous date silently accepted: %+v", r)
+	if r.Date != "1989-09-05" || r.Status != "needs-review" || !strings.HasPrefix(r.Album, "1989-09-05") {
+		t.Fatalf("ambiguous date suggestion lost review: %+v", r)
 	}
 	for _, want := range []string{"ambiguous numeric concert date", "duplicate numbering in notes: 1:2", "track count mismatch: 10 listed titles, 9 audio files"} {
 		if !hasReason(r, want) {
