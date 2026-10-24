@@ -2,7 +2,6 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { readFileSync } = require('node:fs');
 const { runInNewContext } = require('node:vm');
-require('./status.test.cjs');
 const code = readFileSync(require('node:path').join(__dirname, '../assets/player.js'), 'utf8');
 function setup() {
   const element = () => ({

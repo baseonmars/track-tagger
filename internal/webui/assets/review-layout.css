@@ -1,0 +1,120 @@
+.compact-review .review-workspace{display:grid;grid-template-columns:320px minmax(0,1fr);gap:12px;align-items:start}
+.compact-review .review-sidebar,.compact-review .review-content{min-width:0}
+.compact-review .review-workspace section{margin:0;padding:12px}
+.compact-review .review-tabs{display:flex;gap:4px;margin-bottom:6px}
+.compact-review .review-tabs button{flex:1;padding:7px}
+.compact-review .review-tabs [aria-selected=false]{background:#e8eee5;color:var(--green)}
+.compact-review [role=tabpanel][hidden]{display:none}
+.compact-review .album-fields{display:block}
+.compact-review .album-fields label{display:block}
+.compact-review .album-fields input,.compact-review .artwork select{min-height:30px;padding:4px 6px;margin:3px 0 8px}
+.compact-review .date-unknown{display:flex!important}
+.compact-review .review-sidebar h2{font-size:1rem}
+.compact-review .review-sidebar .step{display:none}
+.compact-review .review-sidebar p{font-size:12px;margin:4px 0 8px}
+.compact-review .review-sidebar pre{font-size:12px;padding:8px}
+.compact-review .review-content .attention{margin-bottom:8px;padding:8px 12px}
+.compact-review .review-content .attention h2{display:none}
+.compact-review #track-list{padding:8px 10px}
+.compact-review #track-list h2{font-size:1rem;margin:0 0 4px}
+.compact-review #track-list h2 .step{display:none}
+.compact-review #track-list>p{font-size:12px;margin:0 0 6px}
+.compact-review .mapping{table-layout:fixed;font-size:13px}
+.compact-review .mapping th,.compact-review .mapping td{height:32px;padding:2px 4px;vertical-align:middle}
+.compact-review .mapping th{position:sticky;top:0;background:#f5f7f1;z-index:1}
+.compact-review .mapping th:nth-child(1){width:54px}
+.compact-review .mapping th:nth-child(2){width:22%}
+.compact-review .mapping th:nth-child(3),.compact-review .mapping th:nth-child(4){width:52px}
+.compact-review .mapping th:nth-child(6){width:23%}
+.compact-review .mapping td:last-child{min-width:0;width:auto}
+.compact-review .mapping .filename{min-width:0;max-width:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.compact-review .mapping input:not([type=checkbox]){min-height:27px;height:27px;padding:2px 5px;margin:0;font-size:13px;min-width:0;max-width:none}
+.compact-review .mapping .play-track{padding:3px 6px;font-size:12px}
+.compact-review .track-artist{display:block;font-size:0;line-height:0}
+.compact-review .track-artist input{font-size:13px;line-height:normal}
+.compact-review .listening{margin-top:8px!important;padding:8px 12px!important;display:grid;grid-template-columns:minmax(130px,1fr) minmax(180px,2fr) auto;gap:4px 10px;align-items:center}
+.compact-review .listening h2{display:none}
+.compact-review .listening #player-title{margin:0;font-size:12px}
+.compact-review .listening audio{margin:0;height:32px}
+.compact-review .player-navigation{gap:4px}
+.compact-review .player-navigation button{padding:5px;font-size:11px}
+.compact-review #player-error{grid-column:1/-1;margin:0;font-size:12px}
+.compact-review .review-approval{margin:10px 0;padding:10px 14px;display:grid;grid-template-columns:1fr auto;gap:5px 14px}
+.compact-review .review-approval h2,.compact-review .review-approval>p:first-of-type{display:none}
+.compact-review .acknowledge{font-size:12px;line-height:1.5;max-width:none}
+.compact-review .review-actions{align-self:center;grid-column:2;grid-row:1/3}
+.compact-review .review-actions button{padding:8px 12px}
+.compact-review #review-help{font-size:12px;line-height:1.4;margin:0;max-width:none}
+.compact-review .listening-tracks{margin:0}
+.compact-review .listening-tracks li{padding:3px 4px;min-height:32px;font-size:13px}
+.compact-review .listening-tracks li>div{display:flex;gap:12px;align-items:center}
+.compact-review .listening-tracks .play-track{padding:3px 8px}
+.compact-review .technical{margin-top:10px;padding:8px 12px}
+.compact-review .next{font-size:12px;margin:12px 0;padding:8px 12px}
+.compact-review .next h2{font-size:14px}
+
+
+@media(max-width:1099px){.compact-review .review-workspace{grid-template-columns:1fr}
+.compact-review .review-sidebar{max-width:none}
+.compact-review .album-fields{display:grid;grid-template-columns:1fr 1fr}
+.compact-review .review-sidebar [role=tabpanel]{max-height:none}
+.compact-review .review-approval{display:block}
+.compact-review .review-actions{margin:8px 0}
+.compact-review .listening{display:block}
+.compact-review .listening audio{margin:6px 0}
+.compact-review .table-scroll{height:auto;max-height:none}
+.compact-review .mapping{min-width:700px}
+}
+
+@media(max-width:600px){.compact-review .album-fields{display:block}
+.compact-review .review-workspace{display:block}
+.compact-review .review-content{margin-top:12px}
+}
+
+.compact-review .playback-table{font-size:13px}
+.compact-review .playback-table td,.compact-review .playback-table th{height:32px;padding:2px 6px}
+.compact-review .playback-table .play-track{padding:3px 8px}
+.compact-review .playback-table th{position:sticky;top:0;background:#f5f7f1}
+.compact-review .playback-table th:first-child{width:65px}
+
+.compact-review .mapping .performer-prompt{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}
+.compact-review .mapping .needs-performer input[name=track_title]{border-color:#ac8d49}
+.compact-review .mapping td{position:relative}
+.compact-review .mapping tr{height:32px}
+
+@media(min-width:1100px) and (min-height:700px){
+.compact-review header{height:48px;min-height:48px;padding:5px 24px;gap:24px}
+.compact-review header .brand{font-size:21px}
+.compact-review header .brand span{display:none}
+.compact-review main{margin:10px auto;padding:0 24px}
+.compact-review .preview{padding:5px 10px;margin:0 0 6px;font-size:12px;line-height:20px}
+.compact-review .heading{gap:12px;margin:5px 0 8px;min-height:32px;justify-content:flex-start}
+.compact-review .heading>div{flex:1;min-width:0}
+.compact-review .heading h1{font-size:21px;line-height:1.2;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.compact-review .heading .eyebrow{display:none}
+.compact-review .heading .back{white-space:nowrap;font-size:12px}
+.compact-review .date-search{font-size:11px;max-width:170px;line-height:1.3}
+.compact-review main>.attention{padding:4px 10px;font-size:12px;margin:5px 0}
+.compact-review .review-content .attention{padding:4px 10px;margin-bottom:6px;font-size:12px}
+.compact-review #track-list>p{display:none}
+.compact-review #track-list h2{line-height:20px;margin-bottom:2px}
+.compact-review #track-list{padding:5px 8px}
+.compact-review #track-list .table-scroll{height:max(348px,calc(100dvh - 352px));max-height:none;overflow:auto;scroll-padding-block:4px}
+.compact-review .review-sidebar [role=tabpanel],.compact-review .review-sidebar .notes{max-height:max(384px,calc(100dvh - 316px));overflow:auto}
+.compact-review .listening{margin-top:6px!important;padding:5px 10px!important}
+.compact-review .review-approval{position:sticky;bottom:8px;z-index:3;margin:7px 0;padding:7px 12px;gap:3px 12px;background:#fff;box-shadow:0 -4px 12px #293b3514}
+.compact-review #review-form{padding-bottom:8px}
+.compact-review .review-workspace{scroll-margin-bottom:90px}
+.compact-review .review-approval .acknowledge{line-height:1.35}
+.compact-review #review-help{line-height:1.3}
+.compact-review .review-actions button{padding:6px 10px}
+.compact-review .next,.compact-review .technical{margin-top:8px}
+
+}
+
+@media(min-width:1100px) and (min-height:700px){
+.compact-review #review-form input,.compact-review #review-form select{scroll-margin-block:80px}
+.compact-review .mapping tr{scroll-margin-bottom:80px}
+}
+.compact-review .review-workspace.without-sidebar{grid-template-columns:minmax(0,1fr)}
+.compact-review #track-list>.playback-explanation{display:block;font-size:12px;margin:0 0 6px}

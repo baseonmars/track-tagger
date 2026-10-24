@@ -4,3 +4,35 @@
 
 .review-actions{display:flex;gap:.75rem;flex-wrap:wrap}button:disabled{opacity:.45;cursor:not-allowed}#review-help{max-width:65ch}
 .library-controls{display:flex;align-items:center;gap:.5rem 1rem;flex-wrap:wrap;padding:1rem 1.2rem;background:#fff;border:1px solid var(--line);border-radius:3px}.library-controls select{width:auto;max-width:100%;margin:0}.library-controls .library-check{display:inline-flex;align-items:center;gap:.4rem}.library-controls .library-check[hidden]{display:none}.library-check input{margin:0}.library-check:has(input:disabled){opacity:.55}.library-group-heading{margin:1.8rem 0 .4rem;padding-bottom:.4rem;border-bottom:1px solid var(--line)}.library-group-heading+.recording-card{margin-top:.6rem}@media(max-width:700px){.library-controls{align-items:stretch}.library-controls select{width:100%}.library-controls>label:not(.library-check){width:100%}.library-check{width:100%}}
+
+html[data-layout=compact] main{max-width:none;margin:1rem auto;padding:0 24px}
+html[data-layout=compact] header{padding:.6rem 24px;gap:2rem}
+html[data-layout=compact] .preview{margin-bottom:.7rem;padding:.5rem .8rem}
+html[data-layout=compact] .eyebrow{margin:.6rem 0 .2rem}
+html[data-layout=compact] h1{font-size:1.8rem;margin:.2rem 0 .45rem}
+html[data-layout=compact] .intro{margin-bottom:.65rem}
+html[data-layout=compact] .library-controls{padding:.45rem .7rem;gap:.35rem .7rem;font-size:.8rem}
+html[data-layout=compact] .library-controls input:not([type=checkbox]),html[data-layout=compact] .library-controls select{min-height:30px;padding:.2rem .4rem;margin:0}
+html[data-layout=compact] .library-controls>label:first-child{display:flex;align-items:center;gap:.5rem}
+html[data-layout=compact] .library-controls button{padding:.3rem .5rem}
+.library-table{table-layout:fixed;background:white;margin-top:.65rem;font-size:13px}
+.library-table th,.library-table td{height:32px;padding:4px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;line-height:23px}
+.library-table th:nth-child(1){width:125px}.library-table th:nth-child(2){width:14%}.library-table th:nth-child(3){width:25%}.library-table th:nth-child(4){width:95px}.library-table th:nth-child(5){width:65px}.library-table th:nth-child(6){width:165px}
+.library-table .column-sort{padding:0;background:transparent;color:var(--green);font-size:12px;text-align:left;width:100%}
+.library-table tbody tr:hover{background:#edf2e9}.library-table .library-group{background:#e8eee5}
+.library-pagination{display:flex;align-items:center;justify-content:flex-end;gap:1rem;margin:.7rem 0;font-size:.8rem}.library-pagination button{padding:.35rem .7rem}
+html[data-layout=compact] footer{max-width:none;margin:1rem 24px;padding:.7rem 0}
+@media(max-width:800px){html[data-layout=compact] main{padding:0 12px}.library{overflow-x:auto}.library-table{min-width:850px}html[data-layout=compact] header{flex-wrap:wrap;gap:.6rem}.library-pagination{justify-content:center}.library-controls>label:first-child{width:100%}}
+
+.library-table td:has(details[open]){white-space:normal;overflow:visible}.library-table .row-details summary{font-size:12px}.library-table .row-details p{white-space:normal;overflow-wrap:anywhere;line-height:1.4;margin:.3rem 0}
+
+html[data-layout=compact] main:has(#recording-library){margin:8px auto}
+@media(min-width:1100px){html[data-layout=compact] body:has(#recording-library)>header{height:48px;padding:4px 24px}}
+html[data-layout=compact] main:has(#recording-library)>.eyebrow{display:none}
+html[data-layout=compact] main:has(#recording-library)>.intro{margin:0 0 6px;font-size:13px}
+@media(min-width:1100px) and (min-height:700px){html[data-layout=compact] #recording-library{height:calc(100vh - 267px);min-height:480px;overflow:auto}.library-table{margin-top:0}.library-table thead{position:sticky;top:0;background:#f5f7f1;z-index:1}html[data-layout=compact] main:has(#recording-library)>.refresh-note{margin:4px 0;font-size:11px}html[data-layout=compact] body:has(#recording-library)>footer{margin:4px 24px;padding:4px 0}}
+
+.library-table th[aria-sort=ascending] .column-sort::after{content:" \2191";color:#637269}
+.library-table th[aria-sort=descending] .column-sort::after{content:" \2193";color:#637269}
+.library-table tbody tr:nth-child(even){background:#f7f8f3}
+.library-table tbody tr:hover,.library-table tbody tr:focus-within{background:#e8eee5}

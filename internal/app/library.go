@@ -248,7 +248,7 @@ func (e *Engine) validateLibrary(ctx context.Context, generation uint64, hook fu
 	completed := 0
 	for i, d := range ds {
 		items[i] = Item{Recording: catalog.Recording{ID: d.ID, Path: d.Path, RelativePath: d.RelativePath, Status: "loading"}}
-		rows[i] = webui.Recording{ID: d.ID, Path: d.Path, Status: "loading"}
+		rows[i] = webui.Recording{ID: d.ID, Path: d.Path, RelativePath: d.RelativePath, Status: "loading"}
 		if !full && !dirty[d.ID] {
 			items[i], rows[i] = oldItems[i], previous.Recordings[i]
 			finished[i] = true

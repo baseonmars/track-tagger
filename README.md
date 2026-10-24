@@ -68,9 +68,9 @@ FLAC, ordinary PCM WAV, MP3, and Ogg audio (`.ogg`, `.oga`, `.opus`) are availab
 
 The quiet interval defaults to two minutes. Watchers measure time since observed changes, add recursive directory watches, and reconcile every five minutes. Use `--poll` for network shares (15-second observations). Watcher failures fall back to polling and are logged. `--settle 0s` is available for deliberate testing on disposable copies; normal operation should retain the default.
 
-After folder discovery, the web library shows recordings while validating them one at a time in the background. Open a recording to prioritize it after the current recording finishes. Progress and library cards update automatically; an open review keeps its edits and playback and asks you to refresh when newer details are available. Saving and applying become available once that recording is validated, even while others are still loading. A failed recording does not prevent the remaining recordings from loading. Refresh the page to retry a discovery error.
+After folder discovery, the web library shows recordings while validating them one at a time in the background. Open a recording to prioritize it after the current recording finishes. Progress and library entries update automatically; an open review keeps its edits and playback and asks you to refresh when newer details are available. Saving and applying become available once that recording is validated, even while others are still loading. A failed recording does not prevent the remaining recordings from loading. Refresh the page to retry a discovery error.
 
-The Recordings page can show all recordings or only those marked Needs review, Ready, or Completed. Sort by latest source-file modification time or title. In All, you can keep Needs review at the top or group cards by status. These display choices are saved in this browser and apply as the library updates. Recordings without a known modification time sort last. After saving a review or applying tags, the page returns to Recordings so you can choose the next item.
+The default Compact layout shows the Recordings library in 32-pixel rows, with 100 recordings per page. Search, filter by status, and use sortable columns to find a recording. The review page puts Album and Notes tabs in a sidebar beside a dense track table. In **Settings**, choose **Compact** or **Classic**; Classic preserves the card library and full-width review layout. The layout choice is saved only in this browser. Recordings without a known modification time sort last. After saving a review or applying tags, the page returns to Recordings so you can choose the next item.
 
 The watcher and browser share this background work. The first observation reads local files to establish content hashes. Later observations reuse hashes when file identity, size, and modification time match, and read only FLAC headers for tag conflicts. Background validation pauses for review saves and media operations; library pages and progress remain available during that work. Saving or applying refreshes the affected recording. An external edit that preserves those attributes can leave the preview stale; saving reviews and applying changes always validate fresh content in the selected recording, including newly added or removed inputs. CLI scans remain synchronous and strict. The preview cache is in memory and resets when the app restarts.
 
@@ -108,7 +108,7 @@ For Roon, inspect its metadata preferences for the album and prefer file metadat
 ```sh
 go test -race ./...            # unit, integration, and CLI/HTTP end-to-end tests
 go vet ./...
-node --test internal/webui/testdata/player.test.cjs internal/webui/testdata/review.test.cjs  # development only; Node 24
+node --test internal/webui/testdata/*.test.cjs  # development only; Node 24
 go test ./internal/catalog -fuzz FuzzNotes -fuzztime 10s
 go test ./internal/media -fuzz FuzzMetadata -fuzztime 10s
 ```

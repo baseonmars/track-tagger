@@ -33,8 +33,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
-      - name: Test audio player behavior
-        run: node --test internal/webui/testdata/player.test.cjs internal/webui/testdata/review.test.cjs
+      - name: Test web interface behavior
+        run: node --test internal/webui/testdata/*.test.cjs
       - name: Test Windows signing safeguards
         if: runner.os == 'Windows'
         shell: pwsh
