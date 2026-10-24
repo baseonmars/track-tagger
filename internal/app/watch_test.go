@@ -59,7 +59,7 @@ func TestWatchCancellation(t *testing.T) {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	if err = e.Watch(ctx, true, time.Hour, nil); err != nil {
+	if err = e.Watch(ctx, true, time.Hour, func(s string) { t.Errorf("canceled watcher performed work: %s", s) }); err != nil {
 		t.Fatal(err)
 	}
 }

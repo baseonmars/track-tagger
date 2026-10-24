@@ -58,6 +58,9 @@ func (e *watchEntry) ready(now time.Time, settle time.Duration) bool {
 // missed events. Polling is an explicit backend and the fallback after watcher
 // failures. Every recording must be observed unchanged for the settle interval.
 func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, log func(string)) error {
+	if ctx.Err() != nil {
+		return nil
+	}
 	if log == nil {
 		log = func(string) {}
 	}
@@ -121,6 +124,9 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 	tick := time.NewTicker(time.Second)
 	defer tick.Stop()
 	scan := func(now time.Time) {
+		if ctx.Err() != nil {
+			return
+		}
 		// Observation may reuse unchanged evidence; Apply always rehashes before writes.
 		plan, err := e.browse()
 		lastScan = now
@@ -131,6 +137,9 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 		}
 		present := map[string]bool{}
 		for _, item := range plan.Recordings {
+			if ctx.Err() != nil {
+				return
+			}
 			present[item.ID] = true
 			entry := schedule.observe(item, now)
 			if item.Status != "ready" {

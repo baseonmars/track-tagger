@@ -38,4 +38,4 @@ actionlint                    # when changing GitHub Actions workflows
 
 CI runs formatting, race tests, vet, and player tests on Linux, macOS, and Windows. Preserve platform portability. A `v*` tag publishes release archives/checksums and GHCR images; do not create release tags or publish without authorization.
 
-Use Conventional Commit messages and PR titles (`type(optional-scope): imperative lower-case description`). Deliver through a feature branch and pull request; never push directly to `main` or `production`. Commit or push only when explicitly authorized by the user.
+Use Conventional Commit messages and PR titles (`type(optional-scope): imperative lower-case description`). Deliver through a feature branch and pull request; never push directly to `main` or `production`. Dan authorizes feature branches/worktrees, commits, pushes, and pull requests as needed for requested work. Merging to `main` always requires his explicit permission; never merge automatically. Release publication still requires explicit authorization.

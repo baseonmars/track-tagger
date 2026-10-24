@@ -13,6 +13,18 @@ go build -o track-tagger ./cmd/track-tagger
 
 Open http://127.0.0.1:8787. Review source notes, metadata, file-to-title mappings, and artwork. Explicitly acknowledge replacements when saving corrections. The default server runs in preview mode and saves review decisions in application storage. Select `--write` or `--copy DEST` to apply metadata changes.
 
+## Windows desktop app
+
+Download the Windows x64 installer for Windows 10/11 x64, or the ARM64 installer for Windows 11 ARM64. Each installer includes the desktop app and `track-tagger.exe` command line tool. The standalone Windows ZIPs include both executables. Installers are per-user and place the application in `%LOCALAPPDATA%\Programs\Track Tagger`; they do not require administrator access. Windows may show an unsigned-app warning because release executables are not code-signed. Continue only if you obtained the installer from this project's GitHub Release.
+
+On first launch, choose a music folder, optional copy destination, and mode. Preview is selected initially; Write and Copy require an explicit choice. The app saves folder, mode, and polling choices when you press Start or Quit, but always starts stopped after launch or restart. Press **Start** to begin. Track Tagger opens the local review page in your browser for the selected mode. Use the tray menu's **Stop** to stop processing while leaving the app open, or **Quit** to close it; closing the browser does not stop the watcher.
+
+Network shares can use polling instead of filesystem notifications; choose the polling option in the desktop app and allow the watcher to observe changes at its configured interval. After an interrupted write, start the app with the same state directory: recovery runs when a write operation resumes. Recovery is per file, so review the queue and rerun if an album was interrupted partway through.
+
+The application stores configuration and history under `%APPDATA%\track-tagger`. Keep that data to retain review decisions, job history, and original metadata for undo. Upgrading replaces application files and retains this data. To uninstall, stop and quit Track Tagger first, then use Windows **Installed apps**. Uninstall removes the application but keeps configuration and history.
+
+See the [Windows guide](docs/windows.md) for the full install, operating, recovery, and uninstall steps.
+
 ```sh
 track-tagger scan SOURCE --dry-run
 track-tagger scan SOURCE --write
