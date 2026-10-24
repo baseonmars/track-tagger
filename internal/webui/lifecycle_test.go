@@ -9,6 +9,34 @@ import (
 	"time"
 )
 
+type stoppingBackend struct {
+	fakeBackend
+	stopped chan struct{}
+}
+
+func (b *stoppingBackend) StopBrowsing() { close(b.stopped) }
+
+func TestServeStopsBackgroundBrowseOnShutdown(t *testing.T) {
+	b := &stoppingBackend{stopped: make(chan struct{})}
+	ctx, cancel := context.WithCancel(context.Background())
+	done := make(chan error, 1)
+	go func() { done <- Serve(ctx, Config{Addr: "127.0.0.1:0"}, b) }()
+	cancel()
+	select {
+	case err := <-done:
+		if err != nil {
+			t.Fatal(err)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("server did not shut down")
+	}
+	select {
+	case <-b.stopped:
+	default:
+		t.Fatal("background browse was not stopped")
+	}
+}
+
 func TestServeListenerDrainsActiveRequests(t *testing.T) {
 	l, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {

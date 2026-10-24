@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"html"
 	"io"
 	"net/http"
@@ -21,12 +22,35 @@ import (
 // Its backend is the real catalog, SQLite store, and FLAC writer.
 type webSession struct {
 	t      *testing.T
+	e      *Engine
 	server *httptest.Server
 	client *http.Client
 }
 
+func awaitWebLibrary(t *testing.T, e *Engine) {
+	t.Helper()
+	deadline := time.Now().Add(5 * time.Second)
+	for {
+		status, err := (WebBackend{E: e}).Status(context.Background())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if status.Phase == "ready" {
+			return
+		}
+		if status.Phase == "error" {
+			t.Fatalf("library validation failed: %s", status.Error)
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("library did not become ready: %+v", status)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+}
+
 func realWeb(t *testing.T, e *Engine, writable bool) *webSession {
 	t.Helper()
+	awaitWebLibrary(t, e)
 	h, err := webui.New(webui.Config{Writable: writable}, WebBackend{E: e})
 	if err != nil {
 		t.Fatal(err)
@@ -35,11 +59,14 @@ func realWeb(t *testing.T, e *Engine, writable bool) *webSession {
 	t.Cleanup(s.Close)
 	c := s.Client()
 	c.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
-	return &webSession{t: t, server: s, client: c}
+	return &webSession{t: t, e: e, server: s, client: c}
 }
 
 func (s *webSession) request(method, path string, v url.Values, want int) string {
 	s.t.Helper()
+	if method == http.MethodGet && (path == "/" || strings.HasPrefix(path, "/recording")) {
+		awaitWebLibrary(s.t, s.e)
+	}
 	var body io.Reader
 	if v != nil {
 		body = strings.NewReader(v.Encode())
@@ -394,7 +421,11 @@ func TestHTTPCombinedFailureRetainsSavedReview(t *testing.T) {
 	if checkedHash(t, audio) != before {
 		t.Fatal("waiting request wrote media")
 	}
+	awaitWebLibrary(t, e)
+	e.mu.Lock()
 	e.Settle = 0
+	e.mu.Unlock()
+	e.invalidateLibrary()
 	page = s.request(http.MethodGet, path, nil, http.StatusOK)
 	v = renderedForm(t, page, "/apply")
 	if v.Get("track_title") != "Saved for retry" {

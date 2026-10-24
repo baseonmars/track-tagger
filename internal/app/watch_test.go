@@ -76,3 +76,21 @@ func TestWatchScheduleObservesDateUnknownChange(t *testing.T) {
 		t.Fatal("unknown acknowledgment did not reset observation")
 	}
 }
+
+func TestWatchFailureRetriesAfterObservationInterval(t *testing.T) {
+	now := time.Unix(100, 0)
+	s := watchSchedule{}
+	item := Item{Recording: catalog.Recording{ID: "one", Path: "/music/show", Fingerprint: "same"}}
+	entry := s.observe(item, now)
+	entry.retryAfter = now.Add(15 * time.Second)
+	if entry.ready(now.Add(time.Second), 0) {
+		t.Fatal("failed operation retried on the next tick")
+	}
+	if got := s.observe(item, now.Add(15*time.Second)); got != entry || !got.ready(now.Add(15*time.Second), 0) {
+		t.Fatal("unchanged recording did not retry after the observation interval")
+	}
+	entry.done = true
+	if entry.ready(now.Add(time.Minute), 0) {
+		t.Fatal("successful operation was retried")
+	}
+}

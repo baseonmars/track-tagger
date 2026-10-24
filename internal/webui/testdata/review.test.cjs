@@ -13,6 +13,8 @@ test('saved review and approval govern actions', () => {
   assert.equal(actionState({...base,approved:true,status:'waiting'}).save,true);
   assert.equal(actionState({...base,approved:true,changed:true,status:'completed'}).apply,true);
   assert.equal(actionState({...base,approved:true,status:'completed'}).apply,false);
+  assert.equal(actionState({...base,approved:true,validated:false}).save,false);
+  assert.equal(actionState({...base,validated:false}).apply,false);
 });
 test('calendar dates match server supported precisions', () => {
  for (const value of ['1970','1970-01','2000-02-29','2024-10-24']) assert.equal(validDate(value),true,value);
@@ -58,4 +60,11 @@ test('DOM invalid dates, blank titles, and approval block forged submits',()=>{
   assert.equal(nodes['save-review'].disabled,true,name); field.value=old;
  }
  form.events.input(); assert.equal(nodes['save-review'].disabled,false);
+});
+test('DOM keeps actions disabled before library validation',()=>{
+ const {form,fields,nodes}=setup({validated:'false'});
+ fields.namedItem('approve').checked=true; form.events.change();
+ assert.equal(nodes['save-review'].disabled,true);
+ assert.equal(nodes['apply-review'].disabled,true);
+ assert.match(nodes['review-help'].textContent,/validation is still running/);
 });

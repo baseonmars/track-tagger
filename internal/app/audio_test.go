@@ -15,11 +15,18 @@ import (
 
 func registeredAudioURL(t *testing.T, e *Engine) string {
 	t.Helper()
-	rs, err := (WebBackend{E: e}).List(context.Background())
-	if err != nil || len(rs) != 1 || len(rs[0].Tracks) == 0 || rs[0].Tracks[0].PlaybackID == "" {
+	e.invalidateLibrary()
+	awaitWebLibrary(t, e)
+	w := WebBackend{E: e}
+	rs, err := w.List(context.Background())
+	if err != nil || len(rs) != 1 {
 		t.Fatalf("playback registration: %+v, %v", rs, err)
 	}
-	return "/audio?" + url.Values{"recording": {rs[0].ID}, "track": {rs[0].Tracks[0].PlaybackID}}.Encode()
+	r, err := w.Get(context.Background(), rs[0].ID)
+	if err != nil || len(r.Tracks) == 0 || r.Tracks[0].PlaybackID == "" {
+		t.Fatalf("playback registration: %+v, %v", r, err)
+	}
+	return "/audio?" + url.Values{"recording": {r.ID}, "track": {r.Tracks[0].PlaybackID}}.Encode()
 }
 
 func TestHTTPRegisteredAudioRangesAndHead(t *testing.T) {
@@ -128,12 +135,18 @@ func TestHTTPPlaybackMIMEsAndWriteGuards(t *testing.T) {
 				if len(plan.Recordings) != 1 || plan.Recordings[0].Status != "playback-only" || !plan.Recordings[0].PlaybackOnly {
 					t.Fatalf("unsafe playback plan: %+v", plan)
 				}
-				rs, err := (WebBackend{E: e}).List(context.Background())
+				awaitWebLibrary(t, e)
+				w := WebBackend{E: e}
+				rs, err := w.List(context.Background())
+				if err != nil || len(rs) != 1 {
+					t.Fatal(err)
+				}
+				r, err := w.Get(context.Background(), rs[0].ID)
 				if err != nil {
 					t.Fatal(err)
 				}
 				var id string
-				for _, tr := range rs[0].Tracks {
+				for _, tr := range r.Tracks {
 					if tr.File == path {
 						id = tr.PlaybackID
 					}

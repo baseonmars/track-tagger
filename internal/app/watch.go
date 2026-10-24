@@ -16,9 +16,10 @@ import (
 )
 
 type watchEntry struct {
-	key, path string
-	since     time.Time
-	done      bool
+	key, path  string
+	since      time.Time
+	retryAfter time.Time
+	done       bool
 }
 type watchSchedule map[string]*watchEntry
 
@@ -47,11 +48,12 @@ func (s watchSchedule) changed(path string, now time.Time) {
 		if err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
 			entry.since = now
 			entry.done = false
+			entry.retryAfter = time.Time{}
 		}
 	}
 }
 func (e *watchEntry) ready(now time.Time, settle time.Duration) bool {
-	return !e.done && !now.Before(e.since.Add(settle))
+	return !e.done && !now.Before(e.since.Add(settle)) && !now.Before(e.retryAfter)
 }
 
 // Watch recursively watches local directories, with periodic reconciliation for
@@ -121,26 +123,31 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 	lastScan := time.Time{}
 	lastEvent := time.Time{}
 	dirty := true
+	lastLibraryError := ""
 	tick := time.NewTicker(time.Second)
 	defer tick.Stop()
-	scan := func(now time.Time) {
+	process := func(now time.Time) {
 		if ctx.Err() != nil {
 			return
 		}
-		// Observation may reuse unchanged evidence; Apply always rehashes before writes.
-		plan, err := e.browse()
-		lastScan = now
-		dirty = false
-		if err != nil {
-			log("scan failed: " + err.Error())
-			return
+		plan, complete := e.libraryPlan()
+		e.libraryMu.Lock()
+		libraryError := e.library.status.Error
+		e.libraryMu.Unlock()
+		if libraryError != "" && libraryError != lastLibraryError {
+			log("scan failed: " + libraryError)
 		}
+		lastLibraryError = libraryError
+
 		present := map[string]bool{}
 		for _, item := range plan.Recordings {
 			if ctx.Err() != nil {
 				return
 			}
 			present[item.ID] = true
+			if item.Status == "loading" || item.Status == "validating" {
+				continue
+			}
 			entry := schedule.observe(item, now)
 			if item.Status != "ready" {
 				continue
@@ -158,22 +165,36 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 				return
 			default:
 			}
-			one := Plan{Version: plan.Version, Source: plan.Source, Recordings: []Item{item}}
-			jobs, err := e.Apply(one)
+			err := (WebBackend{E: e}).applySelection(ctx, item.ID, func(current Item) error {
+				if current.Status != "ready" || current.Fingerprint != item.Fingerprint || current.Reviewed != item.Reviewed || !sameProposal(current.Recording, item.Recording) {
+					return fmt.Errorf("recording changed since watcher observation")
+				}
+				return nil
+			})
 			if err != nil {
 				log("failed: " + item.Path + ": " + err.Error())
+				retryInterval := reconcile
+				if poll {
+					retryInterval = 15 * time.Second
+				}
+				entry.retryAfter = now.Add(retryInterval)
 				continue
 			}
 			entry.done = true
-			log(fmt.Sprintf("completed: %s (jobs %v)", item.Path, jobs))
+			log("completed: " + item.Path)
 		}
-		for id := range schedule {
-			if !present[id] {
-				delete(schedule, id)
+		if complete {
+			for id := range schedule {
+				if !present[id] {
+					delete(schedule, id)
+				}
 			}
 		}
 	}
-	scan(time.Now())
+	e.startBrowsing()
+	lastScan = time.Now()
+	dirty = false
+	process(lastScan)
 	for {
 		select {
 		case <-ctx.Done():
@@ -209,17 +230,16 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 			if dirty && now.Sub(lastEvent) >= time.Second {
 				due = true
 			}
-			if !dirty {
-				for _, entry := range schedule {
-					if entry.ready(now, settle) && entry.since.Add(settle).After(lastScan) {
-						due = true
-						break
-					}
-				}
-			}
 			if due {
-				scan(now)
+				if dirty {
+					e.invalidateLibrary()
+				} else {
+					e.reconcileLibrary()
+				}
+				lastScan = now
+				dirty = false
 			}
+			process(now)
 		}
 	}
 }
