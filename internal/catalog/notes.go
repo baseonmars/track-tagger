@@ -98,7 +98,10 @@ func classifyNoteLine(raw string, number int) noteLine {
 
 func technicalSection(s string) bool {
 	s = strings.TrimSpace(strings.TrimSuffix(s, ":"))
-	for _, heading := range []string{"source", "transfer", "transfer notes", "lineage", "recording lineage", "checksums", "checksum", "md5", "ffp", "sha1", "sha-1", "sha256", "sha-256", "sfv", "flac fingerprints", "shntool output", "shntool", "duration report", "durations", "track durations"} {
+	if s != "" && labelledTransfer.FindString(s) == s {
+		return true
+	}
+	for _, heading := range []string{"source", "transfer", "transfer notes", "production notes", "mastering notes", "editing notes", "lineage", "recording lineage", "checksums", "checksum", "md5", "ffp", "sha1", "sha-1", "sha256", "sha-256", "sfv", "flac fingerprints", "shntool output", "shntool", "duration report", "durations", "track durations"} {
 		if s == heading {
 			return true
 		}
@@ -112,6 +115,13 @@ func noteSegue(s string) bool {
 }
 
 func parseNotes(r *Recording, s string, titles map[string]string, dates, artists map[string]bool) int {
+	var candidates noteDateCandidates
+	count := parseNotesCandidates(r, s, titles, &candidates, artists)
+	candidates.resolve(r, dates, nil)
+	return count
+}
+
+func parseNotesCandidates(r *Recording, s string, titles map[string]string, dates *noteDateCandidates, artists map[string]bool) int {
 	// Preserve line boundaries and indentation; header inference only looks at
 	// the first four nonempty lines of this same classified representation.
 	lines := make([]noteLine, 0, strings.Count(s, "\n")+1)
@@ -135,12 +145,14 @@ func parseNotes(r *Recording, s string, titles map[string]string, dates, artists
 	for i := range lines {
 		line := &lines[i]
 		lower := strings.ToLower(line.text)
-		// Standalone day-first dates are metadata even though they resemble a
-		// whitespace-numbered track. Embedded dates in titles stay untouched.
-		date := namedDate.FindString(line.text)
-		if header && date != "" && strings.HasPrefix(line.text, date) && (date == line.text || weekdaySuffix.MatchString(strings.TrimPrefix(line.text, date))) {
+		// Date-only lines can resemble whitespace-numbered tracks. After the
+		// opening header, require another track block so trailing production
+		// dates cannot become concert metadata. Numbered song titles never qualify.
+		if !blocked && standaloneNoteDate(line.text) {
 			flush()
-			parseDates(r, line.text, dates)
+			if header || concertTracksFollow(lines[i+1:]) {
+				dates.collect(line.text)
+			}
 			continue
 		}
 		switch line.kind {
@@ -223,9 +235,40 @@ func parseNotes(r *Recording, s string, titles map[string]string, dates, artists
 			setLocation(r, "city", &r.City, strings.TrimSpace(line.text[5:]))
 		}
 		if header || strings.HasPrefix(lower, "date:") || strings.HasPrefix(lower, "concert date:") {
-			parseDates(r, line.text, dates)
+			dates.collect(line.text)
 		}
 	}
 	flush()
 	return count
+}
+
+func standaloneNoteDate(text string) bool {
+	text = weekdayPrefix.ReplaceAllString(text, "")
+	for _, pattern := range []*regexp.Regexp{isoDate, numericDate, namedDate, unknownDayDate} {
+		date := pattern.FindString(text)
+		if date != "" && strings.HasPrefix(text, date) && (date == text || weekdaySuffix.MatchString(strings.TrimPrefix(text, date))) {
+			return true
+		}
+	}
+	return false
+}
+
+func concertTracksFollow(lines []noteLine) bool {
+	for _, line := range lines {
+		switch line.kind {
+		case noteBlank:
+			continue
+		case noteSection, noteTracklist, noteEncore:
+			continue
+		case noteEntry, noteExplicitEntry:
+			return !standaloneNoteDate(line.text)
+		default:
+			// Decorative separators do not turn production prose into a header.
+			if strings.Trim(line.text, "-=*_ ") == "" {
+				continue
+			}
+			return false
+		}
+	}
+	return false
 }

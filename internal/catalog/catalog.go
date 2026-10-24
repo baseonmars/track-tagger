@@ -82,6 +82,7 @@ var isoDate = regexp.MustCompile(`\b(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\b`)
 var numericDate = regexp.MustCompile(`\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b`)
 var namedDate = regexp.MustCompile(`(?i)\b(?:\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{4}|(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{4})\b`)
 var ordinalDay = regexp.MustCompile(`(?i)(\d{1,2})(?:st|nd|rd|th)([,\s])`)
+var labelledTransfer = regexp.MustCompile(`^(?:original|first|second|third|final)\s+transfer\s*(?::|$)`)
 
 // IsAudio reports whether a path has a supported playback extension. The browser
 // determines whether the actual codec in the file can be decoded.
@@ -275,6 +276,7 @@ func build(root, dir string, files []string, fingerprint func(string) (Evidence,
 	titles := map[string]string{}
 	listedTitles := 0
 	dates := map[string]bool{}
+	var candidates noteDateCandidates
 	artists := map[string]bool{}
 	for _, p := range paths {
 		if err := media.CheckLocal(p); err != nil {
@@ -306,7 +308,7 @@ func build(root, dir string, files []string, fingerprint func(string) (Evidence,
 			if !utf8.Valid(b) {
 				s, _ = charmap.Windows1252.NewDecoder().String(s)
 			}
-			listedTitles += parseNotes(&r, s, titles, dates, artists)
+			listedTitles += parseNotesCandidates(&r, s, titles, &candidates, artists)
 		case ".jpg", ".jpeg", ".png":
 			r.ArtworkCandidates = append(r.ArtworkCandidates, p)
 		case ".part", ".partial", ".tmp", ".download", ".icloud":
@@ -330,7 +332,8 @@ func build(root, dir string, files []string, fingerprint func(string) (Evidence,
 			checkManifest(&r, p)
 		}
 	}
-	if len(dates) == 1 {
+	resolved := candidates.resolve(&r, dates, filenameDates(dir, r.Notes, files))
+	if len(dates) == 1 && resolved {
 		for d := range dates {
 			r.Date = d
 		}
@@ -545,6 +548,9 @@ func addTitle(r *Recording, titles map[string]string, d, n int, title string) {
 	titles[key] = strings.TrimSpace(title)
 }
 func technical(s string) bool {
+	if labelledTransfer.MatchString(s) {
+		return true
+	}
 	for _, prefix := range []string{"transfer", "transferred", "seed", "upload", "remaster", "mastered", "encoded", "extracted", "checksum", "source:", "lineage:", "eac ", "exact audio", "log ", "personnel:", "musicians:", "recording equipment"} {
 		if strings.HasPrefix(s, prefix) {
 			return true
@@ -553,39 +559,9 @@ func technical(s string) bool {
 	return false
 }
 func parseDates(r *Recording, line string, dates map[string]bool) {
-	for _, m := range isoDate.FindAllStringSubmatch(line, -1) {
-		y, _ := strconv.Atoi(m[1])
-		mo, _ := strconv.Atoi(m[2])
-		d, _ := strconv.Atoi(m[3])
-		addDate(dates, y, mo, d)
-	}
-	for _, m := range numericDate.FindAllStringSubmatch(line, -1) {
-		a, _ := strconv.Atoi(m[1])
-		b, _ := strconv.Atoi(m[2])
-		y, _ := strconv.Atoi(m[3])
-		if a > 12 {
-			addDate(dates, y, b, a)
-		} else if b > 12 || a == b {
-			addDate(dates, y, a, b)
-		} else {
-			reason(r, "ambiguous numeric concert date: "+m[0])
-		}
-	}
-	for _, v := range namedDate.FindAllString(line, -1) {
-		v = ordinalDay.ReplaceAllString(v, "${1}${2}")
-		for _, layout := range []string{"2 January 2006", "2 Jan 2006", "January 2, 2006", "Jan 2, 2006", "January 2 2006", "Jan 2 2006"} {
-			if t, e := time.Parse(layout, v); e == nil {
-				dates[t.Format("2006-01-02")] = true
-				break
-			}
-		}
-	}
-}
-func addDate(dates map[string]bool, y, m, d int) {
-	s := fmt.Sprintf("%04d-%02d-%02d", y, m, d)
-	if _, err := time.Parse("2006-01-02", s); err == nil {
-		dates[s] = true
-	}
+	var candidates noteDateCandidates
+	candidates.collect(line)
+	candidates.resolve(r, dates, nil)
 }
 func chooseArt(r *Recording) {
 	var preferred []string

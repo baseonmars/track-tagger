@@ -426,10 +426,10 @@ func TestRingoStyleRomanSetsAndTwoTextFiles(t *testing.T) {
 		}
 	}
 	r := only(t, dir)
-	if r.Artist != "Example All Star Band" || r.Venue != "Outdoor Amphitheater" || r.City != "Atlanta, GA" || r.Date != "" || r.Status != "needs-review" {
+	if r.Artist != "Example All Star Band" || r.Venue != "Outdoor Amphitheater" || r.City != "Atlanta, GA" || r.Date != "1992-06-07" || r.Status != "needs-review" {
 		t.Fatalf("header or review state lost: %+v", r)
 	}
-	if !hasReason(r, "track count mismatch: 25 listed titles, 26 audio files") || hasReason(r, "duplicate numbering") || hasReason(r, "listed track has no audio file") {
+	if !hasReason(r, "track count mismatch: 25 listed titles, 26 audio files") || hasReason(r, "duplicate numbering") || hasReason(r, "listed track has no audio file") || hasReason(r, "ambiguous numeric concert date") {
 		t.Fatalf("set list confused by reports: %v", r.ReviewReasons)
 	}
 	for _, tr := range r.Tracks {
