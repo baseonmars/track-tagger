@@ -1,0 +1,45 @@
+{
+  "development": {
+    "cases": 140,
+    "exact_cases": 133,
+    "correct_titles": 669,
+    "expected_titles": 714,
+    "correct_unresolved_titles": 5,
+    "expected_unresolved_titles": 5,
+    "correct_mappings": 678,
+    "expected_mappings": 698,
+    "incorrect_accepted_mappings": 1,
+    "false_ready": 0,
+    "review_cases": 56,
+    "failures": [
+      "fixture-024",
+      "fixture-026",
+      "fixture-036",
+      "fixture-056",
+      "fixture-071",
+      "gd-19700102-three-disc",
+      "gd-19900226-hyphen-set-headings"
+    ]
+  },
+  "held-out": {
+    "cases": 60,
+    "exact_cases": 54,
+    "correct_titles": 243,
+    "expected_titles": 261,
+    "correct_unresolved_titles": 1,
+    "expected_unresolved_titles": 1,
+    "correct_mappings": 261,
+    "expected_mappings": 279,
+    "incorrect_accepted_mappings": 5,
+    "false_ready": 1,
+    "review_cases": 32,
+    "failures": [
+      "fixture-027",
+      "fixture-029",
+      "fixture-038",
+      "fixture-039",
+      "fixture-079",
+      "fixture-099"
+    ]
+  }
+}
