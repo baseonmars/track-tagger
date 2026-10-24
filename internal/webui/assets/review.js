@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 (function () {
   function validDate(value) {
     if (!/^\d{4}(-\d{2})?(-\d{2})?$/.test(value)) return false;
@@ -43,6 +43,7 @@
   function snapshot() { return JSON.stringify(fields.map(el => el.type === "checkbox" ? el.checked : el.value)); }
   const baseline = snapshot();
   let submitting = false;
+  let navigationApproved = false;
   function valid() {
     const value = name => form.elements.namedItem(name).value.trim();
     const date = value("date");
@@ -68,8 +69,27 @@
     help.textContent = state.help;
     return state;
   }
-  form.addEventListener("input", update);
-  form.addEventListener("change", update);
+  function edited(event = {}) {
+    if (event.target !== approve && fields.includes(event.target)) approve.checked = false;
+    update();
+  }
+  form.addEventListener("input", edited);
+  form.addEventListener("change", edited);
+  window.addEventListener("beforeunload", event => {
+    if (!submitting && !navigationApproved && snapshot() !== baseline) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  });
+  document.addEventListener("click", event => {
+    const link = event.target.closest("a[href]");
+    if (!link || event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || link.target === "_blank" || link.hasAttribute("download")) return;
+    const destination = new URL(link.href, window.location.href);
+    if (destination.origin === window.location.origin && destination.pathname === window.location.pathname && destination.search === window.location.search) return;
+    if (submitting || snapshot() === baseline) return;
+    if (!window.confirm("Leave this review and discard your unsaved changes?")) event.preventDefault();
+    else navigationApproved = true;
+  });
   form.addEventListener("submit", event => {
     const state = update();
     const applying = apply && event.submitter === apply;
@@ -78,6 +98,6 @@
     submitting = true;
     update();
   });
-  window.addEventListener("pageshow", () => { submitting = false; update(); });
+  window.addEventListener("pageshow", () => { submitting = false; navigationApproved = false; update(); });
   update();
 })();

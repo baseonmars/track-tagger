@@ -35,6 +35,7 @@ type Recording struct {
 	DateUnknown       bool
 	LastModified      int64 // Unix nanoseconds from cached file evidence; zero when unavailable.
 	ID, Path, Status  string
+	RelativePath      string
 	Fingerprint       string
 	Metadata          map[string]string
 	Tracks            []Track
@@ -101,6 +102,8 @@ type page struct {
 	Recordings  []Recording
 	Recording   *Recording
 	Jobs        []Job
+	LibraryData []statusCard
+	Settings    bool
 	History     bool
 }
 
@@ -240,7 +243,7 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	if r.URL.Path == "/player.js" || r.URL.Path == "/review.js" || r.URL.Path == "/status.js" {
+	if r.URL.Path == "/player.js" || r.URL.Path == "/review.js" || r.URL.Path == "/status.js" || r.URL.Path == "/layout.js" || r.URL.Path == "/library.js" || r.URL.Path == "/review-layout.js" {
 		b, err := assets.ReadFile("assets" + r.URL.Path)
 		if err != nil {
 			http.NotFound(w, r)
@@ -254,8 +257,8 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		s.status(w, r)
 		return
 	}
-	if r.URL.Path == "/style.css" {
-		b, _ := assets.ReadFile("assets/style.css")
+	if r.URL.Path == "/style.css" || r.URL.Path == "/review-layout.css" {
+		b, _ := assets.ReadFile("assets" + r.URL.Path)
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")
 		_, _ = w.Write(b)
 		return
@@ -299,6 +302,8 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		rec, err = s.backend.Get(r.Context(), r.URL.Query().Get("id"))
 		p.Recording = &rec
 		p.ReviewReady = rec.Fingerprint != "" && rec.Status != "loading" && rec.Status != "validating"
+	case "/settings":
+		p.Settings = true
 	case "/history":
 		p.History = true
 		p.Jobs, err = s.backend.History(r.Context())
@@ -313,6 +318,7 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	p.LibraryData = libraryCards(p.Recordings)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_ = s.templates.ExecuteTemplate(w, "index.html", p)
 }
@@ -320,6 +326,9 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 type statusCard struct {
 	ID           string   `json:"id"`
 	Title        string   `json:"title"`
+	Artist       string   `json:"artist"`
+	RelativePath string   `json:"relativePath"`
+	PlaybackOnly bool     `json:"playbackOnly"`
 	Status       string   `json:"status"`
 	StatusCode   string   `json:"statusCode"`
 	LastModified int64    `json:"lastModified,string"`
@@ -351,11 +360,17 @@ func (s *server) status(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	out := statusResponse{Phase: status.Phase, Validated: status.Validated, Scanned: status.Scanned, Total: status.Total, Generation: status.Generation, Error: status.Error, Recordings: make([]statusCard, 0, len(status.Recordings))}
-	for _, recording := range status.Recordings {
-		out.Recordings = append(out.Recordings, statusCard{ID: recording.ID, Title: recordingTitle(recording), Status: statusLabel(recording.Status), StatusCode: recording.Status, LastModified: recording.LastModified, Ready: recording.Fingerprint != "" && recording.Status != "loading" && recording.Status != "validating", Action: recordingAction(recording), Date: recording.Metadata["DATE"], Tracks: len(recording.Tracks), Issues: issueSummary(recording)})
-	}
+	out.Recordings = libraryCards(status.Recordings)
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	_ = json.NewEncoder(w).Encode(out)
+}
+
+func libraryCards(recordings []Recording) []statusCard {
+	out := make([]statusCard, 0, len(recordings))
+	for _, recording := range recordings {
+		out = append(out, statusCard{ID: recording.ID, Title: recordingTitle(recording), Artist: recording.Metadata["ARTIST"], RelativePath: relativeDisplayPath(recording.RelativePath), PlaybackOnly: recording.PlaybackOnly, Status: statusLabel(recording.Status), StatusCode: recording.Status, LastModified: recording.LastModified, Ready: recording.Fingerprint != "" && recording.Status != "loading" && recording.Status != "validating", Action: recordingAction(recording), Date: recording.Metadata["DATE"], Tracks: len(recording.Tracks), Issues: issueSummary(recording)})
+	}
+	return out
 }
 
 func (s *server) mutate(w http.ResponseWriter, r *http.Request) {

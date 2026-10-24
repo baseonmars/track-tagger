@@ -15,6 +15,13 @@ Capture recipe:
   It uses the actual web UI templates. Capture library, review, mapping,
   playback, and History there. Its History page supplies a synthetic example
   of a prior job; Preview itself creates no tagging job.
+  The default layout is Compact. Capture its table library, Album/Notes
+  sidebar review, dense track mapping, and playback using the existing names.
+  For pagination, long Unicode names, and dense track-table checks, run:
+  go run ./internal/webui/testdata/capture -addr 127.0.0.1:8788 -recordings 5000 -tracks 30
+  All entries and notes are synthetic. Playback IDs illustrate the controls;
+  the fixture does not stream audio or read a music library. Every mutation
+  method refuses changes. Omit the size flags for the small screenshot set.
 - Capture the native Windows launcher with isolated APPDATA and LOCALAPPDATA
   temporary folders and a synthetic APPDATA/track-tagger/launcher.json. Run
   the following PowerShell from the repository root to create an ignored Go

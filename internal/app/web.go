@@ -30,7 +30,7 @@ func (w WebBackend) List(ctx context.Context) ([]webui.Recording, error) {
 	return rows, nil
 }
 func webRecord(r Item) webui.Recording {
-	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, Reviewed: r.Reviewed, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
+	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, RelativePath: r.RelativePath, Reviewed: r.Reviewed, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
 	for _, ev := range r.Evidence {
 		if ev.ModTime > out.LastModified {
 			out.LastModified = ev.ModTime

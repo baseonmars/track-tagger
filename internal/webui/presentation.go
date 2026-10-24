@@ -76,6 +76,8 @@ func statusLabel(s string) string {
 		return "Completed"
 	case "failed":
 		return "Could not finish"
+	case "playback-only":
+		return "Playback only"
 	}
 	return s
 }
@@ -190,4 +192,18 @@ func performerReview(r Recording, t Track) bool {
 		}
 	}
 	return false
+}
+
+// Relative display paths must never fall back to an absolute source path.
+func relativeDisplayPath(value string) string {
+	value = strings.ReplaceAll(value, `\`, "/")
+	if strings.HasPrefix(value, "/") || strings.Contains(value, ":") {
+		return ""
+	}
+	for _, component := range strings.Split(value, "/") {
+		if component == ".." {
+			return ""
+		}
+	}
+	return value
 }
