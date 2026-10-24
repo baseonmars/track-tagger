@@ -14,7 +14,7 @@ import (
 	"time"
 
 	"track-tagger/internal/app"
-	"track-tagger/internal/webui"
+	"track-tagger/internal/service"
 )
 
 var version = "dev"
@@ -161,12 +161,23 @@ func run(args []string) error {
 		}
 		source = p.Source
 	}
-	e, err := app.New(app.Options{Source: source, Destination: *dest, State: *state, Mode: mode, Settle: *settle})
+	opts := app.Options{Source: source, Destination: *dest, State: *state, Mode: mode, Settle: *settle}
+	if cmd == "serve" {
+		s, err := service.Start(ctx, service.Options{Options: opts, Addr: *addr, Remote: *remote, Token: os.Getenv("TRACK_TAGGER_TOKEN"), Poll: *poll, Reconcile: *reconcile}, func(s string) { fmt.Fprintln(os.Stderr, s) })
+		if err != nil {
+			return err
+		}
+		defer s.Stop()
+		fmt.Fprintln(os.Stderr, "web interface", s.URL(), "mode:", mode)
+		<-s.Done()
+		return s.Err()
+	}
+	e, err := app.New(opts)
 	if err != nil {
 		return err
 	}
 	defer e.Close()
-	if cmd == "serve" || cmd == "watch" || mode != app.DryRun {
+	if cmd == "watch" || mode != app.DryRun {
 		if err = e.OpenStorage(); err != nil {
 			return err
 		}
@@ -204,19 +215,6 @@ func run(args []string) error {
 		return nil
 	case "watch":
 		return e.Watch(ctx, *poll, *reconcile, func(s string) { fmt.Fprintln(os.Stderr, s) })
-	case "serve":
-		cfg := webui.Config{Addr: *addr, Remote: *remote, Token: os.Getenv("TRACK_TAGGER_TOKEN"), Writable: mode != app.DryRun}
-		if _, err = webui.New(cfg, app.WebBackend{E: e}); err != nil {
-			return err
-		}
-		go func() {
-			if err := e.Watch(ctx, *poll, *reconcile, func(s string) { fmt.Fprintln(os.Stderr, s) }); err != nil {
-				fmt.Fprintln(os.Stderr, err)
-				cancel()
-			}
-		}()
-		fmt.Fprintln(os.Stderr, "web interface http://"+*addr, "mode:", mode)
-		return webui.Serve(ctx, cfg, app.WebBackend{E: e})
 	}
 	return nil
 }
