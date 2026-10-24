@@ -2,6 +2,7 @@
 package catalog
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -100,7 +101,13 @@ func CanTag(path string) bool {
 
 func Scan(source string) ([]Recording, error) { return scan(source, Fingerprint) }
 
-func scan(source string, fingerprint func(string) (Evidence, error)) ([]Recording, error) {
+// Discovery describes a recording without opening its file contents.
+type Discovery struct {
+	ID, Path, RelativePath string
+	Files                  []string
+}
+
+func Discover(source string) ([]Discovery, error) {
 	root, err := filepath.Abs(source)
 	if err != nil {
 		return nil, err
@@ -143,15 +150,91 @@ func scan(source string, fingerprint func(string) (Evidence, error)) ([]Recordin
 		dirs = append(dirs, dir)
 	}
 	sort.Strings(dirs)
-	var out []Recording
+	var out []Discovery
 	for _, dir := range dirs {
-		r, err := build(root, dir, groups[dir], fingerprint)
+		rel, _ := filepath.Rel(root, dir)
+		id := sha256.Sum256([]byte(dir))
+		out = append(out, Discovery{ID: hex.EncodeToString(id[:12]), Path: dir, RelativePath: rel, Files: groups[dir]})
+	}
+	return out, nil
+}
+
+func scan(source string, fingerprint func(string) (Evidence, error)) ([]Recording, error) {
+	discovered, err := Discover(source)
+	if err != nil {
+		return nil, err
+	}
+	var out []Recording
+	for _, d := range discovered {
+		r, err := Validate(source, d, fingerprint)
 		if err != nil {
 			return nil, err
 		}
 		out = append(out, r)
 	}
 	return out, nil
+}
+
+// Validate reads the contents of one discovered recording. Callers must not use
+// cached fingerprints for review approval or media changes.
+func Validate(source string, d Discovery, fingerprint func(string) (Evidence, error)) (Recording, error) {
+	root, err := filepath.Abs(source)
+	if err != nil {
+		return Recording{}, err
+	}
+	return scanRecording(root, d.Path, fingerprint)
+}
+
+// ScanRecording freshly discovers and validates one recording, retaining paths
+// relative to the original collection. Independent nested recordings are skipped.
+func ScanRecording(source, dir string) (Recording, error) {
+	return scanRecording(source, dir, Fingerprint)
+}
+func scanRecording(source, dir string, fingerprint func(string) (Evidence, error)) (Recording, error) {
+	root, err := filepath.Abs(source)
+	if err != nil {
+		return Recording{}, err
+	}
+	dir, err = filepath.Abs(dir)
+	if err != nil {
+		return Recording{}, err
+	}
+	rel, err := filepath.Rel(root, dir)
+	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+		return Recording{}, fmt.Errorf("recording is outside source")
+	}
+	var files []string
+	err = filepath.WalkDir(dir, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.Type()&os.ModeSymlink != 0 {
+			return nil
+		}
+		if d.IsDir() {
+			if path != dir && !discDir.MatchString(d.Name()) {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if !strings.HasPrefix(d.Name(), ReservedFilePrefix) && IsAudio(path) {
+			owner := filepath.Dir(path)
+			if owner != root && discDir.MatchString(filepath.Base(owner)) {
+				owner = filepath.Dir(owner)
+			}
+			if owner == dir {
+				files = append(files, path)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return Recording{}, err
+	}
+	if len(files) == 0 {
+		return Recording{}, fmt.Errorf("recording disappeared")
+	}
+	return build(root, dir, files, fingerprint)
 }
 func reason(r *Recording, s string) {
 	for _, v := range r.ReviewReasons {
@@ -586,6 +669,25 @@ func RefreshPlan(r *Recording) {
 	}
 }
 func Fingerprint(path string) (Evidence, error) {
+	return FingerprintContext(context.Background(), path)
+}
+
+type contextReader struct {
+	context.Context
+	io.Reader
+}
+
+func (r contextReader) Read(p []byte) (int, error) {
+	if err := r.Context.Err(); err != nil {
+		return 0, err
+	}
+	return r.Reader.Read(p)
+}
+
+func FingerprintContext(ctx context.Context, path string) (Evidence, error) {
+	if err := ctx.Err(); err != nil {
+		return Evidence{}, err
+	}
 	if err := media.CheckLocal(path); err != nil {
 		return Evidence{}, err
 	}
@@ -602,7 +704,7 @@ func Fingerprint(path string) (Evidence, error) {
 		return Evidence{}, fmt.Errorf("not a regular local file: %s", path)
 	}
 	h := sha256.New()
-	if _, err = io.Copy(h, f); err != nil {
+	if _, err = io.Copy(h, contextReader{ctx, f}); err != nil {
 		return Evidence{}, err
 	}
 	after, err := f.Stat()

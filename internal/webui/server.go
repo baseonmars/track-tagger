@@ -7,6 +7,7 @@ import (
 	"crypto/subtle"
 	"embed"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
@@ -56,6 +57,21 @@ type Review struct {
 	Artwork     string
 }
 type Job struct{ ID, RecordingID, Status, Summary string }
+
+// Status is a cached, immutable view of background validation progress.
+type Status struct {
+	Phase      string      `json:"phase"`
+	Validated  bool        `json:"validated"`
+	Scanned    int         `json:"scanned"`
+	Total      int         `json:"total"`
+	Generation uint64      `json:"generation"`
+	Error      string      `json:"error,omitempty"`
+	Recordings []Recording `json:"-"`
+}
+type statusBackend interface {
+	Status(context.Context) (Status, error)
+}
+type browseStopper interface{ StopBrowsing() }
 type Backend interface {
 	List(context.Context) ([]Recording, error)
 	Get(context.Context, string) (Recording, error)
@@ -76,12 +92,14 @@ type server struct {
 	templates *template.Template
 }
 type page struct {
-	Writable   bool
-	CSRF       string
-	Recordings []Recording
-	Recording  *Recording
-	Jobs       []Job
-	History    bool
+	Status      Status
+	ReviewReady bool
+	Writable    bool
+	CSRF        string
+	Recordings  []Recording
+	Recording   *Recording
+	Jobs        []Job
+	History     bool
 }
 
 func validate(c Config) (Config, error) {
@@ -138,6 +156,11 @@ func Serve(ctx context.Context, cfg Config, backend Backend) error {
 	if err != nil {
 		return err
 	}
+	defer func() {
+		if stopper, ok := backend.(browseStopper); ok {
+			stopper.StopBrowsing()
+		}
+	}()
 	return ServeListener(ctx, listener, h)
 }
 
@@ -165,7 +188,7 @@ func ServeListener(ctx context.Context, listener net.Listener, h http.Handler) e
 
 func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	w.Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; script-src 'self'; media-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'")
+	w.Header().Set("Content-Security-Policy", "default-src 'none'; style-src 'self'; script-src 'self'; connect-src 'self'; media-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'")
 	w.Header().Set("Cache-Control", "no-store")
 	if !s.cfg.Remote {
 		host := r.Host
@@ -215,7 +238,7 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	if r.URL.Path == "/player.js" || r.URL.Path == "/review.js" {
+	if r.URL.Path == "/player.js" || r.URL.Path == "/review.js" || r.URL.Path == "/status.js" {
 		b, err := assets.ReadFile("assets" + r.URL.Path)
 		if err != nil {
 			http.NotFound(w, r)
@@ -225,21 +248,43 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write(b)
 		return
 	}
+	if r.URL.Path == "/status" {
+		s.status(w, r)
+		return
+	}
 	if r.URL.Path == "/style.css" {
 		b, _ := assets.ReadFile("assets/style.css")
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")
 		_, _ = w.Write(b)
 		return
 	}
-	p := page{Writable: s.cfg.Writable, CSRF: s.csrf}
+	p := page{Writable: s.cfg.Writable, CSRF: s.csrf, Status: Status{Phase: "ready", Validated: true}}
+	if r.URL.Path == "/" || r.URL.Path == "/recording" {
+		if b, ok := s.backend.(interface{ RefreshBrowsing() }); ok {
+			b.RefreshBrowsing()
+		}
+	}
+	if b, ok := s.backend.(statusBackend); ok {
+		var statusErr error
+		p.Status, statusErr = b.Status(r.Context())
+		if statusErr != nil {
+			http.Error(w, statusErr.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
 	var err error
 	switch r.URL.Path {
 	case "/":
-		p.Recordings, err = s.backend.List(r.Context())
+		if _, ok := s.backend.(statusBackend); ok {
+			p.Recordings = p.Status.Recordings
+		} else {
+			p.Recordings, err = s.backend.List(r.Context())
+		}
 	case "/recording":
 		var rec Recording
 		rec, err = s.backend.Get(r.Context(), r.URL.Query().Get("id"))
 		p.Recording = &rec
+		p.ReviewReady = rec.Fingerprint != "" && rec.Status != "loading" && rec.Status != "validating"
 	case "/history":
 		p.History = true
 		p.Jobs, err = s.backend.History(r.Context())
@@ -256,6 +301,45 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_ = s.templates.ExecuteTemplate(w, "index.html", p)
+}
+
+type statusCard struct {
+	ID     string   `json:"id"`
+	Title  string   `json:"title"`
+	Status string   `json:"status"`
+	Ready  bool     `json:"ready"`
+	Action string   `json:"action"`
+	Date   string   `json:"date"`
+	Tracks int      `json:"tracks"`
+	Issues []string `json:"issues"`
+}
+type statusResponse struct {
+	Phase      string       `json:"phase"`
+	Validated  bool         `json:"validated"`
+	Scanned    int          `json:"scanned"`
+	Total      int          `json:"total"`
+	Generation uint64       `json:"generation"`
+	Error      string       `json:"error,omitempty"`
+	Recordings []statusCard `json:"recordings"`
+}
+
+func (s *server) status(w http.ResponseWriter, r *http.Request) {
+	b, ok := s.backend.(statusBackend)
+	if !ok {
+		http.NotFound(w, r)
+		return
+	}
+	status, err := b.Status(r.Context())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	out := statusResponse{Phase: status.Phase, Validated: status.Validated, Scanned: status.Scanned, Total: status.Total, Generation: status.Generation, Error: status.Error, Recordings: make([]statusCard, 0, len(status.Recordings))}
+	for _, recording := range status.Recordings {
+		out.Recordings = append(out.Recordings, statusCard{ID: recording.ID, Title: recordingTitle(recording), Status: statusLabel(recording.Status), Ready: recording.Fingerprint != "" && recording.Status != "loading" && recording.Status != "validating", Action: recordingAction(recording), Date: recording.Metadata["DATE"], Tracks: len(recording.Tracks), Issues: issueSummary(recording)})
+	}
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	_ = json.NewEncoder(w).Encode(out)
 }
 
 func (s *server) mutate(w http.ResponseWriter, r *http.Request) {

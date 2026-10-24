@@ -12,15 +12,16 @@
     }
     return true;
   }
-  function actionState({ reviewed, writable, status, changed, approved, valid, submitting }) {
+  function actionState({ reviewed, writable, status, changed, approved, valid, submitting, validated = true }) {
     const saved = reviewed && !changed;
     const eligible = status === "ready" || status === "failed" ||
       (approved && changed && (status === "completed" || status === "needs-review")) ||
       (approved && status === "needs-review");
-    const save = approved && valid && !submitting;
-    const apply = valid && writable && eligible && (approved || saved) && !submitting;
+    const save = validated && approved && valid && !submitting;
+    const apply = validated && valid && writable && eligible && (approved || saved) && !submitting;
     let help = "Check the approval box to save your review.";
     if (submitting) help = "Submitting review; please wait.";
+    else if (!validated) help = "Library validation is still running. Refresh this recording when it completes before saving or applying.";
     else if (!valid) help = "Complete the required fields, a valid date or Date unknown, and unique positive disc/track numbers.";
     else if (!writable) help = "Preview mode: you can save an approved review. Restart in write or copy mode to apply it.";
     else if (status === "waiting") help = "Files are waiting to settle or become locally available. You can save a review; refresh before applying.";
@@ -61,7 +62,7 @@
     return form.checkValidity();
   }
   function update() {
-    const state = actionState({ reviewed: form.dataset.reviewed === "true", writable: form.dataset.writable === "true", status: form.dataset.status, changed: snapshot() !== baseline, approved: approve.checked, valid: valid(), submitting });
+    const state = actionState({ reviewed: form.dataset.reviewed === "true", writable: form.dataset.writable === "true", status: form.dataset.status, changed: snapshot() !== baseline, approved: approve.checked, valid: valid(), submitting, validated: form.dataset.validated !== "false" });
     save.disabled = !state.save;
     if (apply) { apply.disabled = !state.apply; apply.textContent = state.label; }
     help.textContent = state.help;

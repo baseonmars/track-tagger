@@ -87,14 +87,19 @@ func TestBrowseRefreshesChangedAndAddedInputs(t *testing.T) {
 func TestPlaybackDoesNotWaitForScanLock(t *testing.T) {
 	e, _ := engineFixture(t, DryRun)
 	w := WebBackend{e}
+	awaitWebLibrary(t, e)
 	rs, err := w.List(context.Background())
-	if err != nil {
-		t.Fatal(err)
+	if err != nil || len(rs) != 1 {
+		t.Fatalf("library summaries: %+v, %v", rs, err)
+	}
+	r, err := w.Get(context.Background(), rs[0].ID)
+	if err != nil || len(r.Tracks) != 1 || r.Tracks[0].PlaybackID == "" {
+		t.Fatalf("playback registration: %+v, %v", r, err)
 	}
 	e.mu.Lock()
 	done := make(chan error, 1)
 	go func() {
-		a, err := w.OpenAudio(context.Background(), rs[0].ID, rs[0].Tracks[0].PlaybackID)
+		a, err := w.OpenAudio(context.Background(), r.ID, r.Tracks[0].PlaybackID)
 		if err == nil {
 			err = a.Content.Close()
 		}

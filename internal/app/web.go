@@ -12,39 +12,22 @@ import (
 	"track-tagger/internal/media"
 	"unicode/utf8"
 
+	"track-tagger/internal/catalog"
 	"track-tagger/internal/webui"
 )
 
 type WebBackend struct{ E *Engine }
 
 func (w WebBackend) List(ctx context.Context) ([]webui.Recording, error) {
-	p, err := w.E.browse()
-	if err != nil {
+	if err := ctx.Err(); err != nil {
 		return nil, err
 	}
-	var rs []webui.Recording
-	latest := map[string]string{}
-	w.E.mu.Lock()
-	if w.E.store != nil {
-		jobs, x := w.E.store.History()
-		if x == nil {
-			for _, j := range jobs {
-				if _, ok := latest[j.RecordingID]; !ok {
-					latest[j.RecordingID] = j.Status
-				}
-			}
-		}
+	status, _ := w.E.librarySnapshot()
+	rows := make([]webui.Recording, len(status.Recordings))
+	for i, r := range status.Recordings {
+		rows[i] = librarySummary(r)
 	}
-	w.E.mu.Unlock()
-	for _, r := range p.Recordings {
-		wr := webRecord(r)
-		if wr.Status == "ready" && latest[r.ID] == "failed" {
-			wr.Status = "failed"
-		}
-		w.E.registerPlayback(&wr)
-		rs = append(rs, wr)
-	}
-	return rs, nil
+	return rows, nil
 }
 func webRecord(r Item) webui.Recording {
 	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, Reviewed: r.Reviewed, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
@@ -76,32 +59,20 @@ func webRecord(r Item) webui.Recording {
 	return out
 }
 func (w WebBackend) Get(ctx context.Context, id string) (webui.Recording, error) {
-	p, err := w.E.browse()
-	if err != nil {
+	if err := ctx.Err(); err != nil {
 		return webui.Recording{}, err
 	}
-	for _, item := range p.Recordings {
-		if item.ID != id {
-			continue
+	w.E.prioritize(id)
+	status, _ := w.E.librarySnapshot()
+	for _, r := range status.Recordings {
+		if r.ID == id {
+			r = cloneWebRecording(r)
+			w.E.registerPlayback(&r)
+			return r, nil
 		}
-		r := webRecord(item)
-		w.E.mu.Lock()
-		if r.Status == "ready" && w.E.store != nil {
-			jobs, err := w.E.store.History()
-			if err == nil {
-				for _, job := range jobs {
-					if job.RecordingID == id {
-						if job.Status == "failed" {
-							r.Status = "failed"
-						}
-						break
-					}
-				}
-			}
-		}
-		w.E.mu.Unlock()
-		w.E.registerPlayback(&r)
-		return r, nil
+	}
+	if status.Phase == "validating" {
+		return webui.Recording{ID: id, Status: "loading", Metadata: map[string]string{}}, nil
 	}
 	return webui.Recording{}, errors.New("recording not found")
 }
@@ -109,57 +80,75 @@ func (w WebBackend) SaveReview(ctx context.Context, id string, v webui.Review) e
 	if !v.Approve {
 		return errors.New("explicit review acknowledgment required")
 	}
-	p, err := w.E.Scan()
+	w.E.invalidateRecordings(id)
+	defer w.E.invalidateRecordings(id)
+	w.E.validationMu.Lock()
+	defer w.E.validationMu.Unlock()
+	w.E.mu.Lock()
+	defer w.E.mu.Unlock()
+	if err := w.E.OpenStorage(); err != nil {
+		return err
+	}
+	base, err := w.E.recording(id)
 	if err != nil {
 		return err
 	}
-	for _, r := range p.Recordings {
-		if r.ID != id {
-			continue
-		}
-		if v.Fingerprint != r.Fingerprint {
-			return errors.New("inputs changed since this page was loaded; refresh and review again")
-		}
-		for k := range v.Metadata {
-			if k != "ARTIST" && k != "ALBUM" && k != "DATE" {
-				return fmt.Errorf("unsupported album field %s", k)
-			}
-		}
-		r.Artist = v.Metadata["ARTIST"]
-		r.Album = v.Metadata["ALBUM"]
-		r.Date = v.Metadata["DATE"]
-		r.DateUnknown = v.DateUnknown
-		r.Artwork = v.Artwork
-		if len(v.Tracks) != len(r.Tracks) {
-			return errors.New("map every file")
-		}
-		for i, t := range v.Tracks {
-			r.Tracks[i].Path = t.File
-			r.Tracks[i].Title = t.Title
-			r.Tracks[i].Artist = t.Artist
-			r.Tracks[i].Disc = t.Disc
-			r.Tracks[i].Number = t.Track
-		}
-		return w.E.SaveReview(id, r)
+	r := Item{Recording: base}
+	// The discovery result remains the authority for allowed track paths.
+	r.Tracks = append([]catalog.Track(nil), base.Tracks...)
+
+	if v.Fingerprint != r.Fingerprint {
+		return errors.New("inputs changed since this page was loaded; refresh and review again")
 	}
-	return errors.New("recording not found")
+	for k := range v.Metadata {
+		if k != "ARTIST" && k != "ALBUM" && k != "DATE" {
+			return fmt.Errorf("unsupported album field %s", k)
+		}
+	}
+	r.Artist = v.Metadata["ARTIST"]
+	r.Album = v.Metadata["ALBUM"]
+	r.Date = v.Metadata["DATE"]
+	r.DateUnknown = v.DateUnknown
+	r.Artwork = v.Artwork
+	if len(v.Tracks) != len(r.Tracks) {
+		return errors.New("map every file")
+	}
+	for i, t := range v.Tracks {
+		r.Tracks[i].Path = t.File
+		r.Tracks[i].Title = t.Title
+		r.Tracks[i].Artist = t.Artist
+		r.Tracks[i].Disc = t.Disc
+		r.Tracks[i].Number = t.Track
+	}
+	return w.E.saveReview(base, r)
 }
 func (w WebBackend) Apply(ctx context.Context, id string) error {
-	p, err := w.E.Scan()
+	return w.applySelection(ctx, id, func(r Item) error {
+		if r.Status != "ready" {
+			return fmt.Errorf("recording is %s", r.Status)
+		}
+		return nil
+	})
+}
+func (w WebBackend) applySelection(ctx context.Context, id string, check func(Item) error) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	e := w.E
+	e.invalidateRecordings(id)
+	defer e.invalidateRecordings(id)
+	e.validationMu.Lock()
+	defer e.validationMu.Unlock()
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	path, err := e.recordingPath(id)
 	if err != nil {
 		return err
 	}
-	for _, r := range p.Recordings {
-		if r.ID == id {
-			if r.Status != "ready" {
-				return fmt.Errorf("recording is %s", r.Status)
-			}
-			p.Recordings = []Item{r}
-			_, err = w.E.Apply(p)
-			return err
-		}
-	}
-	return errors.New("recording not found")
+	placeholder := Item{}
+	placeholder.ID, placeholder.Path, placeholder.Status = id, path, "ready"
+	_, err = e.applyLocked(Plan{Version: 1, Source: e.Source, Recordings: []Item{placeholder}}, check)
+	return err
 }
 func (w WebBackend) Undo(ctx context.Context, id string) error {
 	_, err := w.E.Undo(id, true)
@@ -198,14 +187,7 @@ func (w WebBackend) ApplyReview(ctx context.Context, id string, v webui.Review) 
 	return err
 }
 func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Review) error {
-	p, err := w.E.Scan()
-	if err != nil {
-		return err
-	}
-	for _, r := range p.Recordings {
-		if r.ID != id {
-			continue
-		}
+	return w.applySelection(ctx, id, func(r Item) error {
 		if v.Fingerprint != r.Fingerprint {
 			return errors.New("inputs changed since this page was loaded; refresh and review again")
 		}
@@ -223,12 +205,9 @@ func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Revie
 		if v.DateUnknown != expected.DateUnknown || !reflect.DeepEqual(v.Metadata, expected.Metadata) || v.Artwork != expected.Artwork || !reflect.DeepEqual(tracks, expected.Tracks) {
 			return errors.New("submitted values differ from the saved review; approve and save your edits before applying")
 		}
-		if r.Status != "ready" {
+		if r.Status != "ready" && r.Status != "failed" {
 			return fmt.Errorf("recording is %s; refresh before applying", r.Status)
 		}
-		p.Recordings = []Item{r}
-		_, err = w.E.Apply(p)
-		return err
-	}
-	return errors.New("recording not found")
+		return nil
+	})
 }

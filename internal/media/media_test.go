@@ -71,6 +71,47 @@ func TestReviewedReplacement(t *testing.T) {
 		t.Fatal(after.Tags)
 	}
 }
+
+func TestStageInspectedChecksSourceAndReturnsStagedHash(t *testing.T) {
+	d := t.TempDir()
+	src := filepath.Join(d, "a.flac")
+	fixture(t, src)
+	original, err := Inspect(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	staged := filepath.Join(d, "stage")
+	result, err := StageInspected(src, staged, original, map[string]string{"TITLE": "Song"}, "", false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	hash, err := Hash(staged)
+	if err != nil || result.FileHash != hash || result.AudioHash != original.AudioHash {
+		t.Fatalf("staged hashes do not match: %+v, hash %q, err %v", result, hash, err)
+	}
+	if _, err := StageInspected(src, filepath.Join(d, "missing-hash"), Info{Metadata: original.Metadata}, nil, "", false); err == nil {
+		t.Fatal("accepted metadata-only inspection")
+	}
+	data, err := os.ReadFile(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	nameAt := bytes.Index(data, []byte("ARTIST=Existing"))
+	if nameAt < 0 {
+		t.Fatal("fixture comment missing")
+	}
+	data[nameAt+len("ARTIST=Existin")] = 'G'
+	if err := os.WriteFile(src, data, 0600); err != nil {
+		t.Fatal(err)
+	}
+	stale := filepath.Join(d, "stale")
+	if _, err := StageInspected(src, stale, original, nil, "", false); err == nil {
+		t.Fatal("accepted source changed after inspection")
+	}
+	if _, err := os.Stat(stale); !os.IsNotExist(err) {
+		t.Fatalf("stale stage left behind: %v", err)
+	}
+}
 func TestMalformedLengths(t *testing.T) {
 	cases := [][]byte{[]byte("fLaC"), append([]byte("fLaC"), []byte{128, 255, 255, 255}...), {0, 0, 0, 0}}
 	for _, data := range cases {

@@ -1,7 +1,10 @@
 package catalog
 
 import (
+	"context"
 	"os"
+	"path/filepath"
+	"strings"
 	"track-tagger/internal/media"
 )
 
@@ -15,6 +18,12 @@ type cachedEvidence struct {
 }
 
 func (c *BrowseCache) Fingerprint(path string) (Evidence, error) {
+	return c.FingerprintContext(context.Background(), path)
+}
+func (c *BrowseCache) FingerprintContext(ctx context.Context, path string) (Evidence, error) {
+	if err := ctx.Err(); err != nil {
+		return Evidence{}, err
+	}
 	if err := media.CheckLocal(path); err != nil {
 		return Evidence{}, err
 	}
@@ -25,7 +34,7 @@ func (c *BrowseCache) Fingerprint(path string) (Evidence, error) {
 	if old, ok := c.entries[path]; ok && os.SameFile(old.info, st) && old.info.Size() == st.Size() && old.info.ModTime().Equal(st.ModTime()) {
 		return old.evidence, nil
 	}
-	ev, err := Fingerprint(path)
+	ev, err := FingerprintContext(ctx, path)
 	if err != nil {
 		return Evidence{}, err
 	}
@@ -47,16 +56,33 @@ func ScanCached(source string, cache *BrowseCache) ([]Recording, error) {
 	if err != nil {
 		return nil, err
 	}
+	cache.Retain(recordings)
+	return recordings, nil
+}
+
+// Retain drops removed inputs after reconciliation, keeping failed recordings'
+// entries until they can be inspected successfully.
+func (c *BrowseCache) Retain(recordings []Recording) {
 	live := map[string]bool{}
+	var failed []string
 	for _, r := range recordings {
+		if r.Status == "failed" {
+			failed = append(failed, r.Path)
+		}
 		for _, ev := range r.Evidence {
 			live[ev.Path] = true
 		}
 	}
-	for path := range cache.entries {
+	for path := range c.entries {
+		for _, dir := range failed {
+			rel, err := filepath.Rel(dir, path)
+			if err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+				live[path] = true
+				break
+			}
+		}
 		if !live[path] {
-			delete(cache.entries, path)
+			delete(c.entries, path)
 		}
 	}
-	return recordings, nil
 }
