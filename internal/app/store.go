@@ -188,3 +188,29 @@ func (s *Store) finishUndo(id, original int64, target, hash string) error {
 	}
 	return tx.Commit()
 }
+
+// saveReviewDecision publishes the review, completion invalidation and undo-hold
+// removal together so a failed save cannot change processing eligibility.
+func (s *Store) saveReviewDecision(id, evidence string, item Item, completion string, changed bool) error {
+	b, err := json.Marshal(item)
+	if err != nil {
+		return err
+	}
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if _, err = tx.Exec("INSERT INTO reviews VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET evidence=excluded.evidence,plan=excluded.plan", id, evidence, b); err != nil {
+		return err
+	}
+	if changed {
+		if _, err = tx.Exec("DELETE FROM completions WHERE id=?", completion); err != nil {
+			return err
+		}
+	}
+	if _, err = tx.Exec("DELETE FROM holds WHERE id=?", id); err != nil {
+		return err
+	}
+	return tx.Commit()
+}

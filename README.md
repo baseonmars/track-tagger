@@ -11,7 +11,7 @@ go build -o track-tagger ./cmd/track-tagger
 ./track-tagger serve /music/concerts
 ```
 
-Open http://127.0.0.1:8787. Review source notes, metadata, file-to-title mappings, and artwork. Explicitly acknowledge replacements when saving corrections. The default server runs in preview mode and saves review decisions in application storage. Select `--write` or `--copy DEST` to apply metadata changes.
+Open http://127.0.0.1:8787. Review source notes, metadata, file-to-title mappings, and artwork. Check the approval box after reviewing your changes, then choose **Save review** or, in write/copy mode, **Save and apply**. An unchanged saved review can be applied with **Apply saved review** without checking approval again. Editing any field requires approval again; restoring all fields to their saved values restores the saved-review action. Saving in write/copy mode also allows the watcher to apply approved corrections after the quiet interval. Waiting recordings must settle before applying; completed recordings need an approved change to apply again. If applying fails after saving, the review remains saved: reopen the recording, address the reported problem, and retry **Apply saved review**. The default server runs in preview mode and saves review decisions in application storage. Select `--write` or `--copy DEST` to apply metadata changes.
 
 ## Windows desktop app
 
@@ -65,7 +65,9 @@ FLAC, ordinary PCM WAV, MP3, and Ogg audio (`.ogg`, `.oga`, `.opus`) are availab
 
 The quiet interval defaults to two minutes. Watchers measure time since observed changes, add recursive directory watches, and reconcile every five minutes. Use `--poll` for network shares (15-second observations). Watcher failures fall back to polling and are logged. `--settle 0s` is available for deliberate testing on disposable copies; normal operation should retain the default.
 
-The first web/watch scan reads local files to establish content hashes. Later observations reuse hashes when file identity, size, and modification time match, and read only FLAC headers for tag conflicts. An external edit that preserves those attributes can leave the preview stale; saving reviews and applying changes always validate fresh content. CLI scans and media writes still perform full integrity checks. The cache is in memory and resets when the app restarts.
+After folder discovery, the web library shows recordings while validating them one at a time in the background. Open a recording to prioritize it after the current recording finishes. Progress and library cards update automatically; an open review keeps its edits and playback and asks you to refresh when newer details are available. Saving and applying become available once that recording is validated, even while others are still loading. A failed recording does not prevent the remaining recordings from loading. Refresh the page to retry a discovery error.
+
+The watcher and browser share this background work. The first observation reads local files to establish content hashes. Later observations reuse hashes when file identity, size, and modification time match, and read only FLAC headers for tag conflicts. Background validation pauses for review saves and media operations; library pages and progress remain available during that work. Saving or applying refreshes the affected recording. An external edit that preserves those attributes can leave the preview stale; saving reviews and applying changes always validate fresh content in the selected recording, including newly added or removed inputs. CLI scans remain synchronous and strict. The preview cache is in memory and resets when the app restarts.
 
 Recognized partial-download extensions, zero-length files, macOS dataless files, and Windows offline/recall attributes wait for local availability. Pin cloud recordings locally before processing, especially on Linux and network shares where placeholder attributes vary by provider.
 
@@ -74,6 +76,8 @@ Recognized partial-download extensions, zero-length files, macOS dataless files,
 Copy mode mirrors paths relative to `SOURCE`, including each recording's accompanying files. It rejects overlapping trees and symlinks, creates independent files, refuses unrelated destination collisions, and updates application-owned outputs only while their recorded hashes match. Sources stay byte-identical. Replacing an existing copy with different audio is refused; select a new destination for changed audio. Collection-level files outside discovered recordings are not copied.
 
 FLAC processing streams audio. The adapter bounds metadata lengths, preserves unknown blocks and unrelated comments, and verifies SHA-256 identity of the exact audio payload. It stages beside the destination, syncs, rechecks source/evidence and destination hashes, and replaces through a platform adapter. A SQLite journal records intent before each replacement and recovers interrupted file commits on the next write command. A process lock serializes writers using the same state directory.
+
+Saving and applying a selected recording do not read unrelated recordings' payloads. Applying still freshly checks the entire selected recording before each file replacement, as well as the source and destination files. Large recordings with many tracks therefore retain repeated full-recording reads during a write; background preview evidence never replaces these integrity checks.
 
 A job is recoverable per file, not an atomic whole-album transaction. An interrupted album can contain completed and pending files; rerun with the same state directory. The `.track-tagger-` file prefix is reserved for temporary stages; abandoned stages are ignored after a crash and can be removed while the application is stopped. Original metadata stays in history. Undo restores metadata in either mode, keeps copied companion files, and refuses subsequent external edits or later tagging jobs. Undo pauses automatic tagging of that recording until it is reviewed again.
 
@@ -99,7 +103,7 @@ For Roon, inspect its metadata preferences for the album and prefer file metadat
 ```sh
 go test -race ./...            # unit, integration, and CLI/HTTP end-to-end tests
 go vet ./...
-node --test internal/webui/testdata/player.test.cjs  # development only; Node 24
+node --test internal/webui/testdata/player.test.cjs internal/webui/testdata/review.test.cjs  # development only; Node 24
 go test ./internal/catalog -fuzz FuzzNotes -fuzztime 10s
 go test ./internal/media -fuzz FuzzMetadata -fuzztime 10s
 ```

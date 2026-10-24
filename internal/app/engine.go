@@ -41,13 +41,18 @@ type Plan struct {
 	Recordings []Item
 }
 type Engine struct {
+	strictFingerprint func(string) (catalog.Evidence, error)
 	Options
-	store       *Store
-	streams     map[string]playbackFile
-	browseCache catalog.BrowseCache
-	outputCache catalog.BrowseCache
-	mu          sync.Mutex
-	streamMu    sync.Mutex
+	store        *Store
+	streams      map[string]playbackFile
+	browseCache  catalog.BrowseCache
+	outputCache  catalog.BrowseCache
+	mu           sync.Mutex
+	streamMu     sync.Mutex
+	previewMu    sync.Mutex
+	validationMu sync.RWMutex
+	libraryMu    sync.Mutex
+	library      libraryState
 }
 
 func New(o Options) (*Engine, error) {
@@ -113,6 +118,9 @@ func (e *Engine) OpenStorage() error {
 	return err
 }
 func (e *Engine) Close() error {
+	e.stopBrowsing()
+	e.mu.Lock()
+	defer e.mu.Unlock()
 	if e.store != nil {
 		return e.store.Close()
 	}
@@ -133,7 +141,9 @@ func (e *Engine) scan(browse bool) (Plan, error) {
 	var rs []catalog.Recording
 	var err error
 	if browse {
+		e.previewMu.Lock()
 		rs, err = catalog.ScanCached(e.Source, &e.browseCache)
+		e.previewMu.Unlock()
 	} else {
 		rs, err = catalog.Scan(e.Source)
 	}
@@ -142,112 +152,122 @@ func (e *Engine) scan(browse bool) (Plan, error) {
 		return p, err
 	}
 	for _, r := range rs {
-		item := Item{Recording: r}
-		if e.store != nil {
-			var saved Item
-			ev, ok, err := e.store.review(r.ID, &saved)
-			if err != nil {
-				return p, err
-			}
-			if ok {
-				if ev == evidence(r) && sameTrackFiles(saved.Tracks, r.Tracks) {
-					item = saved
-					item.Evidence = r.Evidence
-				} else {
-					item.ReviewReasons = append(item.ReviewReasons, "saved review is stale: inputs changed")
-					item.Status = "needs-review"
-				}
-			}
-		}
-		waiting := item.Status == "waiting"
-		for _, ev := range r.Evidence {
-			if time.Since(time.Unix(0, ev.ModTime)) < e.Settle {
-				waiting = true
-			}
-		}
-		for _, t := range item.Tracks {
-			if !catalog.CanTag(t.Path) {
-				continue
-			}
-			info, err := media.InspectMetadata(t.Path)
-			if err != nil {
-				waiting = true
-				item.ReviewReasons = append(item.ReviewReasons, filepath.Base(t.Path)+": "+err.Error())
-				continue
-			}
-			if !item.Reviewed {
-				for k, v := range t.Tags {
-					if old := info.Tags[k]; old != "" && old != v {
-						item.ReviewReasons = append(item.ReviewReasons, filepath.Base(t.Path)+": existing "+k+" conflicts")
-					}
-				}
-			}
-		}
-		if waiting {
-			item.Status = "waiting"
-		} else if len(item.ReviewReasons) > 0 && !item.Reviewed {
-			item.Status = "needs-review"
-		} else {
-			item.Status = "ready"
-		}
-		if item.Status == "ready" && e.store != nil {
-			var done string
-			err := e.store.db.QueryRow("SELECT evidence FROM completions WHERE id=?", e.completionKey(item.ID)).Scan(&done)
-			if err == nil && done == evidence(r) {
-				unchanged := true
-				paths := []string{}
-				if e.Mode == Copy {
-					for _, ev := range item.Evidence {
-						paths = append(paths, ev.Path)
-					}
-				} else {
-					for _, t := range item.Tracks {
-						paths = append(paths, t.Path)
-					}
-				}
-				for _, path := range paths {
-					target, x := e.destination(path)
-					if x != nil {
-						unchanged = false
-						break
-					}
-					var h string
-					if browse {
-						ev, err := e.outputCache.Fingerprint(target)
-						h, x = ev.SHA256, err
-					} else {
-						h, x = media.Hash(target)
-					}
-					known, y := e.store.known(target)
-					if x != nil || y != nil || h != known || known == "" {
-						unchanged = false
-						break
-					}
-				}
-				if unchanged {
-					item.Status = "completed"
-				}
-			}
-		}
-		if e.store != nil && item.Status != "waiting" {
-			var hold string
-			if e.store.db.QueryRow("SELECT id FROM holds WHERE id=?", item.ID).Scan(&hold) == nil {
-				item.Status = "needs-review"
-				item.Reviewed = false
-				item.ReviewReasons = append(item.ReviewReasons, "metadata was undone; review to resume tagging")
-			}
-		}
-		if r.PlaybackOnly {
-			item.PlaybackOnly = true
-			item.Reviewed = false
-			if !waiting {
-				item.Status = "playback-only"
-			}
+		item, err := e.decorate(r, browse)
+		if err != nil {
+			return p, err
 		}
 		p.Recordings = append(p.Recordings, item)
 	}
 	return p, nil
 }
+
+// decorate uses current saved decisions; callers hold the writer mutex.
+func (e *Engine) decorate(r catalog.Recording, browse bool) (Item, error) {
+	item := Item{Recording: r}
+	if e.store != nil {
+		var saved Item
+		ev, ok, err := e.store.review(r.ID, &saved)
+		if err != nil {
+			return Item{}, err
+		}
+		if ok {
+			if ev == evidence(r) && sameTrackFiles(saved.Tracks, r.Tracks) {
+				item = saved
+				item.Evidence = r.Evidence
+			} else {
+				item.ReviewReasons = append(item.ReviewReasons, "saved review is stale: inputs changed")
+				item.Status = "needs-review"
+			}
+		}
+	}
+	waiting := item.Status == "waiting"
+	for _, ev := range r.Evidence {
+		if time.Since(time.Unix(0, ev.ModTime)) < e.Settle {
+			waiting = true
+		}
+	}
+	for _, t := range item.Tracks {
+		if !catalog.CanTag(t.Path) {
+			continue
+		}
+		info, err := media.InspectMetadata(t.Path)
+		if err != nil {
+			waiting = true
+			item.ReviewReasons = append(item.ReviewReasons, filepath.Base(t.Path)+": "+err.Error())
+			continue
+		}
+		if !item.Reviewed {
+			for k, v := range t.Tags {
+				if old := info.Tags[k]; old != "" && old != v {
+					item.ReviewReasons = append(item.ReviewReasons, filepath.Base(t.Path)+": existing "+k+" conflicts")
+				}
+			}
+		}
+	}
+	if waiting {
+		item.Status = "waiting"
+	} else if len(item.ReviewReasons) > 0 && !item.Reviewed {
+		item.Status = "needs-review"
+	} else {
+		item.Status = "ready"
+	}
+	if item.Status == "ready" && e.store != nil {
+		var done string
+		err := e.store.db.QueryRow("SELECT evidence FROM completions WHERE id=?", e.completionKey(item.ID)).Scan(&done)
+		if err == nil && done == evidence(r) {
+			unchanged := true
+			paths := []string{}
+			if e.Mode == Copy {
+				for _, ev := range item.Evidence {
+					paths = append(paths, ev.Path)
+				}
+			} else {
+				for _, t := range item.Tracks {
+					paths = append(paths, t.Path)
+				}
+			}
+			for _, path := range paths {
+				target, x := e.destination(path)
+				if x != nil {
+					unchanged = false
+					break
+				}
+				var h string
+				if browse {
+					ev, err := e.outputCache.Fingerprint(target)
+					h, x = ev.SHA256, err
+				} else {
+					h, x = media.Hash(target)
+				}
+				known, y := e.store.known(target)
+				if x != nil || y != nil || h != known || known == "" {
+					unchanged = false
+					break
+				}
+			}
+			if unchanged {
+				item.Status = "completed"
+			}
+		}
+	}
+	if e.store != nil && item.Status != "waiting" {
+		var hold string
+		if e.store.db.QueryRow("SELECT id FROM holds WHERE id=?", item.ID).Scan(&hold) == nil {
+			item.Status = "needs-review"
+			item.Reviewed = false
+			item.ReviewReasons = append(item.ReviewReasons, "metadata was undone; review to resume tagging")
+		}
+	}
+	if r.PlaybackOnly {
+		item.PlaybackOnly = true
+		item.Reviewed = false
+		if !waiting {
+			item.Status = "playback-only"
+		}
+	}
+	return item, nil
+}
+
 func validateReview(base catalog.Recording, item *Item) error {
 	if base.PlaybackOnly {
 		return errors.New("this recording is playback-only; metadata writing currently supports FLAC-only recordings")
@@ -308,41 +328,109 @@ func validateReview(base catalog.Recording, item *Item) error {
 	return nil
 }
 func (e *Engine) SaveReview(id string, item Item) error {
+	e.invalidateRecordings(id)
+	e.validationMu.Lock()
+	defer e.validationMu.Unlock()
+	defer e.invalidateRecordings(id)
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	if err := e.OpenStorage(); err != nil {
 		return err
 	}
-	rs, err := catalog.Scan(e.Source)
+	r, err := e.strictRecording(id, item.Path)
 	if err != nil {
 		return err
 	}
-	for _, r := range rs {
-		if r.ID == id {
-			if evidence(r) != evidence(item.Recording) {
-				return errors.New("inputs changed; refresh before reviewing")
-			}
-			if err = validateReview(r, &item); err != nil {
-				return err
-			}
-			item.ID = r.ID
-			item.Path = r.Path
-			item.RelativePath = r.RelativePath
-			item.Evidence = r.Evidence
-			item.Reviewed = true
-			item.Status = "ready"
-			if err = e.store.saveReview(id, evidence(r), item); err != nil {
-				return err
-			}
-			_, err = e.store.db.Exec("DELETE FROM holds WHERE id=?", id)
-			return err
+	return e.saveReview(r, item)
+}
+
+// recording locates an ID without reading unrelated file contents.
+func (e *Engine) recording(id string) (catalog.Recording, error) {
+	path, err := e.recordingPath(id)
+	if err != nil {
+		return catalog.Recording{}, err
+	}
+	return e.strictRecording(id, path)
+}
+func (e *Engine) recordingPath(id string) (string, error) {
+	e.libraryMu.Lock()
+	path := ""
+	for _, item := range e.library.items {
+		if item.ID == id {
+			path = item.Path
+			break
 		}
 	}
-	return errors.New("recording not found")
+	e.libraryMu.Unlock()
+	if path != "" {
+		return path, nil
+	}
+	ds, err := catalog.Discover(e.Source)
+	if err != nil {
+		return "", err
+	}
+	for _, d := range ds {
+		if d.ID == id {
+			return d.Path, nil
+		}
+	}
+	return "", errors.New("recording not found")
+}
+func (e *Engine) strictRecording(id, path string) (catalog.Recording, error) {
+	if err := safePath(e.Source, path); err != nil {
+		return catalog.Recording{}, err
+	}
+	fingerprint := e.strictFingerprint
+	if fingerprint == nil {
+		fingerprint = catalog.Fingerprint
+	}
+	r, err := catalog.Validate(e.Source, catalog.Discovery{ID: id, Path: path}, fingerprint)
+	if err != nil {
+		return r, err
+	}
+	if r.ID != id {
+		return r, errors.New("recording path changed")
+	}
+	return r, nil
+}
+func (e *Engine) saveReview(r catalog.Recording, item Item) error {
+	if evidence(r) != evidence(item.Recording) {
+		return errors.New("inputs changed; refresh before reviewing")
+	}
+	if err := validateReview(r, &item); err != nil {
+		return err
+	}
+	item.ID, item.Path, item.RelativePath = r.ID, r.Path, r.RelativePath
+	item.Evidence, item.Fingerprint = r.Evidence, r.Fingerprint
+	item.Reviewed, item.Status = true, "ready"
+	var previous Item
+	_, existed, err := e.store.review(r.ID, &previous)
+	if err != nil {
+		return err
+	}
+	if !existed {
+		previous = Item{Recording: r}
+	}
+	return e.store.saveReviewDecision(r.ID, evidence(r), item, e.completionKey(r.ID), !sameProposal(previous.Recording, item.Recording))
+}
+
+func planIDs(p Plan) []string {
+	ids := make([]string, 0, len(p.Recordings))
+	for _, r := range p.Recordings {
+		ids = append(ids, r.ID)
+	}
+	return ids
 }
 func (e *Engine) Apply(p Plan) ([]string, error) {
+	e.invalidateRecordings(planIDs(p)...)
+	e.validationMu.Lock()
+	defer e.validationMu.Unlock()
+	defer e.invalidateRecordings(planIDs(p)...)
 	e.mu.Lock()
 	defer e.mu.Unlock()
+	return e.applyLocked(p, nil)
+}
+func (e *Engine) applyLocked(p Plan, check func(Item) error) ([]string, error) {
 	if p.Version != 1 || p.Source != e.Source {
 		return nil, errors.New("plan source/version mismatch")
 	}
@@ -360,22 +448,25 @@ func (e *Engine) Apply(p Plan) ([]string, error) {
 	if err = e.recover(); err != nil {
 		return nil, err
 	}
-	fresh, err := catalog.Scan(e.Source)
-	if err != nil {
-		return nil, err
-	}
-	byID := map[string]catalog.Recording{}
-	for _, r := range fresh {
-		byID[r.ID] = r
-	}
 	var ids []string
 	for _, item := range p.Recordings {
 		if item.Status != "ready" {
 			continue
 		}
-		base, ok := byID[item.ID]
-		if !ok || evidence(base) != evidence(item.Recording) {
+		base, err := e.strictRecording(item.ID, item.Path)
+		if err != nil || (check == nil && evidence(base) != evidence(item.Recording)) {
 			return ids, errors.New("plan is stale: recording inputs changed")
+		}
+		if check != nil {
+			current, x := e.decorate(base, false)
+			if x != nil {
+				return ids, x
+			}
+			if x = check(current); x != nil {
+				return ids, x
+			}
+			// Use the freshly validated, current saved proposal.
+			item = current
 		}
 		if item.Path != base.Path {
 			return ids, errors.New("plan path changed")
@@ -477,9 +568,11 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 	}
 
 	sort.Slice(outputs, func(i, j int) bool { return outputs[i].src < outputs[j].src })
-	for _, o := range outputs {
-		if _, err = e.targetAllowed(o.target); err != nil {
-			return "", err
+	if e.Mode == Copy {
+		for _, o := range outputs {
+			if _, err = e.targetAllowed(o.target); err != nil {
+				return "", err
+			}
 		}
 	}
 	id, err = e.store.newJob(item.ID, "metadata update; original checksum documents retained; whole-file MD5 changes")
@@ -496,20 +589,31 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 		}
 	}()
 	for _, o := range outputs {
-		before, x := e.targetAllowed(o.target)
-		if x != nil {
-			return id, x
-		}
-		sourceHash, x := media.Hash(o.src)
-		if x != nil {
-			return id, x
-		}
+		var in media.Info
+		var before, sourceHash string
 		var original []byte
+		var x error
 		if o.audio {
-			in, x := media.Inspect(o.src)
+			in, x = media.Inspect(o.src)
 			if x != nil {
 				return id, x
 			}
+			sourceHash = in.FileHash
+		} else {
+			sourceHash, x = media.Hash(o.src)
+			if x != nil {
+				return id, x
+			}
+		}
+		if e.Mode == Write {
+			before = sourceHash
+		} else {
+			before, x = e.targetAllowed(o.target)
+			if x != nil {
+				return id, x
+			}
+		}
+		if o.audio {
 			original = in.Metadata
 			if !item.Reviewed {
 				for k, v := range o.tags {
@@ -522,6 +626,9 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 				prior, x := media.Inspect(o.target)
 				if x != nil {
 					return id, x
+				}
+				if prior.FileHash != before {
+					return id, errors.New("destination changed before staging")
 				}
 				if prior.AudioHash != in.AudioHash {
 					return id, errors.New("source audio differs from the existing copy; use a new destination")
@@ -539,21 +646,23 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 		tempName := temp.Name()
 		temp.Close()
 		os.Remove(tempName)
+		var after string
 		x = func() error {
 			defer os.Remove(tempName)
 			if o.audio {
-				_, x := media.Stage(o.src, tempName, o.tags, o.art, item.Reviewed)
+				staged, x := media.StageInspected(o.src, tempName, in, o.tags, o.art, item.Reviewed)
 				if x != nil {
 					return x
 				}
+				after = staged.FileHash
 			} else {
 				if x := copyFile(o.src, tempName); x != nil {
 					return x
 				}
-			}
-			after, x := media.Hash(tempName)
-			if x != nil {
-				return x
+				after, x = media.Hash(tempName)
+				if x != nil {
+					return x
+				}
 			}
 			if before == after {
 				return nil
@@ -589,35 +698,23 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 					if x != nil {
 						return id, x
 					}
-					h, x := media.Hash(o.src)
-					if x != nil {
-						return id, x
-					}
-					item.Evidence[i].SHA256 = h
+					item.Evidence[i].SHA256 = after
 					item.Evidence[i].Size = st.Size()
 					item.Evidence[i].ModTime = st.ModTime().UnixNano()
 				}
 			}
 		}
 	}
-	if err = e.revalidate(item, ""); err != nil {
-		return id, err
+	fresh, x := e.revalidateRecording(item)
+	if x != nil {
+		return id, x
 	}
+	item.Fingerprint = fresh.Fingerprint
 	if _, err = e.store.db.Exec("INSERT INTO completions VALUES(?,?) ON CONFLICT(id) DO UPDATE SET evidence=excluded.evidence", e.completionKey(item.ID), evidence(item.Recording)); err != nil {
 		return id, err
 	}
 	if item.Reviewed {
-		rs, x := catalog.Scan(item.Path)
-		if x != nil {
-			return id, x
-		}
-		for _, r := range rs {
-			if r.ID == item.ID {
-				item.Evidence = r.Evidence
-				item.Fingerprint = r.Fingerprint
-				break
-			}
-		}
+		item.Evidence = fresh.Evidence
 		if err = e.store.saveReview(item.ID, evidence(item.Recording), item); err != nil {
 			return id, err
 		}
@@ -658,6 +755,11 @@ func (e *Engine) recover() error {
 	if err != nil {
 		return err
 	}
+	if len(files) > 0 {
+		// Interrupted work can belong to a different recording than this request.
+		e.invalidateLibrary()
+		defer e.invalidateLibrary()
+	}
 	for _, j := range files {
 		if j.Status != "staged" && j.Status != "undo-staged" {
 			continue
@@ -694,6 +796,20 @@ func (e *Engine) recover() error {
 	return nil
 }
 func (e *Engine) Undo(job string, write bool) ([]FileJournal, error) {
+	if write {
+		e.mu.Lock()
+		var recording string
+		if e.OpenStorage() == nil {
+			_ = e.store.db.QueryRow("SELECT recording FROM jobs WHERE id=?", job).Scan(&recording)
+		}
+		e.mu.Unlock()
+		if recording != "" {
+			e.invalidateRecordings(recording)
+			defer e.invalidateRecordings(recording)
+		}
+		e.validationMu.Lock()
+		defer e.validationMu.Unlock()
+	}
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	if err := e.OpenStorage(); err != nil {
@@ -790,27 +906,18 @@ func sameProposal(a, b catalog.Recording) bool {
 	return a.Artist == b.Artist && a.Album == b.Album && a.Date == b.Date && a.DateUnknown == b.DateUnknown && a.Artwork == b.Artwork && reflect.DeepEqual(a.Tracks, b.Tracks)
 }
 func (e *Engine) revalidate(item Item, temp string) error {
-	rs, err := catalog.Scan(item.Path)
+	_, err := e.revalidateRecording(item)
+	return err
+}
+func (e *Engine) revalidateRecording(item Item) (catalog.Recording, error) {
+	r, err := e.strictRecording(item.ID, item.Path)
 	if err != nil {
-		return err
+		return r, err
 	}
-	for _, r := range rs {
-		if r.ID != item.ID {
-			continue
-		}
-		var evs []catalog.Evidence
-		for _, ev := range r.Evidence {
-			if ev.Path != temp {
-				evs = append(evs, ev)
-			}
-		}
-		r.Evidence = evs
-		if !SameInputs(item.Recording, r) {
-			return errors.New("recording inputs changed while staging")
-		}
-		return nil
+	if r.ID != item.ID || !SameInputs(item.Recording, r) {
+		return r, errors.New("recording inputs changed while staging")
 	}
-	return errors.New("recording disappeared")
+	return r, nil
 }
 
 // A parser upgrade may discover additional formats without changing file

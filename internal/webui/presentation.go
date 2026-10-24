@@ -70,6 +70,8 @@ func statusLabel(s string) string {
 		return "Ready"
 	case "waiting":
 		return "Waiting for files"
+	case "loading", "validating":
+		return "Checking files"
 	case "completed":
 		return "Completed"
 	case "failed":

@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"html"
 	"io"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"time"
 
 	"track-tagger/internal/media"
 	"track-tagger/internal/webui"
@@ -20,12 +22,35 @@ import (
 // Its backend is the real catalog, SQLite store, and FLAC writer.
 type webSession struct {
 	t      *testing.T
+	e      *Engine
 	server *httptest.Server
 	client *http.Client
 }
 
+func awaitWebLibrary(t *testing.T, e *Engine) {
+	t.Helper()
+	deadline := time.Now().Add(5 * time.Second)
+	for {
+		status, err := (WebBackend{E: e}).Status(context.Background())
+		if err != nil {
+			t.Fatal(err)
+		}
+		if status.Phase == "ready" {
+			return
+		}
+		if status.Phase == "error" {
+			t.Fatalf("library validation failed: %s", status.Error)
+		}
+		if time.Now().After(deadline) {
+			t.Fatalf("library did not become ready: %+v", status)
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+}
+
 func realWeb(t *testing.T, e *Engine, writable bool) *webSession {
 	t.Helper()
+	awaitWebLibrary(t, e)
 	h, err := webui.New(webui.Config{Writable: writable}, WebBackend{E: e})
 	if err != nil {
 		t.Fatal(err)
@@ -34,11 +59,14 @@ func realWeb(t *testing.T, e *Engine, writable bool) *webSession {
 	t.Cleanup(s.Close)
 	c := s.Client()
 	c.CheckRedirect = func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }
-	return &webSession{t: t, server: s, client: c}
+	return &webSession{t: t, e: e, server: s, client: c}
 }
 
 func (s *webSession) request(method, path string, v url.Values, want int) string {
 	s.t.Helper()
+	if method == http.MethodGet && (path == "/" || strings.HasPrefix(path, "/recording")) {
+		awaitWebLibrary(s.t, s.e)
+	}
 	var body io.Reader
 	if v != nil {
 		body = strings.NewReader(v.Encode())
@@ -79,7 +107,11 @@ func (s *webSession) recordingPage() (string, string) {
 
 func renderedForm(t *testing.T, page, action string) url.Values {
 	t.Helper()
-	m := regexp.MustCompile(`(?s)<form action="` + regexp.QuoteMeta(action) + `"[^>]*>(.*?)</form>`).FindStringSubmatch(page)
+	formAction := action
+	if action == "/apply" {
+		formAction = "/review"
+	}
+	m := regexp.MustCompile(`(?s)<form action="` + regexp.QuoteMeta(formAction) + `"[^>]*>(.*?)</form>`).FindStringSubmatch(page)
 	if len(m) != 2 {
 		t.Fatalf("form %s absent: %s", action, page)
 	}
@@ -90,14 +122,17 @@ func renderedForm(t *testing.T, page, action string) url.Values {
 			attrs[a[1]] = html.UnescapeString(a[2])
 		}
 		if attrs["type"] == "checkbox" {
+			if attrs["name"] == "date_unknown" && strings.Contains(tag, "checked") {
+				v.Set("date_unknown", "yes")
+			}
 			continue
 		}
 		if name := attrs["name"]; name != "" {
 			v.Add(name, attrs["value"])
 		}
 	}
+	v.Set("artwork", "")
 	if action == "/review" {
-		v.Set("artwork", "")
 		v.Set("approve", "yes")
 	}
 	return v
@@ -255,5 +290,206 @@ func TestHTTPUnknownDatePreservesExistingMetadata(t *testing.T) {
 	}
 	if after.Tags["DATE"] != "1969-12-31" || after.AudioHash != before.AudioHash {
 		t.Fatalf("unknown review altered date/audio: %+v", after)
+	}
+}
+
+func TestHTTPCombinedReviewActions(t *testing.T) {
+	for _, mode := range []Mode{Write, Copy} {
+		t.Run(string(mode), func(t *testing.T) {
+			e, audio := engineFixture(t, mode)
+			before, err := media.Inspect(audio)
+			if err != nil {
+				t.Fatal(err)
+			}
+			s := realWeb(t, e, true)
+			path, page := s.recordingPage()
+			v := renderedForm(t, page, "/apply")
+			// An unreviewed proposal cannot be applied, even if the form is otherwise valid.
+			s.request(http.MethodPost, "/apply", v, http.StatusConflict)
+			v.Set("approve", "yes")
+			v.Set("track_title", "Combined correction")
+			s.request(http.MethodPost, "/apply", v, http.StatusSeeOther)
+			target, err := e.destination(audio)
+			if err != nil {
+				t.Fatal(err)
+			}
+			after, err := media.Inspect(target)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if after.Tags["TITLE"] != "Combined correction" || after.AudioHash != before.AudioHash {
+				t.Fatal("combined apply lost metadata or changed audio")
+			}
+			page = s.request(http.MethodGet, path, nil, http.StatusOK)
+			v = renderedForm(t, page, "/apply")
+			if !strings.Contains(page, `data-reviewed="true"`) {
+				t.Fatal("saved review not exposed")
+			}
+			// Re-saving identical values must keep the completed status.
+			v.Set("approve", "yes")
+			s.request(http.MethodPost, "/review", v, http.StatusSeeOther)
+			p, err := e.Scan()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if p.Recordings[0].Status != "completed" {
+				t.Fatalf("unchanged review cleared completion: %s", p.Recordings[0].Status)
+			}
+			v.Set("track_title", "Second correction")
+			s.request(http.MethodPost, "/apply", v, http.StatusSeeOther)
+			after, err = media.Inspect(target)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if after.Tags["TITLE"] != "Second correction" || after.AudioHash != before.AudioHash {
+				t.Fatal("completed update failed")
+			}
+		})
+	}
+}
+func TestHTTPSavedApplyRejectsEditsAndStaleSources(t *testing.T) {
+	e, audio := engineFixture(t, Write)
+	s := realWeb(t, e, true)
+	path, page := s.recordingPage()
+	v := renderedForm(t, page, "/review")
+	s.request(http.MethodPost, "/review", v, http.StatusSeeOther)
+	page = s.request(http.MethodGet, path, nil, http.StatusOK)
+	saved := renderedForm(t, page, "/apply")
+	before := checkedHash(t, audio)
+	for _, field := range []string{"artist", "album", "date", "artwork", "track_title", "track_artist", "track_number", "track_disc", "track_file", "fingerprint"} {
+		edited := url.Values{}
+		for key, values := range saved {
+			edited[key] = append([]string(nil), values...)
+		}
+		value := "forged"
+		if field == "date" {
+			value = "1971"
+		}
+		if field == "track_number" || field == "track_disc" {
+			value = "2"
+		}
+		edited.Set(field, value)
+		s.request(http.MethodPost, "/apply", edited, http.StatusConflict)
+	}
+	if checkedHash(t, audio) != before {
+		t.Fatal("unapproved changes mutated media")
+	}
+	// Even an unchanged submitted review must pass a fresh content scan.
+	notes := filepath.Join(e.Source, "notes.txt")
+	f, err := os.OpenFile(notes, os.O_APPEND|os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = f.WriteString("\nExternal edit\n")
+	f.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+	s.request(http.MethodPost, "/apply", saved, http.StatusConflict)
+	if checkedHash(t, audio) != before {
+		t.Fatal("stale review mutated media")
+	}
+}
+func TestHTTPCombinedPreviewRejectsBeforeSaving(t *testing.T) {
+	e, audio := engineFixture(t, DryRun)
+	s := realWeb(t, e, false)
+	_, page := s.recordingPage()
+	v := renderedForm(t, page, "/review")
+	v.Set("track_title", "Not saved")
+	before := checkedHash(t, audio)
+	s.request(http.MethodPost, "/apply", v, http.StatusForbidden)
+	p, err := e.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.Recordings[0].Reviewed || checkedHash(t, audio) != before {
+		t.Fatal("preview combined request saved or wrote")
+	}
+}
+func TestHTTPCombinedFailureRetainsSavedReview(t *testing.T) {
+	e, audio := engineFixture(t, Write)
+	e.Settle = 24 * time.Hour
+	s := realWeb(t, e, true)
+	path, page := s.recordingPage()
+	v := renderedForm(t, page, "/review")
+	v.Set("track_title", "Saved for retry")
+	before := checkedHash(t, audio)
+	body := s.request(http.MethodPost, "/apply", v, http.StatusConflict)
+	if !strings.Contains(body, "review saved but not applied") || !strings.Contains(body, "Return to recording") {
+		t.Fatal("failure lacks saved state and retry link")
+	}
+	if checkedHash(t, audio) != before {
+		t.Fatal("waiting request wrote media")
+	}
+	awaitWebLibrary(t, e)
+	e.mu.Lock()
+	e.Settle = 0
+	e.mu.Unlock()
+	e.invalidateLibrary()
+	page = s.request(http.MethodGet, path, nil, http.StatusOK)
+	v = renderedForm(t, page, "/apply")
+	if v.Get("track_title") != "Saved for retry" {
+		t.Fatal("review not saved before failure")
+	}
+	s.request(http.MethodPost, "/apply", v, http.StatusSeeOther)
+}
+
+func TestReviewUpdatesAutomaticallyCompletedRecording(t *testing.T) {
+	e, audio := engineFixture(t, Copy)
+	p, err := e.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = e.Apply(p); err != nil {
+		t.Fatal(err)
+	}
+	p, err = e.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.Recordings[0].Status != "completed" || p.Recordings[0].Reviewed {
+		t.Fatal("expected unreviewed automatic completion")
+	}
+	item := p.Recordings[0]
+	item.Tracks[0].Title = "Approved update"
+	if _, err = e.store.db.Exec(`CREATE TRIGGER reject_review BEFORE INSERT ON reviews BEGIN SELECT RAISE(ABORT, 'injected review failure'); END`); err != nil {
+		t.Fatal(err)
+	}
+	if err = e.SaveReview(item.ID, item); err == nil {
+		t.Fatal("expected failed review save")
+	}
+	p, err = e.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.Recordings[0].Status != "completed" {
+		t.Fatal("failed save cleared completion")
+	}
+	if _, err = e.store.db.Exec("DROP TRIGGER reject_review"); err != nil {
+		t.Fatal(err)
+	}
+	if err = e.SaveReview(item.ID, item); err != nil {
+		t.Fatal(err)
+	}
+	p, err = e.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.Recordings[0].Status != "ready" {
+		t.Fatal("approved update did not clear automatic completion")
+	}
+	if _, err = e.Apply(p); err != nil {
+		t.Fatal(err)
+	}
+	target, err := e.destination(audio)
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, err := media.Inspect(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Tags["TITLE"] != "Approved update" {
+		t.Fatal("approved update not written")
 	}
 }

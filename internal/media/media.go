@@ -284,6 +284,17 @@ func Stage(src, temp string, tags map[string]string, artwork string, replace boo
 	if err != nil {
 		return Info{}, err
 	}
+	return StageInspected(src, temp, original, tags, artwork, replace)
+}
+
+// StageInspected stages a file using a fresh, full inspection of src. The
+// source is hashed again before success is returned, so edits since the
+// inspection or during staging are rejected. The returned Info includes the
+// staged file hash and audio hash.
+func StageInspected(src, temp string, original Info, tags map[string]string, artwork string, replace bool) (Info, error) {
+	if original.FileHash == "" || original.AudioHash == "" || len(original.Metadata) == 0 {
+		return Info{}, errors.New("staging requires a full source inspection")
+	}
 	blocks, _, err := readMetadata(bytes.NewReader(original.Metadata))
 	if err != nil {
 		return Info{}, err

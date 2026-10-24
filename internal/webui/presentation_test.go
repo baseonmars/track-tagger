@@ -66,7 +66,7 @@ func TestHistoryIsItsOwnView(t *testing.T) {
 func TestTrackArtistReviewField(t *testing.T) {
 	b := &fakeBackend{}
 	h, _ := New(Config{}, b)
-	v := url.Values{"csrf": {csrfFrom(t, h)}, "id": {"one"}, "fingerprint": {"fp"}, "date": {"1970"}, "track_file": {"a.flac"}, "track_title": {"Opening"}, "track_disc": {"1"}, "track_number": {"1"}, "track_artist": {"Guest"}}
+	v := url.Values{"csrf": {csrfFrom(t, h)}, "id": {"one"}, "fingerprint": {"fp"}, "approve": {"yes"}, "date": {"1970"}, "track_file": {"a.flac"}, "track_title": {"Opening"}, "track_disc": {"1"}, "track_number": {"1"}, "track_artist": {"Guest"}}
 	w := post(h, "/review", v, "http://localhost")
 	if w.Code != 303 || b.review.Tracks[0].Artist != "Guest" {
 		t.Fatalf("artist not saved: %d %+v", w.Code, b.review)

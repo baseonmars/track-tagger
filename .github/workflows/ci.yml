@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: '24'
       - name: Test audio player behavior
-        run: node --test internal/webui/testdata/player.test.cjs
+        run: node --test internal/webui/testdata/player.test.cjs internal/webui/testdata/review.test.cjs
       - name: Test release planning tools
         shell: bash
         run: |

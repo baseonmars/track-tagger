@@ -36,7 +36,7 @@ func TestPlayerRequiresExplicitPlay(t *testing.T) {
 		if strings.Contains(body, "autoplay") {
 			t.Error("player must not autoplay")
 		}
-		for _, form := range []string{`action="/review"`, `action="/apply"`} {
+		for _, form := range []string{`action="/review"`, `formaction="/apply"`} {
 			if strings.Contains(body, form) == listenOnly {
 				t.Errorf("listenOnly=%v unexpected form visibility: %s", listenOnly, form)
 			}

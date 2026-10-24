@@ -38,7 +38,7 @@ func engineFixture(t *testing.T, mode Mode) (*Engine, string) {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = e.Close() })
-	return e, audio
+	return e, filepath.Join(e.Source, filepath.Base(audio))
 }
 func fixturePlan(t *testing.T, e *Engine) Plan {
 	t.Helper()

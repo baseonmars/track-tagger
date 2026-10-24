@@ -2,6 +2,7 @@ package webui
 
 import (
 	"context"
+	"encoding/json"
 	"html"
 	"net/http"
 	"net/http/httptest"
@@ -10,6 +11,69 @@ import (
 	"strings"
 	"testing"
 )
+
+type progressBackend struct {
+	fakeBackend
+	status Status
+}
+
+func (b *progressBackend) Status(context.Context) (Status, error) { return b.status, nil }
+
+func TestStatusEndpointIsAuthenticatedAndOmitsPrivateDetails(t *testing.T) {
+	b := &progressBackend{status: Status{Phase: "validating", Scanned: 1, Total: 3, Generation: 2, Recordings: []Recording{{ID: "one", Path: `C:\private\concert`, Fingerprint: "secret-hash", Status: "loading", Metadata: map[string]string{"ARTIST": "Band", "DATE": "1970"}, Tracks: []Track{{File: `C:\private\song.flac`}}, Notes: []Note{{Text: "private notes"}}}}}}
+	h, err := New(Config{Remote: true, Addr: ":8787", Token: "long-authentication-token"}, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/status", nil))
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("unauthenticated status: %d", w.Code)
+	}
+	r := httptest.NewRequest("GET", "http://localhost/status", nil)
+	r.SetBasicAuth("reviewer", "long-authentication-token")
+	w = httptest.NewRecorder()
+	h.ServeHTTP(w, r)
+	if w.Code != http.StatusOK || !strings.HasPrefix(w.Header().Get("Content-Type"), "application/json") {
+		t.Fatalf("status: %d %s", w.Code, w.Body.String())
+	}
+	for _, secret := range []string{"private", "secret-hash", "song.flac", "notes"} {
+		if strings.Contains(w.Body.String(), secret) {
+			t.Fatalf("status exposed %q", secret)
+		}
+	}
+	var result statusResponse
+	if err := json.Unmarshal(w.Body.Bytes(), &result); err != nil {
+		t.Fatal(err)
+	}
+	if result.Phase != "validating" || result.Scanned != 1 || result.Total != 3 || len(result.Recordings) != 1 || result.Recordings[0].Title != "Band · 1970" || result.Recordings[0].Ready {
+		t.Fatalf("unexpected progress: %+v", result)
+	}
+}
+
+func TestPendingReviewActionsRenderDisabled(t *testing.T) {
+	b := &progressBackend{fakeBackend: fakeBackend{recording: &Recording{ID: "one", Status: "loading"}}, status: Status{Phase: "validating", Total: 2}}
+	h, err := New(Config{Writable: true}, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	w := httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/recording?id=one", nil))
+	if w.Code != http.StatusOK {
+		t.Fatalf("detail: %d %s", w.Code, w.Body.String())
+	}
+	for _, fragment := range []string{`data-validated="false"`, `id="save-review" type="submit" disabled`, `id="apply-review" type="submit" formaction="/apply" disabled`, `id="scan-progress"`} {
+		if !strings.Contains(w.Body.String(), fragment) {
+			t.Fatalf("pending page missing %s", fragment)
+		}
+	}
+	b.recording = &Recording{ID: "one", Status: "ready", Fingerprint: "validated-source"}
+	w = httptest.NewRecorder()
+	h.ServeHTTP(w, httptest.NewRequest("GET", "http://localhost/recording?id=one", nil))
+	if !strings.Contains(w.Body.String(), `data-validated="true"`) {
+		t.Fatal("ready recording remained blocked while other recordings validate")
+	}
+}
 
 type fakeBackend struct {
 	applied, undone, saved int
@@ -30,6 +94,14 @@ func (b *fakeBackend) SaveReview(_ context.Context, _ string, r Review) error {
 	b.saved++
 	b.review = r
 	return nil
+}
+func (b *fakeBackend) ApplyReview(ctx context.Context, id string, r Review) error {
+	if r.Approve {
+		if err := b.SaveReview(ctx, id, r); err != nil {
+			return err
+		}
+	}
+	return b.Apply(ctx, id)
 }
 func (b *fakeBackend) Apply(context.Context, string) error { b.applied++; return nil }
 func (b *fakeBackend) Undo(context.Context, string) error  { b.undone++; return nil }
@@ -139,7 +211,7 @@ func TestCSRFDNSRebindingAndEscaping(t *testing.T) {
 	if strings.Contains(w.Body.String(), "<script>alert") {
 		t.Fatal("unescaped metadata")
 	}
-	if w := post(h, "/apply", url.Values{"csrf": {csrf}, "id": {"one"}}, "http://localhost"); w.Code != 303 {
+	if w := post(h, "/apply", url.Values{"csrf": {csrf}, "id": {"one"}, "fingerprint": {"source-version-1"}, "date": {"1970"}, "approve": {"yes"}}, "http://localhost"); w.Code != 303 {
 		t.Fatalf("valid apply %d", w.Code)
 	}
 	if b.applied != 1 {
@@ -301,6 +373,37 @@ func TestEditableMetadataMappingsArtworkAndNotes(t *testing.T) {
 	for _, field := range []string{`name="artist"`, `name="album"`, `name="date"`, `name="track_file" value="t01.flac"`, `name="track_title" value="Opening [intro]"`, `name="track_disc"`, `name="track_number"`, `<select id="artwork"`, `<option value="cover.jpg" selected>`, `Original notes &lt;script&gt;unsafe&lt;/script&gt;`} {
 		if !strings.Contains(w.Body.String(), field) {
 			t.Errorf("rendered form missing %s", field)
+		}
+	}
+}
+
+func TestUnifiedReviewFormAndApproval(t *testing.T) {
+	for _, writable := range []bool{false, true} {
+		b := &fakeBackend{}
+		h, err := New(Config{Writable: writable}, b)
+		if err != nil {
+			t.Fatal(err)
+		}
+		page := httptest.NewRecorder()
+		h.ServeHTTP(page, httptest.NewRequest("GET", "http://localhost/recording?id=one", nil))
+		body := page.Body.String()
+		if strings.Count(body, "<form ") != 1 || strings.Contains(body, `action="/apply" method=`) {
+			t.Fatal("expected one review form")
+		}
+		if strings.Contains(body, `id="apply-review"`) != writable {
+			t.Fatal("apply visible in wrong mode")
+		}
+		if strings.Contains(body, `name="approve" value="yes" checked`) || !strings.Contains(body, `id="save-review" type="submit" disabled`) {
+			t.Fatal("approval must begin unchecked and save disabled")
+		}
+		v := url.Values{"csrf": {csrfFrom(t, h)}, "id": {"one"}, "date": {"1970"}, "fingerprint": {"source-version-1"}}
+		post(h, "/review", v, "http://localhost")
+		if b.saved != 0 {
+			t.Fatal("unapproved review reached backend")
+		}
+		post(h, "/apply", url.Values{"csrf": {v.Get("csrf")}, "id": {"one"}}, "http://localhost")
+		if b.applied != 0 {
+			t.Fatal("bare apply reached backend")
 		}
 	}
 }
