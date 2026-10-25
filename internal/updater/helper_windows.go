@@ -128,7 +128,7 @@ func Installed() (bool, error) {
 
 // Install transfers ownership of staged files to a helper. The caller must have
 // drained its service and must exit after success so the helper can proceed.
-func Install(s *Staged) error {
+func Install(s *Staged, resumeServer bool) error {
 	if s == nil || !validHash(s.hash) {
 		return errors.New("missing verified update")
 	}
@@ -178,7 +178,7 @@ func Install(s *Staged) error {
 		return err
 	}
 	defer windows.CloseHandle(ready)
-	h := handoff{ParentPID: uint32(os.Getpid()), InstallDir: filepath.Dir(exe), InstallerHash: s.hash, HelperHash: helperHash, ReadyEvent: uint64(ready)}
+	h := handoff{ParentPID: uint32(os.Getpid()), InstallDir: filepath.Dir(exe), InstallerHash: s.hash, HelperHash: helperHash, ReadyEvent: uint64(ready), ResumeServer: resumeServer}
 	b, err := json.Marshal(h)
 	if err != nil {
 		return err
@@ -390,15 +390,18 @@ func runHelper(args []string, acknowledged *bool) error {
 			return fmt.Errorf("%w; see %s", err, log)
 		}
 		return nil
-	}, func() error {
-		cmd := exec.Command(original)
+	}, func(resumeServer bool) error {
+		args := []string{}
+		if resumeServer {
+			args = append(args, resumeFlag)
+		}
+		cmd := exec.Command(original, args...)
 		cmd.Dir = h.InstallDir
-		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 		if err := cmd.Start(); err != nil {
 			return err
 		}
 		return cmd.Process.Release()
-	})
+	}, h.ResumeServer)
 }
 
 // RunHelper must be dispatched before the normal GUI's single-instance lock.

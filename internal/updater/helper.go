@@ -15,6 +15,11 @@ import (
 )
 
 const helperFlag = "--track-tagger-update-helper"
+const resumeFlag = "--track-tagger-update-resume"
+
+// ResumeRequested accepts only the internal argument supplied after a successful
+// in-app update. Normal launches remain stopped.
+func ResumeRequested(args []string) bool { return len(args) == 1 && args[0] == resumeFlag }
 
 type handoff struct {
 	ParentPID     uint32
@@ -22,6 +27,7 @@ type handoff struct {
 	InstallerHash string
 	HelperHash    string
 	ReadyEvent    uint64
+	ResumeServer  bool
 }
 
 func helperArguments(args []string) (uintptr, string, error) {
@@ -159,12 +165,12 @@ func safeStage(dir, root string) error {
 
 // finishHandoff keeps the ordering testable without executing installers in tests.
 // A failed wait must never run an installer or start a duplicate parent process.
-func finishHandoff(wait, install, restart func() error) error {
+func finishHandoff(wait, install func() error, restart func(bool) error, resumeServer bool) error {
 	if err := wait(); err != nil {
 		return fmt.Errorf("wait for Track Tagger to exit: %w", err)
 	}
 	installErr := install()
-	restartErr := restart()
+	restartErr := restart(installErr == nil && resumeServer)
 	if installErr != nil {
 		installErr = fmt.Errorf("installation failed: %w", installErr)
 	}

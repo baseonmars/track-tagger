@@ -17,7 +17,7 @@ type updateBackend interface {
 	Check(context.Context, string) (*updateRelease, error)
 	Download(context.Context, *updateRelease) (updateDownload, error)
 	Installed() (bool, error)
-	Install(updateDownload) error
+	Install(updateDownload, bool) error
 }
 
 // updateController is owned by the UI thread. Workers return exclusively through
@@ -26,7 +26,7 @@ type updateController struct {
 	backend          updateBackend
 	dispatch         func(func())
 	changed          func()
-	stop             func(func())
+	stop             func(func(bool))
 	exit             func()
 	version          string
 	message          string
@@ -34,6 +34,20 @@ type updateController struct {
 	busy, installing bool
 	cancel           context.CancelFunc
 	afterCancel      func()
+}
+
+// resumeAtSafeStop samples the service just before the update stops it. A
+// concurrent manual Stop or a completed service must remain stopped.
+func resumeAtSafeStop(done <-chan struct{}, stopping bool) bool {
+	if stopping {
+		return false
+	}
+	select {
+	case <-done:
+		return false
+	default:
+		return true
+	}
 }
 
 func (u *updateController) notify() {
@@ -108,7 +122,7 @@ func (u *updateController) BeginInstall() {
 			}
 			u.message = "Stopping safely before installing…"
 			u.notify()
-			u.stop(func() {
+			u.stop(func(resumeServer bool) {
 				if ctx.Err() != nil {
 					d.Cleanup()
 					cancel()
@@ -123,7 +137,7 @@ func (u *updateController) BeginInstall() {
 				u.message = "Preparing installer…"
 				u.notify()
 				go func() {
-					e := u.backend.Install(d)
+					e := u.backend.Install(d, resumeServer)
 					u.dispatch(func() {
 						cancel()
 						u.cancel = nil
