@@ -39,7 +39,7 @@ func TestNativeStartFailureReturnsToStoppedControls(t *testing.T) {
 	}
 	set(1, filepath.Join(directory, "missing-music"))
 	check(4, true)
-	start()
+	start(false)
 	if !busy || status != "Starting" {
 		t.Fatalf("start transition: %s %v", status, busy)
 	}
@@ -69,7 +69,7 @@ func TestNativeStartFailureReturnsToStoppedControls(t *testing.T) {
 			t.Fatalf("diagnostics missing %q: %s", want, diagnostics)
 		}
 	}
-	start()
+	start(false)
 	stop(false)
 	deadline = time.Now().Add(5 * time.Second)
 	for busy && time.Now().Before(deadline) {
@@ -97,5 +97,80 @@ func TestNativeStartFailureReturnsToStoppedControls(t *testing.T) {
 	call(user, "GetWindowRect", win, unsafe.Pointer(&collapsed))
 	if expanded.bottom-expanded.top < collapsed.bottom-collapsed.top {
 		t.Fatal("details window shrank on expansion")
+	}
+}
+
+func TestNativeResumeSuppressesBrowserButManualStartOpensIt(t *testing.T) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+	root := t.TempDir()
+	directory = t.TempDir()
+	config = Settings{Mode: app.DryRun}
+	busy, quitting = false, false
+	session = nil
+	updates = nil
+	status = "Stopped"
+	win = call(user, "CreateWindowExW", 0, ptr("STATIC"), ptr("Launcher test"), 0, 0, 0, 600, 600, 0, 0, 0, 0)
+	if win == 0 {
+		t.Fatal("create native test window")
+	}
+	defer call(user, "DestroyWindow", win)
+	controls = map[int]uintptr{}
+	for _, id := range []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 20, 21, 22} {
+		kind := "BUTTON"
+		if id == 1 || id == 2 || id >= 20 {
+			kind = "EDIT"
+		}
+		controls[id] = call(user, "CreateWindowExW", 0, ptr(kind), ptr(""), 0x40000000, 0, 0, 300, 25, win, id, 0, 0)
+	}
+	set(1, root)
+	check(4, true)
+	opens := 0
+	previous := openBrowserAfterStart
+	openBrowserAfterStart = func() { opens++ }
+	defer func() { openBrowserAfterStart = previous }()
+	defer func() {
+		if session != nil {
+			session.Stop()
+			session = nil
+		}
+	}()
+	for _, tc := range []struct {
+		name       string
+		openReview bool
+		wantOpens  int
+	}{{"update resume", false, 0}, {"manual start", true, 1}} {
+		start(tc.openReview)
+		deadline := time.Now().Add(5 * time.Second)
+		for busy && time.Now().Before(deadline) {
+			queueMu.Lock()
+			q := queue
+			queue = nil
+			queueMu.Unlock()
+			for _, f := range q {
+				f()
+			}
+			time.Sleep(time.Millisecond)
+		}
+		if status != "Running" || session == nil {
+			t.Fatalf("%s preview service did not start: %s %s", tc.name, status, get(21))
+		}
+		if opens != tc.wantOpens {
+			t.Fatalf("%s browser opens = %d, want %d", tc.name, opens, tc.wantOpens)
+		}
+		session.Stop()
+		for session != nil && time.Now().Before(deadline) {
+			queueMu.Lock()
+			q := queue
+			queue = nil
+			queueMu.Unlock()
+			for _, f := range q {
+				f()
+			}
+			time.Sleep(time.Millisecond)
+		}
+		if session != nil {
+			t.Fatalf("%s preview service did not stop", tc.name)
+		}
 	}
 }

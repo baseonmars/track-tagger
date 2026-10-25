@@ -113,6 +113,7 @@ var tray notifyIcon
 var scale = 1.0
 var scrollPosition, scrollMaximum int
 var trayOK bool
+var openBrowserAfterStart = openBrowser
 var details bool
 var appVersion = "dev"
 var updates *updateController
@@ -286,7 +287,7 @@ func readSettings() {
 	config.Poll = checked(7)
 	config.AutoCheckUpdates = checked(42)
 }
-func start() {
+func start(openReview bool) {
 	if busy || session != nil || updates != nil && updates.installing {
 		return
 	}
@@ -332,8 +333,8 @@ func start() {
 			refresh()
 			if quitting || ctx.Err() != nil {
 				stop(quitting)
-			} else {
-				openBrowser()
+			} else if openReview {
+				openBrowserAfterStart()
 			}
 			go func() {
 				<-started.Done()
@@ -515,7 +516,7 @@ func proc(h uintptr, m uint32, w, l uintptr) uintptr {
 		case 7:
 			config.PollOverride = true
 		case 10:
-			start()
+			start(true)
 		case 11:
 			stop(false)
 		case 12:
@@ -565,7 +566,7 @@ func proc(h uintptr, m uint32, w, l uintptr) uintptr {
 	}
 	return call(user, "DefWindowProcW", h, uintptr(m), w, l)
 }
-func Run(version string) {
+func Run(version string, resumeServer bool) {
 	appVersion = version
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
@@ -675,7 +676,7 @@ func Run(version string) {
 		id = 6
 	}
 	check(id, true)
-	add(33, "STATIC", "Copy and Update automatically process eligible recordings after they settle.\r\nAmbiguous recordings wait for review. Start is required every time you open this app.", 0, 20, 313, 700, 44)
+	add(33, "STATIC", "Copy and Update automatically process eligible recordings after they settle.\r\nAmbiguous recordings wait for review. Start is required on ordinary launches.", 0, 20, 313, 700, 44)
 	label := "Start preview"
 	if id == 5 {
 		label = "Start copying eligible recordings"
@@ -713,6 +714,8 @@ func Run(version string) {
 	}
 	if e != nil {
 		box(fmt.Sprint("Settings could not be loaded; Preview selected. ", e))
+	} else if resumeServer {
+		start(false)
 	}
 	var message msg
 	for {

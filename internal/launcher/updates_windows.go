@@ -30,23 +30,24 @@ func (nativeUpdateBackend) Download(ctx context.Context, r *updateRelease) (upda
 	}
 	return d, nil
 }
-func (nativeUpdateBackend) Install(d updateDownload) error {
-	return updater.Install(d.(*updater.Staged))
+func (nativeUpdateBackend) Install(d updateDownload, resumeServer bool) error {
+	return updater.Install(d.(*updater.Staged), resumeServer)
 }
 func (nativeUpdateBackend) Installed() (bool, error) { return updater.Installed() }
 
 func initializeUpdates() {
 	go func() { _ = updater.CleanupStale() }()
-	updates = &updateController{backend: nativeUpdateBackend{}, dispatch: post, changed: refresh, version: appVersion, message: "Updates install only when you choose Install update.", stop: func(done func()) {
+	updates = &updateController{backend: nativeUpdateBackend{}, dispatch: post, changed: refresh, version: appVersion, message: "Updates install only when you choose Install update.", stop: func(done func(bool)) {
 		if session == nil {
-			done()
+			done(false)
 			return
 		}
+		s := session
+		resumeServer := resumeAtSafeStop(s.Done(), busy)
 		busy = true
 		status = "Stopping"
 		refresh()
-		s := session
-		go func() { s.Stop(); post(done) }()
+		go func() { s.Stop(); post(func() { done(resumeServer) }) }()
 	}, exit: func() { call(user, "DestroyWindow", win) }}
 	refreshUpdates()
 }
@@ -93,7 +94,7 @@ func confirmInstallUpdate() {
 		openReleaseNotes()
 		return
 	}
-	prompt := fmt.Sprintf("Download and install Track Tagger %s?\n\nTrack Tagger will finish active work, stop safely, and restart with processing stopped. Your preferences, history, and music will be preserved.", updates.release.Version)
+	prompt := fmt.Sprintf("Download and install Track Tagger %s?\n\nTrack Tagger will finish active work and stop safely. Processing that is still running at the update stop will resume in the visible launcher with your saved settings. No browser tab will open; use Open browser to return to the review page. Stopped processing will stay stopped. Your preferences, history, and music will be preserved.", updates.release.Version)
 	if call(user, "MessageBoxW", win, prompt, "Install Track Tagger update", 0x124) != 6 {
 		return
 	}

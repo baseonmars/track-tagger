@@ -13,5 +13,5 @@ func main() {
 	if handled, _ := updater.RunHelper(os.Args[1:]); handled {
 		return
 	}
-	launcher.Run(version)
+	launcher.Run(version, updater.ResumeRequested(os.Args[1:]))
 }

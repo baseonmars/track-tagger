@@ -7,7 +7,7 @@ import "errors"
 func CleanupStale() error { return nil }
 
 func Installed() (bool, error) { return false, nil }
-func Install(s *Staged) error {
+func Install(s *Staged, resumeServer bool) error {
 	return errors.New("built-in installation is available on Windows only")
 }
 func RunHelper(args []string) (bool, error) {

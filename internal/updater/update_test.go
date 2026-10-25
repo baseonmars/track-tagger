@@ -352,7 +352,12 @@ func TestHandoffWaitInstallRestartOrdering(t *testing.T) {
 				return nil
 			}
 		}
-		err := finishHandoff(step("wait"), step("install"), step("restart"))
+		err := finishHandoff(step("wait"), step("install"), func(resume bool) error {
+			if resume != (failure != "install") {
+				t.Errorf("resume after %q failure = %v", failure, resume)
+			}
+			return step("restart")()
+		}, true)
 		want := "wait,install,restart"
 		if failure == "wait" {
 			want = "wait"
@@ -363,6 +368,29 @@ func TestHandoffWaitInstallRestartOrdering(t *testing.T) {
 		if (err != nil) != (failure != "") {
 			t.Fatalf("failure %s: %v", failure, err)
 		}
+	}
+}
+
+func TestHandoffStoppedDoesNotResume(t *testing.T) {
+	called := false
+	if err := finishHandoff(func() error { return nil }, func() error { return nil }, func(resume bool) error {
+		called = true
+		if resume {
+			t.Error("stopped server resumed")
+		}
+		return nil
+	}, false); err != nil || !called {
+		t.Fatalf("stopped handoff: called=%v err=%v", called, err)
+	}
+}
+
+func TestResumeArgumentAndLegacyHandoff(t *testing.T) {
+	if ResumeRequested(nil) || ResumeRequested([]string{"--other"}) || ResumeRequested([]string{resumeFlag, "extra"}) || !ResumeRequested([]string{resumeFlag}) {
+		t.Fatal("only the internal resume argument should start processing")
+	}
+	var h handoff
+	if err := json.Unmarshal([]byte(`{"ParentPID":1}`), &h); err != nil || h.ResumeServer {
+		t.Fatalf("legacy handoff must default to stopped: %+v, %v", h, err)
 	}
 }
 
