@@ -246,7 +246,7 @@ jobs:
         with:
           name: unsigned-windows-${{ matrix.goarch }}-installer
           path: unsigned
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '8.0.x'
       - name: Validate configuration and install pinned signing tools
