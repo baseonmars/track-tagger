@@ -279,6 +279,7 @@ func build(root, dir string, files []string, fingerprint func(string) (Evidence,
 	dates := map[string]bool{}
 	var candidates noteDateCandidates
 	artists := map[string]bool{}
+	fallbackArtists := map[string]bool{}
 	for _, p := range paths {
 		if err := media.CheckLocal(p); err != nil {
 			r.Status = "waiting"
@@ -308,6 +309,9 @@ func build(root, dir string, files []string, fingerprint func(string) (Evidence,
 			s := string(b)
 			if !utf8.Valid(b) {
 				s, _ = charmap.Windows1252.NewDecoder().String(s)
+			}
+			if artist := firstLineArtist(s); artist != "" {
+				fallbackArtists[artist] = true
 			}
 			listedTitles += parseNotesCandidates(&r, s, titles, &candidates, artists)
 		case ".jpg", ".jpeg", ".png":
@@ -343,6 +347,10 @@ func build(root, dir string, files []string, fingerprint func(string) (Evidence,
 	}
 	if r.Date == "" {
 		reason(&r, "concert date is missing or ambiguous")
+	}
+	if len(artists) == 0 && len(fallbackArtists) > 0 {
+		artists = fallbackArtists
+		reason(&r, "artist inferred from first line of concert notes; verify before applying")
 	}
 	if len(artists) == 1 {
 		for a := range artists {

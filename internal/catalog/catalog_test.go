@@ -320,14 +320,23 @@ func TestSnarkyPuppyNotesAndMappings(t *testing.T) {
 
 func TestUnlabelledHeaderRequiresStructureAndPreservesConflicts(t *testing.T) {
 	for _, prefix := range []string{
-		"Random Heading\nDate: 2023-04-22\nNewport, KY @ Hall\n",
 		"Source: Transfer\nApril 22, 2023\nNewport, KY @ Hall\n",
-		"Random Heading\n04/05/2023\nNewport, KY @ Hall\n",
-		"Random Heading\nApril 22, 2023\nSome location\n",
+		"April 22, 2023\nNewport, KY @ Hall\n",
+		"Set I\nApril 22, 2023\nSome location\n",
 	} {
 		r := only(t, fixture(t, "show", 1, prefix+"01. Song\n"))
 		if r.Artist != "" || !hasReason(r, "artist is missing") {
 			t.Fatalf("guessed artist: %+v", r)
+		}
+	}
+	for _, prefix := range []string{
+		"Random Heading\nDate: 2023-04-22\nNewport, KY @ Hall\n",
+		"Random Heading\n04/05/2023\nNewport, KY @ Hall\n",
+		"Random Heading\nApril 22, 2023\nSome location\n",
+	} {
+		r := only(t, fixture(t, "show", 1, prefix+"01. Song\n"))
+		if r.Artist != "Random Heading" || !hasReason(r, "artist inferred from first line") || r.Status != "needs-review" {
+			t.Fatalf("fallback artist needs review: %+v", r)
 		}
 	}
 	r := only(t, fixture(t, "conflicts", 1, "Band\nApril 22, 2023\nCity @ Hall\nArtist: Other Band\nDate: 2023-04-23\nVenue: Other Hall\nCity: Other City\n01. Song\n"))
@@ -395,7 +404,7 @@ func TestFiveLineHeaderRejectsNonHeaderComponents(t *testing.T) {
 			lines := append([]string(nil), base...)
 			lines[tc.index] = tc.replacement
 			r := only(t, fixture(t, "show", 1, strings.Join(lines, "\n")+"\n01. Song\n"))
-			if r.Artist != "" || r.Venue == "Isle of Wight Festival, East Afton Farm" || !hasReason(r, "artist is missing") {
+			if r.Artist != "Jimi Hendrix" || r.Venue == "Isle of Wight Festival, East Afton Farm" || !hasReason(r, "artist inferred from first line") {
 				t.Fatalf("accepted malformed five-line header: %+v", r)
 			}
 		})
