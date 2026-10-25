@@ -35,6 +35,7 @@ var notesSection = regexp.MustCompile(`(?i)^-*(?:disc|disk|cd|set)\s*(\d+|one|tw
 var notesSectionStart = regexp.MustCompile(`(?i)^-*(?:disc|disk|cd|set)\b`)
 var notesTrailingTime = regexp.MustCompile(`\s+\(?\d+:\d{2}(?:\.\d+)?\)?$`)
 var notesChecksum = regexp.MustCompile(`(?i)^(?:.+\.[a-z0-9]{1,8}:\s*(?:[a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})|(?:[a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})\s+\*?.+\.[a-z0-9]{1,8}|.+\.[a-z0-9]{1,8}\s+[a-f0-9]{8})$`)
+var spacedDash = regexp.MustCompile(`\s+[-–—]\s+`)
 
 func classifyNoteLine(raw string, number int) noteLine {
 	line := noteLine{line: number}
@@ -108,7 +109,7 @@ func technicalSection(s string) bool {
 	if s != "" && labelledTransfer.FindString(s) == s {
 		return true
 	}
-	for _, heading := range []string{"source", "transfer", "transfer notes", "production notes", "mastering notes", "editing notes", "lineage", "recording lineage", "checksums", "checksum", "md5", "ffp", "sha1", "sha-1", "sha256", "sha-256", "sfv", "flac fingerprints", "shntool output", "shntool", "duration report", "durations", "track durations"} {
+	for _, heading := range []string{"source", "transfer", "recording info", "transfer info", "transfer notes", "production notes", "mastering notes", "editing notes", "lineage", "recording lineage", "checksums", "checksum", "md5", "ffp", "sha1", "sha-1", "sha256", "sha-256", "sfv", "flac fingerprints", "shntool output", "shntool", "duration report", "durations", "track durations"} {
 		if s == heading {
 			return true
 		}
@@ -136,6 +137,7 @@ func parseNotesCandidates(r *Recording, s string, titles map[string]string, date
 		lines = append(lines, classifyNoteLine(raw, number+1))
 	}
 	parseUnlabelledHeader(r, lines, artists)
+	parseDashHeader(r, lines, artists)
 	disc, count := 1, 0
 	header, blocked := true, false
 	continuationReview, sectionReview := false, false
@@ -247,6 +249,80 @@ func parseNotesCandidates(r *Recording, s string, titles map[string]string, date
 	}
 	flush()
 	return count
+}
+
+// A common taper opening combines artist/date and venue/city on two lines.
+// Require a complete date suffix and a city with a region to avoid treating
+// punctuation inside an artist or venue name as a separator.
+func parseDashHeader(r *Recording, lines []noteLine, artists map[string]bool) {
+	var opening []noteLine
+	for _, line := range lines {
+		if line.text != "" {
+			opening = append(opening, line)
+			if len(opening) == 2 {
+				break
+			}
+		}
+	}
+	if len(opening) != 2 || opening[0].kind != noteText || opening[1].kind != noteText || strings.ContainsAny(opening[0].text, ":@>") {
+		return
+	}
+	artist, _, ok := artistDateSuffix(opening[0].text)
+	if !ok {
+		return
+	}
+	parts := spacedDash.FindAllStringIndex(opening[1].text, -1)
+	if len(parts) != 1 {
+		return
+	}
+	venue := strings.TrimSpace(opening[1].text[:parts[0][0]])
+	city := strings.TrimSpace(opening[1].text[parts[0][1]:])
+	if venue == "" || city == "" || !strings.Contains(city, ",") || strings.ContainsAny(venue+city, ":@>") {
+		return
+	}
+	artists[artist] = true
+	setLocation(r, "venue", &r.Venue, venue)
+	setLocation(r, "city", &r.City, city)
+}
+
+func artistDateSuffix(text string) (string, string, bool) {
+	for _, separator := range spacedDash.FindAllStringIndex(text, -1) {
+		artist := strings.TrimSpace(text[:separator[0]])
+		date := strings.TrimSpace(text[separator[1]:])
+		if artist != "" && !containsNoteDate(artist) && standaloneNoteDate(date) {
+			return artist, date, true
+		}
+	}
+	return "", "", false
+}
+
+func firstLineArtist(s string) string {
+	for i, raw := range strings.Split(s, "\n") {
+		line := classifyNoteLine(raw, i+1)
+		if line.kind == noteBlank {
+			continue
+		}
+		if line.kind != noteText || strings.ContainsAny(line.text, ":@>") || standaloneNoteDate(line.text) {
+			return ""
+		}
+		if artist, _, ok := artistDateSuffix(line.text); ok {
+			return artist
+		}
+		if containsNoteDate(line.text) {
+			return ""
+		}
+		return line.text
+	}
+	return ""
+}
+
+func containsNoteDate(text string) bool {
+	for _, pattern := range []*regexp.Regexp{isoDate, numericDate, namedDate, unknownDayDate} {
+		if pattern.MatchString(text) {
+			return true
+		}
+	}
+	return false
 }
 
 func standaloneNoteDate(text string) bool {
