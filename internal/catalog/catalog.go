@@ -179,11 +179,7 @@ func scan(source string, fingerprint func(string) (Evidence, error)) ([]Recordin
 // Validate reads the contents of one discovered recording. Callers must not use
 // cached fingerprints for review approval or media changes.
 func Validate(source string, d Discovery, fingerprint func(string) (Evidence, error)) (Recording, error) {
-	root, err := filepath.Abs(source)
-	if err != nil {
-		return Recording{}, err
-	}
-	return scanRecording(root, d.Path, fingerprint)
+	return scanRecording(source, d.Path, fingerprint)
 }
 
 // ScanRecording freshly discovers and validates one recording, retaining paths
@@ -200,8 +196,7 @@ func scanRecording(source, dir string, fingerprint func(string) (Evidence, error
 	if err != nil {
 		return Recording{}, err
 	}
-	rel, err := filepath.Rel(root, dir)
-	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+	if !within(root, dir) {
 		return Recording{}, fmt.Errorf("recording is outside source")
 	}
 	var files []string
@@ -244,6 +239,12 @@ func reason(r *Recording, s string) {
 		}
 	}
 	r.ReviewReasons = append(r.ReviewReasons, s)
+}
+
+// within reports whether path is the same as or inside root.
+func within(root, path string) bool {
+	rel, err := filepath.Rel(root, path)
+	return err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator))
 }
 func build(root, dir string, files []string, fingerprint func(string) (Evidence, error)) (Recording, error) {
 	rel, _ := filepath.Rel(root, dir)

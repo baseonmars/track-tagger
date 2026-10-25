@@ -100,9 +100,10 @@ func issueSummary(r Recording) []string {
 	var out []string
 	unmatched := map[string]bool{}
 	others := map[string]bool{}
+	unmatchedPrefixes := []string{"unmatched file without explicit track number: ", "unmatched audio file: "}
 	for _, reason := range r.Reasons {
 		found := false
-		for _, prefix := range []string{"unmatched file without explicit track number: ", "unmatched audio file: "} {
+		for _, prefix := range unmatchedPrefixes {
 			if strings.HasPrefix(reason, prefix) {
 				unmatched[strings.TrimPrefix(reason, prefix)] = true
 				found = true

@@ -50,16 +50,7 @@ func classifyNoteLine(raw string, number int) noteLine {
 		token := notesSection.FindStringSubmatch(line.text)[1]
 		line.disc, _ = strconv.Atoi(token)
 		if line.disc == 0 {
-			for i, v := range []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"} {
-				if strings.EqualFold(token, v) {
-					line.disc = i + 1
-				}
-			}
-			for i, v := range []string{"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"} {
-				if strings.EqualFold(token, v) {
-					line.disc = i + 1
-				}
-			}
+			line.disc = noteDiscToken(token)
 		}
 	case notesSectionStart.MatchString(line.text):
 		line.kind = noteAmbiguousSection
@@ -94,6 +85,22 @@ func classifyNoteLine(raw string, number int) noteLine {
 		}
 	}
 	return line
+}
+
+// noteDiscToken maps word and Roman-numeral disc labels such as "three" or
+// "IV" to their ordinal. Zero means the label is not recognized.
+func noteDiscToken(token string) int {
+	for i, v := range []string{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"} {
+		if strings.EqualFold(token, v) {
+			return i + 1
+		}
+	}
+	for i, v := range []string{"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"} {
+		if strings.EqualFold(token, v) {
+			return i + 1
+		}
+	}
+	return 0
 }
 
 func technicalSection(s string) bool {

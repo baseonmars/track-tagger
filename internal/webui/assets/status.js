@@ -24,13 +24,14 @@
         if (p.group) { const diff = groups.indexOf(groupCode(a.statusCode)) - groups.indexOf(groupCode(b.statusCode)); if (diff) return diff; }
         else if (p.pin) { const diff = Number(b.statusCode === "needs-review") - Number(a.statusCode === "needs-review"); if (diff) return diff; }
       }
-      const direction = p.direction === "asc" ? 1 : -1;
+      let direction = p.direction === "desc" ? -1 : 1;
+      if (p.sort === "modified" && p.direction !== "asc") direction = -1;
       if (p.sort === "modified") { const x = timestamp(a.lastModified), y = timestamp(b.lastModified); if ((x === 0n) !== (y === 0n)) return x === 0n ? 1 : -1; if (x !== y) return (x > y ? 1 : -1) * direction; }
       else if (["artist", "date", "tracks", "status", "issues"].includes(p.sort)) {
         const key = p.sort === "status" ? "statusCode" : p.sort;
         let x = p.sort === "issues" ? (a.issues || []).length : a[key], y = p.sort === "issues" ? (b.issues || []).length : b[key];
         if (p.sort === "date" && (!x || !y)) { if (!!x !== !!y) return x ? -1 : 1; }
-        else { const diff = typeof x === "number" ? x - y : String(x || "").localeCompare(String(y || "")); if (diff) return diff * (p.direction === "desc" ? -1 : 1); }
+        else { const diff = typeof x === "number" ? x - y : String(x || "").localeCompare(String(y || "")); if (diff) return diff * direction; }
       }
       if (p.sort === "alphabetical" && p.direction === "desc") return b.title.localeCompare(a.title) || a.id.localeCompare(b.id);
       return a.title.localeCompare(b.title) || a.id.localeCompare(b.id);

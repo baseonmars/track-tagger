@@ -90,7 +90,8 @@ func listen(opts Options) (net.Listener, error) {
 		return listener, err
 	}
 	host, _, splitErr := net.SplitHostPort(opts.Addr)
-	if splitErr != nil || host != "localhost" && (net.ParseIP(host) == nil || !net.ParseIP(host).IsLoopback()) {
+	ip := net.ParseIP(host)
+	if splitErr != nil || (host != "localhost" && (ip == nil || !ip.IsLoopback())) {
 		return nil, fmt.Errorf("fallback requires a loopback address: %w", err)
 	}
 	return net.Listen("tcp", net.JoinHostPort(host, "0"))

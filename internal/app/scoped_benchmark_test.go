@@ -108,13 +108,7 @@ func scopedBenchmarkFixture(b *testing.B, recordings int) (*Engine, string, stri
 		if item.Status != "ready" || len(item.Tracks) != 1 {
 			b.Fatalf("selected recording is not ready: %+v", item)
 		}
-		track := item.Tracks[0]
-		review := webui.Review{
-			Approve:     true,
-			Fingerprint: item.Fingerprint,
-			Metadata:    map[string]string{"ARTIST": item.Artist, "ALBUM": item.Album, "DATE": item.Date},
-			Tracks:      []webui.Track{{File: track.Path, Title: track.Title, Artist: track.Artist, Track: track.Number, Disc: track.Disc}},
-		}
+		review := scopedReview(item)
 		return e, selected, item.ID, review
 	}
 	b.Fatal("selected recording was not discovered")

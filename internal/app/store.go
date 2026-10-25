@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gofrs/flock"
@@ -83,10 +84,14 @@ func (s *Store) finishFile(id int64, target, hash, status string) error {
 	if _, err = tx.Exec("UPDATE files SET status=? WHERE id=?", status, id); err != nil {
 		return err
 	}
-	if _, err = tx.Exec("INSERT INTO outputs VALUES(?,?) ON CONFLICT(path) DO UPDATE SET hash=excluded.hash", target, hash); err != nil {
+	if err = upsertOutput(tx, target, hash); err != nil {
 		return err
 	}
 	return tx.Commit()
+}
+func upsertOutput(tx *sql.Tx, path, hash string) error {
+	_, err := tx.Exec("INSERT INTO outputs VALUES(?,?) ON CONFLICT(path) DO UPDATE SET hash=excluded.hash", path, hash)
+	return err
 }
 func (s *Store) known(path string) (string, error) {
 	var h string
@@ -105,7 +110,7 @@ func (s *Store) finishCompletion(id, evidence string, skipped map[string]string)
 	}
 	defer tx.Rollback()
 	for path, hash := range skipped {
-		if _, err = tx.Exec("INSERT INTO outputs VALUES(?,?) ON CONFLICT(path) DO UPDATE SET hash=excluded.hash", path, hash); err != nil {
+		if err = upsertOutput(tx, path, hash); err != nil {
 			return err
 		}
 	}
@@ -118,13 +123,17 @@ func (s *Store) Files(job string) ([]FileJournal, error) { return s.files(job, f
 func (s *Store) pendingFiles() ([]FileJournal, error)    { return s.files("", true) }
 func (s *Store) files(job string, pending bool) ([]FileJournal, error) {
 	q := "SELECT id,job,source,target,before_hash,after_hash,metadata,status,undo_of FROM files"
+	var conds []string
 	args := []any{}
 	if job != "" {
-		q += " WHERE job=?"
+		conds = append(conds, "job=?")
 		args = append(args, job)
 	}
 	if pending {
-		q += " WHERE status IN ('staged','undo-staged')"
+		conds = append(conds, "status IN ('staged','undo-staged')")
+	}
+	if len(conds) > 0 {
+		q += " WHERE " + strings.Join(conds, " AND ")
 	}
 	q += " ORDER BY id DESC"
 	rows, err := s.db.Query(q, args...)
@@ -201,7 +210,7 @@ func (s *Store) finishUndo(id, original int64, target, hash string) error {
 	if _, err = tx.Exec("INSERT OR IGNORE INTO holds SELECT recording FROM jobs JOIN files ON files.job=jobs.id WHERE files.id=?", original); err != nil {
 		return err
 	}
-	if _, err = tx.Exec("INSERT INTO outputs VALUES(?,?) ON CONFLICT(path) DO UPDATE SET hash=excluded.hash", target, hash); err != nil {
+	if err = upsertOutput(tx, target, hash); err != nil {
 		return err
 	}
 	return tx.Commit()

@@ -32,11 +32,11 @@ func fixtureClient(t *testing.T, handler http.HandlerFunc) client {
 	return client{arch: "amd64", cache: t.TempDir(), http: &http.Client{CheckRedirect: trustedRedirect, Transport: roundTrip(func(r *http.Request) (*http.Response, error) {
 		// Keep real validated URLs in the client; route only this test's transport
 		// to a loopback fixture. No request can reach GitHub from these tests.
-		copy := r.Clone(r.Context())
+		cloned := r.Clone(r.Context())
 		u := *r.URL
 		u.Scheme, u.Host = target.Scheme, target.Host
-		copy.URL = &u
-		return transport.RoundTrip(copy)
+		cloned.URL = &u
+		return transport.RoundTrip(cloned)
 	})}}
 }
 

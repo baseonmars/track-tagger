@@ -230,15 +230,17 @@ func inspect(path string, hashes bool) (Info, error) {
 			info.HasArtwork = true
 		}
 		if b.Type == flac.VorbisComment {
+			// readMetadata already validated this block, so decodeComments cannot fail.
 			_, vals, _ := decodeComments(b.Data)
 			for _, v := range vals {
 				k, val, ok := strings.Cut(v, "=")
 				if ok {
 					key := strings.ToUpper(k)
-					if old := info.Tags[key]; old != "" && val != "" && old != val {
-						info.Tags[key] = old + "; " + val
-					} else if old == "" {
+					switch old := info.Tags[key]; {
+					case old == "":
 						info.Tags[key] = val
+					case val != "" && val != old:
+						info.Tags[key] = old + "; " + val
 					}
 				}
 			}
@@ -404,6 +406,8 @@ func StageRestore(src, temp string, metadata []byte) (Info, error) {
 	if len(raw) != len(metadata) {
 		return Info{}, errors.New("trailing restoration metadata")
 	}
+	// original.Metadata starts with the "fLaC" marker (4), first block header (4),
+	// and 34-byte STREAMINFO, so the stored STREAMINFO payload is bytes 8:42.
 	if !bytes.Equal(blocks[0].Data, original.Metadata[8:42]) {
 		return Info{}, errors.New("restoration STREAMINFO does not match the current audio")
 	}
@@ -441,7 +445,7 @@ func stage(src, temp string, blocks []*flac.MetaDataBlock, original Info) (Info,
 	})
 }
 func stageWithSink(src, temp string, blocks []*flac.MetaDataBlock, original Info, openSink sinkFactory) (result Info, err error) {
-	total := 4
+	total := 4 // "fLaC" marker
 	for _, b := range blocks {
 		total += 4 + len(b.Data)
 		if len(b.Data) > maxBlock || total > maxMetadata {

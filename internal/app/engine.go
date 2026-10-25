@@ -669,7 +669,7 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 				skipped[o.target] = after
 				return nil
 			}
-			if x = e.revalidate(item, tempName); x != nil {
+			if x = e.revalidate(item); x != nil {
 				return x
 			}
 			check, x := media.Hash(o.src)
@@ -916,7 +916,7 @@ func SameInputs(a, b catalog.Recording) bool { return reflect.DeepEqual(a.Eviden
 func sameProposal(a, b catalog.Recording) bool {
 	return a.Artist == b.Artist && a.Album == b.Album && a.Date == b.Date && a.DateUnknown == b.DateUnknown && a.Artwork == b.Artwork && reflect.DeepEqual(a.Tracks, b.Tracks)
 }
-func (e *Engine) revalidate(item Item, temp string) error {
+func (e *Engine) revalidate(item Item) error {
 	_, err := e.revalidateRecording(item)
 	return err
 }

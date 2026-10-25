@@ -23,7 +23,7 @@ const uninstallKey = `Software\Microsoft\Windows\CurrentVersion\Uninstall\{A4D0D
 func openStageGuard(dir string, create bool) (io.Closer, error) {
 	path := filepath.Join(dir, "active.lock")
 	if _, e := os.Lstat(path); e == nil {
-		if e = regularStageFile(path); e != nil {
+		if e := regularStageFile(path); e != nil {
 			return nil, e
 		}
 	} else if !os.IsNotExist(e) {
