@@ -125,21 +125,7 @@ func BenchmarkBrowseLargePayload(b *testing.B) {
 	if err := os.Mkdir(source, 0700); err != nil {
 		b.Fatal(err)
 	}
-	path := filepath.Join(source, "t01.flac")
-	header := append([]byte{'f', 'L', 'a', 'C', 128, 0, 0, 34}, make([]byte, 34)...)
-	if err := os.WriteFile(path, header, 0600); err != nil {
-		b.Fatal(err)
-	}
-	f, err := os.OpenFile(path, os.O_WRONLY, 0)
-	if err != nil {
-		b.Fatal(err)
-	}
-	if err = f.Truncate(128 << 20); err != nil {
-		b.Fatal(err)
-	}
-	if err = f.Close(); err != nil {
-		b.Fatal(err)
-	}
+	writeBenchmarkFLAC(b, filepath.Join(source, "t01.flac"), 128<<20)
 	for _, mode := range []string{"strict", "cold", "warm"} {
 		b.Run(mode, func(b *testing.B) {
 			e, err := New(Options{Source: source, State: filepath.Join(root, "state"), Mode: DryRun})

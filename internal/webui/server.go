@@ -359,8 +359,7 @@ func (s *server) status(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	out := statusResponse{Phase: status.Phase, Validated: status.Validated, Scanned: status.Scanned, Total: status.Total, Generation: status.Generation, Error: status.Error, Recordings: make([]statusCard, 0, len(status.Recordings))}
-	out.Recordings = libraryCards(status.Recordings)
+	out := statusResponse{Phase: status.Phase, Validated: status.Validated, Scanned: status.Scanned, Total: status.Total, Generation: status.Generation, Error: status.Error, Recordings: libraryCards(status.Recordings)}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	_ = json.NewEncoder(w).Encode(out)
 }
@@ -372,6 +371,9 @@ func libraryCards(recordings []Recording) []statusCard {
 	}
 	return out
 }
+
+// actionErrorPage sends the user back to the recording after a failed action.
+const actionErrorPage = `<!doctype html><html lang="en"><meta charset="utf-8"><title>Review action needs attention</title><h1>Review action needs attention</h1><p>%s</p><p><a href="/recording?id=%s">Return to recording to review or retry</a></p></html>`
 
 func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 	id := r.PostForm.Get("id")
@@ -413,7 +415,7 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(http.StatusConflict)
-		fmt.Fprintf(w, "<!doctype html><html lang=\"en\"><meta charset=\"utf-8\"><title>Review action needs attention</title><h1>Review action needs attention</h1><p>%s</p><p><a href=\"/recording?id=%s\">Return to recording to review or retry</a></p></html>", template.HTMLEscapeString(err.Error()), template.HTMLEscapeString(url.QueryEscape(id)))
+		fmt.Fprintf(w, actionErrorPage, template.HTMLEscapeString(err.Error()), template.HTMLEscapeString(url.QueryEscape(id)))
 		return
 	}
 	if r.URL.Path == "/undo" {

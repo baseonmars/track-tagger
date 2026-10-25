@@ -53,7 +53,7 @@ func run(args []string) error {
 	}
 	f := flag.NewFlagSet(cmd, flag.ContinueOnError)
 	write := f.Bool("write", false, "change media")
-	dry := f.Bool("dry-run", false, "preview only")
+	f.Bool("dry-run", false, "preview only")
 	dest := f.String("copy", "", "copy destination")
 	state := f.String("state", "", "application storage directory")
 	js := f.Bool("json", false, "JSON output")
@@ -88,7 +88,6 @@ func run(args []string) error {
 	if len(positional) != 1 {
 		return errors.New("exactly one source, plan, or job ID is required")
 	}
-	_ = dry
 	modes := 0
 	mode := app.DryRun
 	f.Visit(func(v *flag.Flag) {

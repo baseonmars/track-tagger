@@ -582,7 +582,7 @@ func Run(version string, resumeServer bool) {
 	var e error
 	config, e = Load(directory)
 	if e != nil {
-		config = Settings{Mode: app.DryRun, AutoCheckUpdates: true}
+		config = defaultSettings()
 	}
 	sid := "user"
 	if token, err := windows.OpenCurrentProcessToken(); err == nil {

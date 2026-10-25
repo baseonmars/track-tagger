@@ -3,8 +3,6 @@ package catalog
 import (
 	"context"
 	"os"
-	"path/filepath"
-	"strings"
 	"track-tagger/internal/media"
 )
 
@@ -75,8 +73,7 @@ func (c *BrowseCache) Retain(recordings []Recording) {
 	}
 	for path := range c.entries {
 		for _, dir := range failed {
-			rel, err := filepath.Rel(dir, path)
-			if err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+			if within(dir, path) {
 				live[path] = true
 				break
 			}

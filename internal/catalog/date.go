@@ -112,7 +112,9 @@ func filenameDates(dir string, notes, audio []string) map[string]bool {
 		for _, span := range basenameISODate.FindAllStringIndex(name, -1) {
 			// Taper names often join the artist/date/track identifier without
 			// punctuation. Only adjacent digits invalidate an ISO date token.
-			if span[0] > 0 && name[span[0]-1] >= '0' && name[span[0]-1] <= '9' || span[1] < len(name) && name[span[1]] >= '0' && name[span[1]] <= '9' {
+			prev := span[0] > 0 && name[span[0]-1] >= '0' && name[span[0]-1] <= '9'
+			next := span[1] < len(name) && name[span[1]] >= '0' && name[span[1]] <= '9'
+			if prev || next {
 				continue
 			}
 			date := name[span[0]:span[1]]

@@ -319,7 +319,7 @@ func (c client) download(ctx context.Context, release *Release, progress func(in
 		return nil, err
 	}
 	defer resp.Body.Close()
-	if resp.ContentLength > maxInstaller || resp.ContentLength > 0 && resp.ContentLength != release.installer.Size {
+	if resp.ContentLength > maxInstaller || (resp.ContentLength > 0 && resp.ContentLength != release.installer.Size) {
 		return nil, errors.New("installer size does not match release metadata")
 	}
 	h := sha256.New()

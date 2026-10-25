@@ -23,6 +23,19 @@ test('library orders exact statuses, timestamps, titles and ids', () => {
   assert.equal(ids({filter:'completed',sort:'modified',pin:false,group:false}),'c');
 });
 
+test('library sort directions retain their column defaults', () => {
+  const items = [
+    {id:'a',title:'Alpha',artist:'Alpha',date:'2000',tracks:1,statusCode:'completed',issues:[],lastModified:'10'},
+    {id:'b',title:'Beta',artist:'Beta',date:'2001',tracks:2,statusCode:'ready',issues:['review'],lastModified:'20'},
+  ];
+  for (const sort of ['modified', 'alphabetical', 'artist', 'date', 'tracks', 'status', 'issues']) {
+    const ids = direction => ordered(items, {filter:'all',sort,pin:false,group:false,...(direction ? {direction} : {})}).map(item => item.id);
+    assert.deepEqual(ids(), sort === 'modified' ? ['b','a'] : ['a','b'], `${sort} default`);
+    assert.deepEqual(ids('asc'), ['a','b'], `${sort} ascending`);
+    assert.deepEqual(ids('desc'), ['b','a'], `${sort} descending`);
+  }
+});
+
 test('library preferences restore valid values and survive unavailable storage', () => {
   const values = new Map();
   const storage = {getItem:key=>values.get(key)||null,setItem:(key,value)=>values.set(key,value)};

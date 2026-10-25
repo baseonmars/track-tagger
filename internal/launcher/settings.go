@@ -25,8 +25,13 @@ func ConfigDir() (string, error) {
 	d, e := os.UserConfigDir()
 	return filepath.Join(d, "track-tagger"), e
 }
+
+// defaultSettings returns the safe fallback: preview mode with the update
+// check enabled but not started.
+func defaultSettings() Settings { return Settings{Mode: app.DryRun, AutoCheckUpdates: true} }
+
 func Load(dir string) (Settings, error) {
-	s := Settings{Mode: app.DryRun, AutoCheckUpdates: true}
+	s := defaultSettings()
 	b, e := os.ReadFile(filepath.Join(dir, "launcher.json"))
 	if os.IsNotExist(e) {
 		return s, nil
@@ -35,9 +40,9 @@ func Load(dir string) (Settings, error) {
 		return s, e
 	}
 	if e = json.Unmarshal(b, &s); e != nil {
-		return Settings{Mode: app.DryRun, AutoCheckUpdates: true}, fmt.Errorf("read launcher settings: %w", e)
+		return defaultSettings(), fmt.Errorf("read launcher settings: %w", e)
 	}
-	if s.Mode != app.DryRun && s.Mode != app.Copy && s.Mode != app.Write {
+	if !validMode(s.Mode) {
 		s.Mode = app.DryRun
 	}
 	return s, nil
@@ -68,6 +73,11 @@ func Save(dir string, s Settings) error {
 	}
 	return replaceSettings(name, filepath.Join(dir, "launcher.json"))
 }
+
+// validMode reports whether m is one of the processing modes a user can
+// select. Anything else is treated as unsafe and falls back to preview.
+func validMode(m app.Mode) bool { return m == app.DryRun || m == app.Copy || m == app.Write }
+
 func (s Settings) UsePolling() bool {
 	if s.PollOverride {
 		return s.Poll
@@ -78,7 +88,7 @@ func (s Settings) Validate() error {
 	if strings.TrimSpace(s.Source) == "" {
 		return fmt.Errorf("choose a music folder")
 	}
-	if s.Mode != app.DryRun && s.Mode != app.Copy && s.Mode != app.Write {
+	if !validMode(s.Mode) {
 		return fmt.Errorf("choose a processing mode")
 	}
 	if s.Mode == app.Copy && strings.TrimSpace(s.Destination) == "" {
