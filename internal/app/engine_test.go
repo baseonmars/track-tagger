@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	flac "github.com/go-flac/go-flac/v2"
+	"track-tagger/internal/catalog"
 	"track-tagger/internal/media"
 )
 
@@ -58,6 +60,254 @@ func checkedHash(t *testing.T, path string) string {
 		t.Fatal(err)
 	}
 	return h
+}
+
+func alreadyTagged(t *testing.T, path string, tags map[string]string, artwork string) {
+	t.Helper()
+	stage := filepath.Join(filepath.Dir(path), ".track-tagger-test-stage")
+	if _, err := media.Stage(path, stage, tags, artwork, false); err != nil {
+		t.Fatal(err)
+	}
+	if err := media.Replace(stage, path); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestAlreadyTaggedWriteCompletesWithoutReplacement(t *testing.T) {
+	e, audio := engineFixture(t, Write)
+	proposal := fixturePlan(t, e).Recordings[0]
+	alreadyTagged(t, audio, proposal.Tracks[0].Tags, proposal.Artwork)
+	stamp := time.Unix(1_500_000_000, 0)
+	if err := os.Chtimes(audio, stamp, stamp); err != nil {
+		t.Fatal(err)
+	}
+	before, err := os.ReadFile(audio)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := fixturePlan(t, e)
+	jobs, err := e.Apply(p)
+	if err != nil || len(jobs) != 1 {
+		t.Fatalf("apply: %v %v", jobs, err)
+	}
+	files, err := e.store.Files(jobs[0])
+	if err != nil || len(files) != 0 {
+		t.Fatalf("unchanged file journaled: %v %v", files, err)
+	}
+	after, err := os.ReadFile(audio)
+	if err != nil || !bytes.Equal(before, after) {
+		t.Fatal("unchanged file bytes changed", err)
+	}
+	st, err := os.Stat(audio)
+	if err != nil || !st.ModTime().Equal(stamp) {
+		t.Fatal("unchanged file modification time changed", err)
+	}
+	known, err := e.store.known(audio)
+	if err != nil || known != checkedHash(t, audio) {
+		t.Fatal("unchanged output hash missing", err)
+	}
+	fresh, err := e.Scan()
+	if err != nil || len(fresh.Recordings) != 1 || fresh.Recordings[0].Status != "completed" {
+		t.Fatalf("rescan: %+v %v", fresh, err)
+	}
+	other, err := New(e.Options)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = other.Close() })
+	if err = other.OpenStorage(); err != nil {
+		t.Fatal(err)
+	}
+	fresh, err = other.Scan()
+	if err != nil || len(fresh.Recordings) != 1 || fresh.Recordings[0].Status != "completed" {
+		t.Fatalf("reopened rescan: %+v %v", fresh, err)
+	}
+	other.startBrowsing()
+	waitLibraryCompleted := func(after uint64) uint64 {
+		t.Helper()
+		deadline := time.Now().Add(5 * time.Second)
+		for time.Now().Before(deadline) {
+			status, items := other.librarySnapshot()
+			if status.Phase == "ready" && status.Generation > after && len(items) == 1 && items[0].Status == "completed" {
+				return status.Generation
+			}
+			time.Sleep(10 * time.Millisecond)
+		}
+		status, items := other.librarySnapshot()
+		t.Fatalf("library did not publish completed item: %+v %+v", status, items)
+		return 0
+	}
+	generation := waitLibraryCompleted(0)
+	other.reconcileLibrary()
+	waitLibraryCompleted(generation)
+	jobsAgain, err := other.Apply(fresh)
+	if err != nil || len(jobsAgain) != 0 {
+		t.Fatalf("completed plan created another job: %v %v", jobsAgain, err)
+	}
+	history, err := other.store.History()
+	if err != nil || len(history) != 1 {
+		t.Fatalf("reconciliation created another job: %v %v", history, err)
+	}
+}
+
+func TestMixedWriteJournalsOnlyChangedTrack(t *testing.T) {
+	e, first := engineFixture(t, Write)
+	second := filepath.Join(e.Source, "t02.flac")
+	b, err := os.ReadFile(first)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = os.WriteFile(second, b, 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err = os.WriteFile(filepath.Join(e.Source, "notes.txt"), []byte("Artist: Band\nDate: 1970-01-20\nVenue: Hall\nCity: London\n01. First Song\n02. Second Song\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	p := fixturePlan(t, e)
+	if len(p.Recordings[0].Tracks) != 2 {
+		t.Fatal("fixture did not find both tracks")
+	}
+	for _, track := range p.Recordings[0].Tracks {
+		if track.Path == first {
+			alreadyTagged(t, first, track.Tags, p.Recordings[0].Artwork)
+		}
+	}
+	p = fixturePlan(t, e)
+	firstHash := checkedHash(t, first)
+	jobs, err := e.Apply(p)
+	if err != nil || len(jobs) != 1 {
+		t.Fatalf("apply: %v %v", jobs, err)
+	}
+	files, err := e.store.Files(jobs[0])
+	if err != nil || len(files) != 1 || files[0].Target != second {
+		t.Fatalf("wrong journal rows: %v %v", files, err)
+	}
+	if checkedHash(t, first) != firstHash {
+		t.Fatal("already tagged track changed")
+	}
+	for _, path := range []string{first, second} {
+		known, err := e.store.known(path)
+		if err != nil || known != checkedHash(t, path) {
+			t.Fatalf("missing output hash for %s: %q %v", path, known, err)
+		}
+	}
+	fresh, err := e.Scan()
+	if err != nil || fresh.Recordings[0].Status != "completed" {
+		t.Fatalf("mixed recording not complete: %+v %v", fresh, err)
+	}
+}
+
+func TestUnchangedOutputEditBeforeCompletionRejected(t *testing.T) {
+	e, audio := engineFixture(t, Write)
+	p := fixturePlan(t, e)
+	alreadyTagged(t, audio, p.Recordings[0].Tracks[0].Tags, p.Recordings[0].Artwork)
+	p = fixturePlan(t, e)
+	reads := 0
+	e.strictFingerprint = func(path string) (catalog.Evidence, error) {
+		ev, err := catalog.Fingerprint(path)
+		if path == audio {
+			reads++
+			if reads == 2 && err == nil {
+				f, x := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0)
+				if x != nil {
+					return ev, x
+				}
+				_, x = f.Write([]byte{7})
+				if closeErr := f.Close(); x == nil {
+					x = closeErr
+				}
+				if x != nil {
+					return ev, x
+				}
+			}
+		}
+		return ev, err
+	}
+	jobs, err := e.Apply(p)
+	if err == nil || len(jobs) != 1 || reads < 2 {
+		t.Fatalf("intervening edit accepted: jobs=%v reads=%d err=%v", jobs, reads, err)
+	}
+	known, err := e.store.known(audio)
+	if err != nil || known != "" {
+		t.Fatal("failed completion recorded unchanged output", err)
+	}
+	var completed string
+	if err := e.store.db.QueryRow("SELECT evidence FROM completions WHERE id=?", e.completionKey(p.Recordings[0].ID)).Scan(&completed); err == nil {
+		t.Fatal("failed completion recorded evidence")
+	}
+}
+
+func TestOwnedNoopCopyRetainsCollisionChecks(t *testing.T) {
+	e, source := engineFixture(t, Copy)
+	p := fixturePlan(t, e)
+	first, err := e.Apply(p)
+	if err != nil || len(first) != 1 {
+		t.Fatalf("initial copy: %v %v", first, err)
+	}
+	if _, err = e.store.db.Exec("DELETE FROM completions WHERE id=?", e.completionKey(p.Recordings[0].ID)); err != nil {
+		t.Fatal(err)
+	}
+	target := filepath.Join(e.Destination, filepath.Base(source))
+	before, err := os.ReadFile(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	st, err := os.Stat(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p = fixturePlan(t, e)
+	second, err := e.Apply(p)
+	if err != nil || len(second) != 1 {
+		t.Fatalf("owned no-op copy: %v %v", second, err)
+	}
+	files, err := e.store.Files(second[0])
+	if err != nil || len(files) != 0 {
+		t.Fatalf("owned no-op copy journaled: %v %v", files, err)
+	}
+	after, err := os.ReadFile(target)
+	if err != nil || !bytes.Equal(before, after) {
+		t.Fatal("owned no-op copy changed bytes", err)
+	}
+	stAfter, err := os.Stat(target)
+	if err != nil || !stAfter.ModTime().Equal(st.ModTime()) {
+		t.Fatal("owned no-op copy changed modification time", err)
+	}
+	fresh, err := e.Scan()
+	if err != nil || fresh.Recordings[0].Status != "completed" {
+		t.Fatalf("owned no-op copy not completed: %+v %v", fresh, err)
+	}
+	if _, err = e.store.db.Exec("DELETE FROM completions WHERE id=?", e.completionKey(p.Recordings[0].ID)); err != nil {
+		t.Fatal(err)
+	}
+	p = fixturePlan(t, e)
+	if err = os.WriteFile(target, []byte("unrelated output"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = e.Apply(p); err == nil {
+		t.Fatal("copy accepted externally edited destination")
+	}
+	actual, err := os.ReadFile(target)
+	if err != nil || string(actual) != "unrelated output" {
+		t.Fatal("copy changed externally edited destination", err)
+	}
+}
+
+func TestCompletionAndUnchangedHashesCommitTogether(t *testing.T) {
+	e, audio := engineFixture(t, Write)
+	if err := e.OpenStorage(); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := e.store.db.Exec("CREATE TRIGGER reject_completion BEFORE INSERT ON completions BEGIN SELECT RAISE(ABORT, 'test failure'); END"); err != nil {
+		t.Fatal(err)
+	}
+	if err := e.store.finishCompletion("test", "evidence", map[string]string{audio: "hash"}); err == nil {
+		t.Fatal("completion insert unexpectedly succeeded")
+	}
+	known, err := e.store.known(audio)
+	if err != nil || known != "" {
+		t.Fatalf("output hash escaped rolled back completion: %q %v", known, err)
+	}
 }
 
 func TestInterruptedApplyRecovery(t *testing.T) {

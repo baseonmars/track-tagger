@@ -96,6 +96,24 @@ func (s *Store) known(path string) (string, error) {
 	}
 	return h, err
 }
+
+// finishCompletion records verified unchanged outputs and their recording evidence together.
+func (s *Store) finishCompletion(id, evidence string, skipped map[string]string) error {
+	tx, err := s.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	for path, hash := range skipped {
+		if _, err = tx.Exec("INSERT INTO outputs VALUES(?,?) ON CONFLICT(path) DO UPDATE SET hash=excluded.hash", path, hash); err != nil {
+			return err
+		}
+	}
+	if _, err = tx.Exec("INSERT INTO completions VALUES(?,?) ON CONFLICT(id) DO UPDATE SET evidence=excluded.evidence", id, evidence); err != nil {
+		return err
+	}
+	return tx.Commit()
+}
 func (s *Store) Files(job string) ([]FileJournal, error) { return s.files(job, false) }
 func (s *Store) pendingFiles() ([]FileJournal, error)    { return s.files("", true) }
 func (s *Store) files(job string, pending bool) ([]FileJournal, error) {
