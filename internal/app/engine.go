@@ -588,6 +588,7 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 			err = x
 		}
 	}()
+	skipped := make(map[string]string)
 	for _, o := range outputs {
 		var in media.Info
 		var before, sourceHash string
@@ -665,6 +666,7 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 				}
 			}
 			if before == after {
+				skipped[o.target] = after
 				return nil
 			}
 			if x = e.revalidate(item, tempName); x != nil {
@@ -709,8 +711,17 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 	if x != nil {
 		return id, x
 	}
+	for target, want := range skipped {
+		got, x := e.targetAllowed(target)
+		if x != nil {
+			return id, fmt.Errorf("revalidate unchanged output %s: %w", target, x)
+		}
+		if got != want {
+			return id, fmt.Errorf("unchanged output changed before completion: %s", target)
+		}
+	}
 	item.Fingerprint = fresh.Fingerprint
-	if _, err = e.store.db.Exec("INSERT INTO completions VALUES(?,?) ON CONFLICT(id) DO UPDATE SET evidence=excluded.evidence", e.completionKey(item.ID), evidence(item.Recording)); err != nil {
+	if err = e.store.finishCompletion(e.completionKey(item.ID), evidence(item.Recording), skipped); err != nil {
 		return id, err
 	}
 	if item.Reviewed {
