@@ -1,9 +1,11 @@
 import hashlib
+import json
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
-from .replay import reconstruct
+from .replay import reconstruct,replay
+from ..hosted import canonical
 from .labels import source_hash
 
 class ReplayTests(unittest.TestCase):
@@ -19,6 +21,14 @@ class ReplayTests(unittest.TestCase):
             with patch('experiments.parser.study_v2.replay.fetch')as fetch:
                 result=reconstruct(record,part,root,'a'*64);fetch.assert_not_called()
             self.assertEqual(result['notes'][0]['text'],'Artist\n')
+    def test_manifest_unicode_separator_is_not_jsonl_record_boundary(self):
+        data,record,part=self.fixtures();record['description']='a\u2028b'
+        with tempfile.TemporaryDirectory()as d:
+            root=Path(d);note=root/'packages/fixture/notes/note.txt';note.parent.mkdir(parents=True);note.write_bytes(data)
+            acquisition=root/'acquisition.jsonl';acquisition.write_text(canonical(record)+'\n')
+            manifest=root/'manifest.json';value={'cases':[dict(part,id='fixture')]};value['manifest_sha256']=hashlib.sha256(canonical(value).encode()).hexdigest();manifest.write_text(canonical(value))
+            with patch('experiments.parser.study_v2.replay.fetch')as fetch:report=replay(acquisition,manifest,root,1);fetch.assert_not_called()
+            self.assertEqual(report['reconstructed'],1)
     def test_note_name_cannot_disguise_audio_url(self):
         _,record,part=self.fixtures();record['notes'][0]['source_url']='https://archive.org/download/fixture/t01.flac'
         with tempfile.TemporaryDirectory()as d,patch('experiments.parser.study_v2.replay.fetch')as fetch:

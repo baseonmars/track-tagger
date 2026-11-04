@@ -36,7 +36,7 @@ def replay(acquisition,manifest,root,workers=4):
     if not 1<=workers<=8:raise ValueError('workers must be1..8')
     value=json.loads(manifest.read_text());digest=value.pop('manifest_sha256')
     if hashlib.sha256(canonical(value).encode()).hexdigest()!=digest:raise ValueError('source split manifest changed')
-    records=[json.loads(l)for l in acquisition.read_text().splitlines()if l.strip()];parts={r['id']:r for r in value['cases']}
+    records=[json.loads(l)for l in acquisition.read_text().split('\n')if l.strip()];parts={r['id']:r for r in value['cases']}
     if len(parts)!=len(value['cases'])or len({r['package_id']for r in records})!=len(records)or{r['package_id']for r in records}!=set(parts):raise ValueError('acquisition and partition membership differ')
     def worker(record):
         try:return reconstruct(record,parts[record['package_id']],root,digest),None
