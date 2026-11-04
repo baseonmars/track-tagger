@@ -1,0 +1,27 @@
+{
+  "audit_sha256": "9f2aae552f343dd30f4fef909d8b678f71ea36c30c0e5568585bd3fa658ff52e",
+  "candidate_artifact_sha256": "a42f8a2502eb8b7cc7187d166beb2363e305e17abf84ea4f6281f28692afda0d",
+  "audit_after_gold_and_candidate_freeze": true,
+  "no_parser_or_model_tuning": true,
+  "human_certified": false,
+  "ready_cases": 10,
+  "reviewed_source_lines": 535,
+  "reviewed_file_names": 181,
+  "strict_gold_false_ready": 2,
+  "new_ready": 0,
+  "changed_title_records": 2,
+  "changed_titles": 20,
+  "review_reason_order_only_differences": 49,
+  "metadata_or_numeric_mapping_changes_observed": false,
+  "findings": [
+    {
+      "id": "bbragg2006-03-26",
+      "existing_issue": "Unknown title placeholder accepted; city omitted. Full 36-file inventory was present."
+    },
+    {
+      "id": "tm1995-03-17.flac16",
+      "existing_issue": "Venue/city split error and conservative review for checksum filename padding. All 22 actual track-number joins unambiguous."
+    }
+  ],
+  "scope": "Agent-reviewed source audit, not human certification or end-to-end media write verification."
+}
