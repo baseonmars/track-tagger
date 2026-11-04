@@ -28,6 +28,13 @@ headers conservatively. Terminal bracketed duration annotations are removed whil
 meaningful title punctuation and segues remain intact. Identifier matching and
 media-writing behavior remain unchanged.
 
+A separate [targeted replay of four known development failures](../../experiments/parser/study_v2/results/known4-development-replay.json)
+confirmed that three previously ready cases now require review for speculative venue,
+provisional title or ambiguous event/location evidence; the fourth retains readiness
+with its venue corrected. That replay also removed twelve duration annotations.
+These four inspected development cases motivated the fixes and are not combined
+with the independent held-out counts below.
+
 The comparison pins the current baseline to `5fd190b` and these fixes to `fece1a0`.
 The synthetic regression corpus updates 82 title expectations across 18 fixtures
 for bracketed durations; source notes are unchanged. Earlier experiment gold and
