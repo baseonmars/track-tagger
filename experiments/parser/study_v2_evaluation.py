@@ -71,7 +71,7 @@ def freeze_protocol(sources, recording_gold, line_gold, enabled_roles=FIELDS, *,
         bytes.fromhex(classifier_model_sha256)
     except ValueError:
         raise ValueError('invalid classifier model hash') from None
-    expected_execution_keys = {'runner_sha256', 'build_manifest_sha256', 'baseline_binary_sha256', 'fixed_binary_sha256', 'classifier_binary_sha256'}
+    expected_execution_keys = {'runner_sha256', 'build_manifest_sha256', 'baseline_binary_sha256', 'fixed_binary_sha256', 'classifier_binary_sha256', 'model_freeze_sha256'}
     if not isinstance(execution_manifest, dict) or set(execution_manifest) != expected_execution_keys:
         raise ValueError('frozen execution manifest required')
     for value in execution_manifest.values():

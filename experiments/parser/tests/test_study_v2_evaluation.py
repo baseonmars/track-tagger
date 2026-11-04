@@ -4,7 +4,7 @@ from experiments.parser.study_v2_evaluation import (
     FIELDS, BASELINE_COMMIT, FIXED_COMMIT, digest, freeze_protocol, evaluate)
 
 MODEL = 'b' * 64
-EXECUTION = {k: 'c'*64 for k in ('runner_sha256', 'build_manifest_sha256', 'baseline_binary_sha256', 'fixed_binary_sha256', 'classifier_binary_sha256')}
+EXECUTION = {k: 'c'*64 for k in ('runner_sha256', 'build_manifest_sha256', 'baseline_binary_sha256', 'fixed_binary_sha256', 'classifier_binary_sha256', 'model_freeze_sha256')}
 
 
 def fixture(count=200):

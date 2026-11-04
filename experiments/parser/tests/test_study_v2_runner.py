@@ -6,9 +6,18 @@ from pathlib import Path
 from unittest.mock import patch
 
 from experiments.parser.study_v2_runner import (
-    proposals, source_hash, source_lines, validate_dispatch, file_sha, catalog_run, date_value)
+    proposals as raw_proposals, source_hash, source_lines, validate_dispatch as raw_validate_dispatch, file_sha, catalog_run, date_value)
 from experiments.parser.study_v2_evaluation import freeze_protocol, digest
 from experiments.parser.tests.test_study_v2_evaluation import fixture, EXECUTION
+
+def proposals(*args, **kwargs):
+    return raw_proposals(*args, enabled_roles=['artist','date','venue','city'], **kwargs)
+
+
+def validate_dispatch(cases, split, model, execution, *args):
+    return raw_validate_dispatch(cases, split, model, execution, *args,
+        model_freeze={'model_sha256':file_sha(model), 'enabled_metadata_roles':['artist','date','venue','city']})
+
 
 
 def case(text, split='train'):
@@ -28,6 +37,13 @@ def fixed():
 
 
 class ProposalTests(unittest.TestCase):
+    def test_only_explicitly_enabled_metadata_roles_become_proposals(self):
+        c = case('Band\nHall')
+        pred = predictions(c, [['artist'], ['venue']])
+        self.assertEqual(raw_proposals(c, pred, fixed(), lambda x:x), [])
+        got = raw_proposals(c, pred, fixed(), lambda x:x, ['venue'])
+        self.assertEqual([p['field'] for p in got], ['venue'])
+
     def test_unicode_source_span_and_no_underlying_output_mutation(self):
         c = case('  Artist: Bänd\n2020-01-01\nHåll\nTown\n\n01. Song')
         pred = predictions(c, [['artist'], ['date'], ['venue'], ['city'], [], ['title']])
@@ -81,6 +97,18 @@ class ProposalTests(unittest.TestCase):
 
 
 class DispatchTests(unittest.TestCase):
+    def test_model_selection_freeze_required_and_bound_to_model(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            model = Path(tmp)/'model.json'
+            model.write_text('{}')
+            for freeze in (None, {}, {'model_sha256':'a'*64,'enabled_metadata_roles':[]},
+                           {'model_sha256':file_sha(model),'enabled_metadata_roles':['title']}):
+                with self.assertRaises(ValueError):
+                    raw_validate_dispatch([case('Band')], 'train', model, EXECUTION, model_freeze=freeze)
+            selected, _ = raw_validate_dispatch([case('Band')], 'train', model, EXECUTION,
+                model_freeze={'model_sha256':file_sha(model),'enabled_metadata_roles':[]})
+            self.assertEqual(len(selected), 1)
+
     def test_test_dispatch_requires_reviewed_freeze_before_any_inference(self):
         with tempfile.TemporaryDirectory() as tmp:
             model = Path(tmp)/'model.json';model.write_text('{}')

@@ -141,3 +141,5 @@ At least 95% of nonblank source lines must have reviewed nondisputed role refere
 for the quantitative gates to pass. Unknown references are excluded from semantic
 role/background denominators and counted separately. A metadata proposal relying
 on an unknown role reference is recorded as uncertifiable, not silently accepted.
+
+The runner requires `--model-freeze` for execution manifests and runs. Its complete file hash binds model selection and thresholds; its model hash must match the scorer artifact. Only its explicit `enabled_metadata_roles` may produce proposals, and the test protocol must enable the same roles. An empty allowlist emits no proposals; a missing allowlist rejects dispatch.

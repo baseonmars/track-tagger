@@ -120,7 +120,7 @@ def build_catalogs(repo, destination):
     return manifest
 
 
-def execution_manifest(build_path, scorer):
+def execution_manifest(build_path, scorer, model_freeze):
     builds = json.loads(Path(build_path).read_text())
     for name, commit in [('baseline', BASELINE_COMMIT), ('fixed', FIXED_COMMIT)]:
         b = builds['binaries'][name]
@@ -129,7 +129,7 @@ def execution_manifest(build_path, scorer):
     return {'runner_sha256': file_sha(__file__), 'build_manifest_sha256': file_sha(build_path),
             'baseline_binary_sha256': builds['binaries']['baseline']['sha256'],
             'fixed_binary_sha256': builds['binaries']['fixed']['sha256'],
-            'classifier_binary_sha256': file_sha(scorer)}
+            'classifier_binary_sha256': file_sha(scorer), 'model_freeze_sha256': file_sha(model_freeze)}
 
 
 class Scorer:
@@ -207,7 +207,7 @@ def date_value(binary, value):
     return out['date'] if not out['review_reasons'] else ''
 
 
-def proposals(case, predictions, fixed_output, parse_date):
+def proposals(case, predictions, fixed_output, parse_date, enabled_roles=()):
     """Select one unambiguous source-backed header proposal per metadata role.
 
     This function has no access to gold labels, source applicability gold flags,
@@ -238,7 +238,7 @@ def proposals(case, predictions, fixed_output, parse_date):
             if pred.get('error') or pred.get('abstention') or len(pred.get('roles', [])) != 1:
                 continue
             role = pred['roles'][0]
-            if role not in FIELDS or any(mark in value for mark in (' @ ', ' > ', ' | ', '?')):
+            if role not in enabled_roles or role not in FIELDS or any(mark in value for mark in (' @ ', ' > ', ' | ', '?')):
                 continue
             label = LABEL.match(value)
             if label:
@@ -269,7 +269,15 @@ def proposals(case, predictions, fixed_output, parse_date):
     return result
 
 
-def validate_dispatch(cases, split, model_path, execution, protocol=None, recording_gold=None, line_gold=None):
+def validate_dispatch(cases, split, model_path, execution, protocol=None, recording_gold=None, line_gold=None, model_freeze=None):
+    if not isinstance(model_freeze, dict):
+        raise ValueError("model selection freeze required")
+    enabled = model_freeze.get("enabled_metadata_roles")
+    if (not isinstance(enabled, list) or any(r not in FIELDS for r in enabled)
+        or len(set(enabled)) != len(enabled) or model_freeze.get("model_sha256") != file_sha(model_path)):
+        raise ValueError("invalid model selection freeze")
+    if protocol is not None and set(protocol["enabled_roles"]) != set(enabled):
+        raise ValueError("protocol roles differ from model selection freeze")
     selected = [c for c in cases if c['split'] == split]
     by_id = indexed(selected)
     for case in selected:
@@ -299,7 +307,7 @@ def validate_dispatch(cases, split, model_path, execution, protocol=None, record
                              'model_sha256': file_sha(model_path), 'execution_manifest': execution})
 
 
-def run_cases(cases, build, scorer_binary, model, freeze_hash, output_root):
+def run_cases(cases, build, scorer_binary, model, freeze_hash, output_root, enabled_roles=()):
     output_root = require_external(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
     model_hash = file_sha(model)
@@ -349,7 +357,7 @@ def run_cases(cases, build, scorer_binary, model, freeze_hash, output_root):
                         line_rows.append(row)
                 try:
                     arm_rows['assisted']['proposals'] = proposals(case, line_rows, arm_rows['fixed'].get('output'),
-                                                                  lambda value: date_value(build['binaries']['fixed']['path'], value))
+                                                                  lambda value: date_value(build['binaries']['fixed']['path'], value), enabled_roles)
                 except (ValueError, subprocess.SubprocessError):
                     arm_rows['assisted']['proposals'] = []
                     arm_rows['assisted']['proposal_error'] = 'date_validation_failed'
@@ -380,12 +388,14 @@ def main():
     manifest.add_argument('--build-manifest', required=True)
     manifest.add_argument('--scorer', required=True)
     manifest.add_argument('--output', required=True)
+    manifest.add_argument('--model-freeze', required=True)
     run = sub.add_parser('run')
     run.add_argument('--cases', required=True)
     run.add_argument('--split', choices=['train', 'validation', 'test'], required=True)
     run.add_argument('--build-manifest', required=True)
     run.add_argument('--scorer', required=True)
     run.add_argument('--model', required=True)
+    run.add_argument('--model-freeze', required=True)
     run.add_argument('--output-root', required=True)
     run.add_argument('--protocol')
     run.add_argument('--recording-gold')
@@ -394,17 +404,18 @@ def main():
     if args.command == 'build':
         print(json.dumps(build_catalogs(args.repo, args.output_root), indent=2))
         return
-    execution = execution_manifest(args.build_manifest, args.scorer)
+    execution = execution_manifest(args.build_manifest, args.scorer, args.model_freeze)
     if args.command == 'execution-manifest':
         with require_external(args.output).open('x') as output:
             json.dump(execution, output, indent=2)
         return
     def gold(path):
         return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()] if path else None
+    model_freeze = json.loads(Path(args.model_freeze).read_text())
     protocol = json.loads(Path(args.protocol).read_text()) if args.protocol else None
     cases = json.loads(Path(args.cases).read_text())['cases']
     selected, frozen = validate_dispatch(cases, args.split, args.model, execution, protocol,
-                                         gold(args.recording_gold), gold(args.line_gold))
+                                         gold(args.recording_gold), gold(args.line_gold), model_freeze)
     if not selected:
         raise ValueError('empty selected cohort')
     output_root = require_external(args.output_root)
@@ -413,7 +424,7 @@ def main():
     if prior_manifest.exists() and json.loads(prior_manifest.read_text()).get('freeze_sha256') != frozen:
         raise ValueError('output root belongs to a different frozen run')
     arms, predictions = run_cases(selected, json.loads(Path(args.build_manifest).read_text()), args.scorer,
-                                   args.model, frozen, output_root/'case-cache')
+                                   args.model, frozen, output_root/'case-cache', model_freeze['enabled_metadata_roles'])
     (output_root/'arms.json').write_text(json.dumps(arms, ensure_ascii=False, allow_nan=False))
     (output_root/'line-predictions.jsonl').write_text(''.join(json.dumps(r, ensure_ascii=False, allow_nan=False)+'\n' for r in predictions))
     (output_root/'run-manifest.json').write_text(json.dumps({'mode': args.split, 'freeze_sha256': frozen,
