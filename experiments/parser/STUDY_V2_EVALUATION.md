@@ -45,7 +45,10 @@ model-and-source evaluation protocol.
 - Assisted rows additionally contain `proposals`, a list of at most one candidate-
   selected proposal per enabled field: `{field,value,note,line_index,start,end,quote}`.
   Proposals are evaluated separately and must not mutate the underlying output.
-  Their exact source spans must reference a nonabstaining line prediction emitting
+  Their source-line `mixed_scope`, `uncertainty`, and `conflict` gold flags must be
+  false for an eligible current-recording metadata proposal. These ground-truth
+  flags measure errors only; they never filter production predictions or rewrite
+  candidate outputs. Their exact source spans must reference a nonabstaining line prediction emitting
   the same role. No oracle-guided selection among multiple proposed values occurs.
 - Line predictions: `id`, `note`, `line_index`, `source_input_sha256`,
   `freeze_sha256`, `model_sha256`, `roles`, plus optional `abstention` or `error`.

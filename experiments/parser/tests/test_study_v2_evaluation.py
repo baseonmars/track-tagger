@@ -134,6 +134,23 @@ class StudyEvaluationTests(unittest.TestCase):
         self.assertEqual(result['new_material_acceptance_ids'], ['case-0'])
         self.assertFalse(result['gates']['no_new_material_acceptance'])
 
+    def test_gold_scope_flags_measure_ineligible_proposals_without_changing_outputs(self):
+        for flag in ('mixed_scope', 'uncertainty', 'conflict'):
+            data = list(fixture(3))
+            data[2][0][flag] = True
+            data[0] = freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL)
+            for arm in data[3].values():
+                for row in arm['rows']:
+                    row['freeze_sha256'] = digest(data[0])
+            for row in data[4]:
+                row['freeze_sha256'] = digest(data[0])
+            before = copy.deepcopy(data[3])
+            result = evaluate(*data)
+            self.assertFalse(result['gates']['source_eligible_metadata_proposals'])
+            self.assertEqual(result['source_ineligible_proposals'][0]['flags'], [flag])
+            self.assertEqual(result['review_cohort']['proposed_metadata_exact'], 2)
+            self.assertEqual(data[3], before)
+
     def test_unlabeled_lines_cannot_masquerade_as_complete_gold(self):
         data = fixture(3)
         data[2][0]['roles'] = []

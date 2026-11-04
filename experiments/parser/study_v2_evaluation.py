@@ -209,6 +209,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
     new_false_ready = []
     new_material_acceptance = []
     proposal_invalid = []
+    proposal_ineligible = []
     proposed_correct = fixed_correct = 0
     improvements = []
     for case_id in eligible:
@@ -238,7 +239,14 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
                 prediction = predictions.get(key, {})
                 if prediction.get('error') or prediction.get('abstention') or p['field'] not in prediction.get('roles', []):
                     raise ValueError('proposal lacks classifier role evidence')
-                line = lines[key]['line']
+                source_label = lines[key]
+                if any(source_label.get(flag, False) for flag in ('mixed_scope', 'uncertainty', 'conflict')):
+                    proposal_ineligible.append({'id': case_id, 'field': p['field'], 'note': p['note'],
+                                                'line_index': p['line_index'],
+                                                'flags': [flag for flag in ('mixed_scope', 'uncertainty', 'conflict') if source_label.get(flag, False)]})
+                    merged = None
+                    break
+                line = source_label['line']
                 start, end = p['start'], p['end']
                 if type(start) is not int or type(end) is not int or not 0 <= start < end <= len(line) or p['quote'] != line[start:end]:
                     raise ValueError('invalid proposal source span')
@@ -311,6 +319,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
         'metadata_improvement': improvement is not None and improvement >= .05,
         'assistance_parity': not parity_failures,
         'source_backed_proposals': not proposal_invalid,
+        'source_eligible_metadata_proposals': not proposal_ineligible,
         'no_new_false_ready': not new_false_ready,
         'no_new_material_acceptance': not new_material_acceptance,
         'complete_candidate_outputs': all(not m['failures'] for m in arm_metrics.values()) and not line_failures,
@@ -325,6 +334,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
                            'recordings': len(background_recordings), 'affected_recordings': len(affected_recordings)},
             'line_coverage': {'eligible_lines': line_total, 'abstentions': abstentions,
                               'disputed_lines': disputed, 'failed_or_missing_lines': len(line_failures)},
+            'source_ineligible_proposals': proposal_ineligible,
             'parity_failure_ids': sorted(parity_failures), 'invalid_proposal_ids': sorted(set(proposal_invalid)),
             'new_false_ready_ids': sorted(new_false_ready), 'new_material_acceptance_ids': sorted(new_material_acceptance), 'gates': gates,
             'quantitative_gates_pass': all(gates.values()),
