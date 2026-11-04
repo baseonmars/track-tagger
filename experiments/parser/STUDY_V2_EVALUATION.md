@@ -36,7 +36,8 @@ model-and-source evaluation protocol.
   Labels are `agent-reviewed`/`adjudicated` or explicitly `disputed`/`unresolved`.
   Unresolved recordings remain reported in the frozen inventory but are ineligible.
 - Line gold: existing complete-line study rows including `id`, `note`,
-  `line_index`, `line`, `roles`, `role_disputed`, `source_input_sha256`,
+  `line_index`, `line`, `roles`, `role_disputed`, the explicit boolean flags
+  `mixed_scope`/`uncertainty`/`conflict`, `source_input_sha256`,
   `label_status`. Unicode codepoint offsets refer to the normalized source line.
 - Arms JSON: `baseline`, `fixed`, `assisted`, each containing `application_commit`
   and `rows`; assisted additionally binds `model_sha256`. Application revisions

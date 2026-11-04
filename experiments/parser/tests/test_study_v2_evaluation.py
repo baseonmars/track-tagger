@@ -20,7 +20,7 @@ def fixture(count=200):
         for j, (role, value) in enumerate([*metadata.items(), ('other', 'Technical prose')]):
             lines.append(dict(id=case, note='notes.txt', line_index=j, line=value,
                               source_input_sha256='a'*64, label_status='agent-reviewed',
-                              roles=[role], role_disputed=False))
+                              roles=[role], role_disputed=False, mixed_scope=False, uncertainty=False, conflict=False))
     protocol = freeze_protocol(sources, gold, lines, classifier_model_sha256=MODEL)
     frozen = digest(protocol)
     predictions = [{**{k: row[k] for k in ('id', 'note', 'line_index', 'source_input_sha256')},
