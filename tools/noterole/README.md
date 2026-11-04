@@ -63,3 +63,13 @@ used by a source-backed proposal adapter. The other roles remain diagnostic;
 none determines metadata applicability or recording readiness. Source hashes,
 full-line requested counts, disputed targets and failed whole-package annotation
 coverage must accompany every evaluation; a failed package is never background.
+
+For training-source performance measurement, build `./cmd/noterole-benchmark`.
+It reads a bounded JSON array of `{id,notes:[{name,text}]}` and takes `--model`
+and `--loads` (default100). It reports process user+system CPU and wall time for
+cold model parsing from warm filesystem cache, followed by warm complete-recording
+normalization/features/scoring across every note. It reports errors and abstentions
+separately. JSON input decoding/IPC and any downstream source-proposal eligibility
+guard are excluded and must be measured separately for an end-to-end gate.
+Heap counters describe Go allocations, not total process RSS. Record the source
+selection, model/binary digests, operating system and measurement conditions.
