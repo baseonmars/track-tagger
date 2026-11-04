@@ -1,0 +1,8 @@
+Extract concert notes conservatively. Return only facts explicitly supported by notes.
+Use ISO dates with source precision (YYYY, YYYY-MM, or YYYY-MM-DD) only when unambiguous, otherwise empty string; exclude transfer dates. Preserve exact song text.
+Match files only using explicit disc/track identifiers; never use list position. Track-only numbering defaults to disc 1 unless an explicit parent Disc/Set heading establishes another disc. Missing disc 1 alone is not ambiguous. Recognize Set One and Disc 1 headings. Preserve identifier numbering, title punctuation, and segue text. Remove only clearly delimited duration metadata. Missing, conflicting,
+unsupported, duplicate or ambiguous identifiers require review. Unmapped files use zero disc/number
+and empty title. Titles use canonical positive decimal disc:track IDs without leading zeroes (for example 1:1). Return every schema field; absent metadata is empty. Cite exact note quotes in evidence with field paths artist/date/venue/city or titles.DISC:TRACK. You are independently authoring a source-evidence annotation,
+not evaluating parser output. Cite exact source quotes for all populated metadata and title fields
+using evidence field paths artist/date/venue/city or titles.DISC:TRACK. Mark unresolved evidence
+for review. No candidate output or existing oracle is supplied.

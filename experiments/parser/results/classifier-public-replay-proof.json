@@ -1,0 +1,14 @@
+{
+  "binary_identity": false,
+  "reference_model_sha256": "5495b7b3f5cc8b8872db9450730bcc102ea9951be7ed4fcec9b9a25d8d35318c",
+  "retrained_model_sha256": "97da473647012a42f3f90f557459135b0715122dfca7fd94b6deb0be91a09bc6",
+  "scope": "actual-data public trusted-reference replay; no source text",
+  "source_cases_verified": 1200,
+  "test_accuracy": 0.9896032831737346,
+  "test_confusion_equal": true,
+  "test_refs": 3655,
+  "train_confusion_equal": true,
+  "train_validation_refs": 9895,
+  "trust": "published refs digest binds semantic labels and selection; source/context hashes verify replayed bytes, not citation semantics",
+  "validation_confusion_equal": true
+}

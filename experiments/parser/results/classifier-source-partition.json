@@ -1,0 +1,2421 @@
+{
+  "acquisition_manifest_sha256": "62f029fa422ef2aba19cf46f596668ec4eb5afb0eba59d1e740280c15a952616",
+  "algorithm_sha256": "aaf44cc957cc5d358de5f527fee9fa65b271c3f52fe8f76235eece13885ec493",
+  "audit_sha256": "bab50f1c03e38ade1cadb069d19676a0354d412f99a2029c93adf27648bcbe10",
+  "counts": {
+    "test_retained": 200,
+    "train_excluded": 341,
+    "train_retained": 459,
+    "validation_excluded": 56,
+    "validation_retained": 144
+  },
+  "exclusions": {
+    "3572011-04-02": [
+      "uploader_in_validation_or_test"
+    ],
+    "3sw-2003-10-25.at831.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "420band1993-09-25": [
+      "uploader_in_validation_or_test"
+    ],
+    "7walkers2010-05-28.tlm170.flac16": [
+      "uploader_in_test"
+    ],
+    "AE2007-04-15": [
+      "uploader_in_validation_or_test"
+    ],
+    "BDL2012-01-14.MATRIX": [
+      "uploader_in_validation_or_test"
+    ],
+    "BHTM1998-06-26": [
+      "uploader_in_validation_or_test"
+    ],
+    "BHTM1999-06-26": [
+      "uploader_in_validation_or_test"
+    ],
+    "BL2012-01-21.sbd": [
+      "uploader_in_validation_or_test"
+    ],
+    "BTS2023-04-20.vwmule": [
+      "uploader_in_validation_or_test"
+    ],
+    "ButchyBand2022-05-28.SBD.Matrix.Flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "Cracker1991-04-18": [
+      "uploader_in_validation_or_test"
+    ],
+    "Cracker1994-02-03": [
+      "uploader_in_validation_or_test"
+    ],
+    "Cracker1998-10-23": [
+      "uploader_in_validation_or_test"
+    ],
+    "CrisJacobs2021-03-02.Flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "DLG2010-12-16.Tammany.Hall": [
+      "uploader_in_test"
+    ],
+    "DavidLowery1991-03-22": [
+      "uploader_in_test"
+    ],
+    "Dawes2011-03-13": [
+      "uploader_in_test"
+    ],
+    "FatCats1996-10-12.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "Fennario2014-01-11.Plymouth.MA": [
+      "uploader_in_validation_or_test"
+    ],
+    "GM2005-03-26.LSD2.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "GT2019-09-07.nyctaper": [
+      "uploader_in_validation_or_test"
+    ],
+    "HollyBowling2018-09-14.aud.matrix.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "Hyryder2017-12-01.sbd.flac16": [
+      "uploader_in_test"
+    ],
+    "Indecision1992-08-27.asbd": [
+      "uploader_in_validation_or_test"
+    ],
+    "JBB2006-05-17.AUD.FLAC16": [
+      "uploader_in_validation_or_test"
+    ],
+    "JGF2015-02-24.JGandFriendsStealYourFunkNightWithRichieNaganPSTNewhavenCT": [
+      "uploader_in_validation_or_test"
+    ],
+    "Kkehr2006-01-14.Flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "LAF2014-07-19.LeboAndFriends2014-07-19.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "MonteBarrylr-mo1976-10-01-SBD": [
+      "uploader_in_validation_or_test"
+    ],
+    "Nam2005-08-19.flac16": [
+      "uploader_in_test"
+    ],
+    "NicoleAtkins2011-02-09.nyctaper": [
+      "uploader_in_validation_or_test"
+    ],
+    "PTF2019-10-11.AKG-CK63.Flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "Rugburns1997-05-24": [
+      "uploader_in_test"
+    ],
+    "RyanMontbleau2007-02-10.sr77.ps2.r09.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "RyleyWalker2017-01-26.nyctaper": [
+      "uploader_in_validation_or_test"
+    ],
+    "StellarRoad2005-11-19.aud.flac16": [
+      "uploader_in_test"
+    ],
+    "TFB1997-02-18.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "TJB2009-08-09.Live_at_The_Northeastern_Nudist_and_Naturist_Festival": [
+      "uploader_in_validation_or_test"
+    ],
+    "TheQuiet2006-02-05": [
+      "uploader_in_test"
+    ],
+    "WarOnDrugs2011-12-11.nyctaper": [
+      "uploader_in_validation_or_test"
+    ],
+    "Zeke2000-07-02.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "abird1998-11-07.flac": [
+      "uploader_in_test"
+    ],
+    "abird2005-05-01.dsbd.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ae1998-04-07": [
+      "uploader_in_validation_or_test"
+    ],
+    "afoshee2004-07-21.at831.shnf": [
+      "uploader_in_validation_or_test",
+      "verified_test_template_family"
+    ],
+    "afoshee2005-01-09.sbd.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ais2006-08-12.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "alabamashakes2011-11-13.ak40.flac16": [
+      "uploader_in_test"
+    ],
+    "alabamashakes2012-04-05.flac16": [
+      "uploader_in_test"
+    ],
+    "alecd2005-11-19.flacf": [
+      "uploader_in_validation_or_test"
+    ],
+    "allenstone2012-10-19": [
+      "uploader_in_validation_or_test"
+    ],
+    "allgood1994-01-04shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "alperry2005-09-03.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "am2003-11-13.shnf": [
+      "uploader_in_test"
+    ],
+    "amt2015-05-06.knit_acidjack": [
+      "uploader_in_test"
+    ],
+    "anniebeth2006-06-30.at831.flac16": [
+      "uploader_in_validation_or_test",
+      "verified_test_template_family"
+    ],
+    "antibalas2003-08-01.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "anyamarina2007-09-29.at831.flac16": [
+      "uploader_in_validation_or_test",
+      "verified_test_template_family"
+    ],
+    "arbsq1980-10-25.sbd_flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "aru1992-07-09.flacf": [
+      "uploader_in_validation_or_test"
+    ],
+    "asmz2006-08-21.m300.flacf": [
+      "uploader_in_validation_or_test"
+    ],
+    "b4b2010-08-09.sb.aud.shivaho.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "badlivers1994-12-10-flac": [
+      "uploader_in_test"
+    ],
+    "bardo1995-7-22.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "bardo1999-12-9.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "bbs2021-11-26": [
+      "uploader_in_validation_or_test"
+    ],
+    "bbs2023-11-24": [
+      "uploader_in_validation_or_test"
+    ],
+    "beirut2007-03-16.kexp.pcm.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "beirut2007-10-03.kexp.pcm.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "benlee2005-02-19.at831.flac16": [
+      "uploader_in_validation_or_test",
+      "verified_test_template_family"
+    ],
+    "bfft1991-08-02.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "bigg2013-05-24.mk241f_24bit": [
+      "uploader_in_validation_or_test"
+    ],
+    "billybragg1995-07-11.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "billykids2015-04-20.ck1h.kindrec": [
+      "uploader_in_validation_or_test"
+    ],
+    "billystrings2018-01-29.sbd.schoepsMK4V.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "blacklillies2012-04-26.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "blitzentrapper2009-02-24.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "bloodkin2007-06-04.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "bmb2001-09-28.m300": [
+      "uploader_in_validation_or_test"
+    ],
+    "bmb2004-06-26m300s": [
+      "uploader_in_validation_or_test"
+    ],
+    "bmelon1995-10-17.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "bobwalkenhorst2005-04-06.shnf": [
+      "uploader_in_test"
+    ],
+    "bobwalkenhorst2005-12-28.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "boombox2005-10-04sbd": [
+      "uploader_in_validation_or_test"
+    ],
+    "bp2005-09-30b-dpa4022.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "breakfast2005-06-10.akg.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "brew2008-12-27.jklabs-ck63.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "brock2019-05-26.peluso.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "bt1988-10-14.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "bt1994-05-17.flac16": [
+      "uploader_in_test"
+    ],
+    "btf2006-02-18.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "bw2019-03-30.peluso.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "bwww1996-12-31.shnf": [
+      "uploader_in_test"
+    ],
+    "bwww2004-07-29.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "cabinet2022-04-01.litz.sbd.akg414.flac16": [
+      "uploader_in_test"
+    ],
+    "cabinetGD2014-09-06.schoepsMK41V.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "calexico1998-06-14.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "calexico2003-04-25.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "calexico2006-12-02..flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "canine1996-11-02": [
+      "uploader_in_validation_or_test"
+    ],
+    "canine1999-07-24.flac16f": [
+      "uploader_in_validation_or_test"
+    ],
+    "cats2016-11-22": [
+      "uploader_in_validation_or_test"
+    ],
+    "ccope2004-09-17": [
+      "uploader_in_validation_or_test"
+    ],
+    "ch1998-10-30.dsbd.shnf": [
+      "uploader_in_test"
+    ],
+    "chead1993-01-22": [
+      "uploader_in_validation_or_test"
+    ],
+    "chead1995-09-17": [
+      "uploader_in_validation_or_test"
+    ],
+    "chrisforsyth2019-09-06.nyctaper": [
+      "uploader_in_validation_or_test"
+    ],
+    "chrisforsyth2019-09-13.nyctaper": [
+      "uploader_in_validation_or_test"
+    ],
+    "cipollina1969-01-12.sbd.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "cjf1969-11-30.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "countryjoe1967-07-04.Mk2-M1-TV.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "crisjacobs2020-04-17.Flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ct2006-02-03.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "cubensis2006-05-26.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "cubensis2006-07-25.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "d_alvin_tgm2006-08-26.matrix.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "damo2004-06-12.ck-63": [
+      "uploader_in_validation_or_test"
+    ],
+    "danc2005-04-03.flac16": [
+      "uploader_in_test"
+    ],
+    "danieldonato2024-02-06.mk41.kc5g.cmc6.sxr4.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "daveharrington2019-06-29.nyctaper": [
+      "uploader_in_validation_or_test"
+    ],
+    "dbb1998-11-06.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "dbern2004-10-14.flac16": [
+      "uploader_in_test"
+    ],
+    "dbr1996-09-06.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "dbt2006-01-20.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ddbb2004-06-20.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "deke2004-07-31.flacf": [
+      "uploader_in_test"
+    ],
+    "del1969-08-08.shnf": [
+      "missing_uploader"
+    ],
+    "dgray1999-12-15": [
+      "uploader_in_validation_or_test"
+    ],
+    "dhoh1992-08-12.fm.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "direwolves2019-05-10": [
+      "uploader_in_validation_or_test"
+    ],
+    "dispatch1999-09-03.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "dixie1991-01-22": [
+      "uploader_in_validation_or_test"
+    ],
+    "dixie1992-02-07-flac": [
+      "uploader_in_test"
+    ],
+    "dkem03-04-17": [
+      "uploader_in_validation_or_test"
+    ],
+    "dnb1999-10-09": [
+      "uploader_in_validation_or_test"
+    ],
+    "doloco1997-12-06": [
+      "uploader_in_validation_or_test"
+    ],
+    "donavonf2004-10-09.at831.shnf": [
+      "uploader_in_validation_or_test",
+      "verified_test_template_family"
+    ],
+    "dopapod2015-06-06.mtnjam_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "dplan2000-10-29": [
+      "uploader_in_validation_or_test"
+    ],
+    "dplan2002-11-03": [
+      "uploader_in_validation_or_test"
+    ],
+    "ds1983-02-12.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ds1983-06-22.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "ds1985-07-18.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "dubapoc2013-03-04.ck61nos.pfa.sxm2.ad2k.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "dum2014-04-11": [
+      "uploader_in_test"
+    ],
+    "ehalter2006-06-22.sbd.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ehutchinson2006-10-09.mk4.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "eits2007-03-28.mk5-c414.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "eits2007-05-05.eits2007-05-05.dpa4061.flac16.0G": [
+      "uploader_in_validation_or_test"
+    ],
+    "eits2008-03-21.m300.flac16": [
+      "uploader_in_test"
+    ],
+    "electrelane2004-04-08": [
+      "uploader_in_validation_or_test"
+    ],
+    "electrelane2005-06-16": [
+      "uploader_in_validation_or_test"
+    ],
+    "emckeown2005-06-30.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "eo2003-02-21": [
+      "uploader_in_validation_or_test"
+    ],
+    "fgc2005-05-28.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "freep2004-03-10.cm100.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "fuzz2004-09-11.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "gans2004-12-15.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "garciapeoples2019-10-24": [
+      "uploader_in_validation_or_test"
+    ],
+    "gc1996-09-26.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "gc1997-04-17.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "gd69-04-15.sbd.cotsman.6288.sbeok.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "gdegraw2004-05-30.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "ggw2016-03-24.wklitz.schoepsMK41V.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "glc2005-06-23.matrix.adub.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "gomez2005-01-25.dpa4011.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "goose2024-02-08.Pasternak.NeumannKMR82i.Flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "gourds2025-04-12.matrix": [
+      "uploader_in_validation_or_test"
+    ],
+    "gpn2006-07-29.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "gsand1991-01-30.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "gsand1995-02-09.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "gt2018-06-19.up_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "gus1998-10-03": [
+      "uploader_in_test"
+    ],
+    "gutter1994-06-06.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "hcb1995-10-21.flac16": [
+      "uploader_in_test"
+    ],
+    "hcb1997-01-17.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "hdixie2004-07-02": [
+      "uploader_in_validation_or_test"
+    ],
+    "hella2003-10-14": [
+      "uploader_in_validation_or_test"
+    ],
+    "hermanators1996-10-30": [
+      "uploader_in_validation_or_test"
+    ],
+    "heronoblivion2018-12-09": [
+      "uploader_in_validation_or_test"
+    ],
+    "hexbelt2006-07-29.matrix": [
+      "uploader_in_validation_or_test"
+    ],
+    "hf2014-05-01.dsbd.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "hgelb2000-08-19.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "honeydogs2007-04-06.sbd.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "hopper-reilly2006-04-03": [
+      "uploader_in_validation_or_test"
+    ],
+    "horseflies1989-08-04late.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "howlinrain2018-07-14": [
+      "uploader_in_validation_or_test"
+    ],
+    "howlinrain2019-08-07": [
+      "uploader_in_validation_or_test"
+    ],
+    "jab2018-04-28.sbd.audixsc25.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "jab2019-06-14": [
+      "uploader_in_validation_or_test"
+    ],
+    "jackop2002-11-25.dsbd.shnf": [
+      "uploader_in_test"
+    ],
+    "jambay1994-01-13.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "jamroom2006-01-1116bit": [
+      "uploader_in_validation_or_test"
+    ],
+    "jbm1991-05-09": [
+      "uploader_in_validation_or_test"
+    ],
+    "jbt2007-03-06.flac16": [
+      "uploader_in_test"
+    ],
+    "jcb2005-06-04": [
+      "uploader_in_validation_or_test"
+    ],
+    "jhatft2005-03-03.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "jjj2006-06-14.mix.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "jlangford1999-03-21.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "jmats2006-01-13.oktava.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "joepug2010-11-06.matrix.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "joerussoshooterollplus2017-04-07.cmc621.cmc641vxt.sbd.matrix.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "johnnorthern2004-12-11.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "josegonzalez2007-11-26.at831.flac16": [
+      "uploader_in_validation_or_test",
+      "verified_test_template_family"
+    ],
+    "jp1990-09-02.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "jp1991-08-21.flac16": [
+      "uploader_in_test"
+    ],
+    "jrad2018-10-20": [
+      "uploader_in_test"
+    ],
+    "jrad2019-09-26.cmc621.cmc64.sbd.matrix.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "jritter2007-10-16.c34.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "jrnb2004-11-11.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "jrnb2006-03-11.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "jte2010-03-09": [
+      "uploader_in_test"
+    ],
+    "jtg2011-05-04.rockshop_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "jw2002-06-14aud_flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "kaplansky2006-02-10.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "kdawson2006-07-11.akgc1000s.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "kdtu2002-05-03.bk.shnf": [
+      "missing_uploader"
+    ],
+    "kellyp2006-03-21-sbd-flac16": [
+      "uploader_in_test"
+    ],
+    "kikagakumoyo2019-11-15.warsaw_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "kimya2019-09-18.nyctaper": [
+      "uploader_in_validation_or_test"
+    ],
+    "kjpsr2006-07-08": [
+      "uploader_in_validation_or_test"
+    ],
+    "knj2005-09-27": [
+      "uploader_in_validation_or_test"
+    ],
+    "knl2006-04-01flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "kungfu2014-12-19.bsc2.483.sbd.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "kvhw1999-02-26c61": [
+      "uploader_in_validation_or_test"
+    ],
+    "kvhw1999-12-08c61": [
+      "uploader_in_validation_or_test"
+    ],
+    "kwi2002-06-21.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "latebphe2006-07-22.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ldead2005-12-02.nak.senn.shivaho.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ldead2006-05-27.sb.nak.matrix.shivaho.flac16": [
+      "uploader_in_test"
+    ],
+    "lettuce2011-01-18.tlm170.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "lf1974-09-19.shnf": [
+      "uploader_in_test"
+    ],
+    "localh1998-10-06.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "loop2004-08-26.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "loop2004-11-24.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "los1997-07-06.fm.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "losthighway2011-03-02.akg.peluso.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "lotus2008-04-05.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "low1995-03-06.KCRW": [
+      "uploader_in_validation_or_test"
+    ],
+    "lowanthem2010-08-13.aud.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "lwtr1999-09-19": [
+      "uploader_in_validation_or_test"
+    ],
+    "madeline2012-09-01.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mammals2005-03-11.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "martinsexton2005-12-09.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mas2004-08-17.aftershow.flacf": [
+      "uploader_in_validation_or_test"
+    ],
+    "mattwertz2006-04-21..sbd.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "mbroussard2004-10-20.at831.shnf": [
+      "uploader_in_validation_or_test",
+      "verified_test_template_family"
+    ],
+    "mc1988-03-12.sbd.flac16f": [
+      "uploader_in_validation_or_test"
+    ],
+    "mcp2006-02-17.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "meatpuppets2017-05-10": [
+      "uploader_in_validation_or_test"
+    ],
+    "mec2014-01-11.hideout_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "mer2006-07-08.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mfruvous1998-11-06.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mfs1999-10-08.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mh1995-08-06": [
+      "uploader_in_validation_or_test"
+    ],
+    "mikecooley2012-02-24.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "minutemen1983-03-09..flacf": [
+      "uploader_in_validation_or_test"
+    ],
+    "minutemen1984-05-12.flacf": [
+      "uploader_in_validation_or_test"
+    ],
+    "miracletrain2005-10-22.aud.treevt.flac16": [
+      "uploader_in_test"
+    ],
+    "mjennings2001-10-19.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "mjennings2007-02-26.akg463.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mnathanson2008-10-07.cmc641": [
+      "uploader_in_validation_or_test"
+    ],
+    "moam2000-11-01.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mob2007-01-13.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mod1992-11-14-flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "mod1998-09-17-flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mojave3-1996-04-20.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "mono2010-03-21.Nijmegen.flac16": [
+      "uploader_in_test"
+    ],
+    "moore2005-02-23dpa4022.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ms2001-06-08.eac.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "national2011-12-12.beacon_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "nbr3pm2023-03-11.schoeps_mk4v_mk21_sbd_matrix_flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "nbs2006-02-11.sb.nak.matrix.shivaho.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "nbs2006-05-06.sb.shivaho.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "nm2004-04-01.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "nms2020-01-30.AKG_C1000S.24bit": [
+      "uploader_in_validation_or_test"
+    ],
+    "nn2013-05-18": [
+      "uploader_in_validation_or_test"
+    ],
+    "oar2003-03-13": [
+      "uploader_in_validation_or_test"
+    ],
+    "oar2006-01-14-sbd.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "oliviatremorcontrol2012-07-26.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "osp1997-07-07-flac16": [
+      "uploader_in_test"
+    ],
+    "oteil2018-12-31.travitz.litz.sbd.schoepsCMC64V.flac16": [
+      "uploader_in_test"
+    ],
+    "ours2004-05-26": [
+      "uploader_in_validation_or_test"
+    ],
+    "paf1964-05-01.134492.sbd.flac16": [
+      "uploader_in_test"
+    ],
+    "paradigm2008-10-31": [
+      "uploader_in_validation_or_test"
+    ],
+    "pattersonh2003-09-29.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "pattersonh2005-01-13.flac16": [
+      "uploader_in_test"
+    ],
+    "pb2002-03-08.flac16": [
+      "uploader_in_test"
+    ],
+    "pcr2005-01-22": [
+      "uploader_in_validation_or_test"
+    ],
+    "pcr2005-02-16sbd": [
+      "uploader_in_validation_or_test"
+    ],
+    "pgc1993-01-14.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "phoffman2020-03-11": [
+      "uploader_in_validation_or_test"
+    ],
+    "pinback2004-04-12.flac16": [
+      "uploader_in_test"
+    ],
+    "pinback2006-05-31": [
+      "uploader_in_validation_or_test"
+    ],
+    "ptf2015-10-30.schoeps.mk22.mk41v.sbd.flac16": [
+      "uploader_in_test"
+    ],
+    "ptf2016-09-23.schoepsMK41v.sbd.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ptm2011-06-04": [
+      "uploader_in_validation_or_test"
+    ],
+    "qms1966-11-20.158177.sbd.sirmick.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "qms1967-12-31.aud.boswell.smith.xxxxxx.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "rads1980-01-14.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rai2006-03-10": [
+      "uploader_in_validation_or_test"
+    ],
+    "rainer1983-12-05.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rane2005-04-15.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "rane2007-01-12.mbho-v3.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rebirthbrassband2006-30-06.rebirthbrassband2006-30-06.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rfl2001-04-20-flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rh1981-10-31.nak700.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rhitchcock1989-06-15.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rhythmDevils2010-07-31": [
+      "uploader_in_validation_or_test"
+    ],
+    "rjtt2006-06-17.sbd.tarnowski.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "rmidon2005-09-24.flacf": [
+      "uploader_in_validation_or_test"
+    ],
+    "rockert2004-04-19-flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "royalwe2005-07-10.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "rr2005-11-26.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rrfb2003-11-11.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rs2005-08-03.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "rt1996-11-07": [
+      "uploader_in_validation_or_test"
+    ],
+    "rt1996-11-23": [
+      "uploader_in_validation_or_test"
+    ],
+    "rugburns1996-12-17": [
+      "uploader_in_validation_or_test"
+    ],
+    "rugburns1997-05-16": [
+      "uploader_in_test"
+    ],
+    "runlittlerabbit2012-08-06.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ryleywalker2019-03-12.unionpool_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "samples1999-11-12.sbd.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "sartr2025-11-06.mtx.lynch.selleseth.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "savak2023-12-01": [
+      "uploader_in_validation_or_test"
+    ],
+    "schwag1993-09-20-flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "schwag1994-12-11-flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "sci1995-11-12.shnf": [
+      "missing_uploader"
+    ],
+    "sci2000-08-12dsbd": [
+      "missing_uploader"
+    ],
+    "scots2006-05-27": [
+      "uploader_in_test"
+    ],
+    "scottsharrard2019-07-28.litz.neumannKM150.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "scr2002-07-07.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "sdo2005-05-07": [
+      "uploader_in_validation_or_test"
+    ],
+    "sf1999-10-05.sbd.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "skb2006-01-22_16bit": [
+      "uploader_in_validation_or_test"
+    ],
+    "slightlystoopid2010-07-03.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "snarkypuppy2013-03-30.bsc2.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "snarkypuppy2013-04-04.bsc2.flac24": [
+      "uploader_in_validation_or_test"
+    ],
+    "softboys2002-10-25.flacf": [
+      "uploader_in_validation_or_test"
+    ],
+    "solos2006-04-17": [
+      "uploader_in_validation_or_test"
+    ],
+    "songsmolina2017-09-08.hopscotch_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "soty2003-10-24.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "spins1991-02-02": [
+      "uploader_in_test"
+    ],
+    "spoltz1998-02-04": [
+      "uploader_in_validation_or_test"
+    ],
+    "srrvb2004-04-24.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "stevewynn1990-11-18.flac16": [
+      "uploader_in_test"
+    ],
+    "stillwaterpioneers2007-04-04.matrix.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "sts9-1999-08-20.shnf": [
+      "uploader_in_test"
+    ],
+    "sunwatchers2018-12-09": [
+      "uploader_in_validation_or_test"
+    ],
+    "sunwatchers2019-02-22.glove_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "superjam2004-06-134.flacf": [
+      "uploader_in_validation_or_test"
+    ],
+    "surfcoast2004-04-16.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "surfcoast2004-04-18.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "swrembel2010-03-07.tlm170.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "sy2012-06-09.sb.nak.shivaho.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "tend2000-07-22.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "tfdi2011-10-09.akg483.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "thilton2006-04-20.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "tlg2006-01-13.mbho.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "tlss-2003-07-19.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "tmg2005-06-23": [
+      "uploader_in_validation_or_test"
+    ],
+    "tnd2003-02-21.c3000.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "tomhamilton_holly_bowling2019-07-27.litz.akg414.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "tortoise2016-03-17.littlefield": [
+      "uploader_in_validation_or_test"
+    ],
+    "tortoise2017-03-15.lpr": [
+      "uploader_in_validation_or_test"
+    ],
+    "tortoise2017-03-16.hallatmp_acidjack": [
+      "uploader_in_test"
+    ],
+    "tprettyman2003-05-01.at831.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "tprettyman2005-01-30.at831.flac16": [
+      "uploader_in_validation_or_test",
+      "verified_test_template_family"
+    ],
+    "trashcansinatras2005-05-14.at831.flac16": [
+      "uploader_in_test",
+      "verified_test_template_family"
+    ],
+    "trb2004-10-30.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "ttb2019-07-27.ccm4v.flac16": [
+      "uploader_in_test"
+    ],
+    "va2001-06-09-flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "vh1996-07-13.shnf": [
+      "uploader_in_validation_or_test"
+    ],
+    "vjd32013-08-15.sbdmatrix.flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "vulfpeck2016-09-10.cmc621xt.sbd.matrix.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "walkmen2012-01-14.ca14.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "wanderj2005-04-08.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "warlocks2012-06-23.mtx.sbd.kindrec": [
+      "uploader_in_validation_or_test"
+    ],
+    "wasabi1993-12-28.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "watt1995-10-15sbd.shnf": [
+      "uploader_in_test"
+    ],
+    "wbm2001-11-21.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "wd1998-01-04flac": [
+      "uploader_in_validation_or_test"
+    ],
+    "wd2012-08-13.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "weaksignal2024-10-04.matrix.kliked": [
+      "uploader_in_validation_or_test"
+    ],
+    "weepies2004-07-25.at831.shnf": [
+      "uploader_in_validation_or_test",
+      "verified_test_template_family"
+    ],
+    "wh2003-06-13.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "wk2021-07-13.152843.batk.dpa4015c.schneider.flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "wod2014-03-20.bowery_acidjack": [
+      "uploader_in_validation_or_test"
+    ],
+    "wolf2022-10-08.bsc-1.ck463.soundboard": [
+      "uploader_in_validation_or_test"
+    ],
+    "woods2019-09-28.woodsist_acidjack": [
+      "uploader_in_test"
+    ],
+    "wsp2026-06-14.z": [
+      "uploader_in_validation_or_test"
+    ],
+    "yep1996-10-30": [
+      "uploader_in_test"
+    ],
+    "yep1996-12-13": [
+      "uploader_in_validation_or_test"
+    ],
+    "younganddead.aud2026-01-17": [
+      "uploader_in_validation_or_test"
+    ],
+    "zero95-8-11flac16": [
+      "uploader_in_validation_or_test"
+    ],
+    "zilla2005-04-22": [
+      "uploader_in_validation_or_test"
+    ]
+  },
+  "method": "Exclude whole train groups sharing an uploader with any validation or test case, validation groups sharing an uploader with any test case, train/validation groups with missing uploader, and train/validation groups matching the source-audited test template signature. Test inputs retained. This conservative metadata policy does not prove separation of all cross-uploader templates.",
+  "policy_version": 1,
+  "source_sha256": "23c48fec1482d85ff8aadfa3ccdff172afddadc02c38f2d0c6cd4e6f657178cf",
+  "test_unknown_uploader_ids": [],
+  "uploader_hash_by_case": {
+    "0130_reggiewatts2013-07-13": "24a24fe6f4087a859b41ca4b6cadc71d0a6973ae4fa8556b0f41e09b2dad6319",
+    "1976-05-17.tltt.sbd.eurodead.9780.sbeok.flacf": "feeb7384df5eba442ee9f108458a5351c57c156a517dd6ad2b27aa9aa93ae536",
+    "1976-12-19.tltt.sbd.eurodead.9779.sbeok.flacf": "feeb7384df5eba442ee9f108458a5351c57c156a517dd6ad2b27aa9aa93ae536",
+    "2006_07_28_The_Coffee_House_Mark_Perkins_Party": "69efbd69ae98cbd2cba0ad54e0831abe49dae078c6ec57b032f0696a8c4ed1b3",
+    "2ndthought2010-02-27": "74e7ecdcdb51746de3be0f687754d89ed9622742f044b6969072cefbc43ff1d8",
+    "2sj-2005-07-22.flac16": "d1ef1e6ff6a15099143549f0eab809e15e403aeb66b551ae90fab76664bc3251",
+    "311-1993-09-19.sbd.flac16": "87fa1316a8d1a7e3d7cb7991da2d5271d29c99f07af0f3c01c7fef796e172a95",
+    "311-1994-10-00.sbd.flac16": "87fa1316a8d1a7e3d7cb7991da2d5271d29c99f07af0f3c01c7fef796e172a95",
+    "3572011-04-02": "059110b892aa03dab4091f1028c51c3e6134418d1759778616e02e9267f944ad",
+    "357stringband2010-02-08": "9d581e664c5449670726c5310790ac550b5572e3ba1faa4cb6c665a0cb5dd0b7",
+    "3sw-2003-10-25.at831.shnf": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "420band1993-06-07": "9e3e85f7dc11a8f2f26318746aa1f2b17ca3f2aeeb3194bee4e4eb10096bd7f6",
+    "420band1993-09-25": "9e3e85f7dc11a8f2f26318746aa1f2b17ca3f2aeeb3194bee4e4eb10096bd7f6",
+    "4wf-2004-04-21.flac": "ea54c888353c7116e89ad5557b38bfa209b99ef9ebe51a8a84e9b94515508e0f",
+    "56HR-2005-01-11-sbd.flac": "7ef57447eb7c77ce309948f586bf340f9fed55978574af3c0fa7bdb6392f9f6a",
+    "56hr2007-01-28.flac16": "77664a876aff4285c743e5c2037a22f39e8e8e03f03408cb358c4e40066eb30a",
+    "7Walkers2014-12-02": "95378f5b655f009de24972dd31a210c0b560956fc933b6c629fc49c39a42a6c3",
+    "7b2013-01-12.sbd": "f55e490ea149d757d00bf4d93c3fb1ff2e637b3791290e5725c2a2a5a490a9d4",
+    "7m3-2010-05-23": "22be937d7590b167b0ac8674f1540bdd74a7effa83616a662729beef1498ad57",
+    "7walkers2010-05-28.tlm170.flac16": "646b018ed17a8137d37ccdaf87aaa4ed1a1874f6647ebed948ac24260b7f649d",
+    "AE2007-04-15": "4e1abdf56e6126e54ce87b01d4321de03cc73d4f2df4ff5a70399cad0958a36e",
+    "AGP2007-03-03.MG200.24-96": "aa62101f6094c99cfbb6761c8f5a0bd66f27b582b303e765e78b70caae9aa907",
+    "ALTA2003-11-28.mg210.shnf": "2da74bee03e31acf71dff1eb4a7efb4c1ae96e56b00eb4a020aa5f4d5164166f",
+    "AP2018-03-10.SBD.FLAC": "a00b948d20977b6767b066f0a7a8eb6ae60e259fd58cf0538d1982de35a356fb",
+    "AStewart2003-08-02.shnf": "540d19d2e95107f8fb1021265dfd0007a98fd2967a066dc03ad53bdf317b427f",
+    "Allgood1994-03-29.shnf": "1771aa0df49bdfcf9fba51822abd20e86f30435eea697f90b9c031c1c48fb201",
+    "AnyaMarina2010-06-29.H4n": "72fea0f6e17b41744e026c0a5984c71d84ae8f64e0a44f380504af66be4ddfd6",
+    "AriHest2006-11-10": "8f9ae83727c9b120cf1cf096fa6d8caf39cc402adec1d8f0c0ca2fa0e2ba6554",
+    "ArtMatthies2005-09-03": "41d8b7eaeb1347720db3ba7a300ea0662f471dc464ecf90b6289d2f9c8703133",
+    "BC2014-08-30": "31758579897b94e150767e0e19c55b7c8067b0b06d191f23d3e401bcaa80a71c",
+    "BDL2012-01-14.MATRIX": "81e47d7e629ef14510c1d6de87f7cc4b12fa84e8aff7c5be0f047b2c6cea0eef",
+    "BDL2012-08-11.BigWhat_Avenson_16bt": "1668836679c2d81253cba6d9c73d0c62c399f6db1ac4bb8bef15c4bba467cca6",
+    "BG2008-06-13.BG08-06-13.Kutik-8track.flac": "6edf05f3ba55079f12ac466de6bb76071c5bb9fd1ea3454d38cdf587ea036166",
+    "BHS1984-08-14.BHS1984-08-14": "ac47aa5d51d30bf978ed8f9cbf6a0317147a866361764fadf358114c3e59d965",
+    "BHTM1998-06-26": "36acd3f89be2dc4dae599139938a5180192d6758f5494f934d06049f6c8afb52",
+    "BHTM1999-06-26": "36acd3f89be2dc4dae599139938a5180192d6758f5494f934d06049f6c8afb52",
+    "BIS2005-05-14.sbd.flac16": "4a5486d127dc17f0d4a7c7f4f998f77fd951cbd3bf46f50588dc9d56dcafb6ed",
+    "BL2012-01-21.sbd": "1f93242748ca91fced8352fe787d5d52739670b75a3f68f3f15e1b4550ea343d",
+    "BTS2023-04-20.vwmule": "5569fd3783220de7a233d3e4efd66b5b81bf313d3436585153984e24b808eb21",
+    "BoH2009-10-10.flac16": "e508c0f0ab444e929e0f8edf9c85c2c7e3a4030c9d9836ab9861506de7def533",
+    "Bridge2004-11-24": "442278fdab48890d41d1442e516bbd187e79ede1e3b08687dea753ce9d99636b",
+    "Bump2006-04-07-shnf": "25458fe6dde8140ac6acdabd2c07820fbe2d4653d460216023657ee7fff7b5f1",
+    "Bump2006-05-04-shnf": "25458fe6dde8140ac6acdabd2c07820fbe2d4653d460216023657ee7fff7b5f1",
+    "ButchyBand2022-05-28.SBD.Matrix.Flac24": "a455a64d6cd366350ca339fc3a290b599937edbfd873f33c43bb4fc75d0b76d8",
+    "BuzzTones2004-04-03": "5d7295bf96b940d216169d476094bae99c276011187c3a3fa5fb79c5de611e4b",
+    "CAC2025-02-20": "8edbb198c2c010e2913d8d451d919505d102162292b775c0f450b2540118b5a3",
+    "CD2004-07-24.shnf": "7bcb8f01e5b9896c87bd72c2abd7bf508ef67e028fe7d3c0747a5445b1df2618",
+    "Candlebox2013-06-18.CastleTheatreFLAC": "ef9498bacb8f625a0e28150d3475eb7b7e4607e08daf9c8ef4bf1b8e76118b8b",
+    "Cracker1991-04-18": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "Cracker1994-02-03": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "Cracker1998-10-23": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "CrisJacobs2021-03-02.Flac16": "a455a64d6cd366350ca339fc3a290b599937edbfd873f33c43bb4fc75d0b76d8",
+    "DG2011-04-22.Pickled_Greek_St_Croix_USVI": "7e6e045b657de9477e2dfeb6a802c9cd2db80a7736d5da6dbd0cb2b47c35b1da",
+    "DJLogic2021-03-26": "80e1a9396b27f5a6c626250cb1464b80b81bde6f4d226f693decd505d94bd4bc",
+    "DLG2010-12-16.Tammany.Hall": "d04619e0642e8007717fcf206d2cead5fab5e09d8731dc07fc95e43182312e8f",
+    "DR2014-11-21.DesertRainLiveatKickersCafeDanielsonCTSuperluxS502_NakamichiCM300": "a0344032e464d0e6c829231179f2c9146f5daf71a8bd4ccb88adccff0da9dadc",
+    "DavidLowery1991-03-22": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "David_Rovics_11-28-2006_1000_Fryd_Alborg": "79ba15d59199284e3e4f15965b09fb0216d6ca24ee7fc470997e46a2c63dc549",
+    "Dawes2010-11-12": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "Dawes2011-03-13": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "Dumpstaphunk2011-05-07": "80e1a9396b27f5a6c626250cb1464b80b81bde6f4d226f693decd505d94bd4bc",
+    "ED2014-07-11.ED2014-07-11sd": "6c51ce6de7e2591aa07eede4c54c3315756cd041763237f28a4b7127ecf40003",
+    "EN2-2005-01-13.flac16": "218f7a00b246aa7c9b56eb8ba1cadc7a3bc6b14502ec05ef4e10ed8b42a7d516",
+    "ElliottSmith1999-12-30.sbd.flac16": "1208ecfaf9a3f72879b52c368d054592f9c277b20561be143eb5d1c313f2b599",
+    "FMR2005-10-28sbd.flac16": "fff4486279f7e52fcb9fab65b1fb19b639a1b7db4bf557468367e24e2684886b",
+    "FT2004-09-17": "63a61626976a4545520942f46a3b57bff2b40a65b3ebbc67fc373bcc8f23b3d7",
+    "FatCats1996-10-12.flac": "47523fc16908b6dba844f32265025c6611ca5338572385d97dfda53947cce067",
+    "FatCats1998-04-25.shn": "47523fc16908b6dba844f32265025c6611ca5338572385d97dfda53947cce067",
+    "Fennario2013-06-29": "d04619e0642e8007717fcf206d2cead5fab5e09d8731dc07fc95e43182312e8f",
+    "Fennario2014-01-11.Plymouth.MA": "d04619e0642e8007717fcf206d2cead5fab5e09d8731dc07fc95e43182312e8f",
+    "Flu2004-5-22-flac16": "4190957d6a7f582ae425adcdbe0b5f22be9341953e62480c4b5af22678807217",
+    "Fugazi1998-06-15.flac16": "3855d3ecb7ec3fee52f04ba33d9df8809d31262ede7fe6cd0af71c1410460f44",
+    "GAT2011-11-04.aud": "b692582cd77f099aa287e91684a9f0c48054ce2fe3f4f8ea73995a198e029976",
+    "GGG2012-08-18": "02107166ba3e38d5161882ce36e84cbeb5cb71eed03fde318bd2f9129273b67d",
+    "GM2005-03-26.LSD2.flac16": "aa62101f6094c99cfbb6761c8f5a0bd66f27b582b303e765e78b70caae9aa907",
+    "GT2019-09-07.nyctaper": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "GarajMahal2017-08-04.SonyPCM-D50_24x48": "2a3e9cf1a9667305799b2422f7a27712380359f81a4452e1769bd4c314b92a69",
+    "GarciaGrismanTribute2023-05-26": "25b63218a95c9ebd9f6e58aa8d48bd400f28b65c91fc4e9c6c2c7ff6c35cbdfd",
+    "Gomez1999-10-01": "490341dfe0aa37d6071e3457839b837b534dbeb85d99d135377b11e51a1bb069",
+    "GregHumphreysAndHobexAll-Stars2012-04-22.matrix.flac16": "bf5d3f039079e63a3f6eef437c14bbf8c5620ef87289baf5b43fd33cecbba406",
+    "Greyhounds2005-02-24": "c99b9721bb7f5dd143d4436f6774108fb77865b96be8417ee8e5028d09d17afa",
+    "HBR2006-02-15flac": "5b004e4502cc7aef36dc6d2841e5c035181bda5732e905042fb38dd241863867",
+    "HBRSB2004-09-25.shnf": "2eb8e4f9ad62e6019f62da4a7ab0a768b0d391fb335350af98bcfe99aca197b7",
+    "HHG2014-06-14": "059110b892aa03dab4091f1028c51c3e6134418d1759778616e02e9267f944ad",
+    "HOTH2004-06-25early.flac16": "25a094921a353e113754c534a9215dc1fd60cde092ff363df1fe12aae427e5b4",
+    "HTHS2006-02-11FLAC": "e888ccce54b7dea8f94767ab8304769eb431b08c7d24e15d2331a5275d295ac3",
+    "HTT2008-04-29": "be51fc97bef1543999e7ee2cc9c380c5a8aa41e4f5cac9bbc360c1f4e793c894",
+    "Hexbelt1998-12-31.flac": "0ff77687a5627f88ccac4471f7af7187971fe0a5d085f612eb1ff20fe18f5fee",
+    "HollyBowling2018-09-14.aud.matrix.flac24": "a455a64d6cd366350ca339fc3a290b599937edbfd873f33c43bb4fc75d0b76d8",
+    "Hyryder2017-12-01.sbd.flac16": "a73ad6b1972ea7d450b70e6fa1c0049c9846e1b646b24d584063b83a43bb63b6",
+    "ISD2009-03-08.Gould.AKG480ck63": "a3845249a1dd3705985badd0d4cc6e6c523bcb12774a9e7700b8ea847d039285",
+    "Indecision1992-08-27.asbd": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "JBB2006-05-17.AUD.FLAC16": "c76ea16378339d1da1f786ca18137125b3a96faa1ef627c74ee330a2ca4d32cc",
+    "JDG2013-02-13": "7c8189cea3a1a77057b1cb194a71997a6ace3e3e02889e9648449391377a7beb",
+    "JGF2015-02-24.JGandFriendsStealYourFunkNightWithRichieNaganPSTNewhavenCT": "a0344032e464d0e6c829231179f2c9146f5daf71a8bd4ccb88adccff0da9dadc",
+    "JV2004-10-18": "51dd598426ebfbfd5bb9dafe553e21832b655d9e0990de8e0541836e43963dbe",
+    "Jkb8x10BaltimoreMd2011-04-28": "79d935a7d60f045716bb7621a0fd1e82ca8ac7cc97f9fa6b2df560325907770a",
+    "KG2007-02-16_MTX": "9a7bfeebc82a384f3ba115e9d337f11ffff8de46767b279998422fec7df8b2c0",
+    "KW1999-04-03.SBD.flac": "127f13d289088eadbe8d504fa9d7807665b64051db3e9571e1b0b948afb76954",
+    "Kaiser1989-02-11.flac": "2cdd819d066d998d60754a9b788b2dae6fbd107abd12c31a5d543873af2b2a27",
+    "Kkehr2006-01-14.Flac16": "0475b49c3ae092fc46c8ee9c821d69baf7f88fad9cdf07a1c8cfdac92b7bb06e",
+    "KristinHersh1999-10-22.cm-s20.flac16": "d85f2f4e76c1cd6f30c163b9d8e4777cd20cbe15b7d1201d2b8001bfddc8e216",
+    "LAF2014-07-19.LeboAndFriends2014-07-19.flac16": "122b3cddcc3b509dc620b1cb3ab85f47cd82d5f4be9614c27ca9577751e7049b",
+    "Lazlo2005-08-06.shnf": "9e33a937dd9b8f6a541467bda8ecafffb63abf033597d98fa51c511f29d3b440",
+    "LosLobos1999-07-24.sbd.ppv.beerengineer.flac1644": "9aa067c52acf0445c5bfc934c75f0e8c514d3ed03e94ec632034b8f1d6c22e62",
+    "Low1997-09-29.DATsrc.flac16": "c79563bfcf6e38e8310e5723dda9c31c55a0fd1f6a3406f62cc706575c837d13",
+    "Low1997-10-28.flac16": "e2f8c0f00bcdb50e6650e86cc6ad7d89c099672feb4337a13a7d31d8f4551239",
+    "Lymbyc2007-05-21": "5a4f5098d8dae419b0706b23742895b49c25601d0b2f2cb5a6c1366643387285",
+    "MHB1997-07-06": "09fdd3c9dba55cede5400d5df25cb7b340cd339af04217272d766b6387c11b42",
+    "MJXmas2018-12-16": "5b80eae1429b4337b6c04bb18124b194bff7a66cdd97bb61d3c780b040877dfa",
+    "MMJ_Langerado": "21e714b4733a6f18478e1624f88cd30efc86f1ce39b50f1e40f6a7625d012f8c",
+    "MSB2004-05-28": "b04afa74f2e7756f7ca439df570cd423ff1e47dbee77e2b014257add5442b250",
+    "MT2012-05-24": "57a787b65c0a6a91e6364287e537fe4f393c147acd44c990902123a60c5f8bd7",
+    "MWertz2004-09-19.flac16": "678b61d39571bddd4c51b0a9e855c3383dc2f2176153f6a935ec892f1c96633e",
+    "Malah2004-10-09": "a7ab2988507553fe2706ee598c24211a518ed29876f4d7c6515e41b425eb864c",
+    "MattHartle2005-06-14shn": "1de465aa49194251732388b4d4f86208bb254a9dac45d746c2cb252e772aee81",
+    "MelvinSeals2021-08-04.vwmule": "5569fd3783220de7a233d3e4efd66b5b81bf313d3436585153984e24b808eb21",
+    "MiZ2011-08-03.wklitz.schoeps.sbd.flac16": "9a7bfeebc82a384f3ba115e9d337f11ffff8de46767b279998422fec7df8b2c0",
+    "Miasmics2005-01-08": "e6e9be8cb728dcf436f5c7fc13caaf6f12a4f27ee4a1a2e80f9eb98feb0873d3",
+    "Mihali2017-12-15.AKG.P170.SBD.Matrix": "77e72c67c38c4bb6e65ba9461146a6c900037b64b87060fdcbf9ad6d15f21790",
+    "MoB1980-11-05.sbd.flac16": "776a2d53be7e4a178a1f73f36a784f97684ab4e11ac26208e4db067e675892c6",
+    "MonteBarrylr-mo1976-10-01-SBD": "54fefa1b844f6604f6cc5335f8df10f125fbed9cd08c870e687fbf892c368e2b",
+    "MonteBarrylr-vg1976-08-15-SBD": "54fefa1b844f6604f6cc5335f8df10f125fbed9cd08c870e687fbf892c368e2b",
+    "Mraz2007-07-15.jm2007-07-15": "2396b4d7d0286d9fae4d01c7b6a6da1eb49c1766365425b7d8e7cf0d30e25f17",
+    "NM2003-11-02": "ce43edfb0ffd590daa9e422f7c9d300a971c06d78d533b9ce788ad67500cee44",
+    "NOS2012-05-01.NOS2012-05-01": "48ca9481561da114586af05691cfff39490a7c41b1c1365a543c6df7abafadd5",
+    "NRPS1969-09-18": "3b16d1c01e106bcdc1dd3d28a047bc37734d069cb9dfac90ecddc40dc242d255",
+    "Nam2005-08-19.flac16": "218f7a00b246aa7c9b56eb8ba1cadc7a3bc6b14502ec05ef4e10ed8b42a7d516",
+    "NicoleAtkins2011-02-09.nyctaper": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "OBF2019-08-24": "80e1a9396b27f5a6c626250cb1464b80b81bde6f4d226f693decd505d94bd4bc",
+    "PG2003-08-03": "4e1abdf56e6126e54ce87b01d4321de03cc73d4f2df4ff5a70399cad0958a36e",
+    "PJO2013-08-17.Joshapalooza": "b5ce7913ed3049d12984c723aadab2a960a1901643bc8a3223fd194ffbd94798",
+    "PMW2015-02-07.Matrix": "372b05475a057240f302743dee1ae4ec766c4e2754154db53fb3bc3ac9e4f26d",
+    "PTF2019-10-11.AKG-CK63.Flac16": "a455a64d6cd366350ca339fc3a290b599937edbfd873f33c43bb4fc75d0b76d8",
+    "Pato2011-04-19.Pato2011-04-19": "e1e2fdec37f952affe8cd72c6b9ba2ed3b80529d28508c4b92081b878d0f9deb",
+    "Piamenta1999-10-18.shnf": "d1ec2e364cb23bd3dc9cf463701b62006c7c977fb0f513a21ec568c06643aecb",
+    "Pnuma2005-09-01": "337167df94a55d80dac89b2e99454ebbbe9797a74f2cd44989b94c3cb018e53a",
+    "Quactus.The.Lab.2014.01.04.FLAC24": "19017347fd2650475e93e2f59a31fdd789e336a1c8bde80bef0c2ae9c09d1865",
+    "RANA2005-07-12.aud.flac16": "0b6f1b7b244c4cf1a865d76a9219cd2017088ea90af19727eb5f21690a13fa93",
+    "RobynHitchcock1992-02-07.cm-s20.flac16": "d85f2f4e76c1cd6f30c163b9d8e4777cd20cbe15b7d1201d2b8001bfddc8e216",
+    "Rugburns1997-05-24": "36acd3f89be2dc4dae599139938a5180192d6758f5494f934d06049f6c8afb52",
+    "RumpkeMountainBoys2015-09-19.sbd.flac16": "a73ad6b1972ea7d450b70e6fa1c0049c9846e1b646b24d584063b83a43bb63b6",
+    "RyanMontbleau2007-02-10.sr77.ps2.r09.flac16": "0cc8e5c38a44e3c17d366d90527bc8a12feba1a7f2d20068545efe1999447950",
+    "RyleyWalker2017-01-26.nyctaper": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "SAAF2015-04-20.StuAllenAndFriends2015-04-20.flac16": "122b3cddcc3b509dc620b1cb3ab85f47cd82d5f4be9614c27ca9577751e7049b",
+    "SESB2005-06-22.shnf": "0609d4470802eb31a01bfcc9204ebb9b552729bd9e1d615b92dfb6e6f48f9703",
+    "SGP2023-04-08.oc818-sbd.flac": "b87d5b58a5482d7791c62215be09f2fffe57bc8727387742cbe379274a5717ee",
+    "SGP2025-01-09.sgp": "2ed7f5b4bb94ebc1c6a9a120a0c682003ea070e6d04d3657a7d5483ffa5979d1",
+    "SOMS2004-11-13.flac": "a260ec28e623bfe58eb89a01085d0b473ff9f53fdc69c3689ee787908256467c",
+    "SPO2005-11-19MarysvilleTavern": "c1caa1acc396f0f4fda18300c860c25bcc4c0540f2f79f77a283b8b899a51a0b",
+    "SS2010-06-25": "57a787b65c0a6a91e6364287e537fe4f393c147acd44c990902123a60c5f8bd7",
+    "STOUT2004-01-10": "5ec306e3bef789d32ea4935bac5119fa46267ec377a76a6c58ad44e214d44174",
+    "STS9-1999-11-14.flac16": "20223d4be1fee146083bf8e76cfed250fd1f062bf0f4e7eae5cd9f08598c8402",
+    "SWMR2023-07-28.VTC_SATANS_DOGS_FLAC": "179755138883bb73d7bac5b53b9ca998b0c4c9ab474e76b680a882192f030c8e",
+    "SmallStars2005-12-17.flac16": "1e9faf3dc01d0fc1dccd8c4775c23ce094cd7efd0afb67d8f3ecd280964be4ae",
+    "SoftBoys2001-03-30.aud.flac16": "6198a89351f7365c26b488063af5dca385bc9417ddb910a059a28ce8a30fba6b",
+    "Soulive2006-07-08..flac16": "653e8454cbc4cc62f35c1b20968b52483104fda2fb23b7d6dd00b0d47c801082",
+    "SpiritualRez2005-09-15.Harpers": "2521c968f7367a491a989388b5d70ce71204c8d6c8f753db59cf407f7c43e842",
+    "StellarRoad2005-05-20.flac16": "0cc8e5c38a44e3c17d366d90527bc8a12feba1a7f2d20068545efe1999447950",
+    "StellarRoad2005-07-13.flac16": "0cc8e5c38a44e3c17d366d90527bc8a12feba1a7f2d20068545efe1999447950",
+    "StellarRoad2005-11-19.aud.flac16": "0cc8e5c38a44e3c17d366d90527bc8a12feba1a7f2d20068545efe1999447950",
+    "TBT2007-07-20.sbd.flac": "926c969963b9cca3d8ac4f939c8d65ded4a2f336303658d4153f66aef3a69c28",
+    "TFB1997-02-18.flac": "2cdd819d066d998d60754a9b788b2dae6fbd107abd12c31a5d543873af2b2a27",
+    "TGP2016-02-27.Sweetwater.Music.Hall_Mill.Valley_CA": "d04619e0642e8007717fcf206d2cead5fab5e09d8731dc07fc95e43182312e8f",
+    "TJB2009-02-14.Live_At_Cornell_Chi_Psi": "1f2bdf832f48e6d2809e4921b7990dfc6d49ceb6ee61943721217bb1bec37626",
+    "TJB2009-08-09.Live_at_The_Northeastern_Nudist_and_Naturist_Festival": "1f2bdf832f48e6d2809e4921b7990dfc6d49ceb6ee61943721217bb1bec37626",
+    "TM1988-09-23": "e94d283e8ac5d9cca037b630013437a701d7be153eee8ba8275f400be274943a",
+    "TMM1999-07-02": "14cc3d9ac0a39bab027d7a4e5a336143e89f947ae231d7cce9f3a22cb8f02586",
+    "TheDrams2006-11-18.m300.flac16": "632d0f1ac90927de66e91e840ba6ca13424a413e9ed72a41f545e6171b6bfe51",
+    "TheQuiet2005-07-06": "804ba31b73d29ca6783e502528a003127cd473859b6eb3568d9b37df802f864e",
+    "TheQuiet2006-02-05": "804ba31b73d29ca6783e502528a003127cd473859b6eb3568d9b37df802f864e",
+    "TheStolenFaces2020-01-18": "3ee09730c8491df774be4010f929b070df1c970b1447e48dfe3c7a534ac447c3",
+    "ThrowingMuses1989-06-01.flac16": "d85f2f4e76c1cd6f30c163b9d8e4777cd20cbe15b7d1201d2b8001bfddc8e216",
+    "TimPalmieri2016-04-20.sbd.flac16": "ba8d69842e302bf5a905c47ce27bb021529530d280320787145800577432e509",
+    "ToyFactoryProject2026-05-19": "268efcea0b321cb13df175f424f64bb890e09d24cb612a35b7959e2fd5a47d50",
+    "Twiddle2014-09-25": "09714e55d486bfb3b69d770a055428ee50765be8a8733694b46bf3e30cc768e5",
+    "UBQ2004-08-14FLAC": "8741397890eeee495d1c82c9ac3e32ed78667e8d9b2f557fe2088737f7937811",
+    "UM1998-05-08.set1.sbd.flacf": "f58aa2383c1b34f13a138ab372f90c6f1be46e51cf4744d0f0ae89bd23966730",
+    "VTowle2002-11-28": "656914e217dc3e89722ab9e1e69465a3a68bb1bdcfa207170191da0d7632cb86",
+    "Vulfpeck2016-04-30.flac16": "d690f8a0a08a4e17f4238e39ab7bfa8dcbef7592c81bafb29c4715f2f443f3c2",
+    "WarOnDrugs2011-12-11.nyctaper": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "Ween1994-03-04": "aba0079570a4443f25b4198eb26d2ab213ee0688245917d2e0b2f6131ad17cd1",
+    "Wolf-Bone-Hendryx2013-07-16.mtx.flac16": "fe043971b59fae046899b2464033699e4a91a37653ee1bff54aefb10f67a3b76",
+    "Zeke2000-07-02.flac16": "5e549a9543f67a9bfd39c3cc139cee9529317f5c3730b59de5f8a8e0812df9d8",
+    "Zeke2000-11-29.flac16": "5e549a9543f67a9bfd39c3cc139cee9529317f5c3730b59de5f8a8e0812df9d8",
+    "aab2004-03-12.shnf": "880ba3c7f45420dd71ce82591100d138d3a17e69b7dc762e487732bf13095eac",
+    "abc2010-07-04.flac16": "7122d6b6a8522259e184577f9fdc7eaf611bcdf39197a0eceb6cbab083823158",
+    "abird1998-11-07.flac": "77bd2d6ecac3b81eb579fd6a07a361ad69a4a2a92c26fd917266531bff441b03",
+    "abird1999-03-19": "77bd2d6ecac3b81eb579fd6a07a361ad69a4a2a92c26fd917266531bff441b03",
+    "abird2005-05-01.dsbd.flac16": "a6f0009628126bde3ada290754c2aaccc8a9983829a1b498d38204f6097788d6",
+    "acollective2009-01-20.nyctaper.dpa4021s": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "acollective2009-01-21.nyctaper.Neumann_KM150.16bit": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "acousticplanet2004-09-03.shnf": "04e11ad958dbcabcf6fdabc4b892f5c955e12573acf3ca1b5905be0beaadf715",
+    "adambrodsky2001-11-17.flac16": "1a0b46ac55f2b7af824825895313865d7667c942018c390d36575bd159cca253",
+    "ae1998-04-07": "bd2eee51b9c55a4fa768f0f77a3cf95286810e7cd40ae9d6c528d3511918952a",
+    "afoshee2004-07-21.at831.shnf": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "afoshee2005-01-09.sbd.flac16": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "agp2004-02-27.flac16": "a08782711ce071a6b324f5c4f5e66a8521ca9fc275c0b2162fc3651aa3b8bcee",
+    "agr1998-04-03.flac16": "884a1aaab5920572fde3a7011fed9b032ffb40d6b100c89d04b03dc57447b84a",
+    "agr1998-07-29.shnf": "c357dd13f8765c4de9d76ac0df1d9ad57653ba53aa39b02ba4eee64c59e46d10",
+    "ahest2004-10-27.mk4.shnf": "a5a4422a06ac93585e6eddbf4a57a7498a7a462f7eee517870f469f320843fff",
+    "ais2006-08-12.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "aj1995-05-26.sbd.flac16": "9ac6b1195478727dc1a22f25ca3357a521cfe40e895c4d8ddf1cf6c8a60823f4",
+    "alabamashakes2011-11-13.ak40.flac16": "0ec4a953261684a1e19dbccae771bf03c7b5ba12e0f62c02b4374ee7b0a9e31a",
+    "alabamashakes2012-04-05.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "alabamashakes2016-12-12.alabamashakes2016-12-12.flac24": "ae7e45997d90537f9305ad182304d4ea85a124137578752cd44e85d63b472e3c",
+    "albino2005-06-05sbd": "a9741525634ec287d904b05ebab71f465f7114a6b0da45127fbefdebd0c7c988",
+    "alecd2005-11-19.flacf": "d1a2acfca2c7004242c1d7566815244a104724ecd7a8336c23f8ea438853e29d",
+    "aliveone2012-12-20": "4c23fde5a615c5fc5d5e6902a76d93a4525cbac97c4ee433398e370e99a1929e",
+    "allenstone2012-10-19": "e15e9ffc0c4a6e3f710cd90b1ca3c7c2eff752fe7b6dbcc72a318fb49d623129",
+    "allenstone2012-11-04": "e15e9ffc0c4a6e3f710cd90b1ca3c7c2eff752fe7b6dbcc72a318fb49d623129",
+    "allgood1994-01-04shnf": "1771aa0df49bdfcf9fba51822abd20e86f30435eea697f90b9c031c1c48fb201",
+    "alo1999-03-11.shnf": "a1ddc0cef5e28f3b6f3e5a3bf4dccc5331ee7af043e83dc78c2a303ed7801bad",
+    "alo2005-02-12.sbd.flac16": "a1715dc718dfffdfac0f03f07b4b4c9b8b35e028ff81f51e7eab52c9fdecee4d",
+    "alperry2005-09-03.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "alschnier1995-12-21.flac": "8dc946e373258bdbe88af8e6bb12b3269f64d60539fdf59bbaf42c97764780be",
+    "am2003-11-13.shnf": "283c236852fab5721cc84988a7a34b7f6e589cfa6eea7d001b2955f2bb9377f6",
+    "ambacbg2010-12-10.flac16": "7a4f82283f826cae88d5d7d6008bfe52eac43e170dc71370d38702bdd4250633",
+    "ams1990-12-xxchambers": "55b0c3e800af5839f1fb4e77d5c1a5eb0bd783033cc33889b8c1817796009b37",
+    "ams1999-01-02.shnf": "664003fda1a0159f42e3b2ef19cd1f61c169cda2679a06165ed17fe17d346aa3",
+    "amt2006-05-16.flac16": "64bd34b6780784c1e6c6b8467f7866c77bdd125ddc45e497830660230d9ce230",
+    "amt2015-05-06.knit_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "andstarscollide2011-07-23.dpa4061_sbd.rob.flac16": "d0f4a9a13daa1ec43cf96ed76e0399a80f5896a4635390faf2f2bd395089b908",
+    "andthenumbers2013-01-26.1": "1c828e19987e7335dc93ac644da8ca7e1d681c667eca0deaa1ecc7b0a60fd32c",
+    "anniebeth2006-06-30.at831.flac16": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "antibalas2003-08-01.flac16": "3fabc654dd12215acf96053588319f8df076cb7d70a24e6a461cd9db786f669e",
+    "antibalas2003-12-03.flac": "7ef57447eb7c77ce309948f586bf340f9fed55978574af3c0fa7bdb6392f9f6a",
+    "anyamarina2007-09-29.at831.flac16": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "aod2005-12-10.flac16": "6b26b6d3abd824a5401869fc6539426c7e8fe5351b34178c87180bf9063a4a4c",
+    "aod2006-03-18.flac16": "5968097f9a7eeea55f0dae04268a05877cd6d150583baba1792f5b6445d9944f",
+    "apollosunshine2006-05-13": "569c23856e27cdc8d8d1f184711eadf7226b21f3cc9bd4730a5bf185bcda0347",
+    "arbsq1980-10-25.sbd_flac24": "54fefa1b844f6604f6cc5335f8df10f125fbed9cd08c870e687fbf892c368e2b",
+    "aru1992-07-09.flacf": "bd2eee51b9c55a4fa768f0f77a3cf95286810e7cd40ae9d6c528d3511918952a",
+    "aru1992-09-30.shn": "137d1c2436f8726536f2d4495d0f41afbedc498200f73ff4706ed109d6d7f244",
+    "as2001-02-24.dsbd.flac16": "c0b554678ccdab25fca9eb15824b87ba84cce438a3a99cbd31d594f742763071",
+    "as2005-05-29.km140.fob.flac16": "f7c4010316646cfd956ce62ffb6b2ff9a7de5ef41df288c6f0e13366e7d71e15",
+    "asmz2005-06-15.mic.flac16": "286b16e7e56c2e8a40ef11ca9d158f68de4f8172451a6dbc8482dcfdba60b62c",
+    "asmz2006-08-21.m300.flacf": "bd2babfada1338f9f0d8865938712a800d9cd52f475c45fa6f2ad6b9b05e053a",
+    "ass1996-02-21.flac": "bdce6302433408668ca050bb3a0bc9efe5a5426799dfad035d4b8e71949cfda8",
+    "ass2006-11-22.mbho.aud.flac16": "4bcddfe4b85ba159a0442d54019882cabbc171e2453f71de05def144ad4d6f5e",
+    "att2002-01-30.flac": "8dc946e373258bdbe88af8e6bb12b3269f64d60539fdf59bbaf42c97764780be",
+    "b4b2010-08-09.sb.aud.shivaho.flac16": "5a1975b25f176ea4fca49bc2761b5ab57f71ec2ccae2bf47ef751c5914ff5586",
+    "bab1994-05-28": "f36cbb64cffffef700a1250cf7d67a354adb702e7649ea9671aff82c3da0da5e",
+    "bab1998-09-07": "f36cbb64cffffef700a1250cf7d67a354adb702e7649ea9671aff82c3da0da5e",
+    "badlivers1991-05-04": "629e77a1ede894eff16cf522e8a410375adc0fb25e6935e0e21e4d2251748767",
+    "badlivers1994-12-10-flac": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "badlivers2000-04-18shn": "629e77a1ede894eff16cf522e8a410375adc0fb25e6935e0e21e4d2251748767",
+    "baja2006-07-21.sbd.flac16": "2a2802a66bc5d27c30cc4699ecb76fb7f1640bb28083d4a48f1e69800af9ffa8",
+    "bal2005-12-17.shnf": "1d9c7ae589634ef94baeff7e620716c3d6086ec1ba7e5d439b9b13df2ad9a181",
+    "bardo1995-7-22.shnf": "4f7677233d0b8f6e49aa1db2976f74d69a745147cf51f9fb71b6650977be4503",
+    "bardo1999-12-9.shnf": "4f7677233d0b8f6e49aa1db2976f74d69a745147cf51f9fb71b6650977be4503",
+    "batk2015-08-15.multitrack.flac": "acce8393ab058937efa1d7f1049a6c4102067f195d87643bafd8710b8f4ee337",
+    "bbragg1992-06-28.flac16": "80e7242e26378d7a8ab5297e4c91b127512ffe6aa469c8d57363d5a8909e4d5a",
+    "bbragg1995-06-25.flac16": "80e7242e26378d7a8ab5297e4c91b127512ffe6aa469c8d57363d5a8909e4d5a",
+    "bbs2021-11-26": "268efcea0b321cb13df175f424f64bb890e09d24cb612a35b7959e2fd5a47d50",
+    "bbs2023-11-24": "268efcea0b321cb13df175f424f64bb890e09d24cb612a35b7959e2fd5a47d50",
+    "bd2011-09-02.BrettDennen2011-09-02TheGorgeMatrix24bit": "7f893df82ce5dc0e3585419b21a0010a0621baae7c128adc14ccf4407868ff97",
+    "bdbb2004-07-24.sbd.flac16": "f7c4010316646cfd956ce62ffb6b2ff9a7de5ef41df288c6f0e13366e7d71e15",
+    "beirut2006-08-13.flac16": "5affe957d71bdf990dd39735afa6c1c2bc0f6ae5cebb64a11f49995276644d34",
+    "beirut2007-03-16.kexp.pcm.flac16": "176c84dd8bb1b183d568c1c40cdd5bebd14856afde527a5f502de420a9aa5abf",
+    "beirut2007-10-03.kexp.pcm.flac16": "176c84dd8bb1b183d568c1c40cdd5bebd14856afde527a5f502de420a9aa5abf",
+    "bengibbard2007-05-09.flac16": "924c3516544d31aed1b451dc032b12269da9ad112fa15c7eb6a68735e07c634c",
+    "benkweller2007-03-05.akg463.flac16": "176c84dd8bb1b183d568c1c40cdd5bebd14856afde527a5f502de420a9aa5abf",
+    "benlee1999-04-14.flac16": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "benlee2005-02-19.at831.flac16": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "bfft1991-08-02.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "bfft1991-08-18.cm300s.flac16": "38f7f8ce520a8a547930c4de43dabb78202a97af0aa3de70c0f69b0ca846e510",
+    "bfm2005-05-06.flac16": "91bc5c616111165b5a8fcb17501c3faeda80931f21e498455cb70f525e188d86",
+    "bgug2006-07-20.akgc2000": "81e47d7e629ef14510c1d6de87f7cc4b12fa84e8aff7c5be0f047b2c6cea0eef",
+    "bhp2008-01-09": "8626e22c1f8ec03e6e83b6cde1f898ba24964a9631ed735f50b086bf0e232be8",
+    "bhs1988-11-22.sbd.flac16": "145a0e7c1e9a5caca6ac731e97751d88ad86f11cd330bff7d238dd7af8bde3ea",
+    "bigg2012-07-21.mk4_16bit": "c0d55af1733e6091c67fe6f74df2d08ab78609e5b1f1a82eaf8d6f0ffc5655e7",
+    "bigg2013-05-24.mk241f_24bit": "c0d55af1733e6091c67fe6f74df2d08ab78609e5b1f1a82eaf8d6f0ffc5655e7",
+    "bigtree2000-09-29": "cb7c4e603095a1d0f9ffe10c5ad90ae1cf5ac0264c46b65a1d4d546549079a67",
+    "billybragg1995-07-11.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "billycorgan_lyricopera2025-11-26.flac16.at943.engsky": "aa9b05dd1c7bc447ff45b1ffa3ef1c2947ce1310a5c469edfcd6e4606f842adc",
+    "billykids2015-04-20.ck1h.kindrec": "9219f01eb3765ab1aaeac3a045e2cac7fb7548ac52a168e3144a3f737009f0de",
+    "billystrings2018-01-29.sbd.schoepsMK4V.flac16": "622f6ae7c7b2b0f36d9ae389c5fe450c55cb258f33034ff3659af4e45d470c35",
+    "billystrings2018-04-25.litz.sbd.akg414.flac16": "622f6ae7c7b2b0f36d9ae389c5fe450c55cb258f33034ff3659af4e45d470c35",
+    "billystrings2025-09-12.SSM2025-09-12": "48fc59ed94e4ad890f8c2a0ebfb7414a70e7e6af2cf0953f589a7ba702b99f7f",
+    "biv2004-09-02at831": "7885f909f71ab4e77a52bc8631801388f9865ea21af28cf01096afb156d4a6c0",
+    "bk40-2006-04-08.flac16": "b8672bc1f503d8e5cce330bb05130f77503a5e231a6d87608c4c3a1cbdeef4ea",
+    "bkgm2023-09-22": "be7c6f7f1dd2dcc5cba46e65fe4b1120ed921dab3ecfa168cef541c8e237aae3",
+    "bkweller2004-04-01.flac16": "85cff8b5f21bee67d5444f419ce5f81122eab014d492852b2e1c06ad3db28077",
+    "blackangels2006-02-11.flac.aud": "f716b4a60c944286122bb38073099435dc113c0fa0c54d77b6fae6bfa4fc9fc7",
+    "blackangels2007-10-19.peluso.flac16": "e489e76f20e64959dd4169ca05c969df47e6a51dc1e60861060d3eebb00c28ba",
+    "blacklillies2012-04-26.flac16": "268efcea0b321cb13df175f424f64bb890e09d24cb612a35b7959e2fd5a47d50",
+    "blbb2006-08-05.flac16": "a5af86a43088b2a00e58e6c2598836e44a56bdf25d424e587ec29821a0fa07d9",
+    "ble2005-07-21.flac16": "0bc02ee7c3c6549d9e7c51e5c6448370cb13d8ff217498ee1f210ce0cfa68b25",
+    "blindmelon1994-02-17.flac16": "476a00febc0163f5bb5185168c2b05d904fbad4c580f7f528b25513bec1b42cb",
+    "blissn1999-08-28.shnf": "86cc7a685cc982f0caee6c67c7e867170e1c225ff70f8ab89b08400c6f515c30",
+    "blitzentrapper2009-02-24.flac16": "e0e8890ce8b55f5f47c8eb781062f4dbe95b02e7a559e95d91d77147915d7096",
+    "bloodkin2007-06-04.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "bluegrassgenerals2017-01-06.matrix": "c675ea82d2941421ebfcdcee1032207339dec94fc5eecb0ce98b773a5efacdf5",
+    "bluemerle2005-06-25.flac16": "569c23856e27cdc8d8d1f184711eadf7226b21f3cc9bd4730a5bf185bcda0347",
+    "bm2004-05-08": "406286e929d39b176d26fdcce31763d644e873160523de9f68727844ce41f50a",
+    "bmb2001-09-28.m300": "a9741525634ec287d904b05ebab71f465f7114a6b0da45127fbefdebd0c7c988",
+    "bmb2004-06-26m300s": "a9741525634ec287d904b05ebab71f465f7114a6b0da45127fbefdebd0c7c988",
+    "bmbb2005-01-08flac16": "5f8e12a0e726c6fab1065a87983b01f29c9e862f8c2349d8df8c6833a80e656a",
+    "bmbb20050513.flac16": "5f8e12a0e726c6fab1065a87983b01f29c9e862f8c2349d8df8c6833a80e656a",
+    "bmelon1995-10-17.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "bobwalkenhorst2005-04-06.shnf": "f83ac6c818481eca42b7551ac27d2863ba6e005ff70b2770a022b224d377e900",
+    "bobwalkenhorst2005-12-28.shnf": "f83ac6c818481eca42b7551ac27d2863ba6e005ff70b2770a022b224d377e900",
+    "boombox2005-10-04sbd": "7daa6a37790f4e7482a969a25938e694cfee884e656018de04791a78bdfcea9e",
+    "boombox2005-11-13.sbd.flac16": "e60a06b0c1237258a61913547abc41b593dc8e4df6c27d2b5509be60c955a8d2",
+    "bp2005-07-29dpa4022.flac16": "395c32915bc2c6c5ff072eb0b7d6bb7cc43e441abff0f137a9fef8f7adb37758",
+    "bp2005-09-30b-dpa4022.flac16": "395c32915bc2c6c5ff072eb0b7d6bb7cc43e441abff0f137a9fef8f7adb37758",
+    "bpuz2005-10-29": "b140b65d3b4e0c95c2b6beed7c457c9582ba34e6ee2f43b064a88b27bde411e3",
+    "breakfast2004-07-30.flac16": "7fa58bac12e28253ea0487cbca3f91e98687ffcba1cd26b8ab637b4ecb665a99",
+    "breakfast2005-06-10.akg.flac16": "130beef39b1677134857aea86d8b606aa3fda482a854ed1f618d5c6ff698ac99",
+    "brettdennen2009-11-06.matrix.flac16": "0d928613ba5e896cb2a5200e1cf1b669cdd63717e0bb4fdb942f6244daaff464",
+    "brew2008-12-27.jklabs-ck63.flac": "b87d5b58a5482d7791c62215be09f2fffe57bc8727387742cbe379274a5717ee",
+    "bridge2005-06-28FLAC.MGm300": "88c0d890906f085a2c8e4834514f76879181b66750337a5abd359bc58f829472",
+    "bridge2005-11-23.SBD": "88c0d890906f085a2c8e4834514f76879181b66750337a5abd359bc58f829472",
+    "brittdaniel.2006-03-29.matrix.flac16": "c76ea16378339d1da1f786ca18137125b3a96faa1ef627c74ee330a2ca4d32cc",
+    "brock2019-05-26.peluso.flac24": "f248f258ecbfabcdc3edd5c28df43fbc0e1110cbee5237e5dea2bd25f4bbe4ad",
+    "bs2016-04-20": "3f951d73ea5feb8f413451b04bc165df3d862c60db0d9f533885d04fffb0827f",
+    "bs2016-07-23.flac24": "3f951d73ea5feb8f413451b04bc165df3d862c60db0d9f533885d04fffb0827f",
+    "bsquad2003-03-27.shnf": "7de318a0202519b15eb77379081c6039ec6d0be74814c914184bfb432e497f14",
+    "bt1988-10-14.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "bt1994-05-17.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "btf2006-02-18.flac16": "0150cff3f3cb43e49b0716bff5a9d8e5c8c79d184ac6ae4b9177f30df607e7f1",
+    "btf2006-06-09.dpa4061.flacf": "90ccd6e00b38ce8e60ab7fc2818dedfa60f68b99bf443ab3d4e7994b718deb13",
+    "btr20040603": "e156a43c62858f68ad967e38dc03076624ebadc3a8f3e1ae9ab826cfb3a123b3",
+    "bts2006-05-15.bts2006-05-15.flac16": "bfa7ae983c477ce60aa09ed8bff284e4c0b08cca513443449a7e39ce906281ce",
+    "buckethead2004-04-06.481.flac16": "77c98649d54f146926fc9b47eb73c6513681d9e14ba05c89be8bbace5a6bae5d",
+    "bw2019-03-30.peluso.flac24": "f248f258ecbfabcdc3edd5c28df43fbc0e1110cbee5237e5dea2bd25f4bbe4ad",
+    "bwb2006-01-14.shnf": "6068e4b88dc48966e1be523a725baec6fdcb483324bc231c103b9277c7d4f533",
+    "bwc2004-10-07.shnf": "c28298febbf07faf27d04873cb59a5544be22f28cecd13b91a2922e22104c5c0",
+    "bwww1996-12-31.shnf": "1778cd5a8699edb871d6f76982328c0ad5f8c110c7d6ac543a75cb0d1fca1cdd",
+    "bwww2004-07-29.flac16": "1778cd5a8699edb871d6f76982328c0ad5f8c110c7d6ac543a75cb0d1fca1cdd",
+    "ca1993-05-11.flac16": "b6aae79f6f3148bbcfaeb3be338625ef8346a1f62453263ba4b73bc41363ef07",
+    "cabinet2022-04-01.litz.sbd.akg414.flac16": "622f6ae7c7b2b0f36d9ae389c5fe450c55cb258f33034ff3659af4e45d470c35",
+    "cabinetGD2014-09-06.schoepsMK41V.flac16": "9a7bfeebc82a384f3ba115e9d337f11ffff8de46767b279998422fec7df8b2c0",
+    "calexico1998-06-14.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "calexico2003-04-25.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "calexico2006-12-02..flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "canine1996-11-02": "489fa46c83515ee0791e06473dfe251b591d6a57e5baa570c4f0745314ada5c3",
+    "canine1999-07-24.flac16f": "489fa46c83515ee0791e06473dfe251b591d6a57e5baa570c4f0745314ada5c3",
+    "carlabozulich2003-03-09.sbd.flac16": "bd2babfada1338f9f0d8865938712a800d9cd52f475c45fa6f2ad6b9b05e053a",
+    "cats2016-11-22": "5569fd3783220de7a233d3e4efd66b5b81bf313d3436585153984e24b808eb21",
+    "cats2019-10-16.akg483.flac24": "7095cdbe91b964ba69157034f8f688eb4922a89b34332ff8c88f7b12fa422409",
+    "ccope2004-09-17": "c0d55af1733e6091c67fe6f74df2d08ab78609e5b1f1a82eaf8d6f0ffc5655e7",
+    "ccope2005-09-20": "46aa69e01b985951dc2eaca9d7233bcb0bb8a77480f96758efa4514c7edeb170",
+    "ch1998-10-30.dsbd.shnf": "cce4a85855d2dacbd6c7ecbda992424f03f47cc794edf5e336e41a9e40eb0fcb",
+    "ch2000-06-01.shnf": "c13bba294f2844aa0c365343bd034a90750df50b43b3c77b65358f8beb0dba18",
+    "chead1993-01-22": "489fa46c83515ee0791e06473dfe251b591d6a57e5baa570c4f0745314ada5c3",
+    "chead1995-05-14.flac16": "6bf3c74cd134efa4847a2cf5946ef3105489966fe74e24d24e6d9096b11bb42f",
+    "chead1995-09-17": "6bf3c74cd134efa4847a2cf5946ef3105489966fe74e24d24e6d9096b11bb42f",
+    "chrisforsyth2019-09-06.nyctaper": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "chrisforsyth2019-09-13.nyctaper": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "cif2004-04-02": "0b0686663e576484ca7d1d622ddb562b237e6521c00910ccd6918ebb8a5b5485",
+    "cif2004-07-23": "0b0686663e576484ca7d1d622ddb562b237e6521c00910ccd6918ebb8a5b5485",
+    "cipollina1969-01-12.sbd.flac16": "acd436d8bc5974af20b3b649838f2862c0bae205ebe528e8f8db5f57cc4d1ba6",
+    "cipollina1969-02-03.sbd.tape39.flac16": "acd436d8bc5974af20b3b649838f2862c0bae205ebe528e8f8db5f57cc4d1ba6",
+    "cj1989-03-05.flacf": "c9e6c92dd5e456dd817f64df5a00fb5e261209f38a1912ee4962277f4fc5fd5d",
+    "cj1989-03-12.flac8": "c9e6c92dd5e456dd817f64df5a00fb5e261209f38a1912ee4962277f4fc5fd5d",
+    "cjf1969-11-30.flac16": "acd436d8bc5974af20b3b649838f2862c0bae205ebe528e8f8db5f57cc4d1ba6",
+    "cl2004-07-10.flac16": "709c441ca9866ed3a1952e1691cbd47e9a07ad2b27a75d66bd4182a3c7cefcf5",
+    "cmartin2004-03-10": "9afb804b1eaa0830c1c25d2aa864ee7ef77e45a5ce7fc084b1d10cb0020c1430",
+    "cmartin2005-06-09.cmc2.flac16": "d85f2f4e76c1cd6f30c163b9d8e4777cd20cbe15b7d1201d2b8001bfddc8e216",
+    "colmeda2004-12-17.at831.flac16": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "color-green-2024-11-21": "f5bb932558d5b2210d66660d573f56e326640cdeb474841a93d021101ec7781a",
+    "consp2006-03-12.mk6.flac16": "f3df9a56b75d9b149095d8dba8b926c9d3931a471b3eae8f1a52be8836395d3e",
+    "cornmeal2009-04-24": "9e702f0571493b757214efb9b236c3415a49b2c18383a4f7b81e4166e123e643",
+    "countryjoe1967-07-04.Mk2-M1-TV.flac": "acd436d8bc5974af20b3b649838f2862c0bae205ebe528e8f8db5f57cc4d1ba6",
+    "cranewives2020-02-28": "0214d28fda3989235d33a37552f47c46f9224843cd54fcf54c1461eba29fc74f",
+    "creepingtime2003-11-21": "ef7cfbc3a5f315404a935fe3083fd0b5ce5aa2bdaee845792301f42e3c6ff7c0",
+    "crisjacobs2020-04-17.Flac16": "a455a64d6cd366350ca339fc3a290b599937edbfd873f33c43bb4fc75d0b76d8",
+    "crnml2005-09-09.flac16": "3f5bc1fe65535ecf8c54fb153f04b2a358b9e4c2c80e02fcb27a7b6cfa9b3f31",
+    "crnml2006-04-12.flac16": "3f5bc1fe65535ecf8c54fb153f04b2a358b9e4c2c80e02fcb27a7b6cfa9b3f31",
+    "ct2006-02-03.flac16": "bd2eee51b9c55a4fa768f0f77a3cf95286810e7cd40ae9d6c528d3511918952a",
+    "ct2013-02-24": "5e9fc0955112de2753934fa612f3440fe4f3d77940b71dcc43214bb21fd37e09",
+    "cubensis2006-05-26.flac16": "7fa58bac12e28253ea0487cbca3f91e98687ffcba1cd26b8ab637b4ecb665a99",
+    "cubensis2006-07-25.flac16": "7fa58bac12e28253ea0487cbca3f91e98687ffcba1cd26b8ab637b4ecb665a99",
+    "cv2008-07-19": "b64a4a538ea6b9b6285eb968e277dd46ff5f3af4eebeb8f31bd3df1900db3aa4",
+    "cvb1986-05-08-flac": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "cvb1989-07-20-flac": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "d_alvin_tgm2006-08-26.matrix.flac16": "94ba946cce54bab3c3e9899c263159120c9dcc16e38ba6a4fe16c07cf226d6c1",
+    "dac2018-06-06.AKGmix.flac16": "5c2fcba799c62a5a5f2a2bf8beef74ae25109b3c002915e1fbb7fcedebd7f9ca",
+    "dach2005-06-10shn": "a7ef4bd8cf0313195f54c147c5302caa7d3af4b8cac948c315a3ae2ea357b2c7",
+    "damo2004-06-12.ck-63": "c0d55af1733e6091c67fe6f74df2d08ab78609e5b1f1a82eaf8d6f0ffc5655e7",
+    "damo2006-11-13.el-rey-theatre-los-angeles-ca": "40e89c5cf1a582387cbed9c831eede567e411e2c2781ec1cf041757a77b02694",
+    "danc2005-04-03.flac16": "283c236852fab5721cc84988a7a34b7f6e589cfa6eea7d001b2955f2bb9377f6",
+    "danieldonato2024-02-06.mk41.kc5g.cmc6.sxr4.flac": "b87d5b58a5482d7791c62215be09f2fffe57bc8727387742cbe379274a5717ee",
+    "dannybarnes2006-07-14.WS.at4041.flac16": "bdce6302433408668ca050bb3a0bc9efe5a5426799dfad035d4b8e71949cfda8",
+    "daveharrington2019-06-29.nyctaper": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "db1999-02-19.shnf": "002b78a93e586893b00272ed8119dd8d34589a882746f1a2e7a3bf6c38ad25cb",
+    "db1999-03-21.shnf": "ba1a023ddd96a8120b193c9b4f66f9bdb098545b8e326e248a897cc93fd2ffa5",
+    "dbarnes2005-03-02.sbd.shnf": "51ecd1c8aacd13ae8fafbce7346d3506bb20123902e85906e5ea5cb429883dca",
+    "dbb1998-11-06.flac16": "130beef39b1677134857aea86d8b606aa3fda482a854ed1f618d5c6ff698ac99",
+    "dbb1999-06-20.akg.flac16": "130beef39b1677134857aea86d8b606aa3fda482a854ed1f618d5c6ff698ac99",
+    "dbern2002-05-14": "c53d67b32b2a6c842c4130f17b5856ea347db3442e357b9fab279982cc2bb6c0",
+    "dbern2004-03-14.flac16": "28aef61c6eb919b64fb7a6ad653ab547958518d9413047d44aaaaec5809577e5",
+    "dbern2004-10-14.flac16": "28aef61c6eb919b64fb7a6ad653ab547958518d9413047d44aaaaec5809577e5",
+    "dbr1996-09-06.shnf": "de83bb2fceff481a2d1aadac0e08bc2d5c0ce214f3c4bbbdbc35a97fddfdd79b",
+    "dbr1999-03-11.shnf": "de83bb2fceff481a2d1aadac0e08bc2d5c0ce214f3c4bbbdbc35a97fddfdd79b",
+    "dbt1998-08-17.csc.flac": "67bdaca84d534e9fd3a4450e55341f8d3a2332567d8d1d30011c835a74d93559",
+    "dbt2006-01-20.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "dc2006-03-24.flacf": "e50578d2399ac8eb2e1af2eed87741ba5ce4830c6d67fdbb1abdd1aed254256e",
+    "dcfc2000-07-22.dsbd.flac16": "5c25a93d2e2571fe35ddd48aa08af3d159212a515cb2b66174bf2965f1d22e6a",
+    "dcfc2001-06-16.dsbd.shnf": "5c25a93d2e2571fe35ddd48aa08af3d159212a515cb2b66174bf2965f1d22e6a",
+    "ddbb2004-06-20.flac16": "20971c10b280c2d1c434b38c548a9c68a1a1bf75d17061f638697af2b5e1a80e",
+    "deadco2015-11-10.m21.burke.flac16": "d41a713f6e2fef04663515d9cbb87f9764f42c91312abfcde465ca9cd2f6b31f",
+    "deadco2017-06-17.deadco2017-06-17": "75707350312efd0fad0a3fc17122b5466254f3a5225f62f3656c10c8aecbc8a3",
+    "deb2006-06-30.flac16": "bb2dbdd91e30bc744b313267386a06f7eb216f8ba74a2071eb6f8c0fec6e12f6",
+    "decemberists2009-05-20.km140.flac24": "d2d8983f312eeeeefa903e4454f6742063c89c6c1d392595614c9574ef78fd41",
+    "deke2004-07-31.flacf": "a260ec28e623bfe58eb89a01085d0b473ff9f53fdc69c3689ee787908256467c",
+    "del1969-08-08.shnf": null,
+    "del1996-11-30": "bdce6302433408668ca050bb3a0bc9efe5a5426799dfad035d4b8e71949cfda8",
+    "df2006-07-15.mbho.flac16": "76f2f79ab5496cf4fc9afa5730cb9fbc9c39cd59858331d676285128d2d8edf0",
+    "dgray1993-12-18": "1961cccf09f9f26d18f69aa5c05d26041a4d2afb4afe6327e7fc9151cdb71ddc",
+    "dgray1999-12-15": "1961cccf09f9f26d18f69aa5c05d26041a4d2afb4afe6327e7fc9151cdb71ddc",
+    "dhoh1992-08-12.fm.shnf": "8b0cca3681f947ad270add7c7da0462bfa158ff69d41ff24c23c87eb788ab081",
+    "dinos1982-12-31.flac16": "4ad4a751bc417b1a224cb5b8431f095706721c244de1f7dabe61e7d72a04dd9a",
+    "dinosaurs1987-06-01.sbd.flac16": "38d2b21685a1c945ff1071664dd55d4daadb0b1e5f682ef2a60e63d626704d86",
+    "direwolves2017-07-27.markethotel_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "direwolves2019-05-10": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "dirtbombs2002-06-14.flac16": "198c148c88f6387a1b408bc6c1dde5d74a67d44b6b6de894290fe7ba410efe85",
+    "dirtbombs2008-03-07": "6527efa7e53d88dde1703601bf868be0194a9ef032c53626fd2f71aa71bcc036",
+    "dispatch1996-04-16.shnf": "b0fd730dd689d389a30f3696ae282afe7e4ac6c3325a29443993971aec71dc0d",
+    "dispatch1999-09-03.shnf": "b0fd730dd689d389a30f3696ae282afe7e4ac6c3325a29443993971aec71dc0d",
+    "dittybops2006-02-17.dpa4061.flac16": "826f2105860b8055bfd5ef3821b21d3f5d354c1ac2df381889ac2e36246af4d3",
+    "dittybops2006-07-23.flac16": "bafbc858affbd02f840525b06735929f727c69c40f8219a67a6364b0bf9f4fe2",
+    "dixie1991-01-22": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "dixie1992-02-07-flac": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "dkem03-04-17": "48e88968b70468731493c3a22a2795cf0c9ccc1dce3fbc85e93baf7df4fa2dce",
+    "dkem2002-05-08.sbd.flacf": "5e7c0b82b286daabdb9da19c39de9ceaa2b1b3215517809604c7704489fae843",
+    "dl2004-05-08": "6d0c77bedcd4240ad6dccc2c78cc191fe604799bc98652cf094df74c0ff6ce1f",
+    "dlowery1991-04-18": "0f0547078189e5cb4f78cd97b0807fa8bf882ed2c7e92213ab2e358b798348d3",
+    "dmead2005-11-04.at831.shnf": "e6c11487ac669d25bed64f4066cfd0e3b5d6fd2dc986745bed9838bb85a99b2e",
+    "dmst2002-10-22.aud.flac16": "666829ddf1a73d223568e9500bbd1a1252b6e2ab06b749a32c7b3b93409e4e69",
+    "dnb1999-04-06": "07fd4ed3c9ae231c94a749a567304d9c9aa622d2706646a4460bcf7583580867",
+    "dnb1999-10-09": "07fd4ed3c9ae231c94a749a567304d9c9aa622d2706646a4460bcf7583580867",
+    "doloco1997-12-06": "489fa46c83515ee0791e06473dfe251b591d6a57e5baa570c4f0745314ada5c3",
+    "dominickfamilyband2023-04-20": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "donavonf2004-10-09.at831.shnf": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "donna1995-07-22.shnf": "909636961d9fd4458047e1eb94c191c39e86ee906b5e10c9027a4b30dab0d37c",
+    "donna1997-10-26.flacf": "1df3f177524b0e4142c9f38eccc439ad9025ab9c6e6bd818efd0354c506ad2f5",
+    "doodis2005-08-20": "d01ce44c1bc3719fcdd5b1baa6e935d13d6c5684d8c6ef1eb092732d519c63e2",
+    "dopapod2015-06-06.mtnjam_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "dp2002-01-25.dsbd.flac16": "b202e0079c2771603e1ff6dd2930a77f589433fb213d5f302f619419ecf5e454",
+    "dplan2000-10-29": "8626e22c1f8ec03e6e83b6cde1f898ba24964a9631ed735f50b086bf0e232be8",
+    "dplan2002-11-03": "8626e22c1f8ec03e6e83b6cde1f898ba24964a9631ed735f50b086bf0e232be8",
+    "dredg2005-06-13.flac": "ccecbbc8ea4d47b8e8e9942dcc529679521bf5d08afe62e378cb5a217836201d",
+    "dredg2005-08-06.SBD.flac16": "85cf5e7b90113e99cbc971220785c207e464fc5660b18687b49b07f945433a26",
+    "dredg2012-06-10.dpa4061.cavis.flac24": "524bf9e517ffc6b7a5e095658f08d5831c859dcc386a1dea2f545bc8cff136dd",
+    "drivinncryin2012-09-14.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "droptrio2004-10-23.shnf": "2171844de16c7d59b5e3a557bec97219e665312729dd5090514aaaccd375749e",
+    "ds1983-02-12.flac16": "4e8815e72659822e1e8dae31197c301e1d47f3594ed5ed559934ebd5b87f7c17",
+    "ds1983-06-22.flac": "716241f780829f2a1e9af5d386bb64f1d15a554026ceb5b236175e3ecadf49ac",
+    "ds1985-07-18.flac16": "4e8815e72659822e1e8dae31197c301e1d47f3594ed5ed559934ebd5b87f7c17",
+    "dso040506.shnf": "6d2c84aacc415f19812d04a88655d7218b87272291398366d1a4f0702488458f",
+    "dso1997-11-11.shnf": "a7c8f84e63453c25eb573a004545caea588db8eeefd0c5ba9552efe547399034",
+    "dso2001-03-31.sbd.tetzeli.sbeok.flac16": "a75524c814931bdd1ccf93b93d2a2982e9e009a50d5ea06fcad9462a84b7e7f7",
+    "dtb1996-03-23.shnf": "0839593ab9061599736644c155869cac72ff5a60c5b95799b220f6a8daac729d",
+    "dtb1999-09-18.dat.flac": "379a9c27bbf98273748e5f21774a01bdb817addab16f1331e01833f6661bfa0a",
+    "dubapoc2013-03-04.ck61nos.pfa.sxm2.ad2k.flac": "b87d5b58a5482d7791c62215be09f2fffe57bc8727387742cbe379274a5717ee",
+    "dum2014-04-11": "5569fd3783220de7a233d3e4efd66b5b81bf313d3436585153984e24b808eb21",
+    "duo2004-05-13.shnf": "735bcecca1146e97ae0d2b98e2cd4d0f629d35bd3a32fbecbaf62ed13f39d1c1",
+    "duo2005-12-30.flac16": "9e702f0571493b757214efb9b236c3415a49b2c18383a4f7b81e4166e123e643",
+    "duo2006-04-06.schoeps.mk21.flacf": "9e702f0571493b757214efb9b236c3415a49b2c18383a4f7b81e4166e123e643",
+    "dvarden1995-10-04.sbd.flac16": "964ba3695dd087c546e7d1bf6b482a60f634d19e613930e00abb162c38ebd088",
+    "dwsb2005-12-16.shnf": "ebf744c94cb5934c2549db543923bf9b026d248bf9f3aa7b4838204744543eb3",
+    "dwsb2006-01-20.shnf": "ebf744c94cb5934c2549db543923bf9b026d248bf9f3aa7b4838204744543eb3",
+    "efo1999-02-12.shnf": "17a7e5b9d9417b1686744097d5ca54308971f2f3868325114793c0e262333ccf",
+    "efo2004-01-30.sbd.silent_e.sbeok.flac": "2fa570926f5c30e59813ab654775a75ac5d8ce12813cb2ad075a9be8e952e00c",
+    "eggy2023-01-07": "4c23fde5a615c5fc5d5e6902a76d93a4525cbac97c4ee433398e370e99a1929e",
+    "eh1999-05-28.shnf": "6cfcac7f572b35706d4b3ac1969a185b7d523f7b23b7f8c8b8bde609e8f409fa",
+    "eh98-08-29": "48e88968b70468731493c3a22a2795cf0c9ccc1dce3fbc85e93baf7df4fa2dce",
+    "ehalter2006-06-22.sbd.flac16": "814089b9f89a8003ee95c21562c6e0ad96670870a6af545bf9c8f1eb55d8e411",
+    "ehutchinson2006-06-08.mk4.flac16": "a5a4422a06ac93585e6eddbf4a57a7498a7a462f7eee517870f469f320843fff",
+    "ehutchinson2006-10-09.mk4.flac16": "75385e8880935146b1da8406f493ebdaa66c06b300d1b1cdff029f44cedac205",
+    "eits2007-03-28.mk5-c414.flac16": "85cff8b5f21bee67d5444f419ce5f81122eab014d492852b2e1c06ad3db28077",
+    "eits2007-05-05.eits2007-05-05.dpa4061.flac16.0G": "ccecbbc8ea4d47b8e8e9942dcc529679521bf5d08afe62e378cb5a217836201d",
+    "eits2008-03-21.m300.flac16": "bd2babfada1338f9f0d8865938712a800d9cd52f475c45fa6f2ad6b9b05e053a",
+    "ekb2023-05-03": "f9cabd6e78f959308b4d5bc8dc1206f6f4ff6d752e0871e2e3df3ca4b017deda",
+    "electrelane2004-04-08": "8626e22c1f8ec03e6e83b6cde1f898ba24964a9631ed735f50b086bf0e232be8",
+    "electrelane2004-09-21": "8626e22c1f8ec03e6e83b6cde1f898ba24964a9631ed735f50b086bf0e232be8",
+    "electrelane2005-06-16": "8626e22c1f8ec03e6e83b6cde1f898ba24964a9631ed735f50b086bf0e232be8",
+    "em2006-12-03": "9e7c2243b39357f00c82d6b249ac1f8d725da9223c78c4c32bbb84bbffe9249d",
+    "emckeown2005-06-30.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "emt2009-01-02.matrix.flac16": "20971c10b280c2d1c434b38c548a9c68a1a1bf75d17061f638697af2b5e1a80e",
+    "eo2003-02-21": "48e88968b70468731493c3a22a2795cf0c9ccc1dce3fbc85e93baf7df4fa2dce",
+    "eoto2007-10-09._sbd_flac16": "d0b6ac736acc2d705dae8179e24f1e8e1ab40ff9bcb9c3428fecec1f8697b7b1",
+    "eoto2010-01-03.ccm4v.flac16": "b1f2d4dadd296557467cd1e94e89cc456291c22ca1780c3dbd01cfeef50e8cf1",
+    "eoto2011-03-20.sbd.mp3": "c928556d39a35399782eac7e333f320ebad5252e1c7abc9c5f4b05818f985bff",
+    "esmith1999-03-01.Fillmore_San_Francisco_CA_FLAC": "c985f9a278970ba6e85cd4042a364a6405e863fcf2d63f0b9e035d4da1b9e0f8",
+    "estra2003-11-22.shnf": "d2cf4905a7faba88507412a717fd91314c8064ce8143a08d33c8dca541b5ef5c",
+    "everyonesdead2017-03-11.peluso.flac24": "f248f258ecbfabcdc3edd5c28df43fbc0e1110cbee5237e5dea2bd25f4bbe4ad",
+    "fc2006-12-13.flac16": "4f810347e1c0bfdce71462580ee4f3d1482ab33f185eed7e1f9d7e45a7954f2f",
+    "fe2006-11-10.flac16": "3f1764826e1cd1da695b641af4db165df4efcbdaacbc7a2acf721a2be8db89b4",
+    "ffw2005-06-14.flac16": "d85f2f4e76c1cd6f30c163b9d8e4777cd20cbe15b7d1201d2b8001bfddc8e216",
+    "fg2003-08-01.at853.shnf": "61765b74ae19442955a7ed764429a4242924672351d0cf959579e8095920f384",
+    "fgc2005-05-28.shnf": "b0563bdfb2073e5e54f54378946f67392493c0c80669bcc7848de4800a92e291",
+    "fgc2006-07-20": "b0563bdfb2073e5e54f54378946f67392493c0c80669bcc7848de4800a92e291",
+    "fgc2012-10-19": "0ad9d5b9763d606789e414a276df68965ce02fc971a3aaf09a4152d970df0ad0",
+    "fgcu2025-04-24.mk41v.flac24": "bcaf585f2334bb0e34145864cf89f2894a1c78e7708f9524962b21fb8ec9131b",
+    "fgh1998-11-25.flac16": "5f3d28c94f7fe938ee3ebf166b24c582ad499e88a616cc401f91e659da15c228",
+    "fgh1999-08-07": "18f76aaf43d5f08838477dff822160562a67222b74a2c9f042eeaa23a478bfeb",
+    "firehose1989-04-24..flacf": "a4bf293e8031701eb8a4482cd7adb9e28d5249affc9788b12b3575abb1178f05",
+    "firehose1991-03-12.eac.flac16": "226f9431f4d0af555e0d0b92c644dced057c112cc19f53b0b1612798ee2561f2",
+    "firstrays2005-09-01.dsdb.flac16": "a0cca5c552d8d087bca5b694aa1a20e569b25c167b492c614c3a3f3303800f0c",
+    "fishbone1985-12-27.flac16": "b5d2285d23a7b25564be02a3d309f44931861060ce7382610c1ba8181b3ad4b2",
+    "fishbone1989-05-27.flac16": "b5d2285d23a7b25564be02a3d309f44931861060ce7382610c1ba8181b3ad4b2",
+    "fjb1992-08-21.updated": "70609e26948331fce6ced3a37f02b8593cb6f8f58e0305eeca1330f8689e9b0c",
+    "fjb1996-09-14": "ca9c987814ed9767b9aa756058d339f6cc2857031da4744fbdaca23afa298a8d",
+    "fotn2004-04-01shnf": "448d9d56eaf3255b7b389ddc129344c651ff3ccfadf46cce35b923ed91bdee70",
+    "fourthriver2006-07-22": "d50d20c4e7d23f9ed207bc9d01d78cbea051d677d2bd06406bf8660107b6c00b",
+    "fr2005-12-31akg480ck63.flac16": "a10269063d405dae90f53085f37af6104af08217ccb947b2156518517078d9ba",
+    "fr2006-08-25.aphex.flacf": "18a625e363502e007e4220b26a98235afb80fc93edb672bf9f9cfa6f706b1a42",
+    "frames2006-02-06.sbd.flac16": "1763c9dc380e4783785af0610de6895b9e3abbb53d5e1cbb8b5e9b8a5d381c60",
+    "frames2007-09-08": "776eae4aab596f9afe90d25c54032182702bd09b9fce3d5f020c574432f923c5",
+    "freep2004-03-10.cm100.flac16": "cce4a85855d2dacbd6c7ecbda992424f03f47cc794edf5e336e41a9e40eb0fcb",
+    "freep2005-02-05.shnf": "c28298febbf07faf27d04873cb59a5544be22f28cecd13b91a2922e22104c5c0",
+    "fsb2004-10-01flac16": "4c72da3bb6a915f46350771ea51f6813dc4e7efbab7bd0410b3d7ea15ee9ec81",
+    "fugazi1989-10-08.flac16": "20971c10b280c2d1c434b38c548a9c68a1a1bf75d17061f638697af2b5e1a80e",
+    "furley2004-07-08": "96987c8759970da375fded53b37b12d3630995859ae2b16bf6a9165a767ef17c",
+    "furthur2011-03-11.akg-c460b.spyder9.113408.flac16": "5649e8c68991f858b44c65ed92c564e10b196a46eff32b3e5fce387d4f683cd2",
+    "furthur2011-11-20.akg.jsfrank": "c023bb16832a889d4c70df31c3a426ff10cf6526c42b9e7fa263d81cd71c57c9",
+    "furthur2012-04-21.spyder9.flac16": "5649e8c68991f858b44c65ed92c564e10b196a46eff32b3e5fce387d4f683cd2",
+    "fuzz2004-03-27.flac16": "d96996cbc62dff5fee28a805143d09d5469fead3aedc380b3f87b7708eb6d2d1",
+    "fuzz2004-09-11.flac16": "d96996cbc62dff5fee28a805143d09d5469fead3aedc380b3f87b7708eb6d2d1",
+    "gad2018-07-08.dr40.sbd.matrix.flac16": "22368ec7bee9fc33dae7e923bac8329ccba5e88db4dc7081b95e055165f68c11",
+    "gambros2005-06-18-flac": "8e00dd6a979f4de97bf346e8e344ee0b289ac3286f9910baf84eac254866e996",
+    "gans2004-12-15.shnf": "bd2eee51b9c55a4fa768f0f77a3cf95286810e7cd40ae9d6c528d3511918952a",
+    "garaj2005-04-10_16bit": "7daa6a37790f4e7482a969a25938e694cfee884e656018de04791a78bdfcea9e",
+    "garciapeoples2018-09-28": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "garciapeoples2019-10-24": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "gat1998-04-25.flac16": "f9f768e1bdaa9bd9dfcd3b7b6b53e58dad7c3385ccac6960722cfbbf8e26f941",
+    "gat2005-08-03.flac16": "0436018ca40255b4f03a288ea2e946e90442fcc554dea30388d2ee47c16c5095",
+    "gat2010-03-13.flac16": "7c68ca590878bc04bef105b47d41cce700c4621a08125ecc1b045ce9d7fa1eac",
+    "gbs1990-00-00.shnf": "0f5a23b2d157497cadbc8351f999b004bf1f787a120a5fc7c8333a19e8a5e7a9",
+    "gbs2003-01-24.shnf": "34f3129ee19c28741c235dfb5590ce369b82fb6b70f6a5a93c2f6b1c28046a90",
+    "gc1996-09-26.flac16": "a6ed57c85df0420af6ccb3ecc4c5c0c502f144bb67d51c055a19a93f3e4b817b",
+    "gc1997-04-17.flac16": "a6ed57c85df0420af6ccb3ecc4c5c0c502f144bb67d51c055a19a93f3e4b817b",
+    "gd1966-11-29.152152.sbd.hance.sirmick.flac24": "b8bb4cd9409244b2fb36e3ec825dad8f85e4b85c66d7f124a66b89b50da5065b",
+    "gd68-xx-xx.sbd.vernon.9426.sbeok.shnf": "7d4dbd6d1ce2210031c07ff8fc0ee3117b54fdcf569af2140c83d7cf14e3497e",
+    "gd69-04-15.sbd.cotsman.6288.sbeok.shnf": "7d4dbd6d1ce2210031c07ff8fc0ee3117b54fdcf569af2140c83d7cf14e3497e",
+    "gdegraw2004-04-04.flac16": "5e2729f730a7bdde70ba90a30290fcb6daddbc9a5c7b21a03e2376e93aa94bd4",
+    "gdegraw2004-05-30.shnf": "bafbc858affbd02f840525b06735929f727c69c40f8219a67a6364b0bf9f4fe2",
+    "gf2017-11-24.flac24": "7d4a809786da07adf4dd5ed6fd9480a1f06d7924f7a3e0ef2d0eb6bc185ea70f",
+    "gfc2004-02-12": "4964ee5213bdfc91b4406a6d05d52d1a9ee00387753e369b90ebc5131ae1612e",
+    "ggw2016-03-24.wklitz.schoepsMK41V.flac16": "f4ce073991d19333bba97d0437da886c4f150a9bdcd9d34a6d0a243f4eddf06f",
+    "gl2018-10-28": "bb26fc58650ac3b1955f201df96afc296c94728f9865efa2f89142ccda9df5fc",
+    "glc2005-06-23.matrix.adub.flac16": "4684936159a6b846b1311d29de34457e9519b46d64689a4f9b4e8037b4bb7d34",
+    "glemon2005-02-26": "6a4788a37acf43c7006100b5edc139dd59e72250c20018a648b4c7b95a9083d0",
+    "glen2001-05-10.shnf": "a11b558dd39b3098e507cbfc622b6162ddd1e70c136fd5c1cdf7990a373d5ae3",
+    "glen2005-08-30.dsd.flac": "df8f928f08945ff1b82db529643e3f543ecc862df414244720c8db35f15b8edc",
+    "glf2025-07-31": "268efcea0b321cb13df175f424f64bb890e09d24cb612a35b7959e2fd5a47d50",
+    "glove1998-03-20.shnf": "8457f4172879319757d8b02a69baf0af950275e63dc05c2fb03403715d601c39",
+    "glove1999-09-26.shnf": "8457f4172879319757d8b02a69baf0af950275e63dc05c2fb03403715d601c39",
+    "gomez2005-01-25.dpa4011.flac16": "76f2f79ab5496cf4fc9afa5730cb9fbc9c39cd59858331d676285128d2d8edf0",
+    "gomez2008-07-05.flac16": "0214d28fda3989235d33a37552f47c46f9224843cd54fcf54c1461eba29fc74f",
+    "goose2019-06-29.CA14.cards.AUD.SBD.Matrix.flac16": "77e72c67c38c4bb6e65ba9461146a6c900037b64b87060fdcbf9ad6d15f21790",
+    "goose2019-07-27.litz.akg414.flac16": "9de23dc0daf9fe6ed36336a5daf581b269a3fb381a8d5b7af212982bf6abfefd",
+    "goose2024-02-08.Pasternak.NeumannKMR82i.Flac24": "a455a64d6cd366350ca339fc3a290b599937edbfd873f33c43bb4fc75d0b76d8",
+    "gorangroup2005-03-27flac16": "5863eec81d2edaa1d6a43a951d499f848a80da9604d34cef4b99527acb042c2e",
+    "gorangroup2006-03-28.flac16": "dc5c66a0c7c7962d761d6b04f51b1504bc4e840f677e2a3cc39e855c7de3ed22",
+    "gourds2010-05-28.akg483.flac16": "555800318dafde66a5615c30bc922d8aac0fb904c9abf1cbd77f1d2b97aca32d",
+    "gourds2025-04-12.matrix": "53310c1041b155ddce65f7140a1ba63b82a0f8af09ca0d09488ab1d77f6d8894",
+    "gpgds2006-11-11.sbd.flac16": "3f7b31dcc8329bf6cc1546287c0dae20166365ea769bc0360257181e39df52d3",
+    "gpn2006-07-29.flac16": "e0e8890ce8b55f5f47c8eb781062f4dbe95b02e7a559e95d91d77147915d7096",
+    "gpn2008-02-21.aud.flac16": "91e79e3937cacbd71fb3a9e3fa7efb2df961742fc8941e92b0d785643ef75ab1",
+    "gpn2008-10-30.dpa4023.flac16": "1f67916e3422c78fd19d9b91c56a8488c863039d953da651901aaa783a5165aa",
+    "grapes1993-04-02.shnf": "baf5341415fd5310affaedd5382da57d3b2fbb28a4edca00a4abf5b68adc13f4",
+    "grapes1994-02-25.shnf": "baf5341415fd5310affaedd5382da57d3b2fbb28a4edca00a4abf5b68adc13f4",
+    "gratefulshred2019-03-01.mbho": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "gro2005-05-04flac16": "7e7e2338671526d5edc71513f004c43e7779c1f1d056810259b23de343b83847",
+    "gro2005-06-04flac16": "7e7e2338671526d5edc71513f004c43e7779c1f1d056810259b23de343b83847",
+    "groovatron2005-04-01unk.flac16": "d31eb2e36bedef232e0b33a1f62d2a0318063d4e09e51a24159cc6e8a6c785ee",
+    "gsand1991-01-30.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "gsand1995-02-09.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "gsand1996-02-03.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "gsbg2006-03-17.flac16": "5a59e36a11949ff6854fbc99c820361a2e47017bf806558f23a5f30298be4584",
+    "gsbg2007-03-03.matrix.flac16": "18f76aaf43d5f08838477dff822160562a67222b74a2c9f042eeaa23a478bfeb",
+    "gsw1992-08-20": "8aa0df10308ae1d9f7538b02b90e8701265015473e6157e5815c70c04d2be406",
+    "gsw1994-10-27.shnf": "bd34ad7483cab6037368cbdc154aadf13c4f1d2ebec533c930fe813ec9a4d520",
+    "gsw1994-10-29.flac16": "841d17b20ebf4fda05efbfc14fd7d5923d279561248dbb7786cf89cd3a30b4e4",
+    "gt2018-06-19.up_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "gtb2004-11-27.shnf": "a77a16a495493422ddf1a086c7c9aea72f4abc47a97921c6f4041b9d1de000e0",
+    "gus1998-10-03": "6cfcac7f572b35706d4b3ac1969a185b7d523f7b23b7f8c8b8bde609e8f409fa",
+    "guster1992-10-08": "2b5457cc1cad48b6fd662dab12a3eb1c28a70b0266475d06764cbdc8795c2b4d",
+    "gutter1994-06-06.flac16": "4e8815e72659822e1e8dae31197c301e1d47f3594ed5ed559934ebd5b87f7c17",
+    "gutter1994-10-21.flac16": "4e8815e72659822e1e8dae31197c301e1d47f3594ed5ed559934ebd5b87f7c17",
+    "guymalone2005-08-13": "7cd20078716a99822810d5c9d8b9c799696376f7ad8fbe8450c0e143968b236e",
+    "gybe1998-11-26": "336ef088e56dec48659b0e2315625dc9c83e3b214dccd3cafefa19cfd34c3bf7",
+    "gybe1999-01-19.flac": "2698b72b712850cf581dfee2cf2476d2a75e80af08dcaf0293f2398b540b83ea",
+    "halfstep1999-10-06.flac16f": "e022bd9dc468d92cc45d63a514babf00635f5bed536ac394307b28018f150ce7",
+    "hamell2005-12-22.sndbrd.flac16": "8a3c4860e1a3450cd4d46b78de5e3754dc2e43697dbc34429c3202faa3d81b11",
+    "hamell2006-02-21_sndbrd_flac16": "8a3c4860e1a3450cd4d46b78de5e3754dc2e43697dbc34429c3202faa3d81b11",
+    "hatp2005-08-03.flac16": "a5a4422a06ac93585e6eddbf4a57a7498a7a462f7eee517870f469f320843fff",
+    "hatp2006-07-29.mk4.flac16": "a5a4422a06ac93585e6eddbf4a57a7498a7a462f7eee517870f469f320843fff",
+    "hatp2006-08-01.mk4.flac16": "75385e8880935146b1da8406f493ebdaa66c06b300d1b1cdff029f44cedac205",
+    "hcb1995-10-21.flac16": "a6ed57c85df0420af6ccb3ecc4c5c0c502f144bb67d51c055a19a93f3e4b817b",
+    "hcb1997-01-17.flac16": "a6ed57c85df0420af6ccb3ecc4c5c0c502f144bb67d51c055a19a93f3e4b817b",
+    "hdanger2006-08-12.hd2006812spacelandlosangelesAUD.flac": "3ac18c4e56eeb068c1fb5f34d5b3e3753a79524846ab3f454f576e8ffdd3857c",
+    "hdanger2008-08-02.AUD.FLAC": "3ac18c4e56eeb068c1fb5f34d5b3e3753a79524846ab3f454f576e8ffdd3857c",
+    "hday2000-04-19.shnf": "f8ae2ad751d83f60dd22372aae7a32d55efbe9e6c0b0a85e800e8e35d9ebc174",
+    "hday2003-04-06.dpa4011.shnf": "4f810347e1c0bfdce71462580ee4f3d1482ab33f185eed7e1f9d7e45a7954f2f",
+    "hdixie2002-12-07.matrix.shnf": "14628c7e92363556bc6a88ec3e9fc1290f44dcecd53b0dd41584538d63289d04",
+    "hdixie2004-07-02": "48e88968b70468731493c3a22a2795cf0c9ccc1dce3fbc85e93baf7df4fa2dce",
+    "hella2003-10-14": "8626e22c1f8ec03e6e83b6cde1f898ba24964a9631ed735f50b086bf0e232be8",
+    "hella2005-8-28.aud.flac.16": "4b367175b9fc4298775f71de613e164c4034c44beaeaa9dc874dfc34e293c6d4",
+    "hem2006-02-23.ADK.FLAC16": "dae363ac1c9d6ac3b8a4837e103000ba155fd850dea4136d9a60ea7538297941",
+    "hermanators1996-10-30": "7daa6a37790f4e7482a969a25938e694cfee884e656018de04791a78bdfcea9e",
+    "heronoblivion2018-12-09": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "hexbelt2006-07-29.matrix": "9e3e85f7dc11a8f2f26318746aa1f2b17ca3f2aeeb3194bee4e4eb10096bd7f6",
+    "hf2014-05-01.dsbd.flac16": "a6f0009628126bde3ada290754c2aaccc8a9983829a1b498d38204f6097788d6",
+    "hgelb2000-08-19.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "hhtm2019-07-05": "e1d520ba9afdb8a4d781cbd54a5e0ead2b2cb020337c79530c542fcaaec5428f",
+    "hl2006-10-05.Live_At_Bunkys_Breakfast": "0db561cb83e6240549b275b718b78fae9d0fc69f7df47be625879862312522ea",
+    "hmhr2005-04-16.flac16": "a1c6730f7066b31823122530eea3486b235f35004b09e3b382ffe0b6bb4685c3",
+    "honeydogs2007-04-06.sbd.flac16": "964ba3695dd087c546e7d1bf6b482a60f634d19e613930e00abb162c38ebd088",
+    "hopper-reilly2006-04-03": "ae6c7fd4ddf77bf704cb29abf14d80d4a4c8f55350050b7719ef33bfbef0b91f",
+    "hopper2006-01-27": "ae6c7fd4ddf77bf704cb29abf14d80d4a4c8f55350050b7719ef33bfbef0b91f",
+    "horseflies1989-08-04late.shnf": "64bd43ae57d30af0af2ee0d17290a303add03e938abc8c4adfba6d70e5e715d9",
+    "howlinrain2018-07-14": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "howlinrain2019-08-07": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "hths2005-06-10.flac16": "cbf3846e94744c3a8d2f01c77c653531da7f8821314515c4a09336245d0b877d",
+    "hum1998-05-05.flac16": "5066315230cc8521293a9788a3943f209f2d6bd3ae3d5a03a8637792a6c7dfef",
+    "hw3-2004-01-14": "38bf6bbe6fbea440506393835e2b32faca1ea76ad62e20caae4535ac444ddf6a",
+    "hw3-2005-02-04.flac16": "971707ec0e3d378ce43c98a62356e96b595f97b84a6976a4e4836c1bf7719d45",
+    "hw32006-06-22.flac16": "d8f8e3d679f9f1fc75d32f3feed7a14638c1fc28b912530c13b8702bc799efa5",
+    "hydro2004-05-07": "d01c922c77d3ee8b85de9b2006162890dee3608d8e24ae82ba371413b64ba2a7",
+    "jab2018-04-28.sbd.audixsc25.flac16": "622f6ae7c7b2b0f36d9ae389c5fe450c55cb258f33034ff3659af4e45d470c35",
+    "jab2019-06-14": "059110b892aa03dab4091f1028c51c3e6134418d1759778616e02e9267f944ad",
+    "jackiegreene2010-11-27.gearing-greenbaum.terrapinstation.org_16bit": "3b427272c19359451a9e6255d34338b6d515aac1730c2e209f16908622d6d838",
+    "jackop2002-11-25.dsbd.shnf": "1961cccf09f9f26d18f69aa5c05d26041a4d2afb4afe6327e7fc9151cdb71ddc",
+    "jadedtraveler2010-09-18.jigglesfest-flac24": "84743e8130289084c224435e9f3c973d7b7edd6609654dfca547cc61bec513d3",
+    "jambay1994-01-13.flac16": "2fd0b782201d5e5f00f51817a880b80a5b65d488866c0600dce105ed837bae65",
+    "jambay1994-08-03.flac16": "2fd0b782201d5e5f00f51817a880b80a5b65d488866c0600dce105ed837bae65",
+    "jamroom2006-01-1116bit": "7daa6a37790f4e7482a969a25938e694cfee884e656018de04791a78bdfcea9e",
+    "jamsam2005-10-01.shnf": "9a34c678d8aa0e28d809a14d3de3c27c370e96188962e656cbd885383b6b215e",
+    "jbb2006-11-01.aud.flac16": "91257e17f054f23822b4e25abd5bb827e390ffa3fc74030924fac6a81aafb42d",
+    "jbm1991-05-09": "ebf744c94cb5934c2549db543923bf9b026d248bf9f3aa7b4838204744543eb3",
+    "jbt2005-12-21.flac": "8e1546586cae2d5ac4fc685dde729785e331ddf8434a176387bbf20994510023",
+    "jbt2007-03-06.flac16": "5affe957d71bdf990dd39735afa6c1c2bc0f6ae5cebb64a11f49995276644d34",
+    "jbtheg2012-06-21.SP-CMC-2": "5e2729f730a7bdde70ba90a30290fcb6daddbc9a5c7b21a03e2376e93aa94bd4",
+    "jcb2005-06-04": "48e88968b70468731493c3a22a2795cf0c9ccc1dce3fbc85e93baf7df4fa2dce",
+    "jcommon2005-09-30.flac16": "052ae20e21b0084491881d833251eafe2cd2229effe66a2770986a210c1bcd49",
+    "jcs1994-06-02.flac16": "adc130785bf63ed0a6b58e6c69ea50817771a987f6a4e7aa39d6454ce2acc263",
+    "jfjo2005-07-30": "c590fb3fde88559bb72b55e412bcb877462c22f513e3e56c93cbaf9363c3a5b4",
+    "jfjo2022-10-08.bsc1.akg463.Soundboard": "3570e91830a77a5d4f43464189ba0ca57cb4ba8728f676f911fc66274cba073c",
+    "jgb2006-03-03.km140s.flac": "9422669b0f97cff9ed0325882c04b357e13176ad87f0ce7f1ec2452bc25f0aff",
+    "jgb2006-09-09.u873r.flac16f": "0892090261d06ccd0c2952996b9509f8d22460538bd00d19f61ccabc943dd8a9",
+    "jhatft2005-03-03.flac16": "283c236852fab5721cc84988a7a34b7f6e589cfa6eea7d001b2955f2bb9377f6",
+    "jhoop2006-03-31.dpa4061.flac16": "826f2105860b8055bfd5ef3821b21d3f5d354c1ac2df381889ac2e36246af4d3",
+    "jj2003-04-21.flac": "8e1546586cae2d5ac4fc685dde729785e331ddf8434a176387bbf20994510023",
+    "jj2003-09-21.at831.flac16": "092975118ea946609540c49ac8e95f389fa2067b4630b62474c8a4ec34ba60f8",
+    "jjj2005-01-02.mk41.sbeok.flac16": "694032cffce7aead8f5aac8eb5b7fe134805f25b7cb469dd88458102e00a36af",
+    "jjj2006-06-14.mix.flac16": "20971c10b280c2d1c434b38c548a9c68a1a1bf75d17061f638697af2b5e1a80e",
+    "jk2017-01-20.NYLifer.SBD.ZoomH6": "d0f39dcb4ae7842e604b9babe994307faf5451065faf8f43b74d2601de39acca",
+    "jlangford1999-03-21.shnf": "b321a408d6f9b488900d2771f978716a3eb32a2a91fb652caf1c7bd3dcb9ab3f",
+    "jlangford2005-04-15.shnf": "9bf9003f16061b44da46c6135698889e26ab422fbd70458b5e080672c1eb818d",
+    "jlc19971126.flac16": "ccb9ac9bf4c48c7d7f04887929bbe8adaae91a011a07f016634560f4d7c40630",
+    "jm2003-01-15.shnf": "76ba63fce5b9710a5b1b72675f760e08e67ca54996d966103030c3ceb7298577",
+    "jm32005-09-13.km140.flac16": "fe043971b59fae046899b2464033699e4a91a37653ee1bff54aefb10f67a3b76",
+    "jm32023-03-09.EJL95": "6cc328f5d2e10416da968b1617cf1e8b8a890eadbcbdfadfb1627449b8211243",
+    "jmats2004-10-29.oktava.shnf": "a77a16a495493422ddf1a086c7c9aea72f4abc47a97921c6f4041b9d1de000e0",
+    "jmats2006-01-13.oktava.shnf": "a77a16a495493422ddf1a086c7c9aea72f4abc47a97921c6f4041b9d1de000e0",
+    "jmayer2004-12-28.4011.trak2.flac16": "46aa69e01b985951dc2eaca9d7233bcb0bb8a77480f96758efa4514c7edeb170",
+    "jmayer2006-10-09.853": "b74f678fe747a9a753abb2bb58b72af7b269763add2241df38dd1f0be4092876",
+    "jmayer2008-07-29.flac": "46aa69e01b985951dc2eaca9d7233bcb0bb8a77480f96758efa4514c7edeb170",
+    "jmband1998-06-26.sbd.shn": "0248abd8688a6d386b66355c8a0a65435f23f9ba07b7154412924df39b475010",
+    "jmraz2003-11-07.mc012.flac16": "814089b9f89a8003ee95c21562c6e0ad96670870a6af545bf9c8f1eb55d8e411",
+    "joepug2010-11-06.matrix.flac": "53310c1041b155ddce65f7140a1ba63b82a0f8af09ca0d09488ab1d77f6d8894",
+    "joerussoshooterollplus2017-04-07.cmc621.cmc641vxt.sbd.matrix.flac24": "60dd56f80ec1aa985aba3c58e696702204446c0e2f7fff34389a94dda2e61a1b",
+    "johnnorthern2004-12-11.shnf": "f83ac6c818481eca42b7551ac27d2863ba6e005ff70b2770a022b224d377e900",
+    "johnyv1999-03-13.flac16": "e0e8890ce8b55f5f47c8eb781062f4dbe95b02e7a559e95d91d77147915d7096",
+    "josegonzalez2007-11-26.at831.flac16": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "jp1990-09-02.shnf": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "jp1991-08-21.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "jrad2018-10-20": "5569fd3783220de7a233d3e4efd66b5b81bf313d3436585153984e24b808eb21",
+    "jrad2019-09-26.cmc621.cmc64.sbd.matrix.flac24": "60dd56f80ec1aa985aba3c58e696702204446c0e2f7fff34389a94dda2e61a1b",
+    "jritter2004-03-25.flac16": "85cff8b5f21bee67d5444f419ce5f81122eab014d492852b2e1c06ad3db28077",
+    "jritter2007-10-16.c34.flac16": "85cff8b5f21bee67d5444f419ce5f81122eab014d492852b2e1c06ad3db28077",
+    "jrnb2004-11-11.shnf": "a5af86a43088b2a00e58e6c2598836e44a56bdf25d424e587ec29821a0fa07d9",
+    "jrnb2006-02-20.flac16": "6ceacfb7531a368892dc21de08abe73c02270fc1927d47abd97bc4f3f1a641dc",
+    "jrnb2006-03-11.flac16": "a5af86a43088b2a00e58e6c2598836e44a56bdf25d424e587ec29821a0fa07d9",
+    "js1992-10-09": "da713754b044b12dcf00d16ccd32a7a65fb13ed14b22760890fd529e7db87ee9",
+    "js1995-02-18.fm": "dca498f07e30a5938dbea707a6c09f3d7eb5f3340086ec83342a206fa63c7ec5",
+    "jsb2006-03-18.shnf": "476294d6dd6c4480a6321f83d65cdab66467d8e7f60e700520368ec83e9acf7a",
+    "jshimabukuro2006-06-09.RevivalTent.superlux.flac16": "2af628979bd78e2422ef5121dff268e25636eb84f2cd6b43b1c9a7c5b4cb21e3",
+    "jte2010-03-09": "9d581e664c5449670726c5310790ac550b5572e3ba1faa4cb6c665a0cb5dd0b7",
+    "jtg2011-05-04.rockshop_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "juggling2003-07-19.shnf": "acb2c6c9ae35ba1c44aea3d0aa741d52b424201e1663c74835ce915022e2f048",
+    "jw2002-06-14aud_flac16": "de9debefb3990c223709c3d13260544d662368bf1b0fc54423b9e74d041c309d",
+    "jw2005-05-27sbd_flac16": "de9debefb3990c223709c3d13260544d662368bf1b0fc54423b9e74d041c309d",
+    "jwpp2006-06-03.flac16": "8a417e4d17b4966bb5f2293f441aec1f59498b6ac59676b80f490541ccdd53b8",
+    "k23orch2005-08-11.akg451s": "94ba946cce54bab3c3e9899c263159120c9dcc16e38ba6a4fe16c07cf226d6c1",
+    "kaikln1998-10-09.flac16": "5f1e83b2c99f3c7e59a4a6c33e2d901a8d1b0a5b0b9ca4b73390c5a16799f57f",
+    "kaplansky2006-02-10.flac16": "e489e76f20e64959dd4169ca05c969df47e6a51dc1e60861060d3eebb00c28ba",
+    "kateearl2005-04-17.flac16": "6a9b495c687bb0b8ea0a2366e95394c066f66c588b38f2cfcda670ea78da9682",
+    "kbrown2005-07-07.sbd.flac16": "a3540b3c0eed29d3987dbae670d8912443bbbe84c6c25dfa50f7ddfd07a97d30",
+    "kdawson2006-07-11.akgc1000s.flac16": "283c236852fab5721cc84988a7a34b7f6e589cfa6eea7d001b2955f2bb9377f6",
+    "kdtu2002-05-03.bk.shnf": null,
+    "kdtu2005-07-03.flac16": "c590fb3fde88559bb72b55e412bcb877462c22f513e3e56c93cbaf9363c3a5b4",
+    "kdtu2005-08-03-flac": "c590fb3fde88559bb72b55e412bcb877462c22f513e3e56c93cbaf9363c3a5b4",
+    "kellyp2006-03-21-sbd-flac16": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "kikagakumoyo2019-11-15.warsaw_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "kimya2005-01-09.flac16": "57833d4c826c18ab203e30f4b3e4ffe90800bb94803fc2446010532c0c0c83e5",
+    "kimya2019-09-18.nyctaper": "ae4bc37864cca8061892d26e69562092be280621e6d818805f053a35f5b38d8d",
+    "kind1994-08-31-flac16": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "kjpsr2006-07-08": "4bbf00135782f573aefd8d9be00f81ec302deb26d43ac706d9b9c13dac782501",
+    "kk2005-02-21": "b36b608540fba1f4daee279b26b90bab26122dbc3b5502c3d71301fdd419e317",
+    "kk2005-02-26.sdb.flac": "7326d07d187788afd57b68af940d6c47e4369695fa94965e5e35ea23c3e0bed7",
+    "kkstar2005-01-28": "b36b608540fba1f4daee279b26b90bab26122dbc3b5502c3d71301fdd419e317",
+    "klenker2004-12-18.shnf": "c28298febbf07faf27d04873cb59a5544be22f28cecd13b91a2922e22104c5c0",
+    "kmhw2003-11-15.shnf": "3d2cb292badc99a5c92d8421345afc591c4f3f9ab41ecbe17bbffce5acb8dcc6",
+    "knj2005-09-27": "48e88968b70468731493c3a22a2795cf0c9ccc1dce3fbc85e93baf7df4fa2dce",
+    "knl2004-12-22.flac": "1ca7a65fc8f7b038c23c9c6816ca883dfb821d2265216ac8576be25a1361ce0f",
+    "knl2006-04-01flac": "5b004e4502cc7aef36dc6d2841e5c035181bda5732e905042fb38dd241863867",
+    "kristinhersh1999-04-29.cm-s20.flac16": "d85f2f4e76c1cd6f30c163b9d8e4777cd20cbe15b7d1201d2b8001bfddc8e216",
+    "kungfu2013-08-10.sbd.flac24": "130beef39b1677134857aea86d8b606aa3fda482a854ed1f618d5c6ff698ac99",
+    "kungfu2014-12-19.bsc2.483.sbd.flac24": "130beef39b1677134857aea86d8b606aa3fda482a854ed1f618d5c6ff698ac99",
+    "kvhw1999-02-26c61": "7daa6a37790f4e7482a969a25938e694cfee884e656018de04791a78bdfcea9e",
+    "kvhw1999-09-09.km143.flacf": "1e540a841f0dd3870a63f8044d2cbd46f8786ef05b6361d514a123fd488b6b12",
+    "kvhw1999-12-08c61": "7daa6a37790f4e7482a969a25938e694cfee884e656018de04791a78bdfcea9e",
+    "kvoeg2006-04-29.flacf": "d1a2acfca2c7004242c1d7566815244a104724ecd7a8336c23f8ea438853e29d",
+    "kw1999-10-19.shnf": "a6f0009628126bde3ada290754c2aaccc8a9983829a1b498d38204f6097788d6",
+    "kweko2017-11-12": "abf7ff5a21339d28c88b4e5a1f8d83c76cd0638dcb883e3e5b0673986393ba58",
+    "kwi2002-06-21.shnf": "cce4a85855d2dacbd6c7ecbda992424f03f47cc794edf5e336e41a9e40eb0fcb",
+    "latebphe2006-07-22.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "ldead2005-12-02.nak.senn.shivaho.flac16": "5a1975b25f176ea4fca49bc2761b5ab57f71ec2ccae2bf47ef751c5914ff5586",
+    "ldead2006-05-27.sb.nak.matrix.shivaho.flac16": "5a1975b25f176ea4fca49bc2761b5ab57f71ec2ccae2bf47ef751c5914ff5586",
+    "lettuce-2002-06-09": "dd958cfa4423223181b6cfd9fe6057e4e3203e2641a39cebe9c202f4f6b7a66e",
+    "lettuce2011-01-18.tlm170.flac16": "646b018ed17a8137d37ccdaf87aaa4ed1a1874f6647ebed948ac24260b7f649d",
+    "lettuce2017-02-19.lettuce2017-02-19.matrix": "2d3a1ba2db671f0c03b7b378ba64a418265f6b987c1df2cf32f553b3d3430649",
+    "lf1974-09-19.shnf": "bd2eee51b9c55a4fa768f0f77a3cf95286810e7cd40ae9d6c528d3511918952a",
+    "lf1977-05-13.flacf": "289d9ad8dbdb107f3fd87862db49051d3b7eda3c40cdfb634c530c48d8b83d1b",
+    "lfb2001-11-07matrix.flac16": "e11b3066b14cd6622bfface9e0557be900031ddf267fcf918199e3456e909767",
+    "lke2001-03-07flac16": "020f320e533e2dd1abd8a2707697c3b2695dbf97192d79a258fc9d14f4ac8626",
+    "lke2003-05-10flac16": "020f320e533e2dd1abd8a2707697c3b2695dbf97192d79a258fc9d14f4ac8626",
+    "llb2005-05-04.flac": "04f1cbff16582c57b70444c297b1baf21962a01f4410ffcf90614d0741fb7a5b",
+    "llb2005-08-13.flacf": "bd2eee51b9c55a4fa768f0f77a3cf95286810e7cd40ae9d6c528d3511918952a",
+    "localh1998-10-06.flac16": "adc130785bf63ed0a6b58e6c69ea50817771a987f6a4e7aa39d6454ce2acc263",
+    "localh1999-06-24-fm103.flac16": "a076b9aacc274ea023722b763a2eeb57f6ad63931a0f39a7bf9e834042dd2743",
+    "logic2001-06-19": "9350d1d3409e0b6c94dceb4cc760fc1d5a8569f4e67dc64c2437903115c51ae6",
+    "logic2004-10-24.flac16": "3fabc654dd12215acf96053588319f8df076cb7d70a24e6a461cd9db786f669e",
+    "londonfile2005-04-23.shnf": "4c87eac38aefcece9801d64e901d495218be4c81296ec10d6a32172830ceba5f",
+    "loop2004-07-28.flac16": "91bc5c616111165b5a8fcb17501c3faeda80931f21e498455cb70f525e188d86",
+    "loop2004-08-26.flac16": "91bc5c616111165b5a8fcb17501c3faeda80931f21e498455cb70f525e188d86",
+    "loop2004-11-24.shnf": "91bc5c616111165b5a8fcb17501c3faeda80931f21e498455cb70f525e188d86",
+    "los1997-07-06.fm.flac16": "a6ed57c85df0420af6ccb3ecc4c5c0c502f144bb67d51c055a19a93f3e4b817b",
+    "los1999-12-31.shnf": "2a7f1fe5f857c28bf200c073c77fd3ccb875ffa2f454c8b49050b341f4740530",
+    "losthighway2011-03-02.akg.peluso.flac16": "f248f258ecbfabcdc3edd5c28df43fbc0e1110cbee5237e5dea2bd25f4bbe4ad",
+    "lotus2002-02-09.shnf": "5bb4dc903db367105368bfb8389c6d46ca64cd2928ce8248d1ec8eca5233542d",
+    "lotus2008-04-05.flac16": "5affe957d71bdf990dd39735afa6c1c2bc0f6ae5cebb64a11f49995276644d34",
+    "low1995-03-06.KCRW": "35ddae199add427e29f8b02dd500dbf36d2051a3afa19e2a0088bd100f724634",
+    "lowanthem2010-08-13.aud.flac16": "49d96dc5d499e89a76cef9fd6b86a021b8a26fcc6d2eb27c918f5feb30a181f6",
+    "lwtr1998-09-20": "f1c8e07689385bfaf81e3ba68d074522cb56ea49197bf64e637515eb062b0e77",
+    "lwtr1999-09-19": "f1c8e07689385bfaf81e3ba68d074522cb56ea49197bf64e637515eb062b0e77",
+    "madahoochi2005-10-14.flac16": "0150cff3f3cb43e49b0716bff5a9d8e5c8c79d184ac6ae4b9177f30df607e7f1",
+    "madeline2007-02-03.cmc4.flac16": "845c6f2c2f364c4ae3c5b3ce7f047aba0bac52879aa64748901ad74e9d0c33a7",
+    "madeline2012-09-01.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "mammals2005-03-11.flac16": "58c9d07f03bc49df5829ba082cc6edcd8076c0da6fab3e02d80c3730bfafa0cd",
+    "marco2010-10-26.flac16": "ee136800f65af9f3b8e41a7730ccad5581a0f06f35e6ff6662b39c7fbe9bd8a7",
+    "markbilyeu2005-05-07.shnf": "f83ac6c818481eca42b7551ac27d2863ba6e005ff70b2770a022b224d377e900",
+    "maroon52007-12-08": "1227dc63c9abc92371265831fa32db16669f1bc776d0744043118942f554facc",
+    "maroon52008-07-25.mkh8040st.flac16": "f867ef59686bb280018d1a5d9f8b11ace0be617e21ab3ca0bee37af7ad5f773f",
+    "martinsexton2005-12-09.flac16": "e0e8890ce8b55f5f47c8eb781062f4dbe95b02e7a559e95d91d77147915d7096",
+    "mas2004-08-10.flac": "acd2dcf2d88c851dccfa25a97b03b6c65790318f92626492972ef38f5f80066b",
+    "mas2004-08-17.aftershow.flacf": "df8f928f08945ff1b82db529643e3f543ecc862df414244720c8db35f15b8edc",
+    "matisyahu2004-12-25": "4a3db0eaaf90600a8fe0a817c6e913265345d48593f6c2b0c9eaecdb7e66f7d3",
+    "matisyahu2006-03-06.sbd.flac16": "10e352b5cd68be07c6b380adbadb5e23d4ae15fda13804ec5caa241fb36be890",
+    "mattcosta2004-10-10.at831.shnf": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "matter2005-06-24.sbd.flac16": "457515f194320a95a4419b5b7cd9751328cdf4ff65d344a58007f313e0e70e22",
+    "mattwertz2006-04-21..sbd.flac": "46aa69e01b985951dc2eaca9d7233bcb0bb8a77480f96758efa4514c7edeb170",
+    "mbl1995-12-21.aud.flac16": "cfb087bc6f7ea80fd323439a11ee45a98b0b0986290565379b068bf98ab2ffb4",
+    "mbroussard2004-10-20.at831.shnf": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "mbroussard2007-08-04.flac16": "46fa93fb3ff53082eccfdba3ccf5270944ed5b7babac0ecd88b2f63e48b8ed45",
+    "mc1987-09-06.flac16": "af948fd1cd19dd0229c9c3393ac96bbb1d1125ee5368c0fb3b2091053b25afba",
+    "mc1988-03-12.sbd.flac16f": "ad6546c917e69e5398b96a8a02d40a2f0f245d9eea577c230c7d4cc1a27ddcbe",
+    "mc1994-07-30.flac16f": "ad6546c917e69e5398b96a8a02d40a2f0f245d9eea577c230c7d4cc1a27ddcbe",
+    "mcp2006-02-17.flac16": "91bc5c616111165b5a8fcb17501c3faeda80931f21e498455cb70f525e188d86",
+    "mdoughty2002-06-22.shnf": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "mdoughty2005-02-15.flac16": "569c23856e27cdc8d8d1f184711eadf7226b21f3cc9bd4730a5bf185bcda0347",
+    "meatpuppets2017-05-10": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "mec2014-01-11.hideout_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "mek1989-12-02.shnf": "b321a408d6f9b488900d2771f978716a3eb32a2a91fb652caf1c7bd3dcb9ab3f",
+    "meltone2004-03-09.sbd.shnf": "3ac7e13facd23fede49f749de7c61801e781e3588f06a52e5b18252ffa3d1306",
+    "mer2006-07-08.flac16": "46fa93fb3ff53082eccfdba3ccf5270944ed5b7babac0ecd88b2f63e48b8ed45",
+    "mer2011-08-20.flac16": "46fa93fb3ff53082eccfdba3ccf5270944ed5b7babac0ecd88b2f63e48b8ed45",
+    "mermen2002-01-05.shnf": "db5aabdc27344f0ef91e24e71ab6170c707730422f08747d9718f95ef11f7163",
+    "mermen2003-01-03.shnf": "db5aabdc27344f0ef91e24e71ab6170c707730422f08747d9718f95ef11f7163",
+    "mermen2003-07-19.shn": "f0f00ca320a9c183d33898d475d962c1173d34ee93d8e38c83854ea3f4a40daf",
+    "mfj2004-12-15.shnf": "309505e4cab08742e3fe10b62fc2857b19e8e0341e446d3f3d551ad7f9a7ae5a",
+    "mfruvous1998-10-29.flac16": "39f09c22682051b79d01c03a39bdf3193bb78f6cc9d5763db0bda83e19a149cf",
+    "mfruvous1998-11-06.flac16": "e0e8890ce8b55f5f47c8eb781062f4dbe95b02e7a559e95d91d77147915d7096",
+    "mfs1999-10-08.flac16": "8b0cca3681f947ad270add7c7da0462bfa158ff69d41ff24c23c87eb788ab081",
+    "mfs2005-01-15.shnf": "8b0cca3681f947ad270add7c7da0462bfa158ff69d41ff24c23c87eb788ab081",
+    "mg2004-02-21": "ce43edfb0ffd590daa9e422f7c9d300a971c06d78d533b9ce788ad67500cee44",
+    "mg2005-09-10": "ce43edfb0ffd590daa9e422f7c9d300a971c06d78d533b9ce788ad67500cee44",
+    "mgpp2004-09-11matrix.shn": "25bb8b13153c437fea0e369e824ce66824844ec5b29215cf6801892fdd2202e4",
+    "mh1995-08-06": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "mh1998-11-16_dsbd_44.1khz.flac": "4e161afe65c0320fc3fb3bf22c3050ffa63fd9abc848243f48ea2a9ae7238997",
+    "mhb2024-01-12.Nak700": "6cc328f5d2e10416da968b1617cf1e8b8a890eadbcbdfadfb1627449b8211243",
+    "mieka2004-07-27.flac16": "2a517926f5307fb862d8c399795c9055329e9b222eb3fbd0318105371c230ad9",
+    "mikecooley2012-02-24.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "minutemen1983-03-09..flacf": "a4bf293e8031701eb8a4482cd7adb9e28d5249affc9788b12b3575abb1178f05",
+    "minutemen1984-05-12.flacf": "a4bf293e8031701eb8a4482cd7adb9e28d5249affc9788b12b3575abb1178f05",
+    "miracletrain2005-10-22.aud.treevt.flac16": "5a1975b25f176ea4fca49bc2761b5ab57f71ec2ccae2bf47ef751c5914ff5586",
+    "miracletrain2006-09-13.sb.aud.matrix.shivaho.flac16": "5a1975b25f176ea4fca49bc2761b5ab57f71ec2ccae2bf47ef751c5914ff5586",
+    "misstring2005-08-30.shnf": "eb4e873f82c1aa633acde765a7696c4491ab3a5da7f262bab14a6f0a13594318",
+    "mj1998-05-22.flac16": "a37c0b016527ffbfd8a66e903805cbe738a99e0e455641455c8a99ecdb1ce34b",
+    "mjb1999-12-24.shnf": "2f55f7618e8f3285eafcab051b044da14b101c34cf8e32f5d545acbe073de9ab",
+    "mjennings2001-10-19.shnf": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "mjennings2007-02-26.akg463.flac16": "176c84dd8bb1b183d568c1c40cdd5bebd14856afde527a5f502de420a9aa5abf",
+    "mkb2019-03-08.aud": "9de984601f7d3cca8d1910e3c90cc97c05056666021c58f5f759ba6a24bf2c80",
+    "mkb2019-05-26.kingsandstrings.mgm300.flac24": "1f93242748ca91fced8352fe787d5d52739670b75a3f68f3f15e1b4550ea343d",
+    "ml2005-07-08.sbd.flac16": "2c11f47021ea8be24fecfe458c0a64e5610465ad2a6a8cfb06796ad1d967ca02",
+    "mmj1999-12-14.shnf": "aaffc2f50d508d964a02334b364205d76cae25d5d48ba39e9bd28f00091b3cfc",
+    "mnathanson2006-04-03.cmc641.late.shnf": "758007a93b02363f082febb172220fc787db1e812e8671b43d3f5ffd3d11e1c1",
+    "mnathanson2008-10-07.cmc641": "758007a93b02363f082febb172220fc787db1e812e8671b43d3f5ffd3d11e1c1",
+    "moam2000-11-01.flac16": "8e7f5517a0991550689507afa4a5d8d9d886adfb6b9a98db90c9a35fbc3f3835",
+    "moam2001-12-17.flac16": "8e7f5517a0991550689507afa4a5d8d9d886adfb6b9a98db90c9a35fbc3f3835",
+    "mob2004-10-16.flac16": "4f7677233d0b8f6e49aa1db2976f74d69a745147cf51f9fb71b6650977be4503",
+    "mob2007-01-13.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "mod1992-11-14-flac": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "mod1998-09-17-flac16": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "moe1997-02-11.flac": "8dc946e373258bdbe88af8e6bb12b3269f64d60539fdf59bbaf42c97764780be",
+    "moe1998-10-29.flac16": "102887e13e637714029d53814ac3bdffb5db6c8224cce12b435469343696da41",
+    "mofro2008-11-26.flac16.aud": "9c0eb8bd1dcfafd15513d361a39c8eaefc61c200a53b7c0caf8e92048e145b56",
+    "mogwai1996-04-26.flacf": "bfb050b395b2597183089631e01890d2a6a41fa7be1cad3d8004f07866eba0d5",
+    "mogwai1997-08-19.flacf": "bfb050b395b2597183089631e01890d2a6a41fa7be1cad3d8004f07866eba0d5",
+    "mojave3-1996-04-20.flac16": "960a9b18df48f5e325c252d63ca18bb0571c21ea5f2fc7df7b1cc923b808b797",
+    "mojave3-1999-04-20.flac16": "960a9b18df48f5e325c252d63ca18bb0571c21ea5f2fc7df7b1cc923b808b797",
+    "mono2010-03-21.Nijmegen.flac16": "35ddae199add427e29f8b02dd500dbf36d2051a3afa19e2a0088bd100f724634",
+    "montbleau2007-12-07": "63ce58e320ee13f67ec519b5b75b9d47a24886709b5c9ee321076156c046ce36",
+    "moore2005-02-23dpa4022.flac16": "395c32915bc2c6c5ff072eb0b7d6bb7cc43e441abff0f137a9fef8f7adb37758",
+    "morgantownrounders2006-04-22.flac16": "44ac8d94021d65e573f7f3e0f15fc1afc9b909e319eab8af795225bdc8326985",
+    "motet2004-10-30.shnf": "b27a58ae2b00302f07a11550a605490a88cffa1412c468fb3245221b2913a183",
+    "motet2011-10-29.OgdenMatrix": "b1719cc283eb40e20ff9bf910bb373e2f7e1ca39d91a620bdcb4c37f7bfddfd5",
+    "motet2011-10-31": "7d4a809786da07adf4dd5ed6fd9480a1f06d7924f7a3e0ef2d0eb6bc185ea70f",
+    "mountaingoats1998-02-06.flac16": "536a9324418ca37f90afe84e302ffa307482f84407e189ac1791e532bc0ff011",
+    "mrblotto1996-10-04.shnf": "3fa7a518aa2a7f512223b2744762342ad64dcec525c0b035d3b796094a068a6b",
+    "mrblotto1999-01-08.flac16": "a18900fdf6b206629e1488991c90d1a482a6b92c82a48b55b7c0b59c0ab2547c",
+    "mrk2021-04-03.cmc622.cmc65xt.sbd.matrix.flac24": "60dd56f80ec1aa985aba3c58e696702204446c0e2f7fff34389a94dda2e61a1b",
+    "ms2001-06-08.eac.flac16": "226f9431f4d0af555e0d0b92c644dced057c112cc19f53b0b1612798ee2561f2",
+    "mshertz2005-07-16.early.aud.shn": "481f1839e6dbb97bb541ec0e16f05f096cea2398660c10d137e2bc69109a39ac",
+    "mshertz2005-07-16.late.aud.shn": "481f1839e6dbb97bb541ec0e16f05f096cea2398660c10d137e2bc69109a39ac",
+    "mss2004-03-13.flac16f": "9a194f3058ef5c8479f752a2b6ddbeb2dc494dd7985d6d86a7050797864e5241",
+    "mss2005-07-29.matrix.adub.flac16": "4684936159a6b846b1311d29de34457e9519b46d64689a4f9b4e8037b4bb7d34",
+    "national2010-08-18.aud.flac16": "36aca73267b0994150b92a9638c41f44c7cb796a75535da77d4bd2554fa8ca32",
+    "national2011-02-24.dpa.flac16": "4589b382df4804e3eb5e0aa681b65d95ab73ca6af9e0815f36211af3c6f77083",
+    "national2011-12-12.beacon_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "nbr3pm2021-09-11.schoeps_mk22_mk4v_sbd_matrix_flac24": "872a16099a575e7152a2e2b99d791061fca91068b92b3c71c5c106f105f0d67b",
+    "nbr3pm2023-03-11.schoeps_mk4v_mk21_sbd_matrix_flac24": "872a16099a575e7152a2e2b99d791061fca91068b92b3c71c5c106f105f0d67b",
+    "nbs2006-02-11.sb.nak.matrix.shivaho.flac16": "5a1975b25f176ea4fca49bc2761b5ab57f71ec2ccae2bf47ef751c5914ff5586",
+    "nbs2006-05-06.sb.shivaho.flac16": "5a1975b25f176ea4fca49bc2761b5ab57f71ec2ccae2bf47ef751c5914ff5586",
+    "neighbor2022-05-06.ck93.flac24": "79ace002ae12610f24bf8feeb3cfac9a47335512c46b37300823348460d5f1ca",
+    "nm2004-04-01.flac": "a6ed57c85df0420af6ccb3ecc4c5c0c502f144bb67d51c055a19a93f3e4b817b",
+    "nm2005-09-20.jeffnphil.wagner.flac16": "d4bcc47d90add34280e9adc0841307877e4094bf0794ae21302e179bd4781e94",
+    "nma2010-02-27.sp200.flac16": "6d72e952e272666be1e2a53dd38f011e688ecf51cf8fdc95a0db20747a3cec98",
+    "nmas2008-05-18.mbho.flac16": "5227223b9af14b592861959fc74a061ce8f188772cc50b4623a572e40bc6b265",
+    "nms2020-01-30.AKG_C1000S.24bit": "7f893df82ce5dc0e3585419b21a0010a0621baae7c128adc14ccf4407868ff97",
+    "nn2013-05-18": "059110b892aa03dab4091f1028c51c3e6134418d1759778616e02e9267f944ad",
+    "nos_bonerama2020-03-07.travitz.schoepsCMC64v.flac16": "f4ce073991d19333bba97d0437da886c4f150a9bdcd9d34a6d0a243f4eddf06f",
+    "nrps1969-08-07.sbd.kafer.boswell.smith.133382.flac16": "9aa067c52acf0445c5bfc934c75f0e8c514d3ed03e94ec632034b8f1d6c22e62",
+    "oar2003-03-13": "0cc8e5c38a44e3c17d366d90527bc8a12feba1a7f2d20068545efe1999447950",
+    "oar2005-03-25.flac16": "873b513d0874ab6397f548a6d4dd02c3aed74d8e7c6c3b41d4e3daabe93d345f",
+    "oar2006-01-14-sbd.shnf": "46fa93fb3ff53082eccfdba3ccf5270944ed5b7babac0ecd88b2f63e48b8ed45",
+    "oej1994-05-14": "d097dd19b43abf284a671d0caeb17e166d36a0a0f49eb488f1a8df5f5f00606e",
+    "oej1996-04-20": "fe3c9d5bce6e22f543d5f59d0d6a891c92282c630108cf276286ee28bdb7b6d7",
+    "oldshoe2011-09-10.flac": "30793c17f39f0d2426bc26c34ef930b888642c7c7cfa879b8fd09806bdd97d49",
+    "oliviatremorcontrol2012-07-26.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "osp1997-07-07-flac16": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "osp1998-06-20.shnf": "71ee1c832f660ff40721d6d1775f139dda96ac8958dd68bab4e5d9dd0d992d31",
+    "oteil2017-08-25.flac16": "482b21d9c0528d3e9eb20e05a3480d06482f94bf32a72a93b5d630be71271b03",
+    "oteil2018-09-23.sbd-matrix": "5d30e3d9a726e4aff81924779d0d67148806beabdecb0f5afaffa53a562f38cc",
+    "oteil2018-12-31.travitz.litz.sbd.schoepsCMC64V.flac16": "622f6ae7c7b2b0f36d9ae389c5fe450c55cb258f33034ff3659af4e45d470c35",
+    "otr2005-08-27.flac16": "c958d716201ccc9678db15d12c9049f6bfc3f4e2a11651c055daae96a179e3c9",
+    "otr2011-11-15.aud.schoeps_cmc34": "74808902643b6bff4db508fe687f53607f5073a3144c108d83aa2fdd7d6b9a74",
+    "ours2003-05-15shnf": "263896d537d2b9991506782cb89a90177efa8e6960de3c2cff1bbfadad7b8edd",
+    "ours2004-05-26": "263896d537d2b9991506782cb89a90177efa8e6960de3c2cff1bbfadad7b8edd",
+    "outformation2006-05-28.ccm4.flac16": "fa364c519c21d8655dc7b9e6718d7e2353d35931ce1e79934db07ee11f5cd173",
+    "outformation2006-09-08.matrix.flac16": "2e3908cff51e64c1861c93acd157ad03c235cabc168d0ca332994d673d12d059",
+    "paf1964-05-01.134492.sbd.flac16": "b8bb4cd9409244b2fb36e3ec825dad8f85e4b85c66d7f124a66b89b50da5065b",
+    "papadosio2010-01-16.mtrack.sbd": "36980f0ea17e8b60e1d510fb5fb87412430ac2d25ec478abea6968f295947dbb",
+    "papadosio2010-08-21.flac16": "1442a9222836227eacd70e1ead595502242a10d92380911b49b531ad1cfe6440",
+    "papamali2004-10-25flac.16": "c99b9721bb7f5dd143d4436f6774108fb77865b96be8417ee8e5028d09d17afa",
+    "papamali2005-08-04": "7d4a809786da07adf4dd5ed6fd9480a1f06d7924f7a3e0ef2d0eb6bc185ea70f",
+    "paradigm2008-10-31": "21e714b4733a6f18478e1624f88cd30efc86f1ce39b50f1e40f6a7625d012f8c",
+    "particle2006-03-17": "e22076b003d1ba777fe40feadcb81bdfd3d6446a5fe8b4c15134e24b467ea5ea",
+    "path2005-03-19.flac16": "1a3531ea5f25b2df4be25eeb4386660a9a2800194d5365c6738c2cf99f9529ae",
+    "pattersonh2003-09-29.flac16": "9d9401e659bb420a76debf585c44f29d28c701d467551d75a0599ca524797890",
+    "pattersonh2005-01-13.flac16": "0ec4a953261684a1e19dbccae771bf03c7b5ba12e0f62c02b4374ee7b0a9e31a",
+    "pb2002-03-08.flac16": "130beef39b1677134857aea86d8b606aa3fda482a854ed1f618d5c6ff698ac99",
+    "pbft2003-04-19.sbd.shn": "799285259dff792e4c761f0ddd60b02cb034479e68908dfe45e970e69d417491",
+    "pcr2005-01-22": "a9741525634ec287d904b05ebab71f465f7114a6b0da45127fbefdebd0c7c988",
+    "pcr2005-02-16sbd": "a9741525634ec287d904b05ebab71f465f7114a6b0da45127fbefdebd0c7c988",
+    "percy1999-02-18.sbd.shnf": "50e69b8f104e15edc819a7e372756d6dee3c82cd56ffecb3ccd1a08f2ab11031",
+    "pg2007-09-15.cemc6.matrix.flac16": "d0d8dc613f39c500fa3ad36128b7a3f32e7395cd31914df7fa0de42eaa2f9d96",
+    "pgc1993-01-14.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "pgc1993-02-26..flac16": "04cec6e4b61339209905025e2525bc6f574e78b2ce86f0cd7cd514554ac971c1",
+    "pgf2002-07-03": "b04afa74f2e7756f7ca439df570cd423ff1e47dbee77e2b014257add5442b250",
+    "pgf2004-01-23": "b04afa74f2e7756f7ca439df570cd423ff1e47dbee77e2b014257add5442b250",
+    "pgroove2007-10-31.mk4.v3.702.flac16": "e0eca122f3b99266e3658d1ea22242436dcec25da0de525b1f5a91ad6745e1f4",
+    "phix2003-09-20": "34955820ddad8cf49993ab83984c25ec3c541c37ae229b95aec506f58ec75350",
+    "phoffman2020-03-11": "268efcea0b321cb13df175f424f64bb890e09d24cb612a35b7959e2fd5a47d50",
+    "pinback2004-04-12.flac16": "d1ef1e6ff6a15099143549f0eab809e15e403aeb66b551ae90fab76664bc3251",
+    "pinback2006-05-31": "8626e22c1f8ec03e6e83b6cde1f898ba24964a9631ed735f50b086bf0e232be8",
+    "pmb2004-12-31.shnf": "980ff6e827a387a063ca56a2f3147ab8bf15e5f51d602a0375a7c77fe4aef7bf",
+    "poly2005-11-26shn": "45f4aa85fc8c9c1b403edc7e57456a34c7239da26e0fa9980c79628cd5dfcc0c",
+    "portables2001-04-20.flac16": "98dd521bfabd22a4a7bfcd098069f3c46d21860b5a3bef1c6e33f68db4ba3d35",
+    "possumjenkins2012-11-04.CA-14.flac24": "822a5da921b5a4c1b5795e3ca80a2dcaa3084b3c1d0b7dead93f347bdc79fe60",
+    "possumjenkins2013-11-03.CA-14.flac24": "822a5da921b5a4c1b5795e3ca80a2dcaa3084b3c1d0b7dead93f347bdc79fe60",
+    "pppp2017-12-31.aud.flac.16-44": "e76491d5d80ddfafde9403221235930d764a7d363e553725ca0ba2675d69874a",
+    "pppp2018-03-01": "35d4cbcb7eae410edc5060c80203405a15140e1a77f81a1fa4816bac8a1ca9e7",
+    "ptf2015-10-30.schoeps.mk22.mk41v.sbd.flac16": "872a16099a575e7152a2e2b99d791061fca91068b92b3c71c5c106f105f0d67b",
+    "ptf2016-09-23.schoepsMK41v.sbd.flac16": "f4ce073991d19333bba97d0437da886c4f150a9bdcd9d34a6d0a243f4eddf06f",
+    "ptm2011-06-04": "e1d520ba9afdb8a4d781cbd54a5e0ead2b2cb020337c79530c542fcaaec5428f",
+    "ptr2006-01-21.shnf": "1b085bf06854dcdcab86a0c9649488da568a0fe5a1a632928daaf8092aab38ec",
+    "qms1966-11-20.158177.sbd.sirmick.flac16": "acd436d8bc5974af20b3b649838f2862c0bae205ebe528e8f8db5f57cc4d1ba6",
+    "qms1967-12-31.aud.boswell.smith.xxxxxx.flac24": "acd436d8bc5974af20b3b649838f2862c0bae205ebe528e8f8db5f57cc4d1ba6",
+    "qst2005-12-31.flac16": "dd8798db585b8dd7bc0678a4cf98cc2f470228fede4b07553b318faabb26ea5a",
+    "rad1983-10-14.flac16": "3b2a87ac613938d3891b641308bcf32b055bdd52ef09f3d9a46c840c0df19527",
+    "radams1999-07-22.aud.flac": "ace9b30025e92f6c1bf8c52e2e648974aa2f929034352f999965d40fc90e6a6a",
+    "rads1980-01-14.flac16": "a6ed57c85df0420af6ccb3ecc4c5c0c502f144bb67d51c055a19a93f3e4b817b",
+    "rai2006-03-10": "4bbf00135782f573aefd8d9be00f81ec302deb26d43ac706d9b9c13dac782501",
+    "rainer1983-12-05.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "rainer1986-04-08.flac16": "3937a3be1ce8dac00dbe6c02ad2674fff9bdee1814bd770b0d999937d22c6c58",
+    "rana2002-03-22.aud.flac16": "a923bed62b01245c25146c302667ba256b1da88a132a24fd0f6144539007e4a8",
+    "rana2004-04-21.SBD.flac16": "a923bed62b01245c25146c302667ba256b1da88a132a24fd0f6144539007e4a8",
+    "rane2005-04-15.shnf": "46b00ac4775e3c2f2fcea6acd5a4b6c8f981e6dfc4d1e5e9e4c1230827a96c73",
+    "rane2006-07-21.mbho.flac16": "46b00ac4775e3c2f2fcea6acd5a4b6c8f981e6dfc4d1e5e9e4c1230827a96c73",
+    "rane2007-01-12.mbho-v3.flac16": "46b00ac4775e3c2f2fcea6acd5a4b6c8f981e6dfc4d1e5e9e4c1230827a96c73",
+    "raq2006-03-10.flac16": "ac9ff6b9b082cd7a40d0e0801b1799763d64c24cc776b04b9fbaaa8ceca006bb",
+    "ratdog1996-06-26.aud.shnf": "40e03824dd2253d28ce089e206a9a67ecc2c1c28d0f6bcc47a6c3e8ebbdbf886",
+    "rclyne2005-08-20.flac16": "052ae20e21b0084491881d833251eafe2cd2229effe66a2770986a210c1bcd49",
+    "rcpm2006-05-05.flac16": "5893fdc448d1f36bb04721e8dd67039fa0ee72a9e1c91637b75d4ec17e9682b4",
+    "rd1995-08-09": "b8dce1063e28637789acac69fc432a9e4ca047cb4282b074c9d13048f492f838",
+    "rebirthbrassband2006-30-06.rebirthbrassband2006-30-06.flac16": "bfa7ae983c477ce60aa09ed8bff284e4c0b08cca513443449a7e39ce906281ce",
+    "recipe2005-11-12.flac16": "578ee812e53d4666f2d200989353a780b71b928c23bfae24fac109bb4a6bfc1d",
+    "recipe2006-03-18.sbd.flac": "578ee812e53d4666f2d200989353a780b71b928c23bfae24fac109bb4a6bfc1d",
+    "rfl2001-04-20-flac16": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "rh1978-07-22.sbd.ververelli.miller.113045.flac16": "fe043971b59fae046899b2464033699e4a91a37653ee1bff54aefb10f67a3b76",
+    "rh1981-10-31.nak700.flac16": "acd436d8bc5974af20b3b649838f2862c0bae205ebe528e8f8db5f57cc4d1ba6",
+    "rhd2006-04-07.mbho.flac16": "20971c10b280c2d1c434b38c548a9c68a1a1bf75d17061f638697af2b5e1a80e",
+    "rhitchcock1989-06-15.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "rhos1996-11-03": "489fa46c83515ee0791e06473dfe251b591d6a57e5baa570c4f0745314ada5c3",
+    "rhythmDevils2010-07-31": "e1d520ba9afdb8a4d781cbd54a5e0ead2b2cb020337c79530c542fcaaec5428f",
+    "rhythmdevils2006-10-24.akg481.flac": "9e702f0571493b757214efb9b236c3415a49b2c18383a4f7b81e4166e123e643",
+    "rjtt2006-03-11.sbd.tarnowski.shnf": "72006957d18abf34de61a3a2e1cf1a48613fd311bb93e85c01160addc0bed7b7",
+    "rjtt2006-06-17.sbd.tarnowski.shnf": "72006957d18abf34de61a3a2e1cf1a48613fd311bb93e85c01160addc0bed7b7",
+    "rmidon2005-09-24.flacf": "e50578d2399ac8eb2e1af2eed87741ba5ce4830c6d67fdbb1abdd1aed254256e",
+    "rockert2004-04-19-flac16": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "royalwe2005-07-10.shnf": "123ba5d60579ad08e141ce7ace7b2f377d42dadb059023d7a3c47635594a57b0",
+    "royalwe2005-12-03.shnf": "123ba5d60579ad08e141ce7ace7b2f377d42dadb059023d7a3c47635594a57b0",
+    "rr1992-02-20.shnf": "45bffbca03181e94c12d9529209f66379e94f1440574e7d2f50f476fa4c21d0c",
+    "rr1995-02-02.shnf": "31b201e130f81c2f4df73cd29c4f89366a75dc7aace535f45b5f16e9020a41db",
+    "rr2005-11-26.flac16": "e0e8890ce8b55f5f47c8eb781062f4dbe95b02e7a559e95d91d77147915d7096",
+    "rre2004-12-30mexicali.flac16": "0475b49c3ae092fc46c8ee9c821d69baf7f88fad9cdf07a1c8cfdac92b7bb06e",
+    "rre2007-03-31.DPA4022.flac": "58c9d07f03bc49df5829ba082cc6edcd8076c0da6fab3e02d80c3730bfafa0cd",
+    "rrfb2003-03-14.shnf": "61f157b8a27270f7ce848f3bdb5223465ab35a3806545ae461484755a2270995",
+    "rrfb2003-11-11.flac16": "20971c10b280c2d1c434b38c548a9c68a1a1bf75d17061f638697af2b5e1a80e",
+    "rs1999-08-10.shnf": "17a7e5b9d9417b1686744097d5ca54308971f2f3868325114793c0e262333ccf",
+    "rs2005-08-03.flac16": "e489e76f20e64959dd4169ca05c969df47e6a51dc1e60861060d3eebb00c28ba",
+    "rt1996-11-07": "489fa46c83515ee0791e06473dfe251b591d6a57e5baa570c4f0745314ada5c3",
+    "rt1996-11-23": "489fa46c83515ee0791e06473dfe251b591d6a57e5baa570c4f0745314ada5c3",
+    "rugburns1996-12-17": "36acd3f89be2dc4dae599139938a5180192d6758f5494f934d06049f6c8afb52",
+    "rugburns1997-05-16": "36acd3f89be2dc4dae599139938a5180192d6758f5494f934d06049f6c8afb52",
+    "runlittlerabbit2012-08-06.flac16": "e15e9ffc0c4a6e3f710cd90b1ca3c7c2eff752fe7b6dbcc72a318fb49d623129",
+    "rwsho2005-08-21.flac": "580934f549fe2b977aed44442cab9918904c700b7923358b5b8f0a828873422d",
+    "ryanadams1999-10-22.sbd.flac16": "153621fa9dd2e6697c72598abfa767a447aa5ef89debbfff4a77cb61c2ae7c4c",
+    "ryleywalker2019-03-12.unionpool_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "sadeghi": "c3cbecd41d826bd71db73baa6e820507dfa8051ea90498d965c90608783e0229",
+    "sage2003-10-31": "ddd12cb8c6fad7a64ccd86f035c1ea155ca171764554a02ac75b50c0703652a5",
+    "samples1994-01-16.DSBD.shnf": "3176ad5a5e6d53f4630023811d65ef5db107a5c69efef9c61f53ceec8ea94c37",
+    "samples1996-10-19.sbd.flac16": "d9e4b4b8b4dd3b44121e908db50a374a5d377e2b2f1eafa2fe483b1ca9226054",
+    "samples1999-11-12.sbd.flac16": "d9e4b4b8b4dd3b44121e908db50a374a5d377e2b2f1eafa2fe483b1ca9226054",
+    "sartr2025-11-06.mtx.lynch.selleseth.flac24": "a9741525634ec287d904b05ebab71f465f7114a6b0da45127fbefdebd0c7c988",
+    "savak2023-12-01": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "sc1997-03-12.flac16": "1778cd5a8699edb871d6f76982328c0ad5f8c110c7d6ac543a75cb0d1fca1cdd",
+    "scc2005-03-11.shnf": "e56a6cce7d8474aeb9834f3e6951de49dc2bc9405a98d1ae26f7ef31246d8001",
+    "scc2006-03-25.flac16": "6b26b6d3abd824a5401869fc6539426c7e8fe5351b34178c87180bf9063a4a4c",
+    "schwag1993-09-20-flac16": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "schwag1994-12-11-flac16": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "sci1995-11-12.shnf": null,
+    "sci1997-03-29.dsbd.flacf": "cdf55da534dbe985686744e3186e127d5dcdbe2363815528ee2c2fd4bde84d03",
+    "sci1998-03-28.sbd.shnf": "da9a52443415b32f4e674005630c8c9a06742b67d22efcea057fbac6b531225d",
+    "sci2000-08-12dsbd": null,
+    "scots2005-07-08": "36f7135b40fc0cd82f02ea97b3edbf6f96d3994de9b4054089c57998b8bfa679",
+    "scots2006-05-27": "36f7135b40fc0cd82f02ea97b3edbf6f96d3994de9b4054089c57998b8bfa679",
+    "scottsharrard2019-07-28.litz.neumannKM150.flac16": "622f6ae7c7b2b0f36d9ae389c5fe450c55cb258f33034ff3659af4e45d470c35",
+    "scr2002-07-07.shnf": "91bc5c616111165b5a8fcb17501c3faeda80931f21e498455cb70f525e188d86",
+    "sdo2005-05-07": "b332472b143b8b4d6179825e89c2f325a27e4342ff57f6e5ea2e5706d91f2a62",
+    "secgov2006-1-21.matrix.flac16": "0b6f1b7b244c4cf1a865d76a9219cd2017088ea90af19727eb5f21690a13fa93",
+    "sesb2005-07-27": "b332472b143b8b4d6179825e89c2f325a27e4342ff57f6e5ea2e5706d91f2a62",
+    "sf1997-11-24.shn": "ee136800f65af9f3b8e41a7730ccad5581a0f06f35e6ff6662b39c7fbe9bd8a7",
+    "sf1999-10-05.sbd.flac16": "cce4a85855d2dacbd6c7ecbda992424f03f47cc794edf5e336e41a9e40eb0fcb",
+    "shakedownst2012-08-11.sbd.kindrec": "9219f01eb3765ab1aaeac3a045e2cac7fb7548ac52a168e3144a3f737009f0de",
+    "shantee2003-05-31.shn": "1255597d4088b9e007d8b84d610c40da73a220351ff9fb17285112530c975569",
+    "shi-tones2002-06-27.flac16": "9179910a83b39cf2a395746b80a9ffdd83d7c8c7ff9c7fe7c5a26601d8a53f47",
+    "shi-tones2003-01-30.flac16": "d210c7d9953b901cdd44bcc28ebc70f1285c4b6df17f48dbbab4e30726306cf1",
+    "shi-tones2004-11-11.flac16": "9179910a83b39cf2a395746b80a9ffdd83d7c8c7ff9c7fe7c5a26601d8a53f47",
+    "shinyribs2011-05-27.matrix.flac": "53310c1041b155ddce65f7140a1ba63b82a0f8af09ca0d09488ab1d77f6d8894",
+    "showdownkids2020-02-15.sbd.flac16": "60dd56f80ec1aa985aba3c58e696702204446c0e2f7fff34389a94dda2e61a1b",
+    "simplicity2004-04-03.shn": "c02d47335056f171f72b2666cf585c679c0a45bf4b301f4be63b07483acdad7a",
+    "simplicity2006-06-22.bells": "def35783fedc2d654bb1241a8e87600fc38f46f6beb70dda563ba076d0de9d88",
+    "skb2003-02-15.dpa4022.shnf": "72324a44512a3ad70a134e2db2d9e4327c24edb31493800f125c7035cae1c7ab",
+    "skb2006-01-22_16bit": "7daa6a37790f4e7482a969a25938e694cfee884e656018de04791a78bdfcea9e",
+    "skf1997-01-25.shnf": "85027becff55d0f01a7d2e43029db562da384402dd99df38d8f9a832fd7ce72b",
+    "skinnysingers2007-09-13.SOUNDBOARD": "bb1952aef799f131c84087d6120806ad63e0f91628543dd512df1ffb215d5502",
+    "skypocket2004-07-20": "6cabb46fcbd708bb0408dc64dc39b3853ef82586c19d0d0b564f5a02c694e873",
+    "skypocket2004-10-29.sbd.flac": "6cabb46fcbd708bb0408dc64dc39b3853ef82586c19d0d0b564f5a02c694e873",
+    "slac2002-02-15": "0f7bb51b7608813c4ef5ccc14527786d8d532c05143b9c25430aa2d363bff616",
+    "slb2005-01-13.matrix.flac16": "b3eea6f743f7dfd6eaf82ba1095952e58f40b511816d0b37c31f338c1ba1ce5a",
+    "slightlystoopid2010-07-03.flac16": "a4bf293e8031701eb8a4482cd7adb9e28d5249affc9788b12b3575abb1178f05",
+    "smk2003-07-28.flac16": "89f0505903e5fff3f0201638a3b3c4363b71a276ed6d8230390f03ccfbd5b8b8",
+    "smk2005-01-15.flac16": "7c880dada464ac513a3fb4242a7e192bf04596b2a898d8d036bb91e925a2cc8e",
+    "smk2005-04-01.flac16": "0938669c832335fcd50463511b125825ec98337d71a9f1fbcd2a2106a0c56f87",
+    "smmd2025-07-03.early.aud.mc930.flac24": "725d0696ef757c5d5be769faa3d177af905836466d3fb72a7878ace8fb5e3313",
+    "smt2006-05-22.matrix.flac16": "d59cd20442249886b571c3911bbee4c881d4cdb68f94e014b21cfa78ae487e9a",
+    "snarkypuppy2013-03-30.bsc2.flac24": "130beef39b1677134857aea86d8b606aa3fda482a854ed1f618d5c6ff698ac99",
+    "snarkypuppy2013-04-04.bsc2.flac24": "130beef39b1677134857aea86d8b606aa3fda482a854ed1f618d5c6ff698ac99",
+    "soclo2005-10-22.flac16": "d222e528b8b40367d94624a061c7e1b4f7e0a3229f1eb8378b6313bc696d16ae",
+    "softboys2002-10-25.flacf": "bd2eee51b9c55a4fa768f0f77a3cf95286810e7cd40ae9d6c528d3511918952a",
+    "solos2005-12-26": "7f7cf86cd972249f71cdcd85062ec69d15af7bfb3562398812c097cc5976996d",
+    "solos2006-04-17": "7f7cf86cd972249f71cdcd85062ec69d15af7bfb3562398812c097cc5976996d",
+    "songsmolina2017-09-08.hopscotch_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "soty2003-10-24.flac16": "283c236852fab5721cc84988a7a34b7f6e589cfa6eea7d001b2955f2bb9377f6",
+    "soulcoughing1998-10-23.mk4.flac16": "5227223b9af14b592861959fc74a061ce8f188772cc50b4623a572e40bc6b265",
+    "soulive2004-11-19-04flac16": "cccceead1bcb5eaa795c428ef92a083fb6516531469d484facc8a1b94f1a298a",
+    "spafford2018-10-05.mk4": "9c5dcda5fdc9c9da1bfa6f5203611910cf4a4969f46af331e2353e7d3a1a6be0",
+    "spin1989-04-15.flac16": "a6ed57c85df0420af6ccb3ecc4c5c0c502f144bb67d51c055a19a93f3e4b817b",
+    "spin1997-11-04.bk4021s.AD1000.flac16": "b511dd950f512c9f4d08583a06d1acda95c2008f9b67bca5d3d99ee9cd4ed8c6",
+    "spins1991-02-02": "646b018ed17a8137d37ccdaf87aaa4ed1a1874f6647ebed948ac24260b7f649d",
+    "spintrav1990-10-31.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "spintraveler2012-10-13.tlm170.flac16": "646b018ed17a8137d37ccdaf87aaa4ed1a1874f6647ebed948ac24260b7f649d",
+    "spoltz1998-02-04": "36acd3f89be2dc4dae599139938a5180192d6758f5494f934d06049f6c8afb52",
+    "spoltz2004-05-28": "36acd3f89be2dc4dae599139938a5180192d6758f5494f934d06049f6c8afb52",
+    "spoon1998-06-10.aud.flac16": "007e6b06118997614879985b2d97aea5000df51ee39f9fa46eed046f4b537f16",
+    "spoon2006-08-12.flac16": "91257e17f054f23822b4e25abd5bb827e390ffa3fc74030924fac6a81aafb42d",
+    "spr1998-12-31.shnf": "8b0cca3681f947ad270add7c7da0462bfa158ff69d41ff24c23c87eb788ab081",
+    "srrvb2004-04-24.flac16": "38bf6bbe6fbea440506393835e2b32faca1ea76ad62e20caae4535ac444ddf6a",
+    "ss2006-05-28": "e26295099c23efe7deb42c6b5be57e480cfe41b57be3cdacc960df9ad49cd69a",
+    "ssteadman2005-11-01.km140.flac16": "a5a4422a06ac93585e6eddbf4a57a7498a7a462f7eee517870f469f320843fff",
+    "ssuckers2004-02-02.shnf": "96125a9ad457a3edcdbc19bfc48a131817a6b8bf535ac5af7a24550e843eb01b",
+    "ssuckers2005-09-17.shnf": "96125a9ad457a3edcdbc19bfc48a131817a6b8bf535ac5af7a24550e843eb01b",
+    "ssuckers2005-11-12.shnf": "96125a9ad457a3edcdbc19bfc48a131817a6b8bf535ac5af7a24550e843eb01b",
+    "ssun2021-02-13.SBD.Flac16": "a455a64d6cd366350ca339fc3a290b599937edbfd873f33c43bb4fc75d0b76d8",
+    "stevewynn1990-11-18.flac16": "4e8815e72659822e1e8dae31197c301e1d47f3594ed5ed559934ebd5b87f7c17",
+    "stillwaterpioneers2007-04-04.matrix.flac": "53310c1041b155ddce65f7140a1ba63b82a0f8af09ca0d09488ab1d77f6d8894",
+    "stonefloat2004-10-16.flac16": "e6ce228e1c8299af5ab9fca7405c326743a5eb805e3d86313248ce3885764031",
+    "stonefloat2004-12-29.flac16": "e6ce228e1c8299af5ab9fca7405c326743a5eb805e3d86313248ce3885764031",
+    "stpnwf1972-07-02.stpnwf1972-07-02": "95a6cca19a2dc0b71ff00dc90959688b9b8d8f0275af16756ba07cda289cb4b7",
+    "strange2013-12-25": "63a7c7d18caf72115f1462ec0b45de887ffb8b716ff8d567d86feda69c0635b2",
+    "strange2015-07-17": "63a7c7d18caf72115f1462ec0b45de887ffb8b716ff8d567d86feda69c0635b2",
+    "strange2015-12-25": "63a7c7d18caf72115f1462ec0b45de887ffb8b716ff8d567d86feda69c0635b2",
+    "sts9-1999-08-20.shnf": "1a3531ea5f25b2df4be25eeb4386660a9a2800194d5365c6738c2cf99f9529ae",
+    "sts9-2002-04-04.shnf": "1eb6b05f062004c0c3648ca6bcf1248775ebec39bb373d44f35443d1d31a5596",
+    "sunwatchers2018-12-09": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "sunwatchers2019-02-22.glove_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "sunwatchers2019-05-10": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "superjam03-06-15.shnf": "f514aa77bd584d25908928e01bcf37adf9414304615df2c00a01325d243b69b8",
+    "superjam2004-06-134.flacf": "df8f928f08945ff1b82db529643e3f543ecc862df414244720c8db35f15b8edc",
+    "superjam2013-06-15.flac": "f2d9775edbda0945f60cc95d874b181a0e65adcad09c9af77ca6edcf1b4036cc",
+    "surfcoast2004-04-16.flac16": "c284ffcef174f47f43da666c2a914850ee4ddabaa9a3e52ef53cda94c49bab9e",
+    "surfcoast2004-04-18.flac16": "c284ffcef174f47f43da666c2a914850ee4ddabaa9a3e52ef53cda94c49bab9e",
+    "surfcoast2005-03-06.flac16": "c284ffcef174f47f43da666c2a914850ee4ddabaa9a3e52ef53cda94c49bab9e",
+    "sweetbacksisters2011-07-15.mk012.gmb.flac16": "49d96dc5d499e89a76cef9fd6b86a021b8a26fcc6d2eb27c918f5feb30a181f6",
+    "swrembel2010-03-07.tlm170.flac16": "646b018ed17a8137d37ccdaf87aaa4ed1a1874f6647ebed948ac24260b7f649d",
+    "sy2012-06-09.sb.nak.shivaho.flac16": "5a1975b25f176ea4fca49bc2761b5ab57f71ec2ccae2bf47ef751c5914ff5586",
+    "syb2003-04-18.shnf": "2622fd95b3647ad9472a4a28025ea0990bc9a05ebfbf942bc3c86c32dcb09eb7",
+    "tND2004-11-27": "002b78a93e586893b00272ed8119dd8d34589a882746f1a2e7a3bf6c38ad25cb",
+    "tallyhall2006-07-18.aud.flac16": "1261575133676bda3c8830d3c159267571ce55ef5035dc022ad3450482c4cf17",
+    "tba2011-10-31.mhow_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "tbg2003-05-31.flac16": "b6e487f2c75cf63d299b473b2f452484839184a18d7e82f99f077c0e74c84127",
+    "tbm2005-12-03.flac16": "1c245b46cf3ba9f091b142bb5835e12675444f3c2bc7e11e2d52d09caa78a91b",
+    "tbm2006-01-26-AKG483": "1d00b9efbbbb55b0baf3e0c303e661782e41f7c6d211532901ef68fe3c09f36e",
+    "tc2014-11-12": "86690ce42d02adffef947c7c1509459799d06895f00998884f18ae6f718469e9",
+    "tc2022-03-11.tk62.logrippo.flac24": "abf7ff5a21339d28c88b4e5a1f8d83c76cd0638dcb883e3e5b0673986393ba58",
+    "tc2022-04-24": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "tc_nakmatrix2022-01-21": "0483d35bf5af77df9c3fdc39bb92cdb987d525f9460487cbecf77b4135844d57",
+    "tedleorx2007-04-30.aud.flac16": "1261575133676bda3c8830d3c159267571ce55ef5035dc022ad3450482c4cf17",
+    "tenaciousd2006-12-03.mk4v.flac16": "5227223b9af14b592861959fc74a061ce8f188772cc50b4623a572e40bc6b265",
+    "tend2000-07-22.shnf": "45bffbca03181e94c12d9529209f66379e94f1440574e7d2f50f476fa4c21d0c",
+    "tfdi2011-10-09.akg483.flac16": "6d72e952e272666be1e2a53dd38f011e688ecf51cf8fdc95a0db20747a3cec98",
+    "thedead2009-04-14": "c7c121a566787142f4a765a9abc6bca3499de4e068168d03bc679876ef7ea2ee",
+    "thedead2009-04-25.jwmod.akg.469.v2.sd722.suraci.sbeok.flac16": "851ca989baacb9c87e8833d51ee68bb3665f96ab5090f929fb11e2cd6bf06508",
+    "thefunksessions2019-05-21.CA14.cards.AUD.SBD.Matrix.flac16": "77e72c67c38c4bb6e65ba9461146a6c900037b64b87060fdcbf9ad6d15f21790",
+    "thilton2006-04-20.flac": "46aa69e01b985951dc2eaca9d7233bcb0bb8a77480f96758efa4514c7edeb170",
+    "throwingmuses1991-05-24.flac16": "2a1d73ad3c086cb15315a1143a84d3577cece6ca600eea2ec5eccee7bbdbc2b6",
+    "thsb2005-10-19.flac16": "b5cfe0b798fb60f2c74c390268694460aa62cb5ffc23eed586b4209929ba4884",
+    "timreynolds2007-04-04.spc4.ua5.sbd.flac16": "3ade9ae2277c2542357cb6d87bf0c5f45ee073446a2626f9db206f87dbe4afd7",
+    "tj1997-10-19": "d9122dd1c6aa3babcad74eb370cd6cf073be9ccb7195e8ebf9e9d6fde96f8048",
+    "tk2006-02-03.flac16": "5714fdfc203d76c04dddf4a46d32f66a0828c506093eed0b57ee6f0de0e2d2ef",
+    "tlg2006-01-13.mbho.flac16": "20971c10b280c2d1c434b38c548a9c68a1a1bf75d17061f638697af2b5e1a80e",
+    "tlg2006-03-25.TL.flac16": "0c09dc2685ca3569e7fae53b679b072a6ea43189a86becf1a81b8f7146261cde",
+    "tlss-2003-07-19.flac16": "38bf6bbe6fbea440506393835e2b32faca1ea76ad62e20caae4535ac444ddf6a",
+    "tmg2005-06-23": "8626e22c1f8ec03e6e83b6cde1f898ba24964a9631ed735f50b086bf0e232be8",
+    "tmngo2005-08-06": "c03c0f836c862519e5e6cb7333b809c76c5545a87aaf09fd89f224ea63fb2c64",
+    "tmt2004-03-19.flac16": "63454249424e29ef90a4136c9f415998fbf574d13120dd209676232a13159361",
+    "tnd2003-02-21.c3000.shnf": "cce4a85855d2dacbd6c7ecbda992424f03f47cc794edf5e336e41a9e40eb0fcb",
+    "toad1992-09-01.flac16": "24b4fe46bc978c1ea1dd521e4aab0ce75b9177de4a89fc69b7e50c10f3ef9504",
+    "toast2004-02-29.flac16": "283c236852fab5721cc84988a7a34b7f6e589cfa6eea7d001b2955f2bb9377f6",
+    "tod2004-07-15.flac16": "844a0f491b9b00e9be3855efab24d5488db75ce6a7526320d985744ada15acce",
+    "tod2007-08-28.mbho.flac16": "f6b4dd101cf21dce8e9c3330ed4879d74cc4614b9225651d47f42b984a7dcb5f",
+    "toddandfriends2018-08-11.ak40.sbd.flac16": "0ec4a953261684a1e19dbccae771bf03c7b5ba12e0f62c02b4374ee7b0a9e31a",
+    "tolcher2005-04-19.akg414.flac16": "ac70d2a3d3d0c5bdbabc4add418188fc6403e949de4f364b14fff24d0c14ef64",
+    "tomhamilton_holly_bowling2019-07-27.litz.akg414.flac16": "622f6ae7c7b2b0f36d9ae389c5fe450c55cb258f33034ff3659af4e45d470c35",
+    "tortoise2016-03-17.littlefield": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "tortoise2017-03-15.lpr": "2a0f45255ccd5680d4a50ef1f511b9f8378b2cd779a7dc42dc8b7c0a40e30fab",
+    "tortoise2017-03-16.hallatmp_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "tprettyman2003-05-01.at831.shnf": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "tprettyman2005-01-30.at831.flac16": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "tr2006-08-07.sbd.flac16": "4f8d17f3463c1c21b128b9a1776d0e1af908febe0ceedd985a9a18dc3a83e8d1",
+    "tr3-1990-09-15.flac16": "47a06653c987c2f8989f807320b57af5b686ad547c13d458a8af9eed53bbb293",
+    "trashcansinatras2005-05-14.at831.flac16": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "travelingmccourys2016-06-11.akg.ck1x": "f9cabd6e78f959308b4d5bc8dc1206f6f4ff6d752e0871e2e3df3ca4b017deda",
+    "travelinmccourys2022-05-29.AKGC414XLIIs": "25b63218a95c9ebd9f6e58aa8d48bd400f28b65c91fc4e9c6c2c7ff6c35cbdfd",
+    "trb2004-10-30.flac16": "1961cccf09f9f26d18f69aa5c05d26041a4d2afb4afe6327e7fc9151cdb71ddc",
+    "ts2002-11-08.flac16": "8a47c57f39eeadd148d773c04d47fdbde1075990bd4a1fc1079c81d7d119103e",
+    "ts2005-02-09.flac16": "8a47c57f39eeadd148d773c04d47fdbde1075990bd4a1fc1079c81d7d119103e",
+    "ts2008-12-19.mix.flac": "316830d0e10d50af2e53a208dbc7efc0bc91dc8d6d694222008c789954b2e98e",
+    "tsool1999-07-09.shnf": "a16ca3c3523438257c704e0c5b2814cccb78b76f1631745ff6455c1ca08ac360",
+    "tsp1988-10-05": "86633a258da6495ea871e675d2d365b67835d9db71bdfc22a4b229e2beda63fd",
+    "tsp1989-03-16.shn": "d78b02671d6f62a287e7791608fa769abb68f29685be7fe802e31646fce0af7a",
+    "tsp1997-10-18.flacf": "624ffa991282cdbd6dadb647b58861473dff8f777527b1d181918db784860f8c",
+    "ttb2014-07-25.neumannak50": "cf54800660306008cae60ad8d32b1a881b77c02c43e0231629eaa9b1747df19d",
+    "ttb2018-02-10.mk6.edtyre": "811f27abc78ddc2cbe92eb484a4148428c3f99fa0a90d1da5c848c982a068e1f",
+    "ttb2019-07-27.ccm4v.flac16": "268efcea0b321cb13df175f424f64bb890e09d24cb612a35b7959e2fd5a47d50",
+    "ttc1989-05-15.flac16": "0c1f0dba5ec4306aa0e17060c71926ca392ee2c973dd09cfe9266a5989a53330",
+    "ttws19950301.flac": "93faa047718f9d3c6b6b96950c7f64ca788aaff351b108a3915aceeec45ac788",
+    "tugg2004-10-10.flac16": "feb485dcb9f510e511af3ab574109b7a1403b07df0bd6b816b528faf7796e295",
+    "turkuaz2020-01-10": "82bf0bed4143d947be8dc23a5a27b2937c717665329dac312fb0980e26533b69",
+    "twiddle2010-11-13.adk-sbd-mix.flac16f": "4053cc31b44d254ac6a2c52ce2a4866ec0ee15bd2c74c42eecf5ca1cc6c1bc80",
+    "twod2019-12-29": "309851cab8fdaa7ae2b7d91c98c09c4143f103902618c0e6600ae2de87e8c675",
+    "twogal2005-02-25.aud.flac16": "820e77acc88f634543cd61304ed7055ba663d7eb101940004691b61e4bde9927",
+    "um1998-01-29.sbd.flac16": "9656bb9119a3104bffe74780303ac1c82e1efc9996b4113d157d89c1f3d006ee",
+    "umelt2004-09-04.flac16": "d7e65e4158a55578b6c7978840dd72f42fa25414f270d58bf53d427b6435328b",
+    "va2001-06-09-flac": "6e2c26a83efcf0493754519e069e2fe2dc83938074f26ec2ad5aa3f5ac57274c",
+    "valentines1995-02-14.mtx.miller.117207.flac16": "fe043971b59fae046899b2464033699e4a91a37653ee1bff54aefb10f67a3b76",
+    "vc1995-10-13.KCRW.FM.flac16": "35ddae199add427e29f8b02dd500dbf36d2051a3afa19e2a0088bd100f724634",
+    "vh1995-05-04.flac": "4a46ff35e5b5d6decdc4f6885079aa83581ac018daa0c69d6a9cb9e7fa4edb1a",
+    "vh1996-07-13.shnf": "4cd30ec7bc713f014d23345dbcf8f55209d576096e32cbe7efac01c3d74b5a88",
+    "vh1999-04-15.shnf": "4cd30ec7bc713f014d23345dbcf8f55209d576096e32cbe7efac01c3d74b5a88",
+    "vi1995-06-30.flac16": "80b7a3db15b0af60b70d03cae148506cd75ce452472f30aa550864e763f17e70",
+    "vinyl2005-07-28": "9e702f0571493b757214efb9b236c3415a49b2c18383a4f7b81e4166e123e643",
+    "vjd32013-08-15.sbdmatrix.flac": "5e9fc0955112de2753934fa612f3440fe4f3d77940b71dcc43214bb21fd37e09",
+    "vorcza2005-12-09": "e7e59a6d66ffcfd7bcf98a9c783867229032687fcf4e1b2e3e79af0a96f88bc4",
+    "vt2007-05-10.sbd": "ca3bf031146a6f6b330c7795d1cd127255913aefc59ff843ff26aed6875fad01",
+    "vteng2004-11-12.aud.moog.flacf": "64bd43ae57d30af0af2ee0d17290a303add03e938abc8c4adfba6d70e5e715d9",
+    "vulfpeck2016-09-09.cmc621xt.sbd.matrix.flac16": "60dd56f80ec1aa985aba3c58e696702204446c0e2f7fff34389a94dda2e61a1b",
+    "vulfpeck2016-09-10.cmc621xt.sbd.matrix.flac16": "60dd56f80ec1aa985aba3c58e696702204446c0e2f7fff34389a94dda2e61a1b",
+    "vw2005-03-12.spyder9.flac16": "5649e8c68991f858b44c65ed92c564e10b196a46eff32b3e5fce387d4f683cd2",
+    "walkmen2012-01-14.ca14.flac16": "4cd30ec7bc713f014d23345dbcf8f55209d576096e32cbe7efac01c3d74b5a88",
+    "wanderj2005-04-08.flac16": "d96996cbc62dff5fee28a805143d09d5469fead3aedc380b3f87b7708eb6d2d1",
+    "warlocks2012-06-23.mtx.sbd.kindrec": "9219f01eb3765ab1aaeac3a045e2cac7fb7548ac52a168e3144a3f737009f0de",
+    "wasabi1993-12-28.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "watt1995-10-15sbd.shnf": "9e7c2243b39357f00c82d6b249ac1f8d725da9223c78c4c32bbb84bbffe9249d",
+    "watt1998-05-20": "078b2552fd9e2368074bbecb9c538366441bf68aabf04eaf7bce8247f78d79fa",
+    "wbks2005-06-29": "b332472b143b8b4d6179825e89c2f325a27e4342ff57f6e5ea2e5706d91f2a62",
+    "wbm2001-11-21.flac16": "9179910a83b39cf2a395746b80a9ffdd83d7c8c7ff9c7fe7c5a26601d8a53f47",
+    "wd1997-07-13flac": "59aa71d77d77adc6b6025745df82478f5bc0086088023f2e926d67e8defafa64",
+    "wd1998-01-04flac": "59aa71d77d77adc6b6025745df82478f5bc0086088023f2e926d67e8defafa64",
+    "wd2012-08-13.flac16": "508df55c26658331ef8cb5008c9348218e61afcac837754d88f111ad62fb07ef",
+    "weaksignal2024-10-04.matrix.kliked": "f5bb932558d5b2210d66660d573f56e326640cdeb474841a93d021101ec7781a",
+    "ween1991-10-12.flac16": "523c59e0ae50c790b825f5374364a9c94e88a88573671da045685d777c21d49d",
+    "weepies2004-07-25.at831.shnf": "a21dfe4e6b54be94122cca6cac3c237109c382e0e07e51de3ac2c247f03473bf",
+    "weepies_2004-09-18_live_in_ohio.shnf": "711330008115e2d9e15ab3ed89b140028ce6dd06f1801d14a1415fed6c3b78fa",
+    "wew2012-03-30.matrix.flac16": "fa3434f80043f536ed18d30e3fbaa154cea01dfa8d1a2e317e39d8a6f61c363c",
+    "wh2003-06-13.flac16": "38bf6bbe6fbea440506393835e2b32faca1ea76ad62e20caae4535ac444ddf6a",
+    "wh2005-10-07.ak40.flac16": "f7c4010316646cfd956ce62ffb6b2ff9a7de5ef41df288c6f0e13366e7d71e15",
+    "wk1968-09-15.151594.seaweed.flac2448": "bd322d42d1753bba0ce11f7b66a9155ca2ec65cd523b6d1733a4bedb18a49570",
+    "wk2021-07-13.152843.batk.dpa4015c.schneider.flac16": "bd322d42d1753bba0ce11f7b66a9155ca2ec65cd523b6d1733a4bedb18a49570",
+    "wlb20060128pvm480flac16": "c6de713e6049a45ff1379db17b04ae4e7830a19de45e6978d15cab1abe739b31",
+    "wod2014-03-20.bowery_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "wolf2022-10-08.bsc-1.ck463.soundboard": "3570e91830a77a5d4f43464189ba0ca57cb4ba8728f676f911fc66274cba073c",
+    "woodbrothers2021-08-13.neumann_skm140.sunboy.flac16": "afefd0f6e7a65d9ad3dff574b7a377886ccc1061819dadefcb3b2f8c557a9ecb",
+    "woods2019-09-28.woodsist_acidjack": "9e3d9ddd623b0c32ffd8b2fb21714aac0ca8a2bf62c7c569d507855157e36246",
+    "wsp2026-06-14.z": "268efcea0b321cb13df175f424f64bb890e09d24cb612a35b7959e2fd5a47d50",
+    "wu1997-05-09.shnf": "5a894e10c0a5027b007ccf230104cf182279c24ee9c436a2d554b28cecba7389",
+    "wu2007-04-28..flac16": "d33f9b0725fc51b67f4c113c489466cc84c79a549e465810d0efede6f690c879",
+    "wwp2012-06-07.mtx.kindrec": "9219f01eb3765ab1aaeac3a045e2cac7fb7548ac52a168e3144a3f737009f0de",
+    "wynn1992-07-16.flac": "716241f780829f2a1e9af5d386bb64f1d15a554026ceb5b236175e3ecadf49ac",
+    "wz1978-07-27.sbeok.flac16": "230c9e90d5d99067c99fdcf4c3fa131d5065dbc7dc7eea314804bdef382c6950",
+    "wz1978-4-24.Live_Roxy.flac16": "ecde25920817a7a5e89926f85aa733234340b3281ddbaf03109c4e2bccbeb1fa",
+    "yarn2012-05-12.matrix.flac16": "fddca4c5038c1440a28ff1479824a1aaca51464e67b316800db49ea59449cc7f",
+    "yarn2014-02-16.dpa4022.mixpred.dr40.cd2go.flac24": "1c9228afec5c01d9d64ee99190f455fa3ac8eb943276869a9c1ba62741559d20",
+    "yep1996-10-30": "489fa46c83515ee0791e06473dfe251b591d6a57e5baa570c4f0745314ada5c3",
+    "yep1996-12-13": "489fa46c83515ee0791e06473dfe251b591d6a57e5baa570c4f0745314ada5c3",
+    "ym1999-10-21.shnf": "ad139b3b90109904eb7e979699e441be16b8fbd89e7f7aed9c6215243f5cfdd0",
+    "ymbfbb2011-08-22.a": "e15e9ffc0c4a6e3f710cd90b1ca3c7c2eff752fe7b6dbcc72a318fb49d623129",
+    "ymsb1998-11-07.flac16": "3ed4e21a2f8d0e20004f3912f4df6486a3f367470a13fe5c4c810b1d6cd31d36",
+    "ymsb2004-04-17.sbd.flac16": "cce4a85855d2dacbd6c7ecbda992424f03f47cc794edf5e336e41a9e40eb0fcb",
+    "younganddead.NT5.2026-02-20": "87d81d2f794fd2cb73023e218d4d00311bfe918f64553ced2a576370e87cbefe",
+    "younganddead.aud2026-01-17": "a7a329f2a711ac130ee0d17683f3b300859a9b8df91bce12db0ccf0aeef81f30",
+    "younganddead2025-11-15": "a7a329f2a711ac130ee0d17683f3b300859a9b8df91bce12db0ccf0aeef81f30",
+    "zero1986-12-06": "5e17b3cad19b5e9392bacc0a355e07eb510e82017505b5155e09848ef213e316",
+    "zero1991-01-23": "4bbf00135782f573aefd8d9be00f81ec302deb26d43ac706d9b9c13dac782501",
+    "zero95-8-11flac16": "bd2eee51b9c55a4fa768f0f77a3cf95286810e7cd40ae9d6c528d3511918952a",
+    "zilla2005-04-22": "4964ee5213bdfc91b4406a6d05d52d1a9ee00387753e369b90ebc5131ae1612e",
+    "zilla2006-01-28": "ce43edfb0ffd590daa9e422f7c9d300a971c06d78d533b9ce788ad67500cee44",
+    "zt1997-06-21.sbd.flac16": "cfb087bc6f7ea80fd323439a11ee45a98b0b0986290565379b068bf98ab2ffb4",
+    "zt2003-12-10.shnf": "02ea01343ee48b10569edfe69ebf2324533c908c3b178617aa7129d78629599c",
+    "zwan2003-03-31.flac16": "c8866a67705371e131b7fb03984c4eab336e021055dac4a5d7119b21177bcf19",
+    "zwan2003-06-13.fm.flac": "b006e358faa4ac3025c945622a873fde76b63e50530e8fff109f505303ac0cc6"
+  }
+}

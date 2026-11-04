@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "scope": "five synthetic training source annotations; no real held-out inputs or candidate predictions",
+  "model": "gpt-6.1-sol",
+  "reasoning": "low",
+  "source_environment": "original repository .env (key not recorded)",
+  "reviews": 5,
+  "statuses": {
+    "agent-reviewed": 5
+  },
+  "verdicts": {
+    "accepted": 5
+  },
+  "promotion_blockers": {},
+  "input_tokens": 5797,
+  "output_tokens": 3006,
+  "cost_usd": 0.041654,
+  "stage_cap_usd": 0.25,
+  "not_human_certified": true,
+  "source_sha256": [
+    "6a5e7348198862658d0f353574257ef06c04b9d9225e3b3e43afe50806c6b1d6",
+    "761447a4af909ba4419e910d53ab50c000aa28080817e2b67051e3fabe2b1641",
+    "33930eeb23ae2e5638b892fe04562005925384a847399a4dc4e46433eb10b6ca",
+    "ecffdd204035786a602508e2f5f149a1a1d21ec111608c7fc85da17f005c4a05",
+    "4f91f17652825bdb2d7cacda83be37c324a03d09bf788259e779717684d07950"
+  ],
+  "prompt_sha256": "0581756ced1fe8a4f67bca947ea5763655e2cc28f982c6a3b40fe64ccb7e0254",
+  "audit_external_path": "/Users/dan/code/track-tagger-experiment-data/run/annotation-smoke-sol-audit.jsonl"
+}

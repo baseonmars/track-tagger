@@ -1,0 +1,17 @@
+{
+  "cohort": "frozen-synthetic-common40, baseline-informed generated V2",
+  "candidate": "Qwen3 0.6B Q8 Metal r2",
+  "scored_correct_titles": 0,
+  "scored_expected_titles": 154,
+  "raw_title_entries": 106,
+  "noncanonical_filename_keys": 106,
+  "empty_title_maps": 8,
+  "exact_expected_title_values_under_wrong_keys": 16,
+  "examples": [
+    {"id": "synthetic-v2-10010799", "finding": "filename key mapped to a note filename rather than title text"},
+    {"id": "synthetic-v2-10000228", "finding": "filename keys mapped to note filenames rather than title text"},
+    {"id": "synthetic-v2-10011388", "finding": "empty title map"},
+    {"id": "synthetic-v2-10055718", "finding": "some exact title values appeared under filename keys rather than disc:track identifiers"}
+  ],
+  "interpretation": "The score is keyed by disc:track; it is not a count of title text appearing anywhere. The adapter converts schema entries into a map without rewriting keys. All validated cases required review. Checkpoint metadata identifies the pinned model, but does not retain the complete request payload. No predictions or scores were changed."
+}

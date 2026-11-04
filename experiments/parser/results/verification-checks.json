@@ -1,0 +1,65 @@
+{
+  "checks": [
+    {
+      "command": "gofmt -l .",
+      "result": "pass; no output"
+    },
+    {
+      "command": "go test -race ./...",
+      "result": "pass; unchanged default-package tests reused Go cache"
+    },
+    {
+      "command": "go vet ./...",
+      "result": "pass"
+    },
+    {
+      "command": "node --test internal/webui/testdata/player.test.cjs",
+      "result": "pass",
+      "tests": 3
+    },
+    {
+      "command": "go test -race -tags parser_experiment ./experiments/parser/adapter ./internal/catalog",
+      "result": "pass; adapter1.199s/catalog21.828s"
+    },
+    {
+      "command": "actionlint",
+      "result": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s experiments/parser/tests -q",
+      "result": "pass; optional scikit-learn replay test skipped without classifier dependencies",
+      "skipped": 1,
+      "tests": 86
+    },
+    {
+      "command": "python3 -m unittest experiments.parser.test_acquire -q",
+      "result": "pass",
+      "tests": 17
+    },
+    {
+      "command": "/tmp/track-parser-venv/bin/python -m unittest experiments.parser.test_synthetic -q",
+      "result": "pass",
+      "tests": 2
+    },
+    {
+      "command": "/tmp/track-parser-venv/bin/python -m unittest discover -s experiments/parser/tests -q",
+      "result": "pass; all classifier dependencies available",
+      "skipped": 0,
+      "tests": 86
+    },
+    {
+      "command": "/tmp/track-parser-venv/bin/python -m unittest experiments.parser.tests.test_q4_setup experiments.parser.tests.test_classifier_refs experiments.parser.tests.test_local_deadline experiments.parser.tests.test_local experiments.parser.tests.test_classifier_partition -q",
+      "result": "pass; focused Q4 process ownership/path guards, classifier replay and local adapter controls",
+      "tests": 11
+    }
+  ],
+  "go_version": "go1.27.2",
+  "host": "darwin/arm64",
+  "no_provider_credentials_or_external_network_required_by_tests": true,
+  "node_version": "v24.16.0",
+  "performance_note": "dedicated CPU and Metal timing finished before heavy regression checks; ongoing quality-run latency is observational shared-host",
+  "pinned_dependency_count_verified_in_local_venv": 10,
+  "remote_ci_status": "not yet run; branch not pushed",
+  "requirements_sha256": "1ee1f1db84675535a91d85abaee4c4b9e6cb976761e292720157994492aec82b",
+  "verified_at_utc": "2026-11-04T08:32:23.827392+00:00"
+}
