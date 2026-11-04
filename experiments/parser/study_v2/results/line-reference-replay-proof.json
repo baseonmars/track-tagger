@@ -9,5 +9,10 @@
     "refs_sha256": "3b90293c94c10af68f55360e5f6d2936e7499caea6c5f5e4dd90597f42602027",
     "feature_target_membership_equal": true
   },
-  "scope": "Actual cached source replay; hashes verify source/context bytes, published reference digest is trusted for semantic labels."
+  "scope": "Actual cached source replay; hashes verify source/context bytes, published reference digest is trusted for semantic labels.",
+  "test": {
+    "rows": 10612,
+    "refs_sha256": "7e08e50afc90507f2ac9e9c2bfc76a066744363621e7bd65d192b448595f1a1e",
+    "feature_target_membership_equal": true
+  }
 }
