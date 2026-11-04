@@ -1,0 +1,613 @@
+{
+  "groups": {
+    "test": [
+      "template-annotated",
+      "template-indented"
+    ],
+    "train": [
+      "template-colon",
+      "template-dash",
+      "template-dot",
+      "template-padded",
+      "template-parenthesis",
+      "template-plain"
+    ],
+    "validation": [
+      "template-duration",
+      "template-set-heading"
+    ]
+  },
+  "method": "word and character ngrams, neighboring lines, and position; logistic regression",
+  "peak_rss_platform_units": 258768896,
+  "splits": {
+    "test": {
+      "confusion": [
+        [
+          998,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          998,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          127,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          605,
+          0,
+          0,
+          0,
+          514,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1513,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          119,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          112,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4115,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          998
+        ]
+      ],
+      "confusion_labels": [
+        "artist",
+        "city",
+        "continuation",
+        "date",
+        "heading",
+        "other",
+        "technical",
+        "track",
+        "venue"
+      ],
+      "lines": 10099,
+      "prediction_seconds": 0.0025317499999997217,
+      "report": {
+        "accuracy": 0.9491038716704624,
+        "artist": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 998.0
+        },
+        "city": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 998.0
+        },
+        "continuation": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 127.0
+        },
+        "date": {
+          "f1-score": 0.7018561484918794,
+          "precision": 1.0,
+          "recall": 0.5406613047363718,
+          "support": 1119.0
+        },
+        "heading": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 1513.0
+        },
+        "macro avg": {
+          "f1-score": 0.9603414425436235,
+          "precision": 0.9876623220758023,
+          "recall": 0.9489623671929301,
+          "support": 10099.0
+        },
+        "other": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 119.0
+        },
+        "technical": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 112.0
+        },
+        "track": {
+          "f1-score": 0.9412168344007319,
+          "precision": 0.8889608986822208,
+          "recall": 1.0,
+          "support": 4115.0
+        },
+        "venue": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 998.0
+        },
+        "weighted avg": {
+          "f1-score": 0.9430126055769309,
+          "precision": 0.9547553320207287,
+          "recall": 0.9491038716704624,
+          "support": 10099.0
+        }
+      },
+      "support": {
+        "artist": 998,
+        "city": 998,
+        "continuation": 127,
+        "date": 1119,
+        "heading": 1513,
+        "other": 119,
+        "technical": 112,
+        "track": 4115,
+        "venue": 998
+      }
+    },
+    "train": {
+      "confusion": [
+        [
+          3014,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3014,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          373,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          3382,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          4541,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          373,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          406,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          12478,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3014
+        ]
+      ],
+      "confusion_labels": [
+        "artist",
+        "city",
+        "continuation",
+        "date",
+        "heading",
+        "other",
+        "technical",
+        "track",
+        "venue"
+      ],
+      "lines": 30595,
+      "prediction_seconds": 0.008815333000000258,
+      "report": {
+        "accuracy": 1.0,
+        "artist": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 3014.0
+        },
+        "city": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 3014.0
+        },
+        "continuation": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 373.0
+        },
+        "date": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 3382.0
+        },
+        "heading": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 4541.0
+        },
+        "macro avg": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 30595.0
+        },
+        "other": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 373.0
+        },
+        "technical": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 406.0
+        },
+        "track": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 12478.0
+        },
+        "venue": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 3014.0
+        },
+        "weighted avg": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 30595.0
+        }
+      },
+      "support": {
+        "artist": 3014,
+        "city": 3014,
+        "continuation": 373,
+        "date": 3382,
+        "heading": 4541,
+        "other": 373,
+        "technical": 406,
+        "track": 12478,
+        "venue": 3014
+      }
+    },
+    "validation": {
+      "confusion": [
+        [
+          988,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          988,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          117,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          646,
+          0,
+          0,
+          0,
+          478,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1468,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          129,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          113,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4059,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          988
+        ]
+      ],
+      "confusion_labels": [
+        "artist",
+        "city",
+        "continuation",
+        "date",
+        "heading",
+        "other",
+        "technical",
+        "track",
+        "venue"
+      ],
+      "lines": 9974,
+      "prediction_seconds": 0.002800291999999871,
+      "report": {
+        "accuracy": 0.9520753960296772,
+        "artist": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 988.0
+        },
+        "city": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 988.0
+        },
+        "continuation": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 117.0
+        },
+        "date": {
+          "f1-score": 0.7299435028248588,
+          "precision": 1.0,
+          "recall": 0.5747330960854092,
+          "support": 1124.0
+        },
+        "heading": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 1468.0
+        },
+        "macro avg": {
+          "f1-score": 0.9638151381816153,
+          "precision": 0.988293781990057,
+          "recall": 0.9527481217872678,
+          "support": 9974.0
+        },
+        "other": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 129.0
+        },
+        "technical": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 113.0
+        },
+        "track": {
+          "f1-score": 0.9443927408096789,
+          "precision": 0.8946440379105135,
+          "recall": 1.0,
+          "support": 4059.0
+        },
+        "venue": {
+          "f1-score": 1.0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "support": 988.0
+        },
+        "weighted avg": {
+          "f1-score": 0.9469366986285971,
+          "precision": 0.957124538788728,
+          "recall": 0.9520753960296772,
+          "support": 9974.0
+        }
+      },
+      "support": {
+        "artist": 988,
+        "city": 988,
+        "continuation": 117,
+        "date": 1124,
+        "heading": 1468,
+        "other": 129,
+        "technical": 113,
+        "track": 4059,
+        "venue": 988
+      }
+    }
+  },
+  "training_seconds": 0.3318926660000001
+}

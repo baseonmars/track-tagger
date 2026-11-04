@@ -1,0 +1,130 @@
+{
+  "coverage": {
+    "citations_seen": 13148,
+    "conflicting_line_labels": 187,
+    "empty_or_multiline_quote": 41,
+    "missing_or_ambiguous_quote": 305,
+    "replayed_references": 3655,
+    "test_annotated_cases": 197,
+    "test_cases": 200,
+    "test_lines": 3655,
+    "test_not_reviewed": 3,
+    "test_total_lines": 11205,
+    "train_annotated_cases": 457,
+    "train_annotation_error": 2,
+    "train_cases": 459,
+    "train_lines": 7184,
+    "train_total_lines": 24426,
+    "uncited_oracle_field": 30,
+    "unsupported_field": 38,
+    "validation_cases": 144,
+    "validation_missing_annotation": 144,
+    "validation_total_lines": 7165,
+    "wrong_note_reference": 1474
+  },
+  "label_status": "train model drafts; validation/test independent source reviews",
+  "scope": "frozen model; partial positive source-cited test lines only; no background false-positive estimate",
+  "splits": {
+    "test": {
+      "classification_report": {
+        "accuracy": 0.9896032831737346,
+        "artist": {
+          "f1-score": 0.9648562300319489,
+          "precision": 0.9617834394904459,
+          "recall": 0.967948717948718,
+          "support": 156.0
+        },
+        "city": {
+          "f1-score": 0.9649805447470817,
+          "precision": 0.992,
+          "recall": 0.9393939393939394,
+          "support": 132.0
+        },
+        "date": {
+          "f1-score": 0.9939393939393939,
+          "precision": 1.0,
+          "recall": 0.9879518072289156,
+          "support": 166.0
+        },
+        "macro avg": {
+          "f1-score": 0.9662729620117776,
+          "precision": 0.9831284831706277,
+          "recall": 0.9510188772657369,
+          "support": 3655.0
+        },
+        "title": {
+          "f1-score": 0.994346632208044,
+          "precision": 0.9909851899549259,
+          "recall": 0.9977309562398703,
+          "support": 3085.0
+        },
+        "venue": {
+          "f1-score": 0.91324200913242,
+          "precision": 0.970873786407767,
+          "recall": 0.8620689655172413,
+          "support": 116.0
+        },
+        "weighted avg": {
+          "f1-score": 0.9894348499607974,
+          "precision": 0.9895466174541059,
+          "recall": 0.9896032831737346,
+          "support": 3655.0
+        }
+      },
+      "confusion": [
+        [
+          151,
+          0,
+          0,
+          5,
+          0
+        ],
+        [
+          0,
+          124,
+          0,
+          6,
+          2
+        ],
+        [
+          0,
+          0,
+          164,
+          2,
+          0
+        ],
+        [
+          5,
+          1,
+          0,
+          3078,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          15,
+          100
+        ]
+      ],
+      "confusion_labels": [
+        "artist",
+        "city",
+        "date",
+        "title",
+        "venue"
+      ],
+      "lines": 3655,
+      "majority_class_accuracy": 0.8440492476060192,
+      "support": {
+        "artist": 156,
+        "city": 132,
+        "date": 166,
+        "title": 3085,
+        "venue": 116
+      }
+    }
+  },
+  "training_majority_class": "title"
+}

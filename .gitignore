@@ -7,3 +7,12 @@ node_modules/
 coverage.out
 .DS_Store
 /.playwright-mcp/
+
+# Local experiment credentials and generated data
+.env
+.env.*
+experiments/parser/state/
+experiments/parser/data/
+.hypothesis/
+__pycache__/
+.venv/

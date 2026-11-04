@@ -44,9 +44,28 @@ jobs:
         run: |
           npm ci --prefix tools/release --ignore-scripts --no-audit --no-fund
           npm test --prefix tools/release
+  parser-experiments:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install pinned experiment test dependencies
+        run: python -m pip install -r experiments/parser/requirements.txt
+      - name: Test isolated experiment harness without network or credentials
+        run: |
+          go test -tags parser_experiment ./experiments/parser/adapter ./internal/catalog
+          go build -tags parser_experiment -o /tmp/track-parser-adapter-v2 ./experiments/parser/adapter
+          python -m unittest discover -s experiments/parser/tests -v
+          python -m unittest experiments.parser.test_acquire -v
+          python -m unittest experiments.parser.test_synthetic -v
   plan-release:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: test
+    needs: [test, parser-experiments]
     runs-on: ubuntu-latest
     permissions:
       contents: read

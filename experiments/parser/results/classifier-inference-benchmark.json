@@ -1,0 +1,27 @@
+{
+  "lines": 3655,
+  "model_sha256": "5495b7b3f5cc8b8872db9450730bcc102ea9951be7ed4fcec9b9a25d8d35318c",
+  "note": "transform plus prediction on fixed cited positive lines, excludes model load and source rehydration; not end-to-end parser time",
+  "peak_rss_platform_units": 173998080,
+  "refs_sha256": "3747b68d7d944b33747f82890416b1c70e09f3c39edef7fc47717c1d318b5264",
+  "samples": [
+    {
+      "call": 1,
+      "prediction_sha256": "d108a7e3f0071aaf54b64ad237ff34f6d629127a99e4b6f676dff85ec028b0a2",
+      "process_cpu_seconds": 0.3016009999999998,
+      "wall_seconds": 0.30232087499999993
+    },
+    {
+      "call": 2,
+      "prediction_sha256": "d108a7e3f0071aaf54b64ad237ff34f6d629127a99e4b6f676dff85ec028b0a2",
+      "process_cpu_seconds": 0.3216380000000001,
+      "wall_seconds": 0.3218750829999997
+    },
+    {
+      "call": 3,
+      "prediction_sha256": "d108a7e3f0071aaf54b64ad237ff34f6d629127a99e4b6f676dff85ec028b0a2",
+      "process_cpu_seconds": 0.3134940000000004,
+      "wall_seconds": 0.3137699999999999
+    }
+  ]
+}
