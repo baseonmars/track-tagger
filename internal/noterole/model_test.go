@@ -30,6 +30,10 @@ func model(t *testing.T, a Artifact) *Model {
 	return m
 }
 func TestFeaturesUnicodeAndLines(t *testing.T) {
+	empty, err := Lines("")
+	if err != nil || len(empty) != 0 {
+		t.Fatal(empty, err)
+	}
 	lines, e := Lines("\ufeffÉlan\r\n\tArtist  名\r\n\r\n")
 	if e != nil || !reflect.DeepEqual(lines, []string{"Élan", "\tArtist  名", ""}) {
 		t.Fatalf("%q %v", lines, e)

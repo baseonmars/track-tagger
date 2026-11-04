@@ -19,6 +19,9 @@ func Lines(text string) ([]string, error) {
 		return nil, fmt.Errorf("invalid UTF-8")
 	}
 	text = strings.TrimPrefix(text, "\ufeff")
+	if text == "" {
+		return []string{}, nil
+	}
 	text = strings.ReplaceAll(strings.ReplaceAll(text, "\r\n", "\n"), "\r", "\n")
 	lines := strings.Split(text, "\n")
 	if strings.HasSuffix(text, "\n") {
