@@ -505,7 +505,13 @@ func parseUnlabelledHeader(r *Recording, source []noteLine, artists map[string]b
 		venue := strings.TrimSpace(strings.TrimSuffix(lines[2].text, ","))
 		if event != "" && venue != "" {
 			artists[lines[0].text] = true
-			setLocation(r, "venue", &r.Venue, event+", "+venue)
+			if strings.HasPrefix(strings.ToLower(event), "aka ") || strings.HasPrefix(strings.ToLower(event), "a.k.a. ") {
+				event = ""
+			}
+			if event != "" {
+				venue = event + ", " + venue
+			}
+			setLocation(r, "venue", &r.Venue, venue)
 			setLocation(r, "city", &r.City, lines[3].text)
 			return
 		}
@@ -516,6 +522,11 @@ func parseUnlabelledHeader(r *Recording, source []noteLine, artists map[string]b
 	if len(lines) >= 4 && headerDate(lines[3]) && plainHeaderLine(lines[1]) && plainHeaderLine(lines[2]) && strings.Contains(lines[2].text, ",") {
 		venue := strings.TrimSpace(strings.TrimSuffix(lines[1].text, ","))
 		city := lines[2].text
+		if strings.Contains(strings.ToLower(venue), "festival") {
+			reason(r, "event and venue/city header needs review")
+			// The comma may separate a venue from a municipality, not city from region.
+			city = ""
+		}
 		if venue != "" {
 			artists[lines[0].text] = true
 			setLocation(r, "venue", &r.Venue, venue)
@@ -538,6 +549,12 @@ func parseUnlabelledHeader(r *Recording, source []noteLine, artists map[string]b
 	if city == "" || venue == "" || strings.ContainsAny(city+venue, ":>") {
 		return
 	}
+	if len(lines) >= 4 && plainHeaderLine(lines[3]) && explicitCityRegion.MatchString(lines[3].text) {
+		// An explicit following location distinguishes event @ venue from city @ venue.
+		reason(r, "event or location before venue needs review")
+		venue = city + ", " + venue
+		city = lines[3].text
+	}
 	artists[lines[0].text] = true
 	setLocation(r, "city", &r.City, city)
 	setLocation(r, "venue", &r.Venue, venue)
@@ -552,6 +569,9 @@ func headerDate(line noteLine) bool {
 }
 
 func setLocation(r *Recording, field string, target *string, value string) {
+	if locationUncertainty.MatchString(value) {
+		reason(r, "uncertain "+field+" in concert notes: "+value)
+	}
 	if *target != "" && value != "" && *target != value {
 		reason(r, "conflicting "+field+" in concert notes")
 	}
@@ -561,6 +581,10 @@ func setLocation(r *Recording, field string, target *string, value string) {
 }
 
 func addTitle(r *Recording, titles map[string]string, d, n int, title string) {
+	title = strings.TrimSpace(bracketedDuration.ReplaceAllString(title, ""))
+	if titleUncertainty.MatchString(title) {
+		reason(r, "uncertain title for track "+fmt.Sprintf("%d:%d", d, n)+": "+title)
+	}
 	if otherPerformer.MatchString(title) {
 		reason(r, "possible other performer in track "+fmt.Sprintf("%d:%d", d, n)+": "+strings.TrimSpace(title))
 	}
