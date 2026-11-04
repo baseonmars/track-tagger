@@ -207,9 +207,20 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
             return None
         return result
 
+    def complete_track_gold(case_id):
+        src, reference = sources[case_id], gold[case_id]
+        files = src.get('files')
+        return (isinstance(files, list) and bool(files) and len(set(files)) == len(files)
+                and isinstance(reference.get('titles'), dict)
+                and all(isinstance(v, str) for v in reference['titles'].values())
+                and isinstance(reference.get('mappings'), dict) and set(reference['mappings']) == set(files)
+                and all(isinstance(m, dict) and type(m.get('disc')) is int and type(m.get('number')) is int
+                        and isinstance(m.get('title'), str) for m in reference['mappings'].values()))
+
+    full_gold_ids = {case_id for case_id in eligible if complete_track_gold(case_id)}
     arm_metrics = {}
     for name in candidates:
-        correct = ready = false_ready = failures = 0
+        correct = ready = false_ready = failures = recording_exact = 0
         for case_id in eligible:
             out = output(name, case_id)
             if out is None:
@@ -218,8 +229,14 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
             correct += metadata_equal(out['metadata'], gold[case_id]['metadata'])
             ready += out['ready']
             false_ready += out['ready'] and gold[case_id]['review_required']
+            if case_id in full_gold_ids:
+                recording_exact += (metadata_equal(out['metadata'], gold[case_id]['metadata'])
+                                    and out['ready'] == (not gold[case_id]['review_required'])
+                                    and out.get('titles') == gold[case_id]['titles']
+                                    and out['mappings'] == gold[case_id]['mappings'])
         arm_metrics[name] = {'eligible': len(eligible), 'metadata_exact': correct, 'ready': ready,
-                             'false_ready': false_ready, 'failures': failures}
+                             'false_ready': false_ready, 'failures': failures, 'full_recording_gold_cases': len(full_gold_ids),
+                             'recording_exact': recording_exact}
     parity_failures = []
     new_false_ready = []
     new_material_acceptance = []
@@ -336,6 +353,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
     reference_fraction = reviewed_nonblank/nonblank_total if nonblank_total else None
     gates = {
         'adjudicated_test_support': len(eligible) >= 180,
+        'complete_track_reference_coverage': len(full_gold_ids) >= 180 and full_gold_ids == eligible,
         'reviewed_nonblank_reference_coverage': reference_fraction is not None and reference_fraction >= .95,
         'role_precision_and_support': all(c['precision'] is not None and c['precision'] >= .95 and c['supporting_recordings'] >= 20 for c in role_metrics.values()),
         'background_false_positive_rate': background_total > 0 and background_fp/background_total <= .01,

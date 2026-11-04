@@ -28,12 +28,14 @@ model-and-source evaluation protocol.
 ## Inputs
 
 - Source rows: `id`, `group`, `source_input_sha256`, `split: "test"`,
-  `notes: {relative_note_name: normalized_line_count}`. Counts must be derived from
+  `notes: {relative_note_name: normalized_line_count}`, and original relative `files`. Counts must be derived from
   actual canonical input, not annotation coverage. All supplied source lines must
   have labels before freezing.
 - Recording gold: `id`, `source_input_sha256`, `label_status`,
   `metadata: {artist,date,venue,city}`, `review_required`. Empty strings explicitly
-  mean unknown. Optional `titles`/`mappings` allow newly accepted track-value checks.
+  mean unknown. `titles`/`mappings` provide full-recording and newly accepted track-value checks.
+  Missing track gold remains explicit and blocks integration; complete metadata
+  alone cannot certify a recording.
   Labels are `agent-reviewed`/`adjudicated` or explicitly `disputed`/`unresolved`.
   Unresolved recordings remain reported in the frozen inventory but are ineligible.
 - Line gold: existing complete-line study rows including `id`, `note`,

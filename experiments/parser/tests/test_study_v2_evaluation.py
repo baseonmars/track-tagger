@@ -15,9 +15,10 @@ def fixture(count=200):
         case = f'case-{i}'
         metadata = dict(artist='Band', date='2020-01-01', venue='Håll', city='Town')
         sources.append(dict(id=case, group=case, source_input_sha256='a'*64,
-                            notes={'notes.txt': 5}, split='test'))
+                            notes={'notes.txt': 5}, files=['d1t01.flac'], split='test'))
         gold.append(dict(id=case, source_input_sha256='a'*64, label_status='agent-reviewed',
-                         metadata=metadata, review_required=True))
+                         metadata=metadata, review_required=True, titles={'1:1':'Song'},
+                         mappings={'d1t01.flac': {'disc':1, 'number':1, 'title':'Song'}}))
         for j, (role, value) in enumerate([*metadata.items(), ('other', 'Technical prose')]):
             lines.append(dict(id=case, note='notes.txt', line_index=j, line=value,
                               source_input_sha256='a'*64, label_status='agent-reviewed',
@@ -32,7 +33,8 @@ def fixture(count=200):
         rows = []
         for label in gold:
             output = dict(metadata={f: '' for f in FIELDS}, ready=False,
-                          review_reasons=['source review required'], mappings={}, write_plan={})
+                          review_reasons=['source review required'], mappings=copy.deepcopy(label['mappings']),
+                          titles=copy.deepcopy(label['titles']), write_plan={})
             row = dict(id=label['id'], source_input_sha256='a'*64,
                        freeze_sha256=frozen, output=output)
             if name == 'assisted':
@@ -53,6 +55,19 @@ class StudyEvaluationTests(unittest.TestCase):
         self.assertEqual(result['review_cohort']['paired_improvement'], 1)
         self.assertEqual(result['background']['lines'], 200)
         self.assertEqual(result['roles']['venue']['supporting_recordings'], 200)
+
+    def test_missing_track_gold_cannot_pass_metadata_only_gate(self):
+        data = list(fixture(200))
+        del data[1][0]['mappings']
+        data[0] = freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
+        for arm in data[3].values():
+            for row in arm['rows']:
+                row['freeze_sha256'] = digest(data[0])
+        for row in data[4]:
+            row['freeze_sha256'] = digest(data[0])
+        result = evaluate(*data)
+        self.assertFalse(result['gates']['complete_track_reference_coverage'])
+        self.assertEqual(result['arms']['fixed']['full_recording_gold_cases'], 199)
 
     def test_insufficient_independent_support_blocks(self):
         result = evaluate(*fixture(3))
