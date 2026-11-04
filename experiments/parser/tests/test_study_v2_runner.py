@@ -57,6 +57,8 @@ class ProposalTests(unittest.TestCase):
         c['notes'].append({'name': 'other.txt', 'text': 'Other Band'})
         pred = predictions(c, [['artist']])+[{'note': 'other.txt', 'line_index': 0, 'roles': ['artist']}]
         self.assertEqual(proposals(c, pred, fixed(), lambda x:x), [])
+        populated = fixed();populated['metadata']['artist'] = 'Band'
+        self.assertEqual(proposals(c, pred, populated, lambda x:x), [])
 
     def test_numeric_dates_reach_deterministic_validator(self):
         c = case('10-29-2011')

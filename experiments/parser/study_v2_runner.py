@@ -256,7 +256,7 @@ def proposals(case, predictions, fixed_output, parse_date):
             if start < 0:
                 continue
             proposed = parse_date(value) if role == 'date' else value
-            if not proposed or proposed == fixed_output['metadata'][role]:
+            if not proposed:
                 continue
             found[role].append({'field': role, 'value': proposed, 'note': note['name'],
                                 'note_sha256': hashlib.sha256(normalized(note['text']).encode()).hexdigest(),
@@ -264,7 +264,7 @@ def proposals(case, predictions, fixed_output, parse_date):
     result = []
     for role in FIELDS:
         candidates = found[role]
-        if len({p['value'] for p in candidates}) == 1:
+        if len({p['value'] for p in candidates}) == 1 and candidates[0]['value'] != fixed_output['metadata'][role]:
             result.append(candidates[0])
     return result
 
