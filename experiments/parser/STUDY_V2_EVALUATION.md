@@ -11,6 +11,7 @@ and enabled roles, create the final evaluation protocol before test inference:
 python3 -m experiments.parser.study_v2_evaluation freeze \
   --sources /external/sources.jsonl --recording-gold /external/recording-gold.jsonl \
   --line-gold /external/line-gold.jsonl --model-sha256 MODEL_SHA256 \
+  --execution-manifest /external/execution-manifest.json \
   --output /external/frozen-protocol.json
 python3 -m experiments.parser.study_v2_evaluation evaluate \
   --protocol /external/frozen-protocol.json \
@@ -80,3 +81,45 @@ Passing numerical gates never sets `integration_approved`: independent source au
 performance/artifact checks, cross-platform validation and integration review remain
 required. Paired improvement intervals resample recording groups. Wilson role
 intervals are descriptive line-level intervals and do not establish safety.
+
+## Offline candidate execution
+
+Build both catalog adapters from pinned application commits in external disposable
+source trees. The adapter is pinned to the completed experiment; the added date
+helper delegates to each pinned catalog's own date validator.
+
+```sh
+python3 -m experiments.parser.study_v2_runner build --repo /path/to/track-tagger \
+  --output-root /external/catalog-build
+python3 -m experiments.parser.study_v2_runner execution-manifest \
+  --build-manifest /external/catalog-build/build-manifest.json \
+  --scorer /external/noterole-features --output /external/execution-manifest.json
+python3 -m experiments.parser.study_v2_runner run --cases /external/corpus.json \
+  --split validation --build-manifest /external/catalog-build/build-manifest.json \
+  --scorer /external/noterole-features --model /external/model.json \
+  --output-root /external/validation-run
+```
+
+For `--split test`, also supply `--protocol`, `--recording-gold`, and `--line-gold`.
+The runner validates the independently reviewed gold, exact test inventory, model,
+runner and executable identities before invoking any test candidate. Train and
+validation runs have distinct development hashes and cannot masquerade as sealed
+test runs. Rebuild the execution manifest and final protocol after any runner,
+executable, or model change; source-only gold freezes remain unchanged.
+
+Proposals operate only on the first contiguous header block, at most eight nonempty
+lines, and only on an unambiguous single metadata role. Technical sections,
+historical references, guests, explicit uncertainty, multi-role lines and conflicting
+same-field sources abstain. Date proposals additionally pass the pinned production
+date validator. This eligibility logic uses source text only, never gold flags or
+Archive reference metadata. Ready catalog cases receive no proposals. Titles and
+file mappings always come directly from the catalog adapter.
+
+Catalog outputs retain their actual metadata, reasons and readiness. The write-plan
+member is explicitly a research-preview sentinel with no writes; the application
+writer is not invoked. Per-case checkpoints bind input, protocol and runner hashes;
+resumption reuses original outputs and timings, rather than claiming a fresh latency
+measurement. Classifier wall timings include feature/scoring IPC and proposal/date
+validation with a persistent model worker. They exclude initial model loading and
+are not per-recording CPU measurements. Oversized sources explicitly abstain, and
+repeated worker failures open a circuit after three failures.

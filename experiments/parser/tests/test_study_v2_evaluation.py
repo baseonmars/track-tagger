@@ -4,6 +4,7 @@ from experiments.parser.study_v2_evaluation import (
     FIELDS, BASELINE_COMMIT, FIXED_COMMIT, digest, freeze_protocol, evaluate)
 
 MODEL = 'b' * 64
+EXECUTION = {k: 'c'*64 for k in ('runner_sha256', 'build_manifest_sha256', 'baseline_binary_sha256', 'fixed_binary_sha256', 'classifier_binary_sha256')}
 
 
 def fixture(count=200):
@@ -21,7 +22,7 @@ def fixture(count=200):
             lines.append(dict(id=case, note='notes.txt', line_index=j, line=value,
                               source_input_sha256='a'*64, label_status='agent-reviewed',
                               roles=[role], role_disputed=False, mixed_scope=False, uncertainty=False, conflict=False))
-    protocol = freeze_protocol(sources, gold, lines, classifier_model_sha256=MODEL)
+    protocol = freeze_protocol(sources, gold, lines, classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
     frozen = digest(protocol)
     predictions = [{**{k: row[k] for k in ('id', 'note', 'line_index', 'source_input_sha256')},
                     'freeze_sha256': frozen, 'model_sha256': MODEL, 'roles': row['roles']}
@@ -122,7 +123,7 @@ class StudyEvaluationTests(unittest.TestCase):
         data = fixture(3)
         data[1][0]['review_required'] = False
         data = list(data)
-        data[0] = freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL)
+        data[0] = freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
         for arm in data[3].values():
             for row in arm['rows']:
                 row['freeze_sha256'] = digest(data[0])
@@ -138,7 +139,7 @@ class StudyEvaluationTests(unittest.TestCase):
         for flag in ('mixed_scope', 'uncertainty', 'conflict'):
             data = list(fixture(3))
             data[2][0][flag] = True
-            data[0] = freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL)
+            data[0] = freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
             for arm in data[3].values():
                 for row in arm['rows']:
                     row['freeze_sha256'] = digest(data[0])
@@ -155,15 +156,15 @@ class StudyEvaluationTests(unittest.TestCase):
         data = fixture(3)
         data[2][0]['roles'] = []
         with self.assertRaisesRegex(ValueError, 'explicitly disputed'):
-            freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL)
+            freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
 
     def test_unreviewed_or_incomplete_gold_cannot_freeze(self):
         data = fixture(3)
         with self.assertRaisesRegex(ValueError, 'coverage'):
-            freeze_protocol(data[0]['sources'], data[1], data[2][:-1], classifier_model_sha256=MODEL)
+            freeze_protocol(data[0]['sources'], data[1], data[2][:-1], classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
         data[1][0]['label_status'] = 'draft'
         with self.assertRaisesRegex(ValueError, 'independently reviewed'):
-            freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL)
+            freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
 
 
 if __name__ == '__main__':

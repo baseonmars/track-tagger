@@ -59,7 +59,7 @@ def metadata_equal(left, right):
     return valid_metadata(left) and all(normalized(left[f]) == normalized(right[f]) for f in FIELDS)
 
 
-def freeze_protocol(sources, recording_gold, line_gold, enabled_roles=FIELDS, *, classifier_model_sha256):
+def freeze_protocol(sources, recording_gold, line_gold, enabled_roles=FIELDS, *, classifier_model_sha256, execution_manifest):
     """Call before predictions; source_line_counts must come from actual input.
 
     Disputed recording labels stay in the requested cohort but are ineligible.
@@ -71,6 +71,17 @@ def freeze_protocol(sources, recording_gold, line_gold, enabled_roles=FIELDS, *,
         bytes.fromhex(classifier_model_sha256)
     except ValueError:
         raise ValueError('invalid classifier model hash') from None
+    expected_execution_keys = {'runner_sha256', 'build_manifest_sha256', 'baseline_binary_sha256', 'fixed_binary_sha256', 'classifier_binary_sha256'}
+    if not isinstance(execution_manifest, dict) or set(execution_manifest) != expected_execution_keys:
+        raise ValueError('frozen execution manifest required')
+    for value in execution_manifest.values():
+        if not isinstance(value, str) or len(value) != 64:
+            raise ValueError('invalid executable hash')
+        try:
+            if len(bytes.fromhex(value)) != 32:
+                raise ValueError('invalid executable hash')
+        except ValueError:
+            raise ValueError('invalid executable hash') from None
     source_by_id, gold = indexed(sources), indexed(recording_gold)
     lines = indexed_lines(line_gold)
     if set(source_by_id) != set(gold):
@@ -118,7 +129,7 @@ def freeze_protocol(sources, recording_gold, line_gold, enabled_roles=FIELDS, *,
             raise ValueError('unlabeled line must remain explicitly disputed')
         if ('blank' in row['roles']) != (not row['line'].strip()) or ('blank' in row['roles'] and len(row['roles']) != 1):
             raise ValueError('blank line label mismatch')
-    return {'schema_version': 1, 'classifier_model_sha256': classifier_model_sha256, 'sources': sources, 'recording_gold_sha256': digest(recording_gold),
+    return {'schema_version': 1, 'classifier_model_sha256': classifier_model_sha256, 'execution_manifest': execution_manifest, 'sources': sources, 'recording_gold_sha256': digest(recording_gold),
             'line_gold_sha256': digest(line_gold), 'enabled_roles': enabled_roles,
             'eligible_ids': sorted(eligible), 'review_cohort': sorted(review_cohort),
             'baseline_commit': BASELINE_COMMIT, 'fixed_commit': FIXED_COMMIT}
@@ -158,7 +169,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
     if digest(recording_gold) != protocol['recording_gold_sha256'] or digest(line_gold) != protocol['line_gold_sha256']:
         raise ValueError('gold changed after freeze')
     # Revalidate the source-defined cohort rather than trusting edited manifest IDs.
-    if freeze_protocol(protocol['sources'], recording_gold, line_gold, protocol['enabled_roles'], classifier_model_sha256=protocol['classifier_model_sha256']) != protocol:
+    if freeze_protocol(protocol['sources'], recording_gold, line_gold, protocol['enabled_roles'], classifier_model_sha256=protocol['classifier_model_sha256'], execution_manifest=protocol['execution_manifest']) != protocol:
         raise ValueError('protocol is inconsistent with reviewed sources')
     frozen_hash = digest(protocol)
     sources, gold, lines = indexed(protocol['sources']), indexed(recording_gold), indexed_lines(line_gold)
@@ -212,6 +223,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
     new_material_acceptance = []
     proposal_invalid = []
     proposal_ineligible = []
+    proposal_failures = []
     proposed_correct = fixed_correct = 0
     improvements = []
     for case_id in eligible:
@@ -258,6 +270,9 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
                 proposal_invalid.append(case_id)
                 merged = None
                 break
+        if candidates['assisted'].get(case_id, {}).get('proposal_error'):
+            proposal_failures.append(case_id)
+            merged = None
         if assisted is None:
             merged = None
         if case_id in cohort:
@@ -324,7 +339,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
         'source_eligible_metadata_proposals': not proposal_ineligible,
         'no_new_false_ready': not new_false_ready,
         'no_new_material_acceptance': not new_material_acceptance,
-        'complete_candidate_outputs': all(not m['failures'] for m in arm_metrics.values()) and not line_failures,
+        'complete_candidate_outputs': all(not m['failures'] for m in arm_metrics.values()) and not line_failures and not proposal_failures,
     }
     return {'protocol_sha256': frozen_hash, 'arms': arm_metrics,
             'review_cohort': {'count': len(cohort), 'fixed_metadata_exact': fixed_correct,
@@ -336,7 +351,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
                            'recordings': len(background_recordings), 'affected_recordings': len(affected_recordings)},
             'line_coverage': {'eligible_lines': line_total, 'abstentions': abstentions,
                               'disputed_lines': disputed, 'failed_or_missing_lines': len(line_failures)},
-            'source_ineligible_proposals': proposal_ineligible,
+            'source_ineligible_proposals': proposal_ineligible, 'proposal_failure_ids': proposal_failures,
             'parity_failure_ids': sorted(parity_failures), 'invalid_proposal_ids': sorted(set(proposal_invalid)),
             'new_false_ready_ids': sorted(new_false_ready), 'new_material_acceptance_ids': sorted(new_material_acceptance), 'gates': gates,
             'quantitative_gates_pass': all(gates.values()),
@@ -355,6 +370,7 @@ def main():
     freeze = sub.add_parser('freeze')
     freeze.add_argument('--sources', required=True, help='JSONL source inventories with note line counts')
     freeze.add_argument('--model-sha256', required=True)
+    freeze.add_argument('--execution-manifest', required=True)
     freeze.add_argument('--enabled-roles', nargs='+', default=list(FIELDS))
     run = sub.add_parser('evaluate')
     run.add_argument('--protocol', required=True)
@@ -372,7 +388,7 @@ def main():
     gold, line_gold = read_rows(args.recording_gold), read_rows(args.line_gold)
     if args.command == 'freeze':
         result = freeze_protocol(read_rows(args.sources), gold, line_gold, args.enabled_roles,
-                                 classifier_model_sha256=args.model_sha256)
+                                 classifier_model_sha256=args.model_sha256, execution_manifest=json.loads(Path(args.execution_manifest).read_text()))
     else:
         result = evaluate(json.loads(Path(args.protocol).read_text()), gold, line_gold,
                           json.loads(Path(args.arms).read_text()), read_rows(args.line_predictions))
