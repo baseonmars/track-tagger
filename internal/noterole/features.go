@@ -60,8 +60,9 @@ func Features(line, previous, next string) (map[string]float64, error) {
 	wordFeatures(out, "w:", line)
 	chars := []rune(strings.Join(strings.Fields(strings.ToLower(line)), " "))
 	for n := 2; n <= 4; n++ {
+		prefix := fmt.Sprintf("c:%d:", n)
 		for i := 0; i+n <= len(chars); i++ {
-			out[fmt.Sprintf("c:%d:%s", n, string(chars[i:i+n]))]++
+			out[prefix+string(chars[i:i+n])]++
 		}
 	}
 	wordFeatures(out, "p:", previous)

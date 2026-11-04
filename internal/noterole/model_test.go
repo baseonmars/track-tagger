@@ -3,6 +3,7 @@ package noterole
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"math"
 	"reflect"
 	"strings"
@@ -90,5 +91,51 @@ func TestFiniteOverflowRejectsWholeSuggestion(t *testing.T) {
 	a.Heads[0].Weights[0] = 1e308
 	if _, err := model(t, a).Suggest("artist artist artist", "", ""); err == nil {
 		t.Fatal("overflow accepted")
+	}
+}
+
+// Representative Unicode fixture remains synthetic and never reads music notes.
+func BenchmarkUnicodeFeatures(b *testing.B) {
+	line := strings.Repeat("Élan 名 01 Song → ", 128)
+	b.ReportAllocs()
+	for b.Loop() {
+		if _, err := Features(line, "Disc 2", "Source: synthetic"); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+func BenchmarkColdLoad(b *testing.B) {
+	a := fixture()
+	a.Vocabulary = make([]string, 12000)
+	for i := range a.Vocabulary {
+		a.Vocabulary[i] = fmt.Sprintf("w:1:token%05d", i)
+	}
+	for i := range a.Heads {
+		a.Heads[i].Weights = make([]float64, len(a.Vocabulary))
+	}
+	data, err := json.Marshal(a)
+	if err != nil {
+		b.Fatal(err)
+	}
+	b.ReportAllocs()
+	b.SetBytes(int64(len(data)))
+	b.ResetTimer()
+	for b.Loop() {
+		if _, err := Load(bytes.NewReader(data)); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+func TestInputBoundsAndUnknowns(t *testing.T) {
+	m := model(t, fixture())
+	if _, err := m.Suggest(string([]byte{0xff}), "", ""); err == nil {
+		t.Fatal("invalid UTF8 accepted")
+	}
+	if _, err := m.Suggest(strings.Repeat("名", MaxLineRunes+1), "", ""); err == nil {
+		t.Fatal("oversized input accepted")
+	}
+	s, err := m.Suggest("source transfer checksum", "artist", "")
+	if err != nil || s.Abstention != "zero_or_oov_source_features" {
+		t.Fatal("neighbor words must not defeat source OOV", s, err)
 	}
 }
