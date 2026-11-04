@@ -59,14 +59,14 @@ with whitespace normalization only. Proposal accuracy overlays candidate-selecte
 suggestions onto the fixed parser's values without changing production output.
 Abstentions retain the fixed value; failed recording outputs count as incorrect.
 
-Role precision is evaluated separately for enabled metadata roles with at least20
+Role precision is evaluated separately for enabled metadata roles with at least 20
 supporting recordings. Background false positives use every nondisputed line labeled
 only `other`, `technical_provenance`, or `blank`; the report also counts affected
 recordings. Role-disputed lines remain in coverage and are explicitly excluded from
 semantic precision/recall denominators. No undocumented removal of failures occurs.
 
-Quantitative gates enforce180eligible recordings,95%per-role precision,1%maximum
-background false-positive rate,5percentage-point paired metadata improvement,
+Quantitative gates enforce 180 eligible recordings, 95% per-role precision, 1% maximum
+background false-positive rate, 5 percentage-point paired metadata improvement,
 source-backed proposals, complete outputs, and exact underlying output parity.
 Newly accepted wrong metadata, available track gold, and missed review are flagged
 separately from inherited baseline errors. Those checks are proxies; independent
