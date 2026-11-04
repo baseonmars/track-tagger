@@ -4,6 +4,7 @@ from collections import Counter
 import hashlib
 import json
 from pathlib import Path
+from ..path_guard import require_external
 import random
 import sqlite3
 from ..acquire import normalize_packages, atomic_json
@@ -24,6 +25,7 @@ def check_proposed_binding(proposed,manifest):
     return digest
 
 def freeze(root,old_root,old_manifest,propose=False):
+    root=require_external(root)
     output=root/('proposed-corpus.json'if propose else 'frozen-corpus.json')
     previous=None
     if output.exists():

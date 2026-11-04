@@ -10,9 +10,10 @@ import time
 from ..budget import Ledger, BudgetExceeded
 from ..hosted import Adapter, canonical, request_schema
 from ..orchestrate import session, MODELS
+from ..path_guard import require_external
 from .labels import PROMPT, schema, flatten, normalized_case, source_hash, lines
 
-ALLOCATIONS={'annotation-v2-pilot-luna:gpt-6-luna':.5,'annotation-v2-pilot-sol:gpt-6.1-sol':4.5,'annotation-v2-training:gpt-6.1-sol':10,'annotation-v2-independent-author:gpt-6.1-sol':11.5,'annotation-v2-independent-review:gpt-6.1-sol':11.5,'annotation-v2-adjudication:gpt-6-astra':5}
+ALLOCATIONS={'annotation-v2-pilot-luna:gpt-6-luna':.5,'annotation-v2-pilot-sol:gpt-6.1-sol':4.5,'annotation-v2-training:gpt-6.1-sol':10,'annotation-v2-independent-author:gpt-6.1-sol':11.5,'annotation-v2-independent-review:gpt-6.1-sol':13.5,'annotation-v2-adjudication:gpt-6-astra':5}
 
 class StudyLedger(Ledger):
     def reserve(self,label,ceiling,stage_cap=None):
@@ -22,8 +23,7 @@ class StudyLedger(Ledger):
         return super().reserve(aggregate,ceiling,stage_cap)
 
 def initialize(root):
-    root=Path(root).resolve()
-    if root.is_relative_to(Path(__file__).resolve().parents[3]):raise ValueError('study state must remain outside Git')
+    root=require_external(root)
     root.mkdir(parents=True,exist_ok=True)
     database=root/'budget.sqlite'
     if database.exists():
@@ -37,7 +37,7 @@ def initialize(root):
     if ledger.summary()['cap_usd']!=50:raise ValueError('study requires its own incremental50 ledger')
     for label,cap in ALLOCATIONS.items():
         with ledger.connect() as db:row=db.execute('SELECT cap FROM stages WHERE label=?',(label,)).fetchone()
-        if row is None:ledger.allocate_stage(label,cap,'approved incremental50 study allocation; shared43 allocated plus2 independent-review reserve and5 overall reserve')
+        if row is None:ledger.allocate_stage(label,cap,'approved incremental50 study allocation; shared45 allocated after explicit2 independent-review reserve release;5 overall reserve')
         elif row[0]!=int(cap*1e6):raise ValueError('stage allocation drift')
     return ledger,session(root)
 

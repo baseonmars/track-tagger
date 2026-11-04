@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 from pathlib import Path
+from ..path_guard import require_external
 import random
 import re
 
@@ -44,6 +45,7 @@ def performance(package):
     return {a+'|'+date for a in aliases(package['artist'])} if re.fullmatch(r'\d{4}-\d{2}-\d{2}',date) else set()
 
 def acquire_fresh(root, old_root, old_manifest, target=500, workers=6):
+    root=require_external(root)
     root.mkdir(parents=True,exist_ok=True)
     old_rows=[json.loads(x) for x in old_manifest.read_text().splitlines() if x.strip()]
     old_ids={r['package_id'] for r in old_rows}; old_uploaders=set();old_performances=set();old_signatures=set()

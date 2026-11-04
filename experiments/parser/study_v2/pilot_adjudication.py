@@ -7,12 +7,14 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+from ..path_guard import require_external
 from ..acquire import atomic_json
 from ..hosted import canonical
 from ..source_review import validate_review
 from .labels import flatten,lines
 
 def adjudicate(root):
+    root=require_external(root)
     packet=json.loads((root/'pilot20-source-adjudication-packet.json').read_text())
     rows=[]
     for case in packet['cases']:

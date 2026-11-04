@@ -4,11 +4,13 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 import json
 from pathlib import Path
+from ..path_guard import require_external
 from ..acquire import acquire, atomic_json
 from ..hosted import canonical
 from .corpus import performance, uploader
 
 def prefetch(root,old_root,old_manifest,target=300,workers=2):
+    root=require_external(root)
     old_ids={json.loads(l)['package_id']for l in old_manifest.read_text().splitlines()if l.strip()}
     old_performances=set()
     for id in old_ids:old_performances.update(performance(json.loads((old_root/'packages'/id/'package.json').read_text())))

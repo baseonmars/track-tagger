@@ -31,13 +31,13 @@ class FullLineTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             ledger=Ledger(Path(d)/'budget.sqlite',50)
             allocations=ALLOCATIONS
-            self.assertEqual(sum(allocations.values()),43)
+            self.assertEqual(sum(allocations.values()),45)
             for name,cap in allocations.items():ledger.allocate_stage(name,cap,'frozen approved incremental50 allocation')
             key=ledger.reserve('annotation-v2-training:gpt-6.1-sol',10,10);ledger.settle(key,10)
             with self.assertRaises(BudgetExceeded):ledger.reserve('annotation-v2-training:gpt-6.1-sol',.000001,10)
-            key=ledger.reserve('annotation-v2-independent-review:gpt-6.1-sol',11.5,11.5);ledger.settle(key,11.5)
+            key=ledger.reserve('annotation-v2-independent-review:gpt-6.1-sol',13.5,13.5);ledger.settle(key,13.5)
             key=ledger.reserve('annotation-v2-independent-author:gpt-6.1-sol',11.5,11.5);ledger.settle(key,11.5)
-            self.assertEqual(ledger.summary()['charged_usd'],33)
+            self.assertEqual(ledger.summary()['charged_usd'],35)
     def test_revised_phase_cannot_reset_pilot_or_change_allocation(self):
         with tempfile.TemporaryDirectory() as d:
             ledger,_=initialize(Path(d))
@@ -52,5 +52,10 @@ class FullLineTests(unittest.TestCase):
             before=hashlib.sha256(path.read_bytes()).hexdigest()
             with self.assertRaisesRegex(ValueError,'prior or amended'):initialize(Path(d))
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),before)
+    def test_other_git_checkout_is_not_an_external_state_directory(self):
+        with tempfile.TemporaryDirectory()as d:
+            checkout=Path(d)/'other-project';(checkout/'.git').mkdir(parents=True)
+            with self.assertRaisesRegex(ValueError,'outside Git'):initialize(checkout/'state')
+            self.assertFalse((checkout/'state/budget.sqlite').exists())
 
 if __name__=='__main__':unittest.main()
