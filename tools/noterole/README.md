@@ -41,3 +41,22 @@ rejects unknown versions, dimensions, nonfinite/signed-zero parameters and model
 over 10 MiB. Any future integration must keep deterministic parser precedence,
 source evidence, review and identifier reconciliation, and separately audit every
 classifier-dependent newly-ready recording against a fresh frozen end-to-end set.
+
+## Fresh-study selection
+
+`study.py fit TRAIN_ROWS EXTRACTOR EXTERNAL_DIRECTORY` fits the predeclared
+class-balanced one-versus-rest candidates C=0.1, 1, 10 using training-only
+vocabulary. It seals candidate hashes and the selection protocol before reading
+validation. `study.py select VALIDATION_ROWS EXTRACTOR EXTERNAL_DIRECTORY` refuses
+test rows and overlapping groups, checks unchanged candidates/extractor, selects
+validation thresholds and writes a single `model-freeze.json`. It refuses a second
+selection on that directory. Thresholds use maximum recall at precision >=0.95,
+at least ten predicted lines across three recordings, from the fixed grid
+0.5/0.6/0.7/0.8/0.9/0.95/0.99 (ties higher). Candidate selection uses diagnostic
+macro-F1 across all eleven raw sigmoid heads, then metadata micro-precision, then
+smaller C. Diagnostic raw scores and runtime abstention are reported separately.
+Only qualified artist/date/venue/city roles in `enabled_metadata_roles` may be
+used by a source-backed proposal adapter. The other roles remain diagnostic;
+none determines metadata applicability or recording readiness. Source hashes,
+full-line requested counts, disputed targets and failed whole-package annotation
+coverage must accompany every evaluation; a failed package is never background.
