@@ -20,7 +20,7 @@ from pathlib import Path
 
 from .path_guard import require_external
 from .study_v2_evaluation import (BASELINE_COMMIT, FIXED_COMMIT, FIELDS, digest,
-                                  freeze_protocol, indexed)
+                                  freeze_protocol, indexed, read_rows)
 
 ADAPTER_COMMIT = 'aa2fcb576f546de93ec574e766babf58c194a812'
 MAX_SCORING_BYTES = 2 << 20
@@ -410,7 +410,7 @@ def main():
             json.dump(execution, output, indent=2)
         return
     def gold(path):
-        return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()] if path else None
+        return read_rows(path) if path else None
     model_freeze = json.loads(Path(args.model_freeze).read_text())
     protocol = json.loads(Path(args.protocol).read_text()) if args.protocol else None
     cases = json.loads(Path(args.cases).read_text())['cases']

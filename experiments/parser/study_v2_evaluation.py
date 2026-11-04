@@ -7,6 +7,7 @@ import hashlib
 import json
 import math
 import random
+from pathlib import Path
 
 FIELDS = ('artist', 'date', 'venue', 'city')
 BASELINE_COMMIT = '5fd190bc13e519edc05788d2bd8cf57c2f23bb28'
@@ -389,9 +390,13 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
             'interval_note': 'Paired improvement resamples recording groups; Wilson role intervals are descriptive line-level intervals, not independent-recording safety guarantees.'}
 
 
+def read_rows(path):
+    """JSONL records end at LF; Unicode source line separators stay in strings."""
+    return [json.loads(line) for line in Path(path).read_text().split('\n') if line.strip()]
+
+
 def main():
     import argparse
-    from pathlib import Path
     from .path_guard import require_external
 
     parser = argparse.ArgumentParser(description=__doc__)
@@ -410,9 +415,6 @@ def main():
         command.add_argument('--line-gold', required=True)
         command.add_argument('--output', required=True)
     args = parser.parse_args()
-
-    def read_rows(path):
-        return [json.loads(line) for line in Path(path).read_text().splitlines() if line.strip()]
 
     gold, line_gold = read_rows(args.recording_gold), read_rows(args.line_gold)
     if args.command == 'freeze':

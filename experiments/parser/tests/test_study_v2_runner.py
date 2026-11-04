@@ -97,6 +97,16 @@ class ProposalTests(unittest.TestCase):
 
 
 class DispatchTests(unittest.TestCase):
+    def test_jsonl_preserves_embedded_unicode_line_separators(self):
+        from experiments.parser.study_v2_evaluation import read_rows
+        from experiments.parser.study_v2_runner import read_rows as runner_read_rows
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)/'gold.jsonl'
+            rows = [{'line':'Band\u2028Venue\u2029City'}, {'line':'Next'}]
+            path.write_text('\n'.join(json.dumps(r, ensure_ascii=False) for r in rows)+'\n')
+            self.assertEqual(read_rows(path), rows)
+            self.assertEqual(runner_read_rows(path), rows)
+
     def test_model_selection_freeze_required_and_bound_to_model(self):
         with tempfile.TemporaryDirectory() as tmp:
             model = Path(tmp)/'model.json'
