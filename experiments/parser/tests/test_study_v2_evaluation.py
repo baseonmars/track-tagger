@@ -152,6 +152,39 @@ class StudyEvaluationTests(unittest.TestCase):
             self.assertEqual(result['review_cohort']['proposed_metadata_exact'], 2)
             self.assertEqual(data[3], before)
 
+    def test_unknown_line_gold_is_explicit_and_reference_shortfall_blocks(self):
+        data = list(fixture(3))
+        for row in data[2][:5]:
+            row.update(label_status='unresolved', roles=[], role_disputed=True)
+        data[0] = freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
+        for arm in data[3].values():
+            for row in arm['rows']:
+                row['freeze_sha256'] = digest(data[0])
+        for row in data[4]:
+            row['freeze_sha256'] = digest(data[0])
+        result = evaluate(*data)
+        self.assertEqual(result['line_coverage']['disputed_lines'], 5)
+        self.assertEqual(result['reference_coverage']['reviewed_nonblank_fraction'], 2/3)
+        self.assertFalse(result['gates']['reviewed_nonblank_reference_coverage'])
+        self.assertEqual(result['background']['lines'], 2)
+        data[2][0]['roles'] = ['artist']
+        with self.assertRaisesRegex(ValueError, 'empty roles'):
+            freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
+
+    def test_valid_line_gold_survives_unresolved_recording_gold(self):
+        data = list(fixture(3))
+        data[1][0]['label_status'] = 'unresolved'
+        data[0] = freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL, execution_manifest=EXECUTION)
+        for arm in data[3].values():
+            for row in arm['rows']:
+                row['freeze_sha256'] = digest(data[0])
+        for row in data[4]:
+            row['freeze_sha256'] = digest(data[0])
+        result = evaluate(*data)
+        self.assertEqual(result['arms']['fixed']['eligible'], 2)
+        self.assertEqual(result['roles']['artist']['supporting_recordings'], 3)
+        self.assertEqual(result['reference_coverage']['eligible_recording_gold'], 2)
+
     def test_unlabeled_lines_cannot_masquerade_as_complete_gold(self):
         data = fixture(3)
         data[2][0]['roles'] = []

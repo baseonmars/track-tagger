@@ -117,8 +117,10 @@ def freeze_protocol(sources, recording_gold, line_gold, enabled_roles=FIELDS, *,
     for key, row in lines.items():
         if row.get('source_input_sha256') != source_by_id[key[0]]['source_input_sha256']:
             raise ValueError('stale line gold')
-        if row.get('label_status') not in REVIEWED:
+        if row.get('label_status') not in REVIEWED | {'disputed', 'unresolved'}:
             raise ValueError('line gold has not been independently reviewed')
+        if row.get('label_status') not in REVIEWED and (row.get('roles') != [] or row.get('role_disputed') is not True):
+            raise ValueError('unknown line gold must have empty roles and explicit dispute')
         if (not isinstance(row.get('line'), str) or type(row.get('line_index')) is not int or not isinstance(row.get('roles'), list)
                 or any(not isinstance(r, str) for r in row['roles']) or set(row['roles']) - ROLES
                 or len(set(row['roles'])) != len(row['roles']) or type(row.get('role_disputed')) is not bool):
@@ -127,7 +129,7 @@ def freeze_protocol(sources, recording_gold, line_gold, enabled_roles=FIELDS, *,
             raise ValueError('explicit source applicability flags required')
         if not row['roles'] and not row['role_disputed']:
             raise ValueError('unlabeled line must remain explicitly disputed')
-        if ('blank' in row['roles']) != (not row['line'].strip()) or ('blank' in row['roles'] and len(row['roles']) != 1):
+        if row['roles'] and (('blank' in row['roles']) != (not row['line'].strip()) or ('blank' in row['roles'] and len(row['roles']) != 1)):
             raise ValueError('blank line label mismatch')
     return {'schema_version': 1, 'classifier_model_sha256': classifier_model_sha256, 'execution_manifest': execution_manifest, 'sources': sources, 'recording_gold_sha256': digest(recording_gold),
             'line_gold_sha256': digest(line_gold), 'enabled_roles': enabled_roles,
@@ -254,10 +256,11 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
                 if prediction.get('error') or prediction.get('abstention') or p['field'] not in prediction.get('roles', []):
                     raise ValueError('proposal lacks classifier role evidence')
                 source_label = lines[key]
-                if any(source_label.get(flag, False) for flag in ('mixed_scope', 'uncertainty', 'conflict')):
+                reference_unknown = source_label['label_status'] not in REVIEWED or source_label['role_disputed']
+                if reference_unknown or any(source_label.get(flag, False) for flag in ('mixed_scope', 'uncertainty', 'conflict')):
                     proposal_ineligible.append({'id': case_id, 'field': p['field'], 'note': p['note'],
                                                 'line_index': p['line_index'],
-                                                'flags': [flag for flag in ('mixed_scope', 'uncertainty', 'conflict') if source_label.get(flag, False)]})
+                                                'flags': [flag for flag in ('mixed_scope', 'uncertainty', 'conflict') if source_label.get(flag, False)] + (['unresolved_role_reference'] if reference_unknown else [])})
                     merged = None
                     break
                 line = source_label['line']
@@ -288,8 +291,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
     affected_recordings = set()
     line_failures = []
     for key, label in lines.items():
-        if key[0] not in eligible:
-            continue
+        # Role gold and recording gold have independent review statuses.
         line_total += 1
         pred = predictions.get(key)
         emitted = set()
@@ -304,7 +306,7 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
         else:
             emitted = set(pred['roles']) & set(protocol['enabled_roles'])
         abstentions += not emitted
-        if label['role_disputed']:
+        if label['role_disputed'] or label['label_status'] not in REVIEWED:
             disputed += 1
             continue
         truth = set(label['roles'])
@@ -329,8 +331,12 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
                                   precision_wilson95=wilson(c['tp'], n),
                                   supporting_recordings=len(c['recordings']))
     improvement = (proposed_correct-fixed_correct)/len(cohort) if cohort else None
+    nonblank_total = sum(bool(r['line'].strip()) for r in lines.values())
+    reviewed_nonblank = sum(bool(r['line'].strip()) and r['label_status'] in REVIEWED and not r['role_disputed'] for r in lines.values())
+    reference_fraction = reviewed_nonblank/nonblank_total if nonblank_total else None
     gates = {
         'adjudicated_test_support': len(eligible) >= 180,
+        'reviewed_nonblank_reference_coverage': reference_fraction is not None and reference_fraction >= .95,
         'role_precision_and_support': all(c['precision'] is not None and c['precision'] >= .95 and c['supporting_recordings'] >= 20 for c in role_metrics.values()),
         'background_false_positive_rate': background_total > 0 and background_fp/background_total <= .01,
         'metadata_improvement': improvement is not None and improvement >= .05,
@@ -349,7 +355,12 @@ def evaluate(protocol, recording_gold, line_gold, arms, line_predictions):
             'background': {'lines': background_total, 'false_positive_lines': background_fp,
                            'false_positive_rate': background_fp/background_total if background_total else None,
                            'recordings': len(background_recordings), 'affected_recordings': len(affected_recordings)},
-            'line_coverage': {'eligible_lines': line_total, 'abstentions': abstentions,
+            'reference_coverage': {'requested_recordings': len(sources), 'eligible_recording_gold': len(eligible),
+                                   'source_lines': len(lines), 'nonblank_lines': nonblank_total,
+                                   'reviewed_nondisputed_nonblank_lines': reviewed_nonblank,
+                                   'reviewed_nonblank_fraction': reference_fraction,
+                                   'role_metric_scope': 'All requested source recordings with reviewed nondisputed line gold, independent of recording-gold eligibility.'},
+            'line_coverage': {'requested_lines': line_total, 'abstentions': abstentions,
                               'disputed_lines': disputed, 'failed_or_missing_lines': len(line_failures)},
             'source_ineligible_proposals': proposal_ineligible, 'proposal_failure_ids': proposal_failures,
             'parity_failure_ids': sorted(parity_failures), 'invalid_proposal_ids': sorted(set(proposal_invalid)),

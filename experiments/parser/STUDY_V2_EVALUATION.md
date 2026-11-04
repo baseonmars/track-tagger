@@ -123,3 +123,19 @@ measurement. Classifier wall timings include feature/scoring IPC and proposal/da
 validation with a persistent model worker. They exclude initial model loading and
 are not per-recording CPU measurements. Oversized sources explicitly abstain, and
 repeated worker failures open a circuit after three failures.
+
+
+## Unknown reference coverage
+
+Recording and line reference review statuses are independent. A failed recording
+oracle does not discard separately reviewed line labels. Unknown line references
+must use `label_status: "unresolved"` or `"disputed"`, `roles: []`, and
+`role_disputed: true`; they retain complete source-line coverage without pretending
+that unknown text is background. Known-role counts use reviewed nondisputed line
+gold from all requested source recordings. Recording accuracy uses only eligible
+recording gold. Both denominators are reported explicitly.
+
+At least 95% of nonblank source lines must have reviewed nondisputed role references
+for the quantitative gates to pass. Unknown references are excluded from semantic
+role/background denominators and counted separately. A metadata proposal relying
+on an unknown role reference is recorded as uncertifiable, not silently accepted.
