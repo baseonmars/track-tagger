@@ -102,7 +102,7 @@ class DispatchTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             model = Path(tmp)/'model.json';model.write_text('{}')
             c = case('Band', 'test')
-            sources = [dict(id=c['id'], group=c['group'], source_input_sha256=source_hash(c), notes={'notes.txt': 1})]
+            sources = [dict(id=c['id'], group=c['group'], source_input_sha256=source_hash(c), notes={'notes.txt': 1}, files=c['files'])]
             gold = [dict(id=c['id'], source_input_sha256=source_hash(c), label_status='agent-reviewed',
                          metadata={f: '' for f in ('artist','date','venue','city')}, review_required=True)]
             lines = [dict(id=c['id'], note='notes.txt', line_index=0, line='Band', roles=['artist'], role_disputed=False,
@@ -114,6 +114,15 @@ class DispatchTests(unittest.TestCase):
             changed = dict(EXECUTION, runner_sha256='d'*64)
             with self.assertRaisesRegex(ValueError, 'identity mismatch'):
                 validate_dispatch([c], 'test', model, changed, protocol, gold, lines)
+            # A claimed source hash does not authenticate mutated label text.
+            altered = copy.deepcopy(lines);altered[0]['line'] = 'Different Band'
+            altered_protocol = freeze_protocol(sources, gold, altered, classifier_model_sha256=file_sha(model), execution_manifest=EXECUTION)
+            with self.assertRaisesRegex(ValueError, 'source bytes'):
+                validate_dispatch([c], 'test', model, EXECUTION, altered_protocol, gold, altered)
+            wrong_inventory = copy.deepcopy(sources);wrong_inventory[0]['files'] = ['invented.flac']
+            wrong_protocol = freeze_protocol(wrong_inventory, gold, lines, classifier_model_sha256=file_sha(model), execution_manifest=EXECUTION)
+            with self.assertRaisesRegex(ValueError, 'inventory mismatch'):
+                validate_dispatch([c], 'test', model, EXECUTION, wrong_protocol, gold, lines)
 
     def test_catalog_receives_no_gold_or_reference_metadata(self):
         c = case('Band');c.update(oracle={'artist':'secret answer'}, provenance={'artist':'secret reference'})

@@ -284,8 +284,14 @@ def validate_dispatch(cases, split, model_path, execution, protocol=None, record
             raise ValueError('test protocol/executable/input identity mismatch')
         for src in protocol['sources']:
             case = by_id[src['id']]
-            if src['source_input_sha256'] != source_hash(case) or src['notes'] != {n['name']: len(source_lines(n['text'])) for n in case['notes']}:
+            if (src['source_input_sha256'] != source_hash(case) or src.get('files') != case['files']
+                or src['notes'] != {n['name']: len(source_lines(n['text'])) for n in case['notes']}):
                 raise ValueError('test source inventory mismatch')
+        actual_lines = {(c['id'], n['name'], i): line for c in selected for n in c['notes']
+                        for i, line in enumerate(source_lines(n['text']))}
+        for row in line_gold:
+            if actual_lines.get((row['id'], row['note'], row['line_index'])) != row['line']:
+                raise ValueError('line gold text does not match frozen source bytes')
         return selected, digest(protocol)
     if split not in ('train', 'validation') or protocol is not None:
         raise ValueError('invalid development dispatch')
