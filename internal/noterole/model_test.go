@@ -139,3 +139,19 @@ func TestInputBoundsAndUnknowns(t *testing.T) {
 		t.Fatal("neighbor words must not defeat source OOV", s, err)
 	}
 }
+
+func TestHighThresholdMarginCanEmitAndAbstain(t *testing.T) {
+	a := fixture()
+	a.Heads[0].Threshold = .99
+	a.Heads[0].Margin = math.Min(.05, (1-.99)/2)
+	a.Heads[0].Weights[0] = math.Log(.999 / (1 - .999))
+	s, err := model(t, a).Suggest("artist", "", "")
+	if err != nil || len(s.Roles) != 1 || s.Roles[0] != "artist" {
+		t.Fatal("strong .99 positive must be possible", s, err)
+	}
+	a.Heads[0].Weights[0] = math.Log(.992 / (1 - .992))
+	s, err = model(t, a).Suggest("artist", "", "")
+	if err != nil || s.Abstention != "threshold_margin" {
+		t.Fatal("borderline must abstain", s, err)
+	}
+}

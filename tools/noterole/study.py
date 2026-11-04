@@ -10,7 +10,7 @@ from pathlib import Path
 import subprocess
 from train import ROLES, VERSION
 
-PROTOCOL={'version':1,'C':[.1,1.,10.],'class_weight':'balanced','solver':'liblinear','random_state':42,'max_iter':1000,'threshold_grid':[.5,.6,.7,.8,.9,.95,.99],'metadata_roles':['artist','date','venue','city'],'enabled_role_min_predicted_lines':10,'enabled_role_min_predicted_records':3,'enabled_role_precision':.95,'threshold_selection':'maximum recall satisfying support and precision; ties higher threshold','model_selection':'maximum validation macro-F1 all roles, then metadata micro-precision, then smaller C','test_not_used':True}
+PROTOCOL={'version':1,'C':[.1,1.,10.],'class_weight':'balanced','solver':'liblinear','random_state':42,'max_iter':1000,'threshold_grid':[.5,.6,.7,.8,.9,.95,.99],'metadata_roles':['artist','date','venue','city'],'enabled_role_min_predicted_lines':10,'enabled_role_min_predicted_records':3,'enabled_role_precision':.95,'threshold_selection':'maximum recall satisfying support and precision; ties higher threshold','model_selection':'maximum validation macro-F1 all roles, then metadata micro-precision, then smaller C','test_not_used':True,'runtime_margin':'min(0.05, threshold/2, (1-threshold)/2)','threshold_search':'per-role emitted-positive including margin and source OOV; final global runtime mask recalculated without retuning','final_role_eligibility':'actual emitted precision/support after all global abstention; disable affects proposal eligibility only','model_selection_score':'actual Go-equivalent emitted roles, not raw probabilities'}
 def canonical(v):return json.dumps(v,sort_keys=True,ensure_ascii=False,separators=(',',':'),allow_nan=False)
 def digest(v):return hashlib.sha256(canonical(v).encode()).hexdigest()
 def write(path,v):Path(path).write_text(canonical(v)+'\n')
@@ -74,22 +74,37 @@ def select(validation,extractor,out):
         path=out/candidate['path']
         if hashlib.sha256(path.read_bytes()).hexdigest()!=candidate['sha256']:raise ValueError('candidate changed')
         artifact=json.loads(path.read_text());x=matrix(fs,artifact['vocabulary']);role_stats={};enabled=[];f1s=[];micro_tp=0;micro_fp=0
+        probabilities={}
+        vocabulary_set=set(artifact['vocabulary'])
+        source_known=np.array([any((k.startswith('w:')or k.startswith('c:'))and k in vocabulary_set for k in f)for f in fs])
         for head in artifact['heads']:
-            role=head['role'];truth=np.array([role in r['roles']for r in rows]);prob=expit(x.dot(np.array(head['weights']))+head['intercept']);options=[]
+            role=head['role'];truth=np.array([role in r['roles']for r in rows]);prob=expit(x.dot(np.array(head['weights']))+head['intercept']);probabilities[role]=prob;options=[]
             for threshold in PROTOCOL['threshold_grid']:
-                pred=prob>=threshold;tp=int(sum(pred&truth));fp=int(sum(pred&~truth));fn=int(sum(~pred&truth));records=len({r['id']for r,p in zip(rows,pred)if p});precision=tp/max(1,tp+fp);recall=tp/max(1,tp+fn)
+                margin=min(.05,threshold/2,(1-threshold)/2)
+                pred=(prob>=threshold)&(np.abs(prob-threshold)>=margin)&source_known
+                tp=int(sum(pred&truth));fp=int(sum(pred&~truth));fn=int(sum(~pred&truth));records=len({r['id']for r,p in zip(rows,pred)if p});precision=tp/max(1,tp+fp);recall=tp/max(1,tp+fn)
                 if tp+fp>=10 and records>=3 and precision>=.95:options.append((recall,threshold))
-            qualified=bool(options);threshold=max(options)[1]if options else .99
-            head['threshold']=threshold;pred=prob>=threshold;tp=int(sum(pred&truth));fp=int(sum(pred&~truth));fn=int(sum(~pred&truth));precision=tp/max(1,tp+fp);recall=tp/max(1,tp+fn);f1=2*tp/max(1,2*tp+fp+fn);f1s.append(f1)
+            threshold=max(options)[1]if options else .99
+            head['threshold']=threshold;head['margin']=min(.05,threshold/2,(1-threshold)/2)
+        # Reproduce all Go abstention before reporting selection metrics. Disabled
+        # metadata roles remain scored: disabling only controls proposal use.
+        uncertain=np.zeros(len(rows),dtype=bool);votes={}
+        for head in artifact['heads']:
+            p=probabilities[head['role']];uncertain|=np.abs(p-head['threshold'])<head['margin'];votes[head['role']]=p>=head['threshold']
+        vote_count=sum(votes.values());incompatible=(votes['other']|votes['blank'])&(vote_count>1)
+        emitted=source_known&~uncertain&~incompatible
+        for head in artifact['heads']:
+            role=head['role'];truth=np.array([role in r['roles']for r in rows]);pred=votes[role]&emitted;tp=int(sum(pred&truth));fp=int(sum(pred&~truth));fn=int(sum(~pred&truth));precision=tp/max(1,tp+fp);recall=tp/max(1,tp+fn);f1=2*tp/max(1,2*tp+fp+fn);f1s.append(f1)
+            records=len({r['id']for r,p in zip(rows,pred)if p});qualified=tp+fp>=10 and records>=3 and precision>=.95
             if role in PROTOCOL['metadata_roles']:
                 micro_tp+=tp;micro_fp+=fp
                 if qualified:enabled.append(role)
-            role_stats[role]={'threshold':threshold,'validation_qualified':qualified,'predicted_positive_lines':tp+fp,'predicted_positive_records':len({r['id']for r,p in zip(rows,pred)if p}),'expected_positive_lines':int(sum(truth)),'true_positive':tp,'false_positive':fp,'false_negative':fn,'precision':precision,'recall':recall,'f1':f1}
+            role_stats[role]={'threshold':head['threshold'],'margin':head['margin'],'validation_qualified':qualified,'predicted_positive_lines':tp+fp,'predicted_positive_records':records,'expected_positive_lines':int(sum(truth)),'true_positive':tp,'false_positive':fp,'false_negative':fn,'precision':precision,'recall':recall,'f1':f1,'metric':'actual Go-equivalent emission after all global abstention'}
         results.append({'C':candidate['C'],'artifact':artifact,'roles':role_stats,'enabled_metadata_roles':enabled,'macro_f1':sum(f1s)/len(f1s),'metadata_micro_precision':micro_tp/max(1,micro_tp+micro_fp)})
     winner=max(results,key=lambda r:(r['macro_f1'],r['metadata_micro_precision'],-r['C']));artifact=winner.pop('artifact');artifact['model_id']='study-v2-frozen-C'+str(winner['C']);model_path=out/'model.json';write(model_path,artifact)
     subprocess.run([str(extractor),'--model',str(model_path)],input=canonical({k:rows[0][k]for k in ('line','prev','next')})+'\n',text=True,capture_output=True,check=True)
     for result in results:result.pop('artifact',None)
-    freeze={'schema_version':1,'protocol':PROTOCOL,'protocol_sha256':digest(PROTOCOL),'training_manifest_sha256':hashlib.sha256((out/'training-manifest.json').read_bytes()).hexdigest(),'validation_rows_sha256':digest(validation),'validation_requested_lines':len(validation),'validation_eligible_lines':len(rows),'validation_records':len({r['id']for r in validation}),'selection_results':results,'selected_C':winner['C'],'enabled_metadata_roles':winner['enabled_metadata_roles'],'model_sha256':hashlib.sha256(model_path.read_bytes()).hexdigest(),'extractor_sha256':manifest['extractor_sha256'],'feature_version':VERSION,'training_source_rows_sha256':manifest['training_rows_sha256'],'test_inspected':False,'score_convention':'Raw independent sigmoid heads for all-role diagnostic selection; runtime abstention/structural eligibility measured separately. Only qualified metadata roles may become proposals; raw role is not metadata applicability.'}
+    freeze={'schema_version':1,'protocol':PROTOCOL,'protocol_sha256':digest(PROTOCOL),'training_manifest_sha256':hashlib.sha256((out/'training-manifest.json').read_bytes()).hexdigest(),'validation_rows_sha256':digest(validation),'validation_requested_lines':len(validation),'validation_eligible_lines':len(rows),'validation_records':len({r['id']for r in validation}),'selection_results':results,'selected_C':winner['C'],'enabled_metadata_roles':winner['enabled_metadata_roles'],'model_sha256':hashlib.sha256(model_path.read_bytes()).hexdigest(),'extractor_sha256':manifest['extractor_sha256'],'feature_version':VERSION,'training_source_rows_sha256':manifest['training_rows_sha256'],'test_inspected':False,'score_convention':'Actual Go-equivalent emitted roles after source OOV, threshold margin and incompatible-role abstention determine model selection and metadata-role eligibility. Only qualified metadata roles may become proposals; role is not metadata applicability.'}
     write(out/'model-freeze.json',freeze);return freeze
 
 if __name__=='__main__':

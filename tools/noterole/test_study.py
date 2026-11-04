@@ -11,5 +11,9 @@ class StudyTests(unittest.TestCase):
    self.assertEqual([c['C']for c in m['candidates']],PROTOCOL['C'])
    with self.assertRaises(ValueError):select([{**r,'split':'test'}for r in val],exe,out)
    f=select(val,exe,out);self.assertFalse(f['test_inspected']);self.assertEqual(len(f['selection_results']),3)
+   payload=''.join(json.dumps({k:r[k]for k in ('line','prev','next')})+'\n'for r in val)
+   emitted=[json.loads(s)for s in subprocess.check_output([str(exe),'--model',str(out/'model.json')],input=payload,text=True).splitlines()]
+   chosen=next(c for c in f['selection_results']if c['C']==f['selected_C'])
+   for role in ROLES:self.assertEqual(sum(role in r['roles']for r in emitted),chosen['roles'][role]['predicted_positive_lines'])
    self.assertTrue(set(f['enabled_metadata_roles'])<=set(PROTOCOL['metadata_roles']))
    with self.assertRaises(ValueError):select(val,exe,out)

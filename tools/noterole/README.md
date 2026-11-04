@@ -52,9 +52,12 @@ test rows and overlapping groups, checks unchanged candidates/extractor, selects
 validation thresholds and writes a single `model-freeze.json`. It refuses a second
 selection on that directory. Thresholds use maximum recall at precision >=0.95,
 at least ten predicted lines across three recordings, from the fixed grid
-0.5/0.6/0.7/0.8/0.9/0.95/0.99 (ties higher). Candidate selection uses diagnostic
-macro-F1 across all eleven raw sigmoid heads, then metadata micro-precision, then
-smaller C. Diagnostic raw scores and runtime abstention are reported separately.
+0.5/0.6/0.7/0.8/0.9/0.95/0.99 (ties higher). The runtime margin is min(0.05, threshold/2, (1-threshold)/2), including at
+threshold 0.99. Candidate selection uses actual Go-equivalent emitted-role
+macro-F1 after global abstention, then metadata micro-precision, then
+smaller C. Per-role search includes margin and source OOV; the final global mask is
+recalculated without retuning and roles failing actual emitted support/precision
+are disabled for proposals. Raw scores remain diagnostic.
 Only qualified artist/date/venue/city roles in `enabled_metadata_roles` may be
 used by a source-backed proposal adapter. The other roles remain diagnostic;
 none determines metadata applicability or recording readiness. Source hashes,
