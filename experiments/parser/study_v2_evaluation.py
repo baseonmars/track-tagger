@@ -112,6 +112,10 @@ def freeze_protocol(sources, recording_gold, line_gold, enabled_roles=FIELDS, *,
                 or any(not isinstance(r, str) for r in row['roles']) or set(row['roles']) - ROLES
                 or len(set(row['roles'])) != len(row['roles']) or type(row.get('role_disputed')) is not bool):
             raise ValueError('invalid line gold')
+        if not row['roles'] and not row['role_disputed']:
+            raise ValueError('unlabeled line must remain explicitly disputed')
+        if ('blank' in row['roles']) != (not row['line'].strip()) or ('blank' in row['roles'] and len(row['roles']) != 1):
+            raise ValueError('blank line label mismatch')
     return {'schema_version': 1, 'classifier_model_sha256': classifier_model_sha256, 'sources': sources, 'recording_gold_sha256': digest(recording_gold),
             'line_gold_sha256': digest(line_gold), 'enabled_roles': enabled_roles,
             'eligible_ids': sorted(eligible), 'review_cohort': sorted(review_cohort),

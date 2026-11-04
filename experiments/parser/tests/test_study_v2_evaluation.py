@@ -134,6 +134,12 @@ class StudyEvaluationTests(unittest.TestCase):
         self.assertEqual(result['new_material_acceptance_ids'], ['case-0'])
         self.assertFalse(result['gates']['no_new_material_acceptance'])
 
+    def test_unlabeled_lines_cannot_masquerade_as_complete_gold(self):
+        data = fixture(3)
+        data[2][0]['roles'] = []
+        with self.assertRaisesRegex(ValueError, 'explicitly disputed'):
+            freeze_protocol(data[0]['sources'], data[1], data[2], classifier_model_sha256=MODEL)
+
     def test_unreviewed_or_incomplete_gold_cannot_freeze(self):
         data = fixture(3)
         with self.assertRaisesRegex(ValueError, 'coverage'):
