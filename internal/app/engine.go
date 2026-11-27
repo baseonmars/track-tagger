@@ -691,7 +691,19 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 			}
 		}
 	}
-	id, err = e.store.newJob(item.ID, "Metadata update.")
+	summary := "Metadata update."
+	if len(removals) > 0 {
+		names := make([]string, 0, len(removals))
+		for _, path := range removals {
+			name, err := filepath.Rel(item.Path, path)
+			if err != nil {
+				return "", err
+			}
+			names = append(names, filepath.ToSlash(name))
+		}
+		summary += " Approved MD5 cleanup for " + strings.Join(names, ", ") + "."
+	}
+	id, err = e.store.newJob(item.ID, summary)
 	if err != nil {
 		return "", err
 	}
