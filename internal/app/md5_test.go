@@ -188,3 +188,43 @@ func TestInterruptedMD5RemovalRestoresJournaledManifest(t *testing.T) {
 		t.Fatalf("interrupted manifest restoration: %q %v", got, err)
 	}
 }
+
+func TestCleanupRequiresSafeNotesBeforeTagging(t *testing.T) {
+	e, audio := engineFixture(t, Write)
+	prior, err := os.ReadFile(audio)
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifest := filepath.Join(e.Source, "show.md5")
+	sum := []byte(fmt.Sprintf("%x *t01.flac", md5.Sum(prior)))
+	if err = os.WriteFile(manifest, sum, 0644); err != nil {
+		t.Fatal(err)
+	}
+	extra := filepath.Join(e.Source, "credits.txt")
+	if err = os.WriteFile(extra, []byte("Credits: synthetic tape\r\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	plan, err := e.Scan()
+	if err != nil {
+		t.Fatal(err)
+	}
+	item := &plan.Recordings[0]
+	item.Reviewed, item.CleanupMD5, item.Status = true, true, "ready"
+	if _, err = e.Apply(plan); err == nil || !strings.Contains(err.Error(), "Choose which show-notes file") {
+		t.Fatalf("expected notes target error, got %v", err)
+	}
+	for path, original := range map[string][]byte{audio: prior, manifest: sum} {
+		got, err := os.ReadFile(path)
+		if err != nil || !bytes.Equal(got, original) {
+			t.Fatal(path, err)
+		}
+	}
+	item.NotesTarget = extra
+	if _, err = e.Apply(plan); err != nil {
+		t.Fatal(err)
+	}
+	got, err := os.ReadFile(extra)
+	if err != nil || !strings.Contains(string(got), "Removed show.md5") {
+		t.Fatal(string(got), err)
+	}
+}
