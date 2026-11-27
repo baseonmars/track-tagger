@@ -149,6 +149,15 @@ func (w WebBackend) SaveReview(ctx context.Context, id string, v webui.Review) e
 	if err != nil {
 		return err
 	}
+	if v.NotesSignatureEnabled != nil {
+		enabled, err := w.E.showNotesSignature()
+		if err != nil {
+			return err
+		}
+		if *v.NotesSignatureEnabled != enabled {
+			return errors.New("the show-notes setting changed; refresh before reviewing")
+		}
+	}
 	r, err := submittedItem(base, v)
 	if err != nil {
 		return err
@@ -175,15 +184,6 @@ func submittedItem(base catalog.Recording, v webui.Review) (Item, error) {
 	r.DateUnknown = v.DateUnknown
 	r.Artwork = v.Artwork
 	r.AddNotesSignature, r.NotesTarget = v.AddNotesSignature, v.NotesTarget
-	if v.NotesSignatureEnabled != nil {
-		enabled, err := w.E.showNotesSignature()
-		if err != nil {
-			return err
-		}
-		if *v.NotesSignatureEnabled != enabled {
-			return errors.New("the show-notes setting changed; refresh before reviewing")
-		}
-	}
 	if len(v.Tracks) != len(r.Tracks) {
 		return Item{}, errors.New("map every file")
 	}
@@ -271,7 +271,7 @@ func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Revie
 		if v.NotesSignatureEnabled != nil && *v.NotesSignatureEnabled != r.NotesSignatureEnabled {
 			return errors.New("the show-notes setting changed; refresh before applying")
 		}
-		if r.NotesSignatureEnabled && (v.AddNotesSignature != r.AddNotesSignature || v.NotesTarget != r.NotesTarget) {
+		if (r.NotesSignatureEnabled && v.AddNotesSignature != r.AddNotesSignature) || ((r.NotesSignatureEnabled || r.CleanupMD5) && v.NotesTarget != r.NotesTarget) {
 			return errors.New("submitted show-notes choices differ from the saved review; approve and save your edits before applying")
 		}
 		expected := webui.Review{DateUnknown: r.DateUnknown, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.Artwork}

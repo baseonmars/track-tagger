@@ -19,6 +19,7 @@ type NotesPreview struct {
 }
 
 type notesEdit struct {
+	alreadyPresent bool
 	NotesPreview
 	beforeHash  string
 	replacement []byte
@@ -121,6 +122,7 @@ func (e *Engine) planNotesEdit(item Item, source string, lines ...string) notesE
 		return edit
 	}
 	if bytes.Equal(data, updated) {
+		edit.alreadyPresent = true
 		edit.Reason = "The requested entry is already in the show notes."
 		return edit
 	}

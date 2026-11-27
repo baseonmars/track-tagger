@@ -30,7 +30,7 @@ type Config struct {
 }
 
 type Recording struct {
-	HasMD5,CleanupMD5 bool
+	HasMD5, CleanupMD5    bool
 	Reviewed              bool
 	PlaybackOnly          bool
 	DateUnknown           bool
@@ -59,7 +59,7 @@ type Track struct {
 	Track, Disc         int
 }
 type Review struct {
-	CleanupMD5 bool
+	CleanupMD5            bool
 	Fingerprint           string `json:"-"`
 	Approve               bool
 	DateUnknown           bool
@@ -503,7 +503,7 @@ func parseReview(form url.Values) (Review, error) {
 	}
 	review.AddNotesSignature = form.Get("notes_signature") == "yes"
 	review.NotesTarget = form.Get("notes_target")
-	review.CleanupMD5 = form.Get("cleanup_md5")=="yes"
+	review.CleanupMD5 = form.Get("cleanup_md5") == "yes"
 	files, titles := form["track_file"], form["track_title"]
 	discs, numbers := form["track_disc"], form["track_number"]
 	artists := form["track_artist"]
