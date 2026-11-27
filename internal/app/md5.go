@@ -140,3 +140,100 @@ func assessMD5(item Item) ([]manifestDecision, error) {
 	}
 	return results, nil
 }
+
+type md5Cleanup struct {
+	manifests []string
+	notes     string
+}
+
+func (c md5Cleanup) noteLines(item Item) []string {
+	var lines []string
+	for _, path := range c.manifests {
+		name, err := filepath.Rel(item.Path, path)
+		if err != nil {
+			name = filepath.Base(path)
+		}
+		lines = append(lines, "Removed "+filepath.ToSlash(name)+" after tagging changed the file checksums.")
+	}
+	return lines
+}
+
+// prepareMD5 runs before any write so the decision uses pre-tag checksums.
+// The notes edit must also be possible before the first manifest is removed.
+func (e *Engine) prepareMD5(item Item) (md5Cleanup, error) {
+	var c md5Cleanup
+	if !item.CleanupMD5 {
+		return c, nil
+	}
+	if !item.Reviewed {
+		return c, fmt.Errorf("MD5 cleanup requires an approved review")
+	}
+	decisions, err := assessMD5(item)
+	if err != nil {
+		return c, err
+	}
+	for _, d := range decisions {
+		if d.Remove {
+			c.manifests = append(c.manifests, d.Path)
+		}
+	}
+	if len(c.manifests) == 0 {
+		return c, nil
+	}
+	for _, path := range item.Notes {
+		if path == item.NotesTarget || item.NotesTarget == "" && len(item.Notes) == 1 {
+			c.notes = path
+			break
+		}
+	}
+	if c.notes == "" {
+		return c, fmt.Errorf("select the show notes to record MD5 cleanup")
+	}
+	b, _, err := readCompanion(c.notes)
+	if err != nil {
+		return c, err
+	}
+	_, err = appendNotesLines(b, c.noteLines(item)...)
+	return c, err
+}
+
+func (e *Engine) finishMD5(job string, item *Item, c md5Cleanup, skipped map[string]string) error {
+	if len(c.manifests) == 0 {
+		return nil
+	}
+	targetNotes, err := e.destination(c.notes)
+	if err != nil {
+		return err
+	}
+	original, _, err := readCompanion(targetNotes)
+	if err != nil {
+		return err
+	}
+	updated, err := appendNotesLines(original, c.noteLines(*item)...)
+	if err != nil {
+		return err
+	}
+	for _, src := range c.manifests {
+		dest, err := e.destination(src)
+		if err != nil {
+			return err
+		}
+		var expected string
+		for _, ev := range item.Evidence {
+			if ev.Path == src {
+				expected = ev.SHA256
+				break
+			}
+		}
+		if err = e.commitCompanion(job, item, src, dest, expected, nil, true); err != nil {
+			return err
+		}
+		delete(skipped, dest)
+	}
+	if err = e.commitCompanion(job, item, c.notes, targetNotes, hashBytes(original), updated, false); err != nil {
+		return err
+	}
+	delete(skipped, targetNotes)
+	_, err = e.store.db.Exec("UPDATE jobs SET summary=? WHERE id=?", "Metadata update. "+strings.Join(c.noteLines(*item), " "), job)
+	return err
+}

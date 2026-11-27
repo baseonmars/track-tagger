@@ -27,6 +27,10 @@
 <label class="date-unknown"><input id="date-unknown" name="date_unknown" type="checkbox" value="yes" {{if $r.DateUnknown}}checked{{end}}> Date unknown</label></div>
 <label class="wide" for="album">Album<input id="album" name="album" value="{{index $r.Metadata "ALBUM"}}" required></label>
 </div><div class="artwork"><label for="artwork">Artwork<select id="artwork" name="artwork"><option value="">Keep existing artwork</option>{{range $r.Artwork}}<option value="{{.}}" {{if eq . $r.SelectedArtwork}}selected{{end}}>{{base .}}</option>{{end}}</select></label>{{if not $r.Artwork}}<p>No local cover image found.</p>{{end}}</div></section>
+{{if $r.HasMD5}}<section><h2>Whole-file MD5 manifests</h2>
+<label><input type="checkbox" name="cleanup_md5" value="yes" {{if $r.CleanupMD5}}checked{{end}}> Remove manifests invalidated by tagging</label>
+<button type="button" id="preview-md5">Preview checksum cleanup</button>
+<pre id="md5-preview" aria-live="polite"></pre></section>{{end}}
 <section id="track-list"><h2><span class="step">2</span> Track titles <span class="count">{{len $r.Tracks}} files</span></h2><p>Each row is one audio file. Check its title and numbering against the notes.</p>
 <div class="table-scroll"><table class="mapping"><thead><tr><th>Audio file</th><th>Disc</th><th>Track</th><th>Title &amp; performer</th></tr></thead><tbody>{{range $i,$t := $r.Tracks}}<tr id="track-{{$t.Disc}}-{{$t.Track}}" {{if performerReview $r $t}}class="needs-performer"{{end}}>
 <td class="filename">{{base $t.File}}{{if $t.PlaybackID}}<button type="button" class="play-track" data-audio-url="/audio?recording={{$r.ID}}&amp;track={{$t.PlaybackID}}" data-title="{{if $t.Title}}{{$t.Title}}{{else}}{{base $t.File}}{{end}}" aria-label="Play {{base $t.File}}" disabled>Play</button>{{end}}<input type="hidden" name="track_file" value="{{$t.File}}"></td>

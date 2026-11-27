@@ -65,8 +65,11 @@ func (w WebBackend) List(ctx context.Context) ([]webui.Recording, error) {
 	return rows, nil
 }
 func webRecord(r Item) webui.Recording {
-	out := webui.Recording{ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, RelativePath: r.RelativePath, Reviewed: r.Reviewed, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
+	out := webui.Recording{CleanupMD5: r.CleanupMD5, ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, RelativePath: r.RelativePath, Reviewed: r.Reviewed, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
 	for _, ev := range r.Evidence {
+		if strings.EqualFold(filepath.Ext(ev.Path), ".md5") {
+			out.HasMD5 = true
+		}
 		if ev.ModTime > out.LastModified {
 			out.LastModified = ev.ModTime
 		}
@@ -146,16 +149,24 @@ func (w WebBackend) SaveReview(ctx context.Context, id string, v webui.Review) e
 	if err != nil {
 		return err
 	}
-	r := Item{Recording: base}
+	r, err := submittedItem(base, v)
+	if err != nil {
+		return err
+	}
+	return w.E.saveReview(base, r)
+}
+
+func submittedItem(base catalog.Recording, v webui.Review) (Item, error) {
+	r := Item{Recording: base, CleanupMD5: v.CleanupMD5}
 	// The discovery result remains the authority for allowed track paths.
 	r.Tracks = append([]catalog.Track(nil), base.Tracks...)
 
 	if v.Fingerprint != r.Fingerprint {
-		return errors.New("inputs changed since this page was loaded; refresh and review again")
+		return Item{}, errors.New("inputs changed since this page was loaded; refresh and review again")
 	}
 	for k := range v.Metadata {
 		if k != "ARTIST" && k != "ALBUM" && k != "DATE" {
-			return fmt.Errorf("unsupported album field %s", k)
+			return Item{}, fmt.Errorf("unsupported album field %s", k)
 		}
 	}
 	r.Artist = v.Metadata["ARTIST"]
@@ -174,7 +185,7 @@ func (w WebBackend) SaveReview(ctx context.Context, id string, v webui.Review) e
 		}
 	}
 	if len(v.Tracks) != len(r.Tracks) {
-		return errors.New("map every file")
+		return Item{}, errors.New("map every file")
 	}
 	for i, t := range v.Tracks {
 		r.Tracks[i].Path = t.File
@@ -183,7 +194,7 @@ func (w WebBackend) SaveReview(ctx context.Context, id string, v webui.Review) e
 		r.Tracks[i].Disc = t.Disc
 		r.Tracks[i].Number = t.Track
 	}
-	return w.E.saveReview(base, r)
+	return r, nil
 }
 func (w WebBackend) Apply(ctx context.Context, id string) error {
 	return w.applySelection(ctx, id, func(r Item) error {
@@ -271,7 +282,7 @@ func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Revie
 		for i := range tracks {
 			tracks[i].Artist = strings.TrimSpace(tracks[i].Artist)
 		}
-		if v.DateUnknown != expected.DateUnknown || !reflect.DeepEqual(v.Metadata, expected.Metadata) || v.Artwork != expected.Artwork || !reflect.DeepEqual(tracks, expected.Tracks) {
+		if v.CleanupMD5 != r.CleanupMD5 || v.DateUnknown != expected.DateUnknown || !reflect.DeepEqual(v.Metadata, expected.Metadata) || v.Artwork != expected.Artwork || !reflect.DeepEqual(tracks, expected.Tracks) {
 			return errors.New("submitted values differ from the saved review; approve and save your edits before applying")
 		}
 		if r.Status != "ready" && r.Status != "failed" {
@@ -279,4 +290,46 @@ func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Revie
 		}
 		return nil
 	})
+}
+
+// PreviewMD5 uses the submitted mapping and artwork so edits to the form are
+// reflected before approval. The preview does not create application storage.
+func (w WebBackend) PreviewMD5(ctx context.Context, id string, v webui.Review) (string, error) {
+	e := w.E
+	e.validationMu.RLock()
+	defer e.validationMu.RUnlock()
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	if err := ctx.Err(); err != nil {
+		return "", err
+	}
+	base, err := e.recording(id)
+	if err != nil {
+		return "", err
+	}
+	item, err := submittedItem(base, v)
+	if err != nil {
+		return "", err
+	}
+	if err = validateReview(base, &item); err != nil {
+		return "", err
+	}
+	item.Reviewed = true
+	decisions, err := assessMD5(item)
+	if err != nil {
+		return "", err
+	}
+	var lines []string
+	for _, d := range decisions {
+		path, err := filepath.Rel(item.Path, d.Path)
+		if err != nil {
+			return "", err
+		}
+		action := "Keep "
+		if d.Remove {
+			action = "Remove "
+		}
+		lines = append(lines, action+filepath.ToSlash(path)+". "+d.Reason)
+	}
+	return strings.Join(lines, "\n"), nil
 }

@@ -41,6 +41,29 @@
   const approve = form.elements.namedItem("approve");
   const fields = Array.from(form.elements).filter(el => el.name && !["csrf", "id", "fingerprint", "approve"].includes(el.name));
   function snapshot() { return JSON.stringify(fields.map(el => el.type === "checkbox" ? el.checked : el.value)); }
+  const previewMD5 = document.getElementById("preview-md5");
+  const md5Result = document.getElementById("md5-preview");
+  if (previewMD5) {
+    let request = 0;
+    const clear = () => { request++; md5Result.textContent = ""; };
+    form.addEventListener("input", clear);
+    form.addEventListener("change", clear);
+    const preview = async () => {
+      const current = ++request;
+      md5Result.textContent = "Checking whole-file checksums…";
+      try {
+        const response = await fetch("/preview-md5", { method: "POST", body: new URLSearchParams(new FormData(form)) });
+        const message = await response.text();
+        if (current === request) md5Result.textContent = message;
+      } catch {
+        if (current === request) md5Result.textContent = "Could not load the checksum preview. Try again.";
+      }
+    };
+    previewMD5.addEventListener("click", preview);
+    form.elements.namedItem("cleanup_md5").addEventListener("change", event => {
+      if (event.target.checked) queueMicrotask(preview);
+    });
+  }
   const baseline = snapshot();
   let submitting = false;
   let navigationApproved = false;

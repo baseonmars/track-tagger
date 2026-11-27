@@ -30,6 +30,7 @@ type Config struct {
 }
 
 type Recording struct {
+	HasMD5,CleanupMD5 bool
 	Reviewed              bool
 	PlaybackOnly          bool
 	DateUnknown           bool
@@ -58,6 +59,7 @@ type Track struct {
 	Track, Disc         int
 }
 type Review struct {
+	CleanupMD5 bool
 	Fingerprint           string `json:"-"`
 	Approve               bool
 	DateUnknown           bool
@@ -410,6 +412,27 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 		}
 		http.Redirect(w, r, "/settings", http.StatusSeeOther)
 		return
+	case "/preview-md5":
+		backend, ok := s.backend.(interface {
+			PreviewMD5(context.Context, string, Review) (string, error)
+		})
+		if !ok {
+			http.NotFound(w, r)
+			return
+		}
+		review, err := parseReview(r.PostForm)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		preview, err := backend.PreviewMD5(r.Context(), id, review)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusConflict)
+			return
+		}
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		fmt.Fprint(w, preview)
+		return
 	case "/review", "/apply":
 		if r.URL.Path == "/apply" && !s.cfg.Writable {
 			http.Error(w, "preview mode cannot change media; restart with --write or --copy", http.StatusForbidden)
@@ -480,6 +503,7 @@ func parseReview(form url.Values) (Review, error) {
 	}
 	review.AddNotesSignature = form.Get("notes_signature") == "yes"
 	review.NotesTarget = form.Get("notes_target")
+	review.CleanupMD5 = form.Get("cleanup_md5")=="yes"
 	files, titles := form["track_file"], form["track_title"]
 	discs, numbers := form["track_disc"], form["track_number"]
 	artists := form["track_artist"]
