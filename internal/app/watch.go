@@ -232,16 +232,19 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 			if dirty && now.Sub(lastEvent) >= time.Second {
 				due = true
 			}
+			if due && dirty {
+				e.invalidateLibrary()
+			}
+			process(now)
 			if due {
-				if dirty {
-					e.invalidateLibrary()
-				} else {
+				// Let the watcher use published results before a periodic refresh
+				// marks them loading. Known filesystem changes invalidate first.
+				if !dirty && ctx.Err() == nil {
 					e.reconcileLibrary()
 				}
 				lastScan = now
 				dirty = false
 			}
-			process(now)
 		}
 	}
 }

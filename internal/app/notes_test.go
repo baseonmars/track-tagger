@@ -230,10 +230,18 @@ func TestShowNotesReviewSelectsOnlyOneFile(t *testing.T) {
 }
 
 func TestWatcherAppliesSavedShowNotesChoice(t *testing.T) {
-	e, _ := engineFixture(t, Write)
-	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Second)
-	defer cancel()
-	if err := (WebBackend{E: e}).SaveShowNotesSignature(ctx, true); err != nil {
+	e, audio := engineFixture(t, Write)
+	notes := filepath.Join(e.Source, "notes.txt")
+	// The files have settled by mtime, but the watcher must observe them
+	// unchanged across two observations before applying the review.
+	e.Settle = 50 * time.Millisecond
+	past := time.Now().Add(-time.Minute)
+	for _, file := range []string{audio, notes} {
+		if err := os.Chtimes(file, past, past); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := (WebBackend{E: e}).SaveShowNotesSignature(t.Context(), true); err != nil {
 		t.Fatal(err)
 	}
 	item := notesItem(t, e)
@@ -243,18 +251,25 @@ func TestWatcherAppliesSavedShowNotesChoice(t *testing.T) {
 	if err := e.SaveReview(item.ID, item); err != nil {
 		t.Fatal(err)
 	}
-	finished := make(chan error, 1)
-	go func() {
-		finished <- e.Watch(ctx, true, time.Second, func(line string) {
-			if strings.HasPrefix(line, "completed: ") {
-				cancel()
-			}
-		})
-	}()
-	if err := <-finished; err != nil {
+	awaitWebLibrary(t, e)
+	ctx, cancel := context.WithTimeout(t.Context(), 8*time.Second)
+	defer cancel()
+	completed := false
+	// Reconciliation is due at every processing tick. It must not discard
+	// the published validation before the watcher can use it.
+	if err := e.Watch(ctx, true, 100*time.Millisecond, func(line string) {
+		t.Log(line)
+		if strings.HasPrefix(line, "completed: ") {
+			completed = true
+			cancel()
+		}
+	}); err != nil {
 		t.Fatal(err)
 	}
-	data, err := os.ReadFile(filepath.Join(e.Source, "notes.txt"))
+	if !completed {
+		t.Fatalf("watcher did not complete the saved review: %v", ctx.Err())
+	}
+	data, err := os.ReadFile(notes)
 	if err != nil || !bytes.HasSuffix(data, []byte(notesSignature+"\n")) {
 		t.Fatalf("watcher did not use approved signature: %q, %v", data, err)
 	}
