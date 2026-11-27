@@ -92,7 +92,9 @@ func classifyMD5(path string, lookup func(string) (trackChecksum, error)) (manif
 func assessMD5(item Item) ([]manifestDecision, error) {
 	tracks := make(map[string]catalog.Track, len(item.Tracks))
 	for _, t := range item.Tracks {
-		tracks[t.Path] = t
+		if !t.Skip {
+			tracks[t.Path] = t
+		}
 	}
 	cache := map[string]trackChecksum{}
 	lookup := func(path string) (trackChecksum, error) {

@@ -34,6 +34,8 @@ type Recording struct {
 	Reviewed              bool
 	PlaybackOnly          bool
 	DateUnknown           bool
+	RenameFiles           bool
+	RenameNotice          string
 	LastModified          int64 // Unix nanoseconds from cached file evidence; zero when unavailable.
 	ID, Path, Status      string
 	RelativePath          string
@@ -57,12 +59,14 @@ type Track struct {
 	PlaybackID          string
 	File, Title, Artist string
 	Track, Disc         int
+	Skip                bool
 }
 type Review struct {
 	CleanupMD5            bool
 	Fingerprint           string `json:"-"`
 	Approve               bool
 	DateUnknown           bool
+	RenameFiles           bool
 	Metadata              map[string]string
 	Tracks                []Track
 	Artwork               string
@@ -493,7 +497,7 @@ func parseReview(form url.Values) (Review, error) {
 			return Review{}, fmt.Errorf("concert date must be YYYY, YYYY-MM, or a valid YYYY-MM-DD date")
 		}
 	}
-	review := Review{DateUnknown: dateUnknown, Metadata: map[string]string{"ARTIST": strings.TrimSpace(form.Get("artist")), "ALBUM": strings.TrimSpace(form.Get("album")), "DATE": date}, Artwork: form.Get("artwork")}
+	review := Review{DateUnknown: dateUnknown, RenameFiles: form.Get("rename_files") == "yes", Metadata: map[string]string{"ARTIST": strings.TrimSpace(form.Get("artist")), "ALBUM": strings.TrimSpace(form.Get("album")), "DATE": date}, Artwork: form.Get("artwork")}
 	if value := form.Get("notes_signature_enabled"); value != "" {
 		enabled, err := strconv.ParseBool(value)
 		if err != nil {
@@ -513,17 +517,26 @@ func parseReview(form url.Values) (Review, error) {
 	if len(files) != len(titles) || len(files) != len(discs) || len(files) != len(numbers) {
 		return Review{}, fmt.Errorf("incomplete track mapping")
 	}
+	skipped := make(map[string]bool, len(form["track_skip"]))
+	for _, file := range form["track_skip"] {
+		skipped[file] = true
+	}
 	for i, file := range files {
+		skip := skipped[file]
+		delete(skipped, file)
 		disc, de := strconv.Atoi(discs[i])
 		number, ne := strconv.Atoi(numbers[i])
-		if de != nil || ne != nil || disc < 1 || number < 1 {
+		if !skip && (de != nil || ne != nil || disc < 1 || number < 1) {
 			return Review{}, fmt.Errorf("disc and track numbers must be positive integers")
 		}
 		artist := ""
 		if len(artists) != 0 {
 			artist = artists[i]
 		}
-		review.Tracks = append(review.Tracks, Track{File: file, Title: titles[i], Artist: artist, Disc: disc, Track: number})
+		review.Tracks = append(review.Tracks, Track{File: file, Title: titles[i], Artist: artist, Disc: disc, Track: number, Skip: skip})
+	}
+	if len(skipped) > 0 {
+		return Review{}, fmt.Errorf("an excluded file is missing from the track mapping")
 	}
 	review.Approve = form.Get("approve") == "yes"
 	review.Fingerprint = form.Get("fingerprint")

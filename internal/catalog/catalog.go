@@ -38,6 +38,7 @@ type Track struct {
 	Title        string            `json:"title"`
 	Disc         int               `json:"disc"`
 	Number       int               `json:"number"`
+	Skip         bool              `json:"skip,omitempty"`
 	DiscTotal    int               `json:"disc_total"`
 	TrackTotal   int               `json:"track_total"`
 	Tags         map[string]string `json:"tags"`
@@ -53,6 +54,7 @@ type Recording struct {
 	Album             string     `json:"album"`
 	Date              string     `json:"date"`
 	DateUnknown       bool       `json:"date_unknown,omitempty"`
+	RenameFiles       bool       `json:"rename_files,omitempty"`
 	Venue             string     `json:"venue"`
 	City              string     `json:"city"`
 	Tracks            []Track    `json:"tracks"`
@@ -179,15 +181,21 @@ func scan(source string, fingerprint func(string) (Evidence, error)) ([]Recordin
 // Validate reads the contents of one discovered recording. Callers must not use
 // cached fingerprints for review approval or media changes.
 func Validate(source string, d Discovery, fingerprint func(string) (Evidence, error)) (Recording, error) {
-	return scanRecording(source, d.Path, fingerprint)
+	return scanRecording(source, d.Path, fingerprint, false)
+}
+
+// ValidateRenameInputs also fingerprints a recording while its audio files are
+// in journaled temporary paths and therefore absent from discovery.
+func ValidateRenameInputs(source, dir string, fingerprint func(string) (Evidence, error)) (Recording, error) {
+	return scanRecording(source, dir, fingerprint, true)
 }
 
 // ScanRecording freshly discovers and validates one recording, retaining paths
 // relative to the original collection. Independent nested recordings are skipped.
 func ScanRecording(source, dir string) (Recording, error) {
-	return scanRecording(source, dir, Fingerprint)
+	return scanRecording(source, dir, Fingerprint, false)
 }
-func scanRecording(source, dir string, fingerprint func(string) (Evidence, error)) (Recording, error) {
+func scanRecording(source, dir string, fingerprint func(string) (Evidence, error), allowEmpty bool) (Recording, error) {
 	root, err := filepath.Abs(source)
 	if err != nil {
 		return Recording{}, err
@@ -227,7 +235,7 @@ func scanRecording(source, dir string, fingerprint func(string) (Evidence, error
 	if err != nil {
 		return Recording{}, err
 	}
-	if len(files) == 0 {
+	if len(files) == 0 && !allowEmpty {
 		return Recording{}, fmt.Errorf("recording disappeared")
 	}
 	return build(root, dir, files, fingerprint)
@@ -656,6 +664,9 @@ func RefreshPlan(r *Recording) {
 	counts := map[int]int{}
 	maxDisc := 0
 	for _, t := range r.Tracks {
+		if t.Skip {
+			continue
+		}
 		counts[t.Disc]++
 		if t.Disc > maxDisc {
 			maxDisc = t.Disc
@@ -663,6 +674,11 @@ func RefreshPlan(r *Recording) {
 	}
 	for i := range r.Tracks {
 		t := &r.Tracks[i]
+		if t.Skip {
+			t.Tags = nil
+			t.TrackTotal, t.DiscTotal = 0, 0
+			continue
+		}
 		t.TrackTotal = counts[t.Disc]
 		t.DiscTotal = maxDisc
 		artist := t.Artist

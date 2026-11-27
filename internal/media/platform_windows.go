@@ -27,6 +27,16 @@ func checkPlatformLocal(path string, st os.FileInfo) error {
 // Replace uses write-through replacement; if Windows refuses a sharing violation,
 // the original and staged file remain for journal-backed recovery.
 func Replace(temp, dest string) error {
+	return moveFile(temp, dest, windows.MOVEFILE_REPLACE_EXISTING)
+}
+
+func MoveExclusive(from, to string) error {
+	return moveFile(from, to, 0)
+}
+
+func SyncDirectory(string) error { return nil }
+
+func moveFile(temp, dest string, flags uint32) error {
 	from, err := windows.UTF16PtrFromString(temp)
 	if err != nil {
 		return err
@@ -35,7 +45,7 @@ func Replace(temp, dest string) error {
 	if err != nil {
 		return err
 	}
-	return windows.MoveFileEx(from, to, windows.MOVEFILE_REPLACE_EXISTING|windows.MOVEFILE_WRITE_THROUGH)
+	return windows.MoveFileEx(from, to, flags|windows.MOVEFILE_WRITE_THROUGH)
 }
 
 // Remove moves the journaled file out of the recording with write-through.

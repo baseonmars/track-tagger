@@ -2,7 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const {readFileSync} = require('node:fs');
 const {runInNewContext} = require('node:vm');
-const {actionState, validDate} = require('../assets/review.js');
+const {actionState, validDate, proposedFilename} = require('../assets/review.js');
 const base = {reviewed:true,writable:true,status:'ready',changed:false,approved:false,valid:true,submitting:false};
 test('saved review and approval govern actions', () => {
   assert.equal(actionState(base).apply,true);
@@ -19,6 +19,13 @@ test('saved review and approval govern actions', () => {
 test('calendar dates match server supported precisions', () => {
  for (const value of ['1970','1970-01','2000-02-29','2024-10-24']) assert.equal(validDate(value),true,value);
  for (const value of ['','0000','1970-00','1970-13','1900-02-29','1970-02-30','1970-1','1970-01-01-extra']) assert.equal(validDate(value),false,value);
+});
+test('filename preview uses portable names and preserves valid punctuation and Unicode', () => {
+ assert.equal(proposedFilename('01', "Uncle John's Band"), "01 Uncle John's Band.flac");
+ assert.equal(proposedFilename('2', 'Déjà Vu.'), '02 Déjà Vu..flac');
+ assert.equal(proposedFilename('123', '  reprise / part 2: a?  '), '123 reprise _ part 2_ a_.flac');
+ assert.equal(proposedFilename('0', 'No mapped song'), '');
+ assert.equal(proposedFilename('99', '🎶'.repeat(70)), '99 ' + '🎶'.repeat(61) + '.flac');
 });
 function setup(options={}) {
  const node = () => ({disabled:true,textContent:'',events:{},addEventListener(name,fn){this.events[name]=fn;}});

@@ -29,12 +29,12 @@ func (s watchSchedule) observe(item Item, now time.Time) *watchEntry {
 	b, _ := json.Marshal(struct {
 		Fingerprint                              string
 		Reviewed                                 bool
-		DateUnknown                              bool
+		DateUnknown, RenameFiles                 bool
 		Tracks                                   any
 		Artwork, Artist, Album, Date             string
 		NotesEnabled, NotesSignature, CleanupMD5 bool
 		NotesTarget                              string
-	}{item.Fingerprint, item.Reviewed, item.DateUnknown, item.Tracks, item.Artwork, item.Artist, item.Album, item.Date, item.NotesSignatureEnabled, item.AddNotesSignature, item.CleanupMD5, item.NotesTarget})
+	}{item.Fingerprint, item.Reviewed, item.DateUnknown, item.RenameFiles, item.Tracks, item.Artwork, item.Artist, item.Album, item.Date, item.NotesSignatureEnabled, item.AddNotesSignature, item.CleanupMD5, item.NotesTarget})
 	h := sha256.Sum256(b)
 	key := hex.EncodeToString(h[:])
 	entry := s[item.ID]
@@ -67,6 +67,9 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 	}
 	if log == nil {
 		log = func(string) {}
+	}
+	if err := e.RecoverRenames(); err != nil {
+		log("rename recovery: " + err.Error())
 	}
 	if reconcile <= 0 {
 		reconcile = 5 * time.Minute
@@ -154,6 +157,9 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 			if item.Status != "ready" {
 				continue
 			}
+			if item.RenameFiles && e.Mode != DryRun {
+				continue
+			}
 			if !entry.ready(now, settle) {
 				continue
 			}
@@ -170,6 +176,13 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 			err := (WebBackend{E: e}).applySelection(ctx, item.ID, func(current Item) error {
 				if current.Status != "ready" || current.Fingerprint != item.Fingerprint || current.Reviewed != item.Reviewed || current.NotesSignatureEnabled != item.NotesSignatureEnabled || !sameItemProposal(current, item) {
 					return fmt.Errorf("recording changed since watcher observation")
+				}
+				moves, err := e.renameMoves(current)
+				if err != nil {
+					return err
+				}
+				if len(moves) > 0 {
+					return fmt.Errorf("filename changes require Apply saved review")
 				}
 				return nil
 			})

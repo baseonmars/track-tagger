@@ -188,6 +188,9 @@ func run(args []string) error {
 	switch cmd {
 	case "scan", "apply":
 		if cmd == "scan" {
+			if err = e.RecoverRenames(); err != nil {
+				return err
+			}
 			p, err = e.Scan()
 			if err != nil {
 				return err

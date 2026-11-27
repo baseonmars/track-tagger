@@ -46,7 +46,10 @@ func OpenStore(path string) (*Store, error) {
  CREATE TABLE IF NOT EXISTS completions(id TEXT PRIMARY KEY,evidence TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS settings(name TEXT PRIMARY KEY,value INTEGER NOT NULL);
  CREATE TABLE IF NOT EXISTS companion_details(file_id INTEGER PRIMARY KEY,mode INTEGER NOT NULL,source_hash TEXT NOT NULL);
- CREATE TABLE IF NOT EXISTS reviews(id TEXT PRIMARY KEY,evidence TEXT NOT NULL,plan BLOB NOT NULL);`)
+ CREATE TABLE IF NOT EXISTS reviews(id TEXT PRIMARY KEY,evidence TEXT NOT NULL,plan BLOB NOT NULL);
+ CREATE TABLE IF NOT EXISTS rename_batches(id TEXT PRIMARY KEY,job TEXT NOT NULL,source TEXT NOT NULL,destination TEXT NOT NULL,mode TEXT NOT NULL,plan BLOB NOT NULL);
+ CREATE TABLE IF NOT EXISTS rename_history(job TEXT PRIMARY KEY,source TEXT NOT NULL,path TEXT NOT NULL);
+ CREATE TABLE IF NOT EXISTS copy_targets(completion TEXT NOT NULL,source TEXT NOT NULL,target TEXT NOT NULL,PRIMARY KEY(completion,source));`)
 	if err != nil {
 		db.Close()
 		return nil, err
@@ -79,7 +82,15 @@ func (s *Store) journal(j FileJournal) (int64, error) {
 		return 0, err
 	}
 	defer tx.Rollback()
-	r, err := tx.Exec("INSERT INTO files(job,source,target,before_hash,after_hash,metadata,status,undo_of) VALUES(?,?,?,?,?,?,?,?)", j.JobID, j.Source, j.Target, j.BeforeHash, j.AfterHash, j.Metadata, journalStatus(j), j.UndoOf)
+	id, err := journalFile(tx, j, journalStatus(j))
+	if err != nil {
+		return 0, err
+	}
+	return id, tx.Commit()
+}
+
+func journalFile(tx *sql.Tx, j FileJournal, status string) (int64, error) {
+	r, err := tx.Exec("INSERT INTO files(job,source,target,before_hash,after_hash,metadata,status,undo_of) VALUES(?,?,?,?,?,?,?,?)", j.JobID, j.Source, j.Target, j.BeforeHash, j.AfterHash, j.Metadata, status, j.UndoOf)
 	if err != nil {
 		return 0, err
 	}
@@ -92,7 +103,7 @@ func (s *Store) journal(j FileJournal) (int64, error) {
 			return 0, err
 		}
 	}
-	return id, tx.Commit()
+	return id, nil
 }
 func (s *Store) finishFile(id int64, target, hash, status string) error {
 	tx, err := s.db.Begin()

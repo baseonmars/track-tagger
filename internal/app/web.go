@@ -65,7 +65,10 @@ func (w WebBackend) List(ctx context.Context) ([]webui.Recording, error) {
 	return rows, nil
 }
 func webRecord(r Item) webui.Recording {
-	out := webui.Recording{CleanupMD5: r.CleanupMD5, ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, RelativePath: r.RelativePath, Reviewed: r.Reviewed, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
+	out := webui.Recording{CleanupMD5: r.CleanupMD5, ID: r.ID, Fingerprint: r.Fingerprint, Path: r.Path, RelativePath: r.RelativePath, Reviewed: r.Reviewed, PlaybackOnly: r.PlaybackOnly, DateUnknown: r.DateUnknown, RenameFiles: r.RenameFiles, Status: r.Status, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.ArtworkCandidates, SelectedArtwork: r.Artwork, Reasons: r.ReviewReasons}
+	if err := checkRenameManifests(r); err != nil {
+		out.RenameNotice = err.Error()
+	}
 	for _, ev := range r.Evidence {
 		if strings.EqualFold(filepath.Ext(ev.Path), ".md5") {
 			out.HasMD5 = true
@@ -93,7 +96,7 @@ func webRecord(r Item) webui.Recording {
 		}
 	}
 	for _, t := range r.Tracks {
-		out.Tracks = append(out.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Track: t.Number, Disc: t.Disc})
+		out.Tracks = append(out.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Track: t.Number, Disc: t.Disc, Skip: t.Skip})
 	}
 	for _, ev := range r.Evidence {
 		out.Evidence = append(out.Evidence, fmt.Sprintf("%s · SHA256 %s", ev.Path, ev.SHA256))
@@ -187,6 +190,7 @@ func submittedItem(base catalog.Recording, v webui.Review) (Item, error) {
 	r.Album = v.Metadata["ALBUM"]
 	r.Date = v.Metadata["DATE"]
 	r.DateUnknown = v.DateUnknown
+	r.RenameFiles = v.RenameFiles
 	r.Artwork = v.Artwork
 	r.AddNotesSignature, r.NotesTarget = v.AddNotesSignature, v.NotesTarget
 	if len(v.Tracks) != len(r.Tracks) {
@@ -198,6 +202,7 @@ func submittedItem(base catalog.Recording, v webui.Review) (Item, error) {
 		r.Tracks[i].Artist = t.Artist
 		r.Tracks[i].Disc = t.Disc
 		r.Tracks[i].Number = t.Track
+		r.Tracks[i].Skip = t.Skip
 	}
 	return r, nil
 }
@@ -220,13 +225,9 @@ func (w WebBackend) applySelection(ctx context.Context, id string, check func(It
 	defer e.validationMu.Unlock()
 	e.mu.Lock()
 	defer e.mu.Unlock()
-	path, err := e.recordingPath(id)
-	if err != nil {
-		return err
-	}
 	placeholder := Item{}
-	placeholder.ID, placeholder.Path, placeholder.Status = id, path, "ready"
-	_, err = e.applyLocked(Plan{Version: 1, Source: e.Source, Recordings: []Item{placeholder}}, check)
+	placeholder.ID, placeholder.Status = id, "ready"
+	_, err := e.applyLocked(Plan{Version: 1, Source: e.Source, Recordings: []Item{placeholder}}, check)
 	return err
 }
 func (w WebBackend) Undo(ctx context.Context, id string) error {
@@ -280,15 +281,15 @@ func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Revie
 		if (r.NotesSignatureEnabled && v.AddNotesSignature != r.AddNotesSignature) || ((r.NotesSignatureEnabled || r.CleanupMD5) && notesTarget(submittedNotes) != notesTarget(r)) {
 			return errors.New("submitted show-notes choices differ from the saved review; approve and save your edits before applying")
 		}
-		expected := webui.Review{DateUnknown: r.DateUnknown, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.Artwork}
+		expected := webui.Review{DateUnknown: r.DateUnknown, RenameFiles: r.RenameFiles, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.Artwork}
 		for _, t := range r.Tracks {
-			expected.Tracks = append(expected.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Disc: t.Disc, Track: t.Number})
+			expected.Tracks = append(expected.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Disc: t.Disc, Track: t.Number, Skip: t.Skip})
 		}
 		tracks := append([]webui.Track(nil), v.Tracks...)
 		for i := range tracks {
 			tracks[i].Artist = strings.TrimSpace(tracks[i].Artist)
 		}
-		if v.CleanupMD5 != r.CleanupMD5 || v.DateUnknown != expected.DateUnknown || !reflect.DeepEqual(v.Metadata, expected.Metadata) || v.Artwork != expected.Artwork || !reflect.DeepEqual(tracks, expected.Tracks) {
+		if v.CleanupMD5 != r.CleanupMD5 || v.DateUnknown != expected.DateUnknown || v.RenameFiles != expected.RenameFiles || !reflect.DeepEqual(v.Metadata, expected.Metadata) || v.Artwork != expected.Artwork || !reflect.DeepEqual(tracks, expected.Tracks) {
 			return errors.New("submitted values differ from the saved review; approve and save your edits before applying")
 		}
 		if r.Status != "ready" && r.Status != "failed" {
