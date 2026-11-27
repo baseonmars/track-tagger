@@ -149,3 +149,42 @@ func TestMD5CleanupApplyAndUndo(t *testing.T) {
 		})
 	}
 }
+
+func TestInterruptedMD5RemovalRestoresJournaledManifest(t *testing.T) {
+	e, _ := engineFixture(t, Write)
+	path := filepath.Join(e.Source, "checksums.md5")
+	data := []byte("; original manifest bytes\r\n")
+	if err := os.WriteFile(path, data, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := e.OpenStorage(); err != nil {
+		t.Fatal(err)
+	}
+	job, err := e.store.newJob("recording", "Approved MD5 cleanup for checksums.md5.")
+	if err != nil {
+		t.Fatal(err)
+	}
+	hash := hashBytes(data)
+	_, err = e.store.journal(FileJournal{JobID: job, Source: path, Target: path, BeforeHash: hash, SourceHash: hash, Metadata: data, Mode: 0600, Companion: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = os.Remove(path); err != nil {
+		t.Fatal(err)
+	}
+	if err = e.Close(); err != nil {
+		t.Fatal(err)
+	}
+	restored, err := NewHistory(e.State, Write)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer restored.Close()
+	if _, err = restored.Undo(job, true); err != nil {
+		t.Fatal(err)
+	}
+	got, err := os.ReadFile(path)
+	if err != nil || !bytes.Equal(got, data) {
+		t.Fatalf("interrupted manifest restoration: %q %v", got, err)
+	}
+}
