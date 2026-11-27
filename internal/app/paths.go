@@ -35,10 +35,29 @@ func inside(root, path string) bool {
 	return err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(os.PathSeparator)) && !filepath.IsAbs(rel)
 }
 func rejectOverlap(a, b string) error {
-	if inside(a, b) || inside(b, a) {
+	if inside(a, b) || inside(b, a) || sameDirectoryOrAncestor(a, b) || sameDirectoryOrAncestor(b, a) {
 		return fmt.Errorf("paths must not overlap: %s and %s", a, b)
 	}
 	return nil
+}
+
+// Compare existing directory identities, including on case-insensitive volumes
+// where two different path strings can refer to the same directory.
+func sameDirectoryOrAncestor(root, path string) bool {
+	rootInfo, err := os.Stat(root)
+	if err != nil {
+		return false
+	}
+	for {
+		if info, err := os.Stat(path); err == nil && os.SameFile(rootInfo, info) {
+			return true
+		}
+		parent := filepath.Dir(path)
+		if parent == path {
+			return false
+		}
+		path = parent
+	}
 }
 func safePath(root, p string) error {
 	if !inside(root, p) {
