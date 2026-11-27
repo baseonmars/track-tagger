@@ -153,6 +153,8 @@ func issueSummary(r Recording) []string {
 			label = "Resolve duplicate track numbers."
 		case reason == "no local concert notes":
 			label = "Add local concert notes or enter the details below."
+		case reason == "review the proposed show-notes signature":
+			label = "Review the proposed show-notes signature."
 		case strings.Contains(reason, "stale"):
 			label = "Files have changed; check your saved review again."
 		default:

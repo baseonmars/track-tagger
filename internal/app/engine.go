@@ -281,7 +281,7 @@ func (e *Engine) decorate(r catalog.Recording, browse bool) (Item, error) {
 		item.NotesTarget = notesTarget(item)
 	}
 	e.previewSignature(&item)
-	if item.Status == "ready" && !item.Reviewed {
+	if (item.Status == "ready" || item.Status == "completed") && !item.Reviewed {
 		for _, note := range item.notesChoices {
 			if note.Addition != "" {
 				item.ReviewReasons = append(item.ReviewReasons, "review the proposed show-notes signature")
@@ -596,6 +596,9 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 	var note notesEdit
 	if item.Reviewed && item.AddNotesSignature && item.NotesSignatureEnabled {
 		note = e.planNotesEdit(item, notesTarget(item), notesSignature)
+		if note.replacement == nil && !note.alreadyPresent {
+			return "", errors.New(note.Reason)
+		}
 	}
 	for _, t := range item.Tracks {
 		dest, x := e.destination(t.Path)

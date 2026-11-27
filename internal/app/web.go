@@ -260,7 +260,8 @@ func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Revie
 		if v.NotesSignatureEnabled != nil && *v.NotesSignatureEnabled != r.NotesSignatureEnabled {
 			return errors.New("the show-notes setting changed; refresh before applying")
 		}
-		if r.NotesSignatureEnabled && (v.AddNotesSignature != r.AddNotesSignature || v.NotesTarget != r.NotesTarget) {
+		submittedNotes := Item{Recording: r.Recording, NotesTarget: v.NotesTarget}
+		if r.NotesSignatureEnabled && (v.AddNotesSignature != r.AddNotesSignature || notesTarget(submittedNotes) != notesTarget(r)) {
 			return errors.New("submitted show-notes choices differ from the saved review; approve and save your edits before applying")
 		}
 		expected := webui.Review{DateUnknown: r.DateUnknown, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.Artwork}
