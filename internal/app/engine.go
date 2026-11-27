@@ -33,7 +33,12 @@ type Options struct {
 }
 type Item struct {
 	catalog.Recording
-	Reviewed bool `json:"Reviewed"`
+	Reviewed              bool          `json:"Reviewed"`
+	AddNotesSignature     bool          `json:"add_notes_signature,omitempty"`
+	NotesTarget           string        `json:"notes_target,omitempty"`
+	NotesPreview          *NotesPreview `json:"notes_preview,omitempty"`
+	NotesSignatureEnabled bool          `json:"-"`
+	notesChoices          []NotesPreview
 }
 type Plan struct {
 	Version    int
@@ -265,6 +270,29 @@ func (e *Engine) decorate(r catalog.Recording, browse bool) (Item, error) {
 			item.Status = "playback-only"
 		}
 	}
+	var err error
+	item.NotesSignatureEnabled, err = e.showNotesSignature()
+	if err != nil {
+		return Item{}, err
+	}
+	item.NotesPreview = nil
+	if item.NotesSignatureEnabled && !item.Reviewed {
+		item.AddNotesSignature = true
+		item.NotesTarget = notesTarget(item)
+	}
+	e.previewSignature(&item)
+	if item.Status == "ready" && !item.Reviewed {
+		for _, note := range item.notesChoices {
+			if note.Addition != "" {
+				item.ReviewReasons = append(item.ReviewReasons, "review the proposed show-notes signature")
+				item.Status = "needs-review"
+				break
+			}
+		}
+	}
+	if item.Status == "completed" && item.Reviewed && item.NotesPreview != nil && item.NotesPreview.Addition != "" {
+		item.Status = "ready"
+	}
 	return item, nil
 }
 
@@ -400,6 +428,17 @@ func (e *Engine) saveReview(r catalog.Recording, item Item) error {
 	if err := validateReview(r, &item); err != nil {
 		return err
 	}
+	if err := validateNotesTarget(&item, r.Notes); err != nil {
+		return err
+	}
+	enabled, err := e.showNotesSignature()
+	if err != nil {
+		return err
+	}
+	if !enabled && item.AddNotesSignature {
+		return errors.New("enable the show-notes signature in Settings before approving it")
+	}
+	item.NotesPreview = nil
 	item.ID, item.Path, item.RelativePath = r.ID, r.Path, r.RelativePath
 	item.Evidence, item.Fingerprint = r.Evidence, r.Fingerprint
 	item.Reviewed, item.Status = true, "ready"
@@ -411,7 +450,7 @@ func (e *Engine) saveReview(r catalog.Recording, item Item) error {
 	if !existed {
 		previous = Item{Recording: r}
 	}
-	return e.store.saveReviewDecision(r.ID, evidence(r), item, e.completionKey(r.ID), !sameProposal(previous.Recording, item.Recording))
+	return e.store.saveReviewDecision(r.ID, evidence(r), item, e.completionKey(r.ID), !sameItemProposal(previous, item))
 }
 
 func planIDs(p Plan) []string {
@@ -472,6 +511,13 @@ func (e *Engine) applyLocked(p Plan, check func(Item) error) ([]string, error) {
 			return ids, errors.New("plan path changed")
 		}
 		if err = validateReview(base, &item); err != nil {
+			return ids, err
+		}
+		if err = validateNotesTarget(&item, base.Notes); err != nil {
+			return ids, err
+		}
+		item.NotesSignatureEnabled, err = e.showNotesSignature()
+		if err != nil {
 			return ids, err
 		}
 		if base.Status == "waiting" {
@@ -547,6 +593,10 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 		audio       bool
 	}
 	var outputs []output
+	var note notesEdit
+	if item.Reviewed && item.AddNotesSignature && item.NotesSignatureEnabled {
+		note = e.planNotesEdit(item, notesTarget(item), notesSignature)
+	}
 	for _, t := range item.Tracks {
 		dest, x := e.destination(t.Path)
 		if x != nil {
@@ -562,6 +612,17 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 			dest, x := e.destination(ev.Path)
 			if x != nil {
 				return "", x
+			}
+			// A newly copied notes file supplies the bytes Undo will restore.
+			// An existing copy is replaced once, preserving its actual prior bytes.
+			if note.replacement != nil && note.Source == ev.Path {
+				hash, x := e.targetAllowed(dest)
+				if x != nil {
+					return "", x
+				}
+				if hash != "" {
+					continue
+				}
 			}
 			outputs = append(outputs, output{src: ev.Path, target: dest})
 		}
@@ -612,6 +673,16 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 			before, x = e.targetAllowed(o.target)
 			if x != nil {
 				return id, x
+			}
+			if !o.audio && before != "" && before != sourceHash {
+				preserved, x := e.store.companionOutput(o.target, sourceHash, before)
+				if x != nil {
+					return id, x
+				}
+				if preserved {
+					skipped[o.target] = before
+					continue
+				}
 			}
 		}
 		if o.audio {
@@ -707,6 +778,11 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 			}
 		}
 	}
+	if note.replacement != nil {
+		if err = e.commitCompanion(id, &item, note.Source, note.Target, note.beforeHash, note.replacement, false); err != nil {
+			return id, err
+		}
+	}
 	fresh, x := e.revalidateRecording(item)
 	if x != nil {
 		return id, x
@@ -726,6 +802,7 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 	}
 	if item.Reviewed {
 		item.Evidence = fresh.Evidence
+		item.NotesPreview = nil
 		if err = e.store.saveReview(item.ID, evidence(item.Recording), item); err != nil {
 			return id, err
 		}
@@ -775,14 +852,11 @@ func (e *Engine) recover() error {
 		if j.Status != "staged" && j.Status != "undo-staged" {
 			continue
 		}
-		h, err := media.Hash(j.Target)
-		if os.IsNotExist(err) && j.BeforeHash == "" {
-			_, err = e.store.db.Exec("UPDATE files SET status='aborted' WHERE id=?", j.ID)
-			if err != nil {
-				return err
-			}
-			continue
+		real, err := canonical(j.Target)
+		if err != nil || real != j.Target {
+			return errors.New("interrupted job target path changed")
 		}
+		h, err := hashOrMissing(j.Target)
 		if err != nil {
 			return err
 		}
@@ -852,20 +926,30 @@ func (e *Engine) Undo(job string, write bool) ([]FileJournal, error) {
 		return nil, err
 	}
 	for _, j := range files {
-		if j.Status != "committed" || len(j.Metadata) == 0 {
+		if j.Status != "committed" || (!j.Companion && len(j.Metadata) == 0) {
 			continue
 		}
 		real, x := canonical(j.Target)
 		if x != nil || real != j.Target {
 			return files, errors.New("undo target path changed")
 		}
-		h, x := media.Hash(j.Target)
-		if x != nil || h != j.AfterHash {
+		h, x := hashOrMissing(j.Target)
+		later, laterErr := e.store.laterOutput(j.Target, j.ID)
+		if laterErr != nil {
+			return files, laterErr
+		}
+		if x != nil || h != j.AfterHash || later {
 			return files, fmt.Errorf("undo refused: external edit or later job: %s", j.Target)
 		}
 	}
 	for _, j := range files {
-		if j.Status != "committed" || len(j.Metadata) == 0 {
+		if j.Status != "committed" || (!j.Companion && len(j.Metadata) == 0) {
+			continue
+		}
+		if j.Companion {
+			if err = e.undoCompanion(j); err != nil {
+				return files, err
+			}
 			continue
 		}
 		t, x := os.CreateTemp(filepath.Dir(j.Target), ".track-tagger-undo-*")
@@ -915,6 +999,9 @@ func SameInputs(a, b catalog.Recording) bool { return reflect.DeepEqual(a.Eviden
 
 func sameProposal(a, b catalog.Recording) bool {
 	return a.Artist == b.Artist && a.Album == b.Album && a.Date == b.Date && a.DateUnknown == b.DateUnknown && a.Artwork == b.Artwork && reflect.DeepEqual(a.Tracks, b.Tracks)
+}
+func sameItemProposal(a, b Item) bool {
+	return sameProposal(a.Recording, b.Recording) && a.AddNotesSignature == b.AddNotesSignature && a.NotesTarget == b.NotesTarget
 }
 func (e *Engine) revalidate(item Item) error {
 	_, err := e.revalidateRecording(item)

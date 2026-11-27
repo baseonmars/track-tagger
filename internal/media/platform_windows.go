@@ -3,8 +3,10 @@
 package media
 
 import (
-	"golang.org/x/sys/windows"
 	"os"
+	"path/filepath"
+
+	"golang.org/x/sys/windows"
 )
 
 func checkPlatformLocal(path string, st os.FileInfo) error {
@@ -34,4 +36,18 @@ func Replace(temp, dest string) error {
 		return err
 	}
 	return windows.MoveFileEx(from, to, windows.MOVEFILE_REPLACE_EXISTING|windows.MOVEFILE_WRITE_THROUGH)
+}
+
+// Remove moves the journaled file out of the recording with write-through.
+func Remove(path string) error {
+	f, err := os.CreateTemp(filepath.Dir(path), ".track-tagger-removed-*")
+	if err != nil {
+		return err
+	}
+	name := f.Name()
+	defer os.Remove(name)
+	if err = f.Close(); err != nil {
+		return err
+	}
+	return Replace(path, name)
 }

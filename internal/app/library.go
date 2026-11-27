@@ -380,6 +380,7 @@ func cloneWebRecording(r webui.Recording) webui.Recording {
 	r.Reasons = append([]string(nil), r.Reasons...)
 	r.Evidence = append([]string(nil), r.Evidence...)
 	r.Notes = append([]webui.Note(nil), r.Notes...)
+	r.NotesChoices = append([]webui.NotesPreview(nil), r.NotesChoices...)
 	metadata := make(map[string]string, len(r.Metadata))
 	for k, v := range r.Metadata {
 		metadata[k] = v
