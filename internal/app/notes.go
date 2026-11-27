@@ -19,10 +19,10 @@ type NotesPreview struct {
 }
 
 type notesEdit struct {
-	alreadyPresent bool
 	NotesPreview
-	beforeHash  string
-	replacement []byte
+	beforeHash     string
+	replacement    []byte
+	alreadyPresent bool
 }
 
 func (e *Engine) showNotesSignature() (bool, error) {

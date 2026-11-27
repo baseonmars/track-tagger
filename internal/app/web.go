@@ -87,6 +87,11 @@ func webRecord(r Item) webui.Recording {
 	for _, note := range r.notesChoices {
 		out.NotesChoices = append(out.NotesChoices, toPreview(note))
 	}
+	if out.HasMD5 && !r.NotesSignatureEnabled {
+		for _, path := range r.Notes {
+			out.NotesChoices = append(out.NotesChoices, toPreview(NotesPreview{Source: path}))
+		}
+	}
 	for _, t := range r.Tracks {
 		out.Tracks = append(out.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Track: t.Number, Disc: t.Disc})
 	}
@@ -271,7 +276,8 @@ func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Revie
 		if v.NotesSignatureEnabled != nil && *v.NotesSignatureEnabled != r.NotesSignatureEnabled {
 			return errors.New("the show-notes setting changed; refresh before applying")
 		}
-		if (r.NotesSignatureEnabled && v.AddNotesSignature != r.AddNotesSignature) || ((r.NotesSignatureEnabled || r.CleanupMD5) && v.NotesTarget != r.NotesTarget) {
+		submittedNotes := Item{Recording: r.Recording, NotesTarget: v.NotesTarget}
+		if (r.NotesSignatureEnabled && v.AddNotesSignature != r.AddNotesSignature) || ((r.NotesSignatureEnabled || r.CleanupMD5) && notesTarget(submittedNotes) != notesTarget(r)) {
 			return errors.New("submitted show-notes choices differ from the saved review; approve and save your edits before applying")
 		}
 		expected := webui.Review{DateUnknown: r.DateUnknown, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.Artwork}

@@ -298,7 +298,7 @@ func (e *Engine) decorate(r catalog.Recording, browse bool) (Item, error) {
 		item.NotesTarget = notesTarget(item)
 	}
 	e.previewSignature(&item)
-	if item.Status == "ready" && !item.Reviewed {
+	if (item.Status == "ready" || item.Status == "completed") && !item.Reviewed {
 		for _, note := range item.notesChoices {
 			if note.Addition != "" {
 				item.ReviewReasons = append(item.ReviewReasons, "review the proposed show-notes signature")
@@ -648,8 +648,8 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 	}
 	if len(lines) > 0 {
 		note = e.planNotesEdit(item, notesTarget(item), lines...)
-		if len(removals) > 0 && note.replacement == nil && !note.alreadyPresent {
-			return "", fmt.Errorf("cannot record MD5 cleanup: %s", note.Reason)
+		if note.replacement == nil && !note.alreadyPresent {
+			return "", errors.New(note.Reason)
 		}
 	}
 	for _, t := range item.Tracks {

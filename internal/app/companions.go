@@ -232,15 +232,13 @@ func (e *Engine) changeCompanion(j FileJournal, replacement []byte, remove bool,
 
 func (e *Engine) undoCompanion(j FileJournal) error {
 	restore := j.Metadata
-	if j.BeforeHash != "" && hashBytes(restore) != j.BeforeHash {
+	remove := j.BeforeHash == ""
+	if !remove && hashBytes(restore) != j.BeforeHash {
 		return errors.New("original companion contents do not match the journal")
 	}
 	j.UndoOf, j.Source, j.BeforeHash, j.AfterHash = j.ID, j.Target, j.AfterHash, ""
 	j.Metadata = nil
-	// The latest companion result continues to describe a copied source after undo.
-	if j.SourceHash == hashBytes(restore) {
-		j.SourceHash = ""
-	}
+	j.SourceHash = ""
 	check := func() error {
 		real, err := canonical(j.Target)
 		if err != nil || real != j.Target {
@@ -252,6 +250,6 @@ func (e *Engine) undoCompanion(j FileJournal) error {
 		}
 		return nil
 	}
-	_, err := e.changeCompanion(j, restore, restore == nil, check)
+	_, err := e.changeCompanion(j, restore, remove, check)
 	return err
 }
