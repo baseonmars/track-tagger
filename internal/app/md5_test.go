@@ -1,10 +1,12 @@
 package app
 
 import (
+	"bytes"
 	"crypto/md5"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -55,4 +57,95 @@ func TestAssessMD5ChecksExactTagChangeAndOriginalChecksum(t *testing.T) {
 		t.Fatal(err)
 	}
 	verify(fixturePlan(t, e).Recordings[0], false)
+}
+
+func TestMD5CleanupApplyAndUndo(t *testing.T) {
+	for _, mode := range []Mode{Write, Copy} {
+		t.Run(string(mode), func(t *testing.T) {
+			e, audio := engineFixture(t, mode)
+			source, err := os.ReadFile(audio)
+			if err != nil {
+				t.Fatal(err)
+			}
+			manifest := filepath.Join(e.Source, "show.md5")
+			checksum := []byte(fmt.Sprintf("%x *t01.flac\r\n", md5.Sum(source)))
+			if err = os.WriteFile(manifest, checksum, 0640); err != nil {
+				t.Fatal(err)
+			}
+			notes := filepath.Join(e.Source, "notes.txt")
+			prior, err := os.ReadFile(notes)
+			if err != nil {
+				t.Fatal(err)
+			}
+			ffp := filepath.Join(e.Source, "show.ffp")
+			fingerprint := []byte("t01.flac:00000000000000000000000000000000")
+			if err = os.WriteFile(ffp, fingerprint, 0644); err != nil {
+				t.Fatal(err)
+			}
+			p := fixturePlan(t, e)
+			item := &p.Recordings[0]
+			item.CleanupMD5 = true
+			if err = e.SaveReview(item.ID, *item); err != nil {
+				t.Fatal(err)
+			}
+			// Saving a review must leave every source checksum valid.
+			assertBytes := func(path string, want []byte) {
+				t.Helper()
+				got, x := os.ReadFile(path)
+				if x != nil || !bytes.Equal(got, want) {
+					t.Fatalf("%s: unexpected contents or error %v", path, x)
+				}
+			}
+			assertBytes(manifest, checksum)
+			assertBytes(notes, prior)
+			assertBytes(audio, source)
+			jobs, err := e.Apply(fixturePlan(t, e))
+			if err != nil || len(jobs) != 1 {
+				t.Fatalf("apply: %v, %v", jobs, err)
+			}
+			output := func(src string) string {
+				t.Helper()
+				d, x := e.destination(src)
+				if x != nil {
+					t.Fatal(x)
+				}
+				return d
+			}
+			if _, err = os.Lstat(output(manifest)); !os.IsNotExist(err) {
+				t.Fatalf("removed output: %v", err)
+			}
+			assertBytes(output(ffp), fingerprint)
+			want := append(bytes.Clone(prior), []byte("Removed show.md5 after tagging changed the file checksums.\n")...)
+			assertBytes(output(notes), want)
+			history, err := e.store.History()
+			if err != nil || !strings.Contains(history[0].Summary, "Removed show.md5") {
+				t.Fatalf("history: %+v, %v", history, err)
+			}
+			if mode == Copy {
+				assertBytes(manifest, checksum)
+				assertBytes(audio, source)
+				assertBytes(notes, prior)
+			}
+			scan, err := e.Scan()
+			if err != nil || scan.Recordings[0].Status != "completed" {
+				t.Fatalf("post-apply status %s: %v", scan.Recordings[0].Status, err)
+			}
+			if err = os.WriteFile(output(manifest), []byte("external replacement"), 0644); err != nil {
+				t.Fatal(err)
+			}
+			if _, err = e.Undo(jobs[0], true); err == nil {
+				t.Fatal("recreated manifest must block Undo")
+			}
+			assertBytes(output(notes), want)
+			if err = os.Remove(output(manifest)); err != nil {
+				t.Fatal(err)
+			}
+			if _, err = e.Undo(jobs[0], true); err != nil {
+				t.Fatal(err)
+			}
+			assertBytes(output(notes), prior)
+			assertBytes(output(manifest), checksum)
+			assertBytes(output(audio), source)
+		})
+	}
 }
