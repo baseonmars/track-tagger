@@ -527,9 +527,12 @@ func (e *Engine) applyLocked(p Plan, check func(Item) error) ([]string, error) {
 	if err = e.recover(); err != nil {
 		return nil, err
 	}
-	resumed, err := e.resumeRenames("")
-	if err != nil {
-		return nil, err
+	var resumed map[string]renameBatch
+	if ids := planIDs(p); len(ids) > 0 {
+		resumed, err = e.resumeRenames("", ids...)
+		if err != nil {
+			return nil, err
+		}
 	}
 	var ids []string
 	for _, item := range p.Recordings {

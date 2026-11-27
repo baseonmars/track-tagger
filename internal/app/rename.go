@@ -702,17 +702,26 @@ func (e *Engine) cleanupRename(b *renameBatch) error {
 
 // resumeRenames runs with both writer locks held. Pending work for a different
 // source or destination stays available to the original command.
-func (e *Engine) resumeRenames(job string) (map[string]renameBatch, error) {
+func (e *Engine) resumeRenames(job string, recordingIDs ...string) (map[string]renameBatch, error) {
 	pending, err := e.store.pendingRenames(e.Source, e.Destination, e.Mode, job)
 	if err != nil {
 		return nil, err
 	}
 	completed := make(map[string]renameBatch)
-	if len(pending) > 0 {
-		e.invalidateLibrary()
-		defer e.invalidateLibrary()
+	selected := make(map[string]bool, len(recordingIDs))
+	for _, id := range recordingIDs {
+		selected[id] = true
 	}
+	dirty := false
 	for _, b := range pending {
+		if len(selected) > 0 && !selected[b.Item.ID] {
+			continue
+		}
+		if !dirty {
+			e.invalidateLibrary()
+			defer e.invalidateLibrary()
+			dirty = true
+		}
 		if err := e.commitRename(&b); err != nil {
 			return completed, fmt.Errorf("resume rename job %s: %w", b.Job, err)
 		}

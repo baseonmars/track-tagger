@@ -493,3 +493,45 @@ func TestSavedRenameIsManual(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestScopedApplyLeavesUnrelatedPendingRenameAlone(t *testing.T) {
+	e, first := engineFixture(t, Write)
+	r := fixturePlan(t, e).Recordings[0]
+	r.RenameFiles = true
+	if err := e.SaveReview(r.ID, r); err != nil {
+		t.Fatal(err)
+	}
+	paused := fixturePlan(t, e)
+	_, err := e.store.db.Exec("CREATE TRIGGER stop_rename BEFORE UPDATE OF plan ON rename_batches BEGIN SELECT RAISE(FAIL, 'interrupted'); END")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err = e.Apply(paused); err == nil {
+		t.Fatal("expected rename to pause")
+	}
+	requireAbsent(t, first)
+
+	secondDir := filepath.Join(e.Source, "another-show")
+	if err = os.Mkdir(secondDir, 0755); err != nil {
+		t.Fatal(err)
+	}
+	second := filepath.Join(secondDir, "t01.flac")
+	renameFixtureAudio(t, second, 2)
+	notes, err := os.ReadFile(filepath.Join(e.Source, "notes.txt"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err = os.WriteFile(filepath.Join(secondDir, "notes.txt"), notes, 0644); err != nil {
+		t.Fatal(err)
+	}
+	e.strictFingerprint = func(path string) (catalog.Evidence, error) {
+		if filepath.Dir(path) != secondDir {
+			t.Errorf("scoped apply read an unrelated payload: %s", path)
+		}
+		return catalog.Fingerprint(path)
+	}
+	if jobs, err := e.Apply(fixturePlan(t, e)); err != nil || len(jobs) != 1 {
+		t.Fatalf("unrelated interrupted rename blocked a scoped apply: %v, %v", jobs, err)
+	}
+	requireAbsent(t, filepath.Join(e.Source, "01 First Song.flac"))
+}
