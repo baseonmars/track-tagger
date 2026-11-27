@@ -14,7 +14,7 @@ import (
 	"track-tagger/internal/media"
 )
 
-var gnuMD5 = regexp.MustCompile(`(?i)^([0-9a-f]{32})[ \t]+[* ]?(.+)$`)
+var gnuMD5 = regexp.MustCompile(`(?i)^([0-9a-f]{32})[ \t][ *]?(.+)$`)
 var bsdMD5 = regexp.MustCompile(`(?i)^MD5 \((.+)\) = ([0-9a-f]{32})$`)
 
 type manifestDecision struct {
@@ -48,8 +48,9 @@ func classifyMD5(path string, lookup func(string) (trackChecksum, error)) (manif
 	}
 	changed, other := 0, 0
 	for _, line := range strings.Split(string(b), "\n") {
-		line = strings.TrimSpace(line)
-		if line == "" || strings.HasPrefix(line, ";") || strings.HasPrefix(line, "#") {
+		line = strings.TrimSuffix(line, "\r")
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" || strings.HasPrefix(trimmed, ";") || strings.HasPrefix(trimmed, "#") {
 			continue
 		}
 		var name, sum string
@@ -61,8 +62,8 @@ func classifyMD5(path string, lookup func(string) (trackChecksum, error)) (manif
 			other++
 			continue
 		}
-		name = filepath.FromSlash(strings.ReplaceAll(name, "\\", "/"))
-		if !filepath.IsLocal(name) {
+		name = filepath.FromSlash(name)
+		if !filepath.IsLocal(name) || strings.Contains("/"+filepath.ToSlash(name)+"/", "/../") {
 			other++
 			continue
 		}
@@ -141,79 +142,38 @@ func assessMD5(item Item) ([]manifestDecision, error) {
 	return results, nil
 }
 
-type md5Cleanup struct {
-	manifests []string
-	notes     string
-}
-
-func (c md5Cleanup) noteLines(item Item) []string {
-	var lines []string
-	for _, path := range c.manifests {
-		name, err := filepath.Rel(item.Path, path)
-		if err != nil {
-			name = filepath.Base(path)
-		}
-		lines = append(lines, "Removed "+filepath.ToSlash(name)+" after tagging changed the file checksums.")
-	}
-	return lines
-}
-
-// prepareMD5 runs before any write so the decision uses pre-tag checksums.
-// The notes edit must also be possible before the first manifest is removed.
-func (e *Engine) prepareMD5(item Item) (md5Cleanup, error) {
-	var c md5Cleanup
+// planMD5 selects manifests against pre-tag evidence. A later source edit is
+// rejected by the same full-recording validation used for audio replacements.
+func planMD5(item Item) ([]string, error) {
 	if !item.CleanupMD5 {
-		return c, nil
+		return nil, nil
 	}
 	if !item.Reviewed {
-		return c, fmt.Errorf("MD5 cleanup requires an approved review")
+		return nil, fmt.Errorf("MD5 cleanup requires an approved review")
 	}
 	decisions, err := assessMD5(item)
 	if err != nil {
-		return c, err
+		return nil, err
 	}
+	var paths []string
 	for _, d := range decisions {
 		if d.Remove {
-			c.manifests = append(c.manifests, d.Path)
+			paths = append(paths, d.Path)
 		}
 	}
-	if len(c.manifests) == 0 {
-		return c, nil
-	}
-	for _, path := range item.Notes {
-		if path == item.NotesTarget || item.NotesTarget == "" && len(item.Notes) == 1 {
-			c.notes = path
-			break
-		}
-	}
-	if c.notes == "" {
-		return c, fmt.Errorf("select the show notes to record MD5 cleanup")
-	}
-	b, _, err := readCompanion(c.notes)
-	if err != nil {
-		return c, err
-	}
-	_, err = appendNotesLines(b, c.noteLines(item)...)
-	return c, err
+	return paths, nil
 }
 
-func (e *Engine) finishMD5(job string, item *Item, c md5Cleanup, skipped map[string]string) error {
-	if len(c.manifests) == 0 {
-		return nil
-	}
-	targetNotes, err := e.destination(c.notes)
+func cleanupLine(root, path string) string {
+	name, err := filepath.Rel(root, path)
 	if err != nil {
-		return err
+		name = filepath.Base(path)
 	}
-	original, _, err := readCompanion(targetNotes)
-	if err != nil {
-		return err
-	}
-	updated, err := appendNotesLines(original, c.noteLines(*item)...)
-	if err != nil {
-		return err
-	}
-	for _, src := range c.manifests {
+	return "Removed " + filepath.ToSlash(name) + " after tagging changed the file checksums."
+}
+
+func (e *Engine) removeMD5(job string, item *Item, paths []string, skipped map[string]string) error {
+	for _, src := range paths {
 		dest, err := e.destination(src)
 		if err != nil {
 			return err
@@ -229,11 +189,10 @@ func (e *Engine) finishMD5(job string, item *Item, c md5Cleanup, skipped map[str
 			return err
 		}
 		delete(skipped, dest)
+		// Make partial work visible in History even if a later note or file fails.
+		if _, err = e.store.db.Exec("UPDATE jobs SET summary=summary || ' ' || ? WHERE id=?", cleanupLine(item.Path, src), job); err != nil {
+			return err
+		}
 	}
-	if err = e.commitCompanion(job, item, c.notes, targetNotes, hashBytes(original), updated, false); err != nil {
-		return err
-	}
-	delete(skipped, targetNotes)
-	_, err = e.store.db.Exec("UPDATE jobs SET summary=? WHERE id=?", "Metadata update. "+strings.Join(c.noteLines(*item), " "), job)
-	return err
+	return nil
 }
