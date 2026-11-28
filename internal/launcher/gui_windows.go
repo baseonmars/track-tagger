@@ -534,10 +534,11 @@ func proc(h uintptr, m uint32, w, l uintptr) uintptr {
 			toggleDetails()
 		case 16:
 			showHelp()
-		case 17:
+		case 9, 17:
+			config.USDates = checked(9)
 			config.NoteSuggestions = checked(17)
 			if e := Save(directory, config); e != nil {
-				set(21, "Could not save note suggestions preference: "+e.Error())
+				set(21, "Could not save review preferences: "+e.Error())
 			}
 		case 41:
 			if updates != nil {
