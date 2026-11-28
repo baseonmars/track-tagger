@@ -1,0 +1,11 @@
+{
+  "acquisition_manifest_sha256": "219d8003fd2b85bae9eb2d5317e27247385cd423c3ad8e9b3a463317e3c20407",
+  "all_source_input_hashes_verified": true,
+  "audio_downloads": 0,
+  "discovery_requests": 0,
+  "failures": [],
+  "reconstructed": 500,
+  "requested": 500,
+  "source_manifest_sha256": "1a4382766bd306db1c107ab89838abe503e3b9f21f6158e8afd6fc99e012bc2c",
+  "verification_scope": "Cached exact original note bytes; current remote availability was not retested."
+}

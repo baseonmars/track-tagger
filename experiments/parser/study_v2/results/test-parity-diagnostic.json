@@ -1,0 +1,151 @@
+{
+  "successful_output_pairs": 176,
+  "successful_output_mismatches": [],
+  "both_failure_pairs": [
+    {
+      "case_sha256": "7ec5256c7e18f3bc635c1b418205212477367472f6d0bb57f4ea6fb078d1bb9a",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "bf08bd132c0347ca9dc6fff0be2bdaabde4baa4c138b21dfa44ffa8683edefe4",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "65466f7a5023bf7aded9730ebaa35883772dea9e0ca59373c51fbeeac21aaf5c",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "db5834c45b2ba03a05253b7c1ef73eb283f05b0d34bbd7c27246f06acc1c7cb2",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "b26be1d805a3c9754de3c0125521affb04f8244ba6d87e84d54232e75e99e450",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "6195bce46dbf8ab7c1337ee1e411871a81a44db3c712a1c1befef62efdd18bb6",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "d3f0308bbfa41b0f8d27f582cab9b7b8ab19355b32af3bbd70c5d21d905bcd39",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "c593e0c5d8d81222a1e15602e27eb2171dc2e707bc8340ad3772f25cb587210d",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "b00a8f2ea6bd36b5822768d87c81d86f8456f8fa1f1e53422917960d7d32adcf",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "20b9f8037898e56851758e260ec8ffac183499aebce7eb93e0a0744b63e39a29",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "a17f01c14e0a58163e0659f080dd46dccd162da1e7b3e4bb0026f2126ac5f1c0",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "9ff68835e35719711d4704ad2de50549265b6729e99cec4647a4377b6d212962",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "29302a51112b2d62b3c208ab6d40864c691487bb7fa70925248f2b863ebadaa0",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "cc8d980855da7154a744445e7fbfa30125c0434eaf8ace3982bb0f534342d6fd",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "56706429a6f43b9bba198d08bc31ea6ce38046ba78362c6d7c60fe493b65cb8b",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "8b4c4d23b526671a673691828c9ec5d6f3b8e2d8385c57035e168c9f9a9a78ce",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "d7c023dea8ae4ddf389e2a732e40ee76494da285d5068727f098a0d6a0007561",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "34294e8269d06671f060a5363a21a02f9830309bbf565b6762b5a4857a8a3c03",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "a51ecff05386e997e6fe6e8629e624661e985b17c1e70103b8dd8532b649abdc",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "0ddee4f2c3efa396ead9301a0e828245259cf6c9135c83a37bfaf3fa3763c827",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "ff2bb4dfb95c9b8cf471b6df68017d53016cd98c11091a708caf134c4769751e",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "a25c941b83bc4f35459099f8569a199aac4d1a24f7d19899ed00196f0c220a9c",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "f58ccce524ce0b45019243d7fc219178512975d978082b017ebfcaad129e6d21",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    },
+    {
+      "case_sha256": "9e6d773d093bd6f4cb6eae537f67762e981aa73786ab8db5c16ac1855ca963cf",
+      "fixed_error": "CalledProcessError",
+      "assisted_error": "CalledProcessError",
+      "same_error_class": true
+    }
+  ],
+  "scope": "Supplemental diagnostic only; frozen evaluator retains failed requests in its strict parity and completeness gates. Matching failure classes are not successful parse parity."
+}

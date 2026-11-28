@@ -1,0 +1,8 @@
+{
+  "runner_sha256": "3540113de8056e3360368109fe12ade2c8d59b4bcfa001549c2184ce5ece8f2a",
+  "build_manifest_sha256": "9b04742e14b396afcd41ca8d5d40797045c397bb63905cbf5014a858c928ecf5",
+  "baseline_binary_sha256": "12d9d9e70455c5c2ed3a494d0bc6539ae9edf7b2ee8a93b73ed0ea863170f6e3",
+  "fixed_binary_sha256": "c75f5cfd46bd7c9d31631be6b99d8ce30e80b10bcf3e84d3bdfc57ccd05ee58f",
+  "classifier_binary_sha256": "705258815ce16b036e4f1500510a86937d3da4aa37b7bb2660d5b73235274af9",
+  "model_freeze_sha256": "28ff6689f74c00eff86f835496501a68838df1f9ceb2af016754fdd5bf652cfe"
+}

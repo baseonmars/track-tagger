@@ -1,0 +1,18 @@
+{
+  "source_cases": 200,
+  "recording_status_counts": {
+    "agent-reviewed": 199,
+    "unresolved": 1
+  },
+  "lines": 10612,
+  "nonblank_lines": 8827,
+  "reviewed_nonblank_lines": 8692,
+  "reviewed_nonblank_fraction": 0.9847060156338507,
+  "recording_gold_sha256": "590d1d104d6a26027b62cdcc9c664dbc083d53ace187fd48f8a38fbe4e240919",
+  "line_gold_sha256": "ce468f0612ccb4afd0ece6f2ec66002a9365b30bd0fa513de6ef71539e7135bf",
+  "source_review_artifact_sha256": "c019b98465bb1d8aef4c7c599297c130c5f0c0fd4b2f1ae138f12b1f1c731e4f",
+  "source_inputs_sha256": "8856ae8f8e3d9287f698071fbdbe109ef8778354c9c8a2cbb3c7c08969b348d9",
+  "gold_frozen_before_candidate_predictions": true,
+  "human_certified": false,
+  "independent_contexts_not_independent_model_families": true
+}

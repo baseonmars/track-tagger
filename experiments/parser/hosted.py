@@ -36,6 +36,13 @@ SCHEMA = {'type':'object','properties': {
 
 def request_schema(config,case):
     schema=copy.deepcopy(config.get('schema',SCHEMA))
+    if config.get('line_annotation_note_enum'):
+        names=sorted({n['name'] for n in case['notes']})
+        if not names:raise ValueError('line annotation requires source documents')
+        schema['properties']['segments']['items']['properties']['note']['enum']=names
+    if config.get('source_gold_identifiers'):
+        schema['properties']['titles']['items']['properties']['id']['pattern']=r'^[1-9]\d*:[1-9]\d*$'
+        schema['properties']['mappings']['items']['properties']['path']['enum']=sorted(set(case['files']))
     if config.get('evidence_note_enum'):
         names=sorted({n['name'] for n in case['notes']})
         if not names:raise ValueError('evidence note enum requires source documents')
@@ -122,7 +129,7 @@ class Adapter:
         candidate_guard(case,phase)
         schema = request_schema(self.config,case)
         safe_case = {'notes':[{k:n[k] for k in ('name','text')} for n in case['notes']], 'files':case['files']}
-        if self.config.get('annotation_review'):
+        if self.config.get('annotation_review') or self.config.get('line_source_review'):
             safe_case['annotation_draft'] = case['annotation_draft']
         payload = {'model':self.config['model'], 'service_tier':'default', 'input':[
             {'role':'system','content':prompt}, {'role':'user','content':canonical(safe_case)}],

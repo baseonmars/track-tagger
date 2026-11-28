@@ -1,0 +1,7 @@
+{
+  "source_manifest_sha256": "1a4382766bd306db1c107ab89838abe503e3b9f21f6158e8afd6fc99e012bc2c",
+  "acquisition_manifest_sha256": "219d8003fd2b85bae9eb2d5317e27247385cd423c3ad8e9b3a463317e3c20407",
+  "source_audit_approval_sha256": "e89102bc7b8cf713f48609f25f1a50ebccdff4a7314e007ef898208cd8ab1481",
+  "original_source_notes_outside_git": true,
+  "no_audio_downloads": true
+}

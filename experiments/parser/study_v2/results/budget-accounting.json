@@ -1,0 +1,40 @@
+{
+  "total_cap_usd": 50,
+  "ledger_settled_usd": 30.54954,
+  "active_reservations_usd": 0,
+  "headroom_usd": 19.45046,
+  "requests": 858,
+  "phases": [
+    {
+      "stage": "annotation-v2-adjudication:gpt-6-astra",
+      "requests": 4,
+      "ledger_settled_usd": 2.486683
+    },
+    {
+      "stage": "annotation-v2-independent-author:gpt-6.1-sol",
+      "requests": 250,
+      "ledger_settled_usd": 9.651055
+    },
+    {
+      "stage": "annotation-v2-independent-review:gpt-6.1-sol",
+      "requests": 250,
+      "ledger_settled_usd": 11.279851
+    },
+    {
+      "stage": "annotation-v2-pilot-luna:gpt-6-luna",
+      "requests": 42,
+      "ledger_settled_usd": 0.053724
+    },
+    {
+      "stage": "annotation-v2-pilot-sol:gpt-6.1-sol",
+      "requests": 62,
+      "ledger_settled_usd": 1.882919
+    },
+    {
+      "stage": "annotation-v2-training:gpt-6.1-sol",
+      "requests": 250,
+      "ledger_settled_usd": 5.195308
+    }
+  ],
+  "scope": "Incremental v2 ledger only; previous experiment ledger untouched. Gross list-price accounting with microdollar ceiling, not net invoice or free-credit consumption. Genuine failed/truncated outputs remain charged. No further paid dispatch planned."
+}

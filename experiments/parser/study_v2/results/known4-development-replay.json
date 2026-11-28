@@ -1,0 +1,19 @@
+{
+  "scope": "Targeted replay of four previously inspected development failures; not independent held-out evidence",
+  "baseline_commit": "5fd190bc13e519edc05788d2bd8cf57c2f23bb28",
+  "fixed_commit": "fece1a07e861390c592edf1acac14cf18faabecb",
+  "cases_replayed": 4,
+  "ready_before": 4,
+  "ready_after": 1,
+  "outcomes": [
+    "Speculative venue now requires review while preserving the source suggestion.",
+    "An explicit alternative performer name no longer contaminates the venue; readiness is preserved.",
+    "An explicitly provisional song title now requires review and remains visible; an ambiguous event/venue/city header also requires review.",
+    "An event-at-venue header now retains event and venue, extracts the explicit city, and requires review; twelve terminal durations are removed while segues remain."
+  ],
+  "limitations": [
+    "Development cases motivated these changes; do not combine with held-out improvement counts.",
+    "No candidate tuning or media writes were performed."
+  ],
+  "private_replay_sha256": "239aaa6734389fa87e7eca1773ee6a543837ca28ddf05748c57d64aa4aec5470"
+}

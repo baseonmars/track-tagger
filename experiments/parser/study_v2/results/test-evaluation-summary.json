@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "protocol_sha256": "72140b84bbf3da48a8adaae27efadf358a9b01f58b6477bae9580ed2977c4f6d",
+  "arms": {
+    "baseline": {
+      "eligible": 199,
+      "metadata_exact": 21,
+      "ready": 10,
+      "false_ready": 2,
+      "failures": 24,
+      "full_recording_gold_cases": 199,
+      "recording_exact": 1
+    },
+    "fixed": {
+      "eligible": 199,
+      "metadata_exact": 21,
+      "ready": 10,
+      "false_ready": 2,
+      "failures": 24,
+      "full_recording_gold_cases": 199,
+      "recording_exact": 2
+    },
+    "assisted": {
+      "eligible": 199,
+      "metadata_exact": 21,
+      "ready": 10,
+      "false_ready": 2,
+      "failures": 24,
+      "full_recording_gold_cases": 199,
+      "recording_exact": 2
+    }
+  },
+  "review_cohort": {
+    "count": 96,
+    "fixed_metadata_exact": 4,
+    "proposed_metadata_exact": 12,
+    "paired_improvement": 0.08333333333333333,
+    "paired_group_bootstrap95": [
+      0.020833333333333332,
+      0.14583333333333334
+    ]
+  },
+  "roles": {
+    "date": {
+      "tp": 209,
+      "fp": 59,
+      "fn": 19,
+      "precision": 0.7798507462686567,
+      "recall": 0.9166666666666666,
+      "supporting_recordings": 194,
+      "precision_wilson95": [
+        0.7264821205476288,
+        0.8253100919086012
+      ]
+    },
+    "venue": {
+      "tp": 54,
+      "fp": 4,
+      "fn": 168,
+      "precision": 0.9310344827586207,
+      "recall": 0.24324324324324326,
+      "supporting_recordings": 54,
+      "precision_wilson95": [
+        0.8356633368561964,
+        0.9728557529824217
+      ]
+    },
+    "city": {
+      "tp": 109,
+      "fp": 14,
+      "fn": 102,
+      "precision": 0.8861788617886179,
+      "recall": 0.5165876777251185,
+      "supporting_recordings": 106,
+      "precision_wilson95": [
+        0.8179893170669815,
+        0.9309771555931453
+      ]
+    }
+  },
+  "background": {
+    "lines": 5037,
+    "false_positive_lines": 46,
+    "false_positive_rate": 0.0091324200913242,
+    "recordings": 200,
+    "affected_recordings": 20
+  },
+  "reference_coverage": {
+    "requested_recordings": 200,
+    "eligible_recording_gold": 199,
+    "source_lines": 10612,
+    "nonblank_lines": 8827,
+    "reviewed_nondisputed_nonblank_lines": 8692,
+    "reviewed_nonblank_fraction": 0.9847060156338507
+  },
+  "line_coverage": {
+    "requested_lines": 10612,
+    "abstentions": 10180,
+    "disputed_lines": 135,
+    "failed_or_missing_lines": 0
+  },
+  "gates": {
+    "adjudicated_test_support": true,
+    "complete_track_reference_coverage": true,
+    "reviewed_nonblank_reference_coverage": true,
+    "role_precision_and_support": false,
+    "background_false_positive_rate": true,
+    "metadata_improvement": true,
+    "assistance_parity": false,
+    "source_backed_proposals": true,
+    "source_eligible_metadata_proposals": true,
+    "no_new_false_ready": true,
+    "no_new_material_acceptance": true,
+    "complete_candidate_outputs": false
+  },
+  "quantitative_gates_pass": false,
+  "integration_approved": false,
+  "failure_index": [
+    {
+      "case_sha256": "7ec5256c7e18f3bc635c1b418205212477367472f6d0bb57f4ea6fb078d1bb9a",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "bf08bd132c0347ca9dc6fff0be2bdaabde4baa4c138b21dfa44ffa8683edefe4",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "65466f7a5023bf7aded9730ebaa35883772dea9e0ca59373c51fbeeac21aaf5c",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "db5834c45b2ba03a05253b7c1ef73eb283f05b0d34bbd7c27246f06acc1c7cb2",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "b26be1d805a3c9754de3c0125521affb04f8244ba6d87e84d54232e75e99e450",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "6195bce46dbf8ab7c1337ee1e411871a81a44db3c712a1c1befef62efdd18bb6",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "d3f0308bbfa41b0f8d27f582cab9b7b8ab19355b32af3bbd70c5d21d905bcd39",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "c593e0c5d8d81222a1e15602e27eb2171dc2e707bc8340ad3772f25cb587210d",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "b00a8f2ea6bd36b5822768d87c81d86f8456f8fa1f1e53422917960d7d32adcf",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "20b9f8037898e56851758e260ec8ffac183499aebce7eb93e0a0744b63e39a29",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "a17f01c14e0a58163e0659f080dd46dccd162da1e7b3e4bb0026f2126ac5f1c0",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "9ff68835e35719711d4704ad2de50549265b6729e99cec4647a4377b6d212962",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "29302a51112b2d62b3c208ab6d40864c691487bb7fa70925248f2b863ebadaa0",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "cc8d980855da7154a744445e7fbfa30125c0434eaf8ace3982bb0f534342d6fd",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "56706429a6f43b9bba198d08bc31ea6ce38046ba78362c6d7c60fe493b65cb8b",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "8b4c4d23b526671a673691828c9ec5d6f3b8e2d8385c57035e168c9f9a9a78ce",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "d7c023dea8ae4ddf389e2a732e40ee76494da285d5068727f098a0d6a0007561",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "34294e8269d06671f060a5363a21a02f9830309bbf565b6762b5a4857a8a3c03",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "a51ecff05386e997e6fe6e8629e624661e985b17c1e70103b8dd8532b649abdc",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "0ddee4f2c3efa396ead9301a0e828245259cf6c9135c83a37bfaf3fa3763c827",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "ff2bb4dfb95c9b8cf471b6df68017d53016cd98c11091a708caf134c4769751e",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "a25c941b83bc4f35459099f8569a199aac4d1a24f7d19899ed00196f0c220a9c",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "f58ccce524ce0b45019243d7fc219178512975d978082b017ebfcaad129e6d21",
+      "category": "underlying_output_changed"
+    },
+    {
+      "case_sha256": "9e6d773d093bd6f4cb6eae537f67762e981aa73786ab8db5c16ac1855ca963cf",
+      "category": "underlying_output_changed"
+    }
+  ]
+}
