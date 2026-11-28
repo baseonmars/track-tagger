@@ -32,7 +32,9 @@ func (s watchSchedule) observe(item Item, now time.Time) *watchEntry {
 		DateUnknown                  bool
 		Tracks                       any
 		Artwork, Artist, Album, Date string
-	}{item.Fingerprint, item.Reviewed, item.DateUnknown, item.Tracks, item.Artwork, item.Artist, item.Album, item.Date})
+		NotesEnabled, NotesSignature bool
+		NotesTarget                  string
+	}{item.Fingerprint, item.Reviewed, item.DateUnknown, item.Tracks, item.Artwork, item.Artist, item.Album, item.Date, item.NotesSignatureEnabled, item.AddNotesSignature, item.NotesTarget})
 	h := sha256.Sum256(b)
 	key := hex.EncodeToString(h[:])
 	entry := s[item.ID]
@@ -166,7 +168,7 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 			default:
 			}
 			err := (WebBackend{E: e}).applySelection(ctx, item.ID, func(current Item) error {
-				if current.Status != "ready" || current.Fingerprint != item.Fingerprint || current.Reviewed != item.Reviewed || !sameProposal(current.Recording, item.Recording) {
+				if current.Status != "ready" || current.Fingerprint != item.Fingerprint || current.Reviewed != item.Reviewed || current.NotesSignatureEnabled != item.NotesSignatureEnabled || !sameItemProposal(current, item) {
 					return fmt.Errorf("recording changed since watcher observation")
 				}
 				return nil
@@ -230,16 +232,19 @@ func (e *Engine) Watch(ctx context.Context, poll bool, reconcile time.Duration, 
 			if dirty && now.Sub(lastEvent) >= time.Second {
 				due = true
 			}
+			if due && dirty {
+				e.invalidateLibrary()
+			}
+			process(now)
 			if due {
-				if dirty {
-					e.invalidateLibrary()
-				} else {
+				// Let the watcher use published results before a periodic refresh
+				// marks them loading. Known filesystem changes invalidate first.
+				if !dirty && ctx.Err() == nil {
 					e.reconcileLibrary()
 				}
 				lastScan = now
 				dirty = false
 			}
-			process(now)
 		}
 	}
 }

@@ -4,19 +4,54 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"golang.org/x/text/encoding/charmap"
 	"io"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
-	"track-tagger/internal/media"
 	"unicode/utf8"
 
+	"golang.org/x/text/encoding/charmap"
+
 	"track-tagger/internal/catalog"
+	"track-tagger/internal/media"
 	"track-tagger/internal/webui"
 )
 
 type WebBackend struct{ E *Engine }
+
+func (w WebBackend) ShowNotesSignature(ctx context.Context) (bool, error) {
+	w.E.mu.Lock()
+	defer w.E.mu.Unlock()
+	if err := ctx.Err(); err != nil {
+		return false, err
+	}
+	if err := w.E.OpenStorage(); err != nil {
+		return false, err
+	}
+	return w.E.showNotesSignature()
+}
+
+func (w WebBackend) SaveShowNotesSignature(ctx context.Context, enabled bool) error {
+	w.E.mu.Lock()
+	defer w.E.mu.Unlock()
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if err := w.E.OpenStorage(); err != nil {
+		return err
+	}
+	unlock, err := w.E.store.acquire()
+	if err != nil {
+		return err
+	}
+	defer unlock()
+	if err = w.E.store.saveSetting(notesSignatureSetting, enabled); err != nil {
+		return err
+	}
+	w.E.invalidateLibrary()
+	return nil
+}
 
 func (w WebBackend) List(ctx context.Context) ([]webui.Recording, error) {
 	if err := ctx.Err(); err != nil {
@@ -35,6 +70,19 @@ func webRecord(r Item) webui.Recording {
 		if ev.ModTime > out.LastModified {
 			out.LastModified = ev.ModTime
 		}
+	}
+	out.NotesSignatureEnabled = r.NotesSignatureEnabled
+	out.AddNotesSignature = r.AddNotesSignature
+	out.NotesTarget = r.NotesTarget
+	toPreview := func(note NotesPreview) webui.NotesPreview {
+		label, _ := filepath.Rel(r.Path, note.Source)
+		return webui.NotesPreview{Source: note.Source, Label: label, Target: note.Target, Addition: note.Addition, Reason: note.Reason}
+	}
+	if r.NotesPreview != nil {
+		out.NotesPreview = toPreview(*r.NotesPreview)
+	}
+	for _, note := range r.notesChoices {
+		out.NotesChoices = append(out.NotesChoices, toPreview(note))
 	}
 	for _, t := range r.Tracks {
 		out.Tracks = append(out.Tracks, webui.Track{File: t.Path, Title: t.Title, Artist: t.Artist, Track: t.Number, Disc: t.Disc})
@@ -115,6 +163,16 @@ func (w WebBackend) SaveReview(ctx context.Context, id string, v webui.Review) e
 	r.Date = v.Metadata["DATE"]
 	r.DateUnknown = v.DateUnknown
 	r.Artwork = v.Artwork
+	r.AddNotesSignature, r.NotesTarget = v.AddNotesSignature, v.NotesTarget
+	if v.NotesSignatureEnabled != nil {
+		enabled, err := w.E.showNotesSignature()
+		if err != nil {
+			return err
+		}
+		if *v.NotesSignatureEnabled != enabled {
+			return errors.New("the show-notes setting changed; refresh before reviewing")
+		}
+	}
 	if len(v.Tracks) != len(r.Tracks) {
 		return errors.New("map every file")
 	}
@@ -198,6 +256,13 @@ func (w WebBackend) applySubmitted(ctx context.Context, id string, v webui.Revie
 		}
 		if !r.Reviewed {
 			return errors.New("save an approved review before applying")
+		}
+		if v.NotesSignatureEnabled != nil && *v.NotesSignatureEnabled != r.NotesSignatureEnabled {
+			return errors.New("the show-notes setting changed; refresh before applying")
+		}
+		submittedNotes := Item{Recording: r.Recording, NotesTarget: v.NotesTarget}
+		if r.NotesSignatureEnabled && (v.AddNotesSignature != r.AddNotesSignature || notesTarget(submittedNotes) != notesTarget(r)) {
+			return errors.New("submitted show-notes choices differ from the saved review; approve and save your edits before applying")
 		}
 		expected := webui.Review{DateUnknown: r.DateUnknown, Metadata: map[string]string{"ARTIST": r.Artist, "ALBUM": r.Album, "DATE": r.Date}, Artwork: r.Artwork}
 		for _, t := range r.Tracks {
