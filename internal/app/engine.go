@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -32,6 +33,7 @@ type Options struct {
 	Settle                     time.Duration
 }
 type Item struct {
+	CleanupMD5 bool `json:"cleanup_md5,omitempty"`
 	catalog.Recording
 	Reviewed              bool          `json:"Reviewed"`
 	AddNotesSignature     bool          `json:"add_notes_signature,omitempty"`
@@ -224,6 +226,21 @@ func (e *Engine) decorate(r catalog.Recording, browse bool) (Item, error) {
 			paths := []string{}
 			if e.Mode == Copy {
 				for _, ev := range item.Evidence {
+					if item.CleanupMD5 && strings.EqualFold(filepath.Ext(ev.Path), ".md5") {
+						target, x := e.destination(ev.Path)
+						if x != nil {
+							return Item{}, x
+						}
+						if _, x = os.Lstat(target); os.IsNotExist(x) {
+							owned, x := e.store.companionOutput(target, ev.SHA256, "")
+							if x != nil {
+								return Item{}, x
+							}
+							if owned {
+								continue
+							}
+						}
+					}
 					paths = append(paths, ev.Path)
 				}
 			} else {
@@ -593,9 +610,44 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 		audio       bool
 	}
 	var outputs []output
+	removals, err := planMD5(item)
+	if err != nil {
+		return "", err
+	}
+	omitted := map[string]bool{}
+	if e.Mode == Copy && item.CleanupMD5 {
+		for _, ev := range item.Evidence {
+			if !strings.EqualFold(filepath.Ext(ev.Path), ".md5") {
+				continue
+			}
+			target, err := e.destination(ev.Path)
+			if err != nil {
+				return "", err
+			}
+			hash, err := e.targetAllowed(target)
+			if err != nil {
+				return "", err
+			}
+			if hash != "" {
+				continue
+			}
+			omitted[ev.Path], err = e.store.companionOutput(target, ev.SHA256, "")
+			if err != nil {
+				return "", err
+			}
+		}
+	}
+	removals = slices.DeleteFunc(removals, func(path string) bool { return omitted[path] })
+	var lines []string
+	for _, path := range removals {
+		lines = append(lines, cleanupLine(item.Path, path))
+	}
 	var note notesEdit
 	if item.Reviewed && item.AddNotesSignature && item.NotesSignatureEnabled {
-		note = e.planNotesEdit(item, notesTarget(item), notesSignature)
+		lines = append(lines, notesSignature)
+	}
+	if len(lines) > 0 {
+		note = e.planNotesEdit(item, notesTarget(item), lines...)
 		if note.replacement == nil && !note.alreadyPresent {
 			return "", errors.New(note.Reason)
 		}
@@ -609,7 +661,7 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 	}
 	if e.Mode == Copy {
 		for _, ev := range item.Evidence {
-			if strings.EqualFold(filepath.Ext(ev.Path), ".flac") {
+			if omitted[ev.Path] || strings.EqualFold(filepath.Ext(ev.Path), ".flac") {
 				continue
 			}
 			dest, x := e.destination(ev.Path)
@@ -639,7 +691,19 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 			}
 		}
 	}
-	id, err = e.store.newJob(item.ID, "metadata update; original checksum documents retained; whole-file MD5 changes")
+	summary := "Metadata update."
+	if len(removals) > 0 {
+		names := make([]string, 0, len(removals))
+		for _, path := range removals {
+			name, err := filepath.Rel(item.Path, path)
+			if err != nil {
+				return "", err
+			}
+			names = append(names, filepath.ToSlash(name))
+		}
+		summary += " Approved MD5 cleanup for " + strings.Join(names, ", ") + "."
+	}
+	id, err = e.store.newJob(item.ID, summary)
 	if err != nil {
 		return "", err
 	}
@@ -780,6 +844,9 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 				}
 			}
 		}
+	}
+	if err = e.removeMD5(id, &item, removals, skipped); err != nil {
+		return id, err
 	}
 	if note.replacement != nil {
 		if err = e.commitCompanion(id, &item, note.Source, note.Target, note.beforeHash, note.replacement, false); err != nil {
@@ -1004,7 +1071,7 @@ func sameProposal(a, b catalog.Recording) bool {
 	return a.Artist == b.Artist && a.Album == b.Album && a.Date == b.Date && a.DateUnknown == b.DateUnknown && a.Artwork == b.Artwork && reflect.DeepEqual(a.Tracks, b.Tracks)
 }
 func sameItemProposal(a, b Item) bool {
-	return sameProposal(a.Recording, b.Recording) && a.AddNotesSignature == b.AddNotesSignature && a.NotesTarget == b.NotesTarget
+	return a.CleanupMD5 == b.CleanupMD5 && sameProposal(a.Recording, b.Recording) && a.AddNotesSignature == b.AddNotesSignature && a.NotesTarget == b.NotesTarget
 }
 func (e *Engine) revalidate(item Item) error {
 	_, err := e.revalidateRecording(item)
