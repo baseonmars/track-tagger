@@ -1,0 +1,12 @@
+{
+  "validation": {
+    "cases": "a39f2dbcbba2c3b3b25c5e544ec8cfa275d66abb4fe12ad4881ee7be5c295e33",
+    "gold": "b50d5e59f107316811ab007b5b36956b6ebe9b7ba47b11c96dcec29185e8c6de",
+    "lines": "e2f9c163e233b19b81d6f557f77b051018ccc41d35cb09e7d6936d4bd3a409f1"
+  },
+  "test": {
+    "cases": "a39f2dbcbba2c3b3b25c5e544ec8cfa275d66abb4fe12ad4881ee7be5c295e33",
+    "gold": "e2eecf3085939c4e3f52bb045b0767af33c1b42d5e085af55f63aa7680e36bf6",
+    "lines": "6ad096970579c1c0a665d1e2775785ca945cc9b6a29d9eb39879ce06975c9974"
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "base_files": {
+    "config.json": "508e1f01aae55d73355cbdd82609be2f43ba5a0d3428837adbe56cf8391f8b39",
+    "model.safetensors": "7fb69ad9f6866d8983183c930e33828f326470bf6ad8bbb2ad4ed957a92e9414",
+    "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+  },
+  "base_revision": "30b0a37ccaaa32f332884b96992754e246e48c5f",
+  "control": {
+    "background": 1361,
+    "background_fp": 0,
+    "roles": {
+      "artist": {
+        "correct": 0,
+        "emitted": 0,
+        "precision": null,
+        "recall": 0.0,
+        "recordings": 0,
+        "role_correct": 0,
+        "supported_references": 134
+      },
+      "city": {
+        "correct": 0,
+        "emitted": 0,
+        "precision": null,
+        "recall": 0.0,
+        "recordings": 0,
+        "role_correct": 0,
+        "supported_references": 50
+      },
+      "date": {
+        "correct": 31,
+        "emitted": 31,
+        "precision": 1.0,
+        "recall": 0.62,
+        "recordings": 31,
+        "role_correct": 31,
+        "supported_references": 50
+      },
+      "venue": {
+        "correct": 0,
+        "emitted": 0,
+        "precision": null,
+        "recall": 0.0,
+        "recordings": 0,
+        "role_correct": 0,
+        "supported_references": 48
+      }
+    }
+  },
+  "control_stress": {
+    "background": 529,
+    "background_fp": 0,
+    "roles": {
+      "artist": {
+        "correct": 0,
+        "emitted": 0,
+        "precision": null,
+        "recall": 0.0,
+        "recordings": 0,
+        "role_correct": 0,
+        "supported_references": 192
+      },
+      "city": {
+        "correct": 0,
+        "emitted": 0,
+        "precision": null,
+        "recall": 0.0,
+        "recordings": 0,
+        "role_correct": 0,
+        "supported_references": 192
+      },
+      "date": {
+        "correct": 41,
+        "emitted": 41,
+        "precision": 1.0,
+        "recall": 0.21354166666666666,
+        "recordings": 41,
+        "role_correct": 41,
+        "supported_references": 192
+      },
+      "venue": {
+        "correct": 0,
+        "emitted": 0,
+        "precision": null,
+        "recall": 0.0,
+        "recordings": 0,
+        "role_correct": 0,
+        "supported_references": 192
+      }
+    }
+  },
+  "epochs": 5,
+  "input_sha256": {
+    "line-gold.jsonl": "697bf309352d80d5c88b85b9a0add06d5327b2322fbee0d705869653504dc314",
+    "recording-gold.jsonl": "b50d5e59f107316811ab007b5b36956b6ebe9b7ba47b11c96dcec29185e8c6de",
+    "training-lines.jsonl": "9a7585408ea08d3d783c721856fe4cdfd758f9011cb3d49e838e97850362723d"
+  },
+  "real_positive_spans": {
+    "artist": 234,
+    "city": 205,
+    "date": 184,
+    "venue": 197
+  },
+  "real_samples": 857,
+  "runtime": {
+    "numpy": "2.5.5",
+    "onnx": "1.19.0",
+    "onnxruntime": "1.22.1",
+    "tokenizers": "0.21.4",
+    "torch": "2.8.0",
+    "transformers": "4.55.4"
+  },
+  "seed": 21691,
+  "synthetic_recordings": 480,
+  "synthetic_samples": 1100,
+  "threads": 2,
+  "train_groups": 172,
+  "train_recordings": 250,
+  "variants": {
+    "random": {
+      "fp32_graph_bytes": 17527968,
+      "losses": [],
+      "package_bytes": 6161757,
+      "policy_sha256": "f3283a7f9a1ca73c298987f40e5d34aa3ca0136d29010fcd44c79d769eb8bc47",
+      "stress": {
+        "at_zero": {
+          "background": 529,
+          "background_fp": 52,
+          "roles": {
+            "artist": {
+              "correct": 29,
+              "emitted": 312,
+              "precision": 0.09294871794871795,
+              "recall": 0.15104166666666666,
+              "recordings": 168,
+              "role_correct": 136,
+              "supported_references": 192
+            },
+            "city": {
+              "correct": 0,
+              "emitted": 353,
+              "precision": 0.0,
+              "recall": 0.0,
+              "recordings": 179,
+              "role_correct": 143,
+              "supported_references": 192
+            },
+            "date": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 192
+            },
+            "venue": {
+              "correct": 0,
+              "emitted": 219,
+              "precision": 0.0,
+              "recall": 0.0,
+              "recordings": 154,
+              "role_correct": 112,
+              "supported_references": 192
+            }
+          }
+        },
+        "calibrated": {
+          "background": 529,
+          "background_fp": 0,
+          "roles": {
+            "artist": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 192
+            },
+            "city": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 192
+            },
+            "date": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 192
+            },
+            "venue": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 192
+            }
+          }
+        },
+        "cases": 240
+      },
+      "thresholds": {},
+      "total_parameters": 4370440,
+      "trainable_parameters": 0,
+      "validation": {
+        "at_zero": {
+          "background": 1361,
+          "background_fp": 9,
+          "roles": {
+            "artist": {
+              "correct": 10,
+              "emitted": 172,
+              "precision": 0.05813953488372093,
+              "recall": 0.07462686567164178,
+              "recordings": 49,
+              "role_correct": 51,
+              "supported_references": 134
+            },
+            "city": {
+              "correct": 1,
+              "emitted": 146,
+              "precision": 0.00684931506849315,
+              "recall": 0.02,
+              "recordings": 49,
+              "role_correct": 24,
+              "supported_references": 50
+            },
+            "date": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 50
+            },
+            "venue": {
+              "correct": 0,
+              "emitted": 65,
+              "precision": 0.0,
+              "recall": 0.0,
+              "recordings": 34,
+              "role_correct": 12,
+              "supported_references": 48
+            }
+          }
+        },
+        "calibrated": {
+          "background": 1361,
+          "background_fp": 0,
+          "roles": {
+            "artist": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 134
+            },
+            "city": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 50
+            },
+            "date": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 50
+            },
+            "venue": {
+              "correct": 0,
+              "emitted": 0,
+              "precision": null,
+              "recall": 0.0,
+              "recordings": 0,
+              "role_correct": 0,
+              "supported_references": 48
+            }
+          }
+        },
+        "groups": 49,
+        "recordings": 50,
+        "reviewed_lines": 2889
+      }
+    }
+  }
+}

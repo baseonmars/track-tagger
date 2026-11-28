@@ -1,0 +1,478 @@
+{
+  "synthetic": [
+    {
+      "family": "upload",
+      "current_evidence": {
+        "note": "show.txt",
+        "start": 11,
+        "end": 21,
+        "quote": "2022-10-19"
+      },
+      "field": "date",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "date",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 11,
+              "end": 21,
+              "quote": "2022-10-19",
+              "value": "2022-10-19",
+              "score": 1.0
+            }
+          ]
+        },
+        "lora": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "date",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 11,
+              "end": 21,
+              "quote": "2022-10-19",
+              "value": "2022-10-19",
+              "score": 5.497354
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "upload",
+      "current_evidence": null,
+      "field": "date",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": []
+        },
+        "lora": {
+          "correct": true,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "filename",
+      "current_evidence": {
+        "note": "show.txt",
+        "start": 0,
+        "end": 10,
+        "quote": "2022-10-19"
+      },
+      "field": "date",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "date",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 0,
+              "end": 10,
+              "quote": "2022-10-19",
+              "value": "2022-10-19",
+              "score": 1.0
+            }
+          ]
+        },
+        "lora": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "date",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 0,
+              "end": 10,
+              "quote": "2022-10-19",
+              "value": "2022-10-19",
+              "score": 7.655366
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "filename",
+      "current_evidence": null,
+      "field": "date",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": []
+        },
+        "lora": {
+          "correct": true,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "historical",
+      "current_evidence": {
+        "note": "show.txt",
+        "start": 6,
+        "end": 16,
+        "quote": "2022-10-19"
+      },
+      "field": "date",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "date",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 6,
+              "end": 16,
+              "quote": "2022-10-19",
+              "value": "2022-10-19",
+              "score": 1.0
+            }
+          ]
+        },
+        "lora": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "date",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 6,
+              "end": 16,
+              "quote": "2022-10-19",
+              "value": "2022-10-19",
+              "score": 5.513989
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "historical",
+      "current_evidence": null,
+      "field": "date",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": []
+        },
+        "lora": {
+          "correct": true,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "personnel",
+      "current_evidence": {
+        "note": "show.txt",
+        "start": 8,
+        "end": 19,
+        "quote": "Oriel Stone"
+      },
+      "field": "artist",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "artist",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 8,
+              "end": 19,
+              "quote": "Oriel Stone",
+              "value": "Oriel Stone",
+              "score": 1.0
+            }
+          ]
+        },
+        "lora": {
+          "correct": false,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "personnel",
+      "current_evidence": null,
+      "field": "artist",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": []
+        },
+        "lora": {
+          "correct": true,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "itinerary",
+      "current_evidence": {
+        "note": "show.txt",
+        "start": 6,
+        "end": 22,
+        "quote": "Port Kestrel, ME"
+      },
+      "field": "city",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "city",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 6,
+              "end": 22,
+              "quote": "Port Kestrel, ME",
+              "value": "Port Kestrel, ME",
+              "score": 1.0
+            }
+          ]
+        },
+        "lora": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "city",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 6,
+              "end": 22,
+              "quote": "Port Kestrel, ME",
+              "value": "Port Kestrel, ME",
+              "score": 9.925357
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "itinerary",
+      "current_evidence": null,
+      "field": "city",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": []
+        },
+        "lora": {
+          "correct": false,
+          "proposals": [
+            {
+              "field": "city",
+              "note": "show.txt",
+              "line_index": 1,
+              "start": 0,
+              "end": 16,
+              "quote": "Port Kestrel, ME",
+              "value": "Port Kestrel, ME",
+              "score": 9.919732
+            }
+          ]
+        }
+      }
+    },
+    {
+      "family": "combined",
+      "current_evidence": {
+        "note": "show.txt",
+        "start": 16,
+        "end": 32,
+        "quote": "Port Kestrel, ME"
+      },
+      "field": "city",
+      "arms": {
+        "control": {
+          "correct": false,
+          "proposals": []
+        },
+        "lora": {
+          "correct": false,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "combined",
+      "current_evidence": null,
+      "field": "city",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": []
+        },
+        "lora": {
+          "correct": true,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "conflict",
+      "current_evidence": {
+        "note": "show.txt",
+        "start": 7,
+        "end": 21,
+        "quote": "Oriel Ballroom"
+      },
+      "field": "venue",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "venue",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 7,
+              "end": 21,
+              "quote": "Oriel Ballroom",
+              "value": "Oriel Ballroom",
+              "score": 1.0
+            }
+          ]
+        },
+        "lora": {
+          "correct": false,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "conflict",
+      "current_evidence": null,
+      "field": "venue",
+      "arms": {
+        "control": {
+          "correct": false,
+          "proposals": [
+            {
+              "field": "venue",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 7,
+              "end": 21,
+              "quote": "Oriel Ballroom",
+              "value": "Oriel Ballroom",
+              "score": 1.0
+            }
+          ]
+        },
+        "lora": {
+          "correct": true,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "conflicting notes",
+      "current_evidence": {
+        "note": "show.txt",
+        "start": 7,
+        "end": 21,
+        "quote": "Oriel Ballroom"
+      },
+      "field": "venue",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": [
+            {
+              "field": "venue",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 7,
+              "end": 21,
+              "quote": "Oriel Ballroom",
+              "value": "Oriel Ballroom",
+              "score": 1.0
+            }
+          ]
+        },
+        "lora": {
+          "correct": false,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "conflicting notes",
+      "current_evidence": null,
+      "field": "venue",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": []
+        },
+        "lora": {
+          "correct": true,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "multiline venue",
+      "current_evidence": {
+        "note": "show.txt",
+        "start": 7,
+        "end": 33,
+        "quote": "Oriel Ballroom\nNorth Stage"
+      },
+      "field": "venue",
+      "arms": {
+        "control": {
+          "correct": false,
+          "proposals": [
+            {
+              "field": "venue",
+              "note": "show.txt",
+              "line_index": 0,
+              "start": 7,
+              "end": 21,
+              "quote": "Oriel Ballroom",
+              "value": "Oriel Ballroom",
+              "score": 1.0
+            }
+          ]
+        },
+        "lora": {
+          "correct": false,
+          "proposals": []
+        }
+      }
+    },
+    {
+      "family": "multiline venue",
+      "current_evidence": null,
+      "field": "venue",
+      "arms": {
+        "control": {
+          "correct": true,
+          "proposals": []
+        },
+        "lora": {
+          "correct": true,
+          "proposals": []
+        }
+      }
+    }
+  ],
+  "previously_scored_example": {
+    "id": "PG2016-10-22.NMA",
+    "diagnostic_only": true,
+    "city_proposals": []
+  }
+}

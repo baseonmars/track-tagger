@@ -1,0 +1,938 @@
+{
+  "phase": "test",
+  "pilot_source_sha256": "ed4b4b279c0f11cae0e354bbd6258b40f1adae026637f8bf9ae903d33520d0c0",
+  "input_sha256": {
+    "cases": "a39f2dbcbba2c3b3b25c5e544ec8cfa275d66abb4fe12ad4881ee7be5c295e33",
+    "gold": "e2eecf3085939c4e3f52bb045b0767af33c1b42d5e085af55f63aa7680e36bf6",
+    "lines": "6ad096970579c1c0a665d1e2775785ca945cc9b6a29d9eb39879ce06975c9974"
+  },
+  "context_freeze_sha256": "21cbdc3ba6e82bd9dc8eb1921bc4a8dba435f3beddfbdbe85e26984ad4debe4f",
+  "catalog_commit": "f8bd76b931fa828cfb9156a2d9a8f29a3aa3cb14",
+  "catalog_adapter_sha256": "88211cd728b55096a93158cfda0c8442b828d3f7e9d47d00a73f5aa8d0b1d0fa",
+  "catalog_binary_sha256": "48342ce2c4f322bc6270924f65d912b6c4a29f9b471f300347b7eeee73922561",
+  "evaluator_sha256": "265e3a9457d4089d94d944312e0d748cd2ebd5d23d37e967667442fc88feb8e9",
+  "catalog_parity": {
+    "successful_equal": 176,
+    "shared_equal_failures": 24,
+    "underlying_application_failures": 24,
+    "underlying_application_failures_by_recording_count": {
+      "0": 21,
+      "1": 0,
+      "2": 3,
+      "3": 0
+    },
+    "strict_parity_pass": false,
+    "preview_only": true,
+    "writer_invocations": 0
+  },
+  "packages": {
+    "head_only": {
+      "file_sha256": {
+        "model.onnx": "f93456f0c5709371c46d0d1b0762f7270d123c88ea3caf2af86156a56c5ab4c7",
+        "policy.json": "2b642e186e4e48389472bb8225a4f7d8a9746b0182c2cd907713969e711d788a",
+        "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+      },
+      "package_bytes": 6161820,
+      "thresholds": {
+        "artist": 3,
+        "city": 4,
+        "date": 0,
+        "venue": 3
+      }
+    },
+    "full_adapted": {
+      "file_sha256": {
+        "model.onnx": "f384135eab1f3828d49dedf326cef95c05109e42624016efba18f40795d62ed0",
+        "policy.json": "8bb5487b4a01cb663bc9dc156fd0930d57c0de4f7a4a2aa91bc465611d302134",
+        "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+      },
+      "package_bytes": 6161821,
+      "thresholds": {
+        "artist": 8,
+        "city": 8,
+        "date": 0,
+        "venue": 12
+      }
+    },
+    "lora_adapted": {
+      "file_sha256": {
+        "model.onnx": "214311b9fb1ea2a6b601bc3473b4e9efd34acad07ec7bdba5b6dcda8ad12f098",
+        "policy.json": "bc2d85d10fc3b83da54c2e9ceecf7d5787019b2b1a077fe8e3dc8a74becbb222",
+        "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+      },
+      "package_bytes": 6161820,
+      "thresholds": {
+        "artist": 5,
+        "city": 6,
+        "date": 5,
+        "venue": 6
+      }
+    }
+  },
+  "arms": {
+    "current_rules": {
+      "recordings": {
+        "emitting_recordings": 0,
+        "reviewed_recordings": 199,
+        "review_cohort": 96,
+        "all_metadata_exact": 21,
+        "underlying_metadata_mapping_readiness_exact": 2,
+        "underlying_reference_required_reviews_accepted": 2,
+        "fields_repaired": 0,
+        "fields_degraded": 0,
+        "review_cohort_exact": 4,
+        "review_cohort_gains": 0,
+        "review_cohort_losses": 0
+      },
+      "requested_recordings": 200,
+      "prediction_failures": 0,
+      "eligible_recording_reference_fraction": 0.995,
+      "proposal_count": 0,
+      "proposal_assessment": {},
+      "proposal_assessment_by_role": {
+        "artist": {},
+        "date": {},
+        "venue": {},
+        "city": {}
+      },
+      "roles": {
+        "artist": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 724,
+          "precision": null,
+          "recall": 0.0,
+          "precision_ci95": null,
+          "recall_ci95": [
+            0,
+            0.0052778785464050754
+          ],
+          "emitting_recordings": 0
+        },
+        "date": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 228,
+          "precision": null,
+          "recall": 0.0,
+          "precision_ci95": null,
+          "recall_ci95": [
+            0,
+            0.01656933509750254
+          ],
+          "emitting_recordings": 0
+        },
+        "venue": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 222,
+          "precision": null,
+          "recall": 0.0,
+          "precision_ci95": null,
+          "recall_ci95": [
+            0,
+            0.017009537756058457
+          ],
+          "emitting_recordings": 0
+        },
+        "city": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 211,
+          "precision": null,
+          "recall": 0.0,
+          "precision_ci95": null,
+          "recall_ci95": [
+            0,
+            0.01788043537676769
+          ],
+          "emitting_recordings": 0
+        }
+      },
+      "background": {
+        "lines": 5037,
+        "fp": 0,
+        "rate": 0.0,
+        "ci95": [
+          0,
+          0.0007620669787128404
+        ],
+        "affected_recordings": 0
+      },
+      "coverage": {
+        "source_lines": 10612,
+        "nonblank_source_lines": 8827,
+        "runtime_error_lines": 0,
+        "emission_lines": 0,
+        "reviewed_nonblank_lines": 8692,
+        "unknown_role_lines": 135,
+        "reviewed_nonblank_fraction": 0.9847060156338507,
+        "role_abstention_lines": 10612,
+        "proposal_abstention_recordings": 200
+      },
+      "review_cohort_exact_ci95": [
+        0.01632070753628871,
+        0.10228191466657878
+      ],
+      "paired_review_cohort_improvement": 0.0,
+      "paired_review_cohort_improvement_ci95": [
+        0.0,
+        0.0
+      ],
+      "prediction_errors_by_type": {}
+    },
+    "section_aware_classifier": {
+      "recordings": {
+        "emitting_recordings": 99,
+        "reviewed_recordings": 199,
+        "review_cohort": 96,
+        "all_metadata_exact": 52,
+        "underlying_metadata_mapping_readiness_exact": 2,
+        "underlying_reference_required_reviews_accepted": 2,
+        "fields_repaired": 121,
+        "fields_degraded": 3,
+        "review_cohort_exact": 16,
+        "review_cohort_gains": 12,
+        "review_cohort_losses": 0
+      },
+      "requested_recordings": 200,
+      "prediction_failures": 0,
+      "eligible_recording_reference_fraction": 0.995,
+      "proposal_count": 148,
+      "proposal_assessment": {
+        "matches_role_and_value_no_annotated_offsets": 120,
+        "wrong_line_role": 4,
+        "wrong_recording_value": 23,
+        "matches_role_and_value_different_annotated_offsets": 1
+      },
+      "proposal_assessment_by_role": {
+        "artist": {
+          "wrong_line_role": 2,
+          "matches_role_and_value_no_annotated_offsets": 1
+        },
+        "date": {
+          "matches_role_and_value_no_annotated_offsets": 11,
+          "matches_role_and_value_different_annotated_offsets": 1
+        },
+        "venue": {
+          "matches_role_and_value_no_annotated_offsets": 38,
+          "wrong_recording_value": 14,
+          "wrong_line_role": 1
+        },
+        "city": {
+          "matches_role_and_value_no_annotated_offsets": 70,
+          "wrong_line_role": 1,
+          "wrong_recording_value": 9
+        }
+      },
+      "roles": {
+        "artist": {
+          "tp": 141,
+          "fp": 8,
+          "fn": 583,
+          "precision": 0.9463087248322147,
+          "recall": 0.19475138121546962,
+          "precision_ci95": [
+            0.8976369864727997,
+            0.9725457573076629
+          ],
+          "recall_ci95": [
+            0.16754769735389935,
+            0.22517719534984515
+          ],
+          "emitting_recordings": 144
+        },
+        "date": {
+          "tp": 156,
+          "fp": 0,
+          "fn": 72,
+          "precision": 1.0,
+          "recall": 0.6842105263157895,
+          "precision_ci95": [
+            0.9759670685625864,
+            1
+          ],
+          "recall_ci95": [
+            0.6212467276613193,
+            0.7410698330922324
+          ],
+          "emitting_recordings": 156
+        },
+        "venue": {
+          "tp": 74,
+          "fp": 4,
+          "fn": 148,
+          "precision": 0.9487179487179487,
+          "recall": 0.3333333333333333,
+          "precision_ci95": [
+            0.8754332345270577,
+            0.9798789875261034
+          ],
+          "recall_ci95": [
+            0.27462206171243037,
+            0.3977144508729225
+          ],
+          "emitting_recordings": 73
+        },
+        "city": {
+          "tp": 112,
+          "fp": 1,
+          "fn": 99,
+          "precision": 0.9911504424778761,
+          "recall": 0.5308056872037915,
+          "precision_ci95": [
+            0.9515691320824176,
+            0.9984361239315609
+          ],
+          "recall_ci95": [
+            0.4635207397667995,
+            0.5969889964422148
+          ],
+          "emitting_recordings": 113
+        }
+      },
+      "background": {
+        "lines": 5037,
+        "fp": 0,
+        "rate": 0.0,
+        "ci95": [
+          0,
+          0.0007620669787128404
+        ],
+        "affected_recordings": 0
+      },
+      "coverage": {
+        "source_lines": 10612,
+        "nonblank_source_lines": 8827,
+        "runtime_error_lines": 0,
+        "emission_lines": 496,
+        "reviewed_nonblank_lines": 8692,
+        "unknown_role_lines": 135,
+        "reviewed_nonblank_fraction": 0.9847060156338507,
+        "role_abstention_lines": 10116,
+        "proposal_abstention_recordings": 101
+      },
+      "review_cohort_exact_ci95": [
+        0.10527382371950267,
+        0.25370990151894635
+      ],
+      "paired_review_cohort_improvement": 0.125,
+      "paired_review_cohort_improvement_ci95": [
+        0.0625,
+        0.19791666666666666
+      ],
+      "prediction_errors_by_type": {}
+    },
+    "deterministic_span_control": {
+      "recordings": {
+        "emitting_recordings": 10,
+        "reviewed_recordings": 199,
+        "review_cohort": 96,
+        "all_metadata_exact": 23,
+        "underlying_metadata_mapping_readiness_exact": 2,
+        "underlying_reference_required_reviews_accepted": 2,
+        "fields_repaired": 10,
+        "fields_degraded": 0,
+        "review_cohort_exact": 5,
+        "review_cohort_gains": 1,
+        "review_cohort_losses": 0
+      },
+      "requested_recordings": 200,
+      "prediction_failures": 0,
+      "eligible_recording_reference_fraction": 0.995,
+      "proposal_count": 10,
+      "proposal_assessment": {
+        "matches_role_and_value_no_annotated_offsets": 10
+      },
+      "proposal_assessment_by_role": {
+        "artist": {},
+        "date": {
+          "matches_role_and_value_no_annotated_offsets": 10
+        },
+        "venue": {},
+        "city": {}
+      },
+      "roles": {
+        "artist": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 722,
+          "precision": 1.0,
+          "recall": 0.0027624309392265192,
+          "precision_ci95": [
+            0.34238022750666547,
+            1
+          ],
+          "recall_ci95": [
+            0.0007578853677267412,
+            0.010015695507151234
+          ],
+          "emitting_recordings": 2
+        },
+        "date": {
+          "tp": 137,
+          "fp": 0,
+          "fn": 91,
+          "precision": 1.0,
+          "recall": 0.6008771929824561,
+          "precision_ci95": [
+            0.9727249429758853,
+            1
+          ],
+          "recall_ci95": [
+            0.5361461136606505,
+            0.6622653362758182
+          ],
+          "emitting_recordings": 137
+        },
+        "venue": {
+          "tp": 2,
+          "fp": 0,
+          "fn": 220,
+          "precision": 1.0,
+          "recall": 0.009009009009009009,
+          "precision_ci95": [
+            0.34238022750666547,
+            1
+          ],
+          "recall_ci95": [
+            0.002474081989044469,
+            0.032246995627265185
+          ],
+          "emitting_recordings": 2
+        },
+        "city": {
+          "tp": 0,
+          "fp": 0,
+          "fn": 211,
+          "precision": null,
+          "recall": 0.0,
+          "precision_ci95": null,
+          "recall_ci95": [
+            0,
+            0.01788043537676769
+          ],
+          "emitting_recordings": 0
+        }
+      },
+      "background": {
+        "lines": 5037,
+        "fp": 0,
+        "rate": 0.0,
+        "ci95": [
+          0,
+          0.0007620669787128404
+        ],
+        "affected_recordings": 0
+      },
+      "coverage": {
+        "source_lines": 10612,
+        "nonblank_source_lines": 8827,
+        "runtime_error_lines": 0,
+        "emission_lines": 141,
+        "reviewed_nonblank_lines": 8692,
+        "unknown_role_lines": 135,
+        "reviewed_nonblank_fraction": 0.9847060156338507,
+        "role_abstention_lines": 10471,
+        "proposal_abstention_recordings": 190
+      },
+      "review_cohort_exact_ci95": [
+        0.022449600474241924,
+        0.11618478031492403
+      ],
+      "paired_review_cohort_improvement": 0.010416666666666666,
+      "paired_review_cohort_improvement_ci95": [
+        0.0,
+        0.03125
+      ],
+      "prediction_errors_by_type": {}
+    },
+    "head_only": {
+      "recordings": {
+        "emitting_recordings": 76,
+        "reviewed_recordings": 199,
+        "review_cohort": 96,
+        "all_metadata_exact": 31,
+        "underlying_metadata_mapping_readiness_exact": 2,
+        "underlying_reference_required_reviews_accepted": 2,
+        "fields_repaired": 79,
+        "fields_degraded": 6,
+        "review_cohort_exact": 9,
+        "review_cohort_gains": 6,
+        "review_cohort_losses": 1
+      },
+      "requested_recordings": 200,
+      "prediction_failures": 0,
+      "eligible_recording_reference_fraction": 0.995,
+      "proposal_count": 104,
+      "proposal_assessment": {
+        "wrong_line_role": 10,
+        "wrong_recording_value": 16,
+        "matches_role_and_value_no_annotated_offsets": 62,
+        "matches_role_value_and_annotated_offsets": 16
+      },
+      "proposal_assessment_by_role": {
+        "artist": {
+          "wrong_line_role": 4,
+          "wrong_recording_value": 2,
+          "matches_role_and_value_no_annotated_offsets": 1
+        },
+        "date": {
+          "matches_role_and_value_no_annotated_offsets": 7,
+          "matches_role_value_and_annotated_offsets": 1,
+          "wrong_line_role": 1
+        },
+        "venue": {
+          "wrong_line_role": 5,
+          "matches_role_and_value_no_annotated_offsets": 23,
+          "wrong_recording_value": 11,
+          "matches_role_value_and_annotated_offsets": 3
+        },
+        "city": {
+          "matches_role_and_value_no_annotated_offsets": 31,
+          "matches_role_value_and_annotated_offsets": 12,
+          "wrong_recording_value": 3
+        }
+      },
+      "roles": {
+        "artist": {
+          "tp": 50,
+          "fp": 8,
+          "fn": 674,
+          "precision": 0.8620689655172413,
+          "recall": 0.06906077348066299,
+          "precision_ci95": [
+            0.7507409056616241,
+            0.9284151298028174
+          ],
+          "recall_ci95": [
+            0.05277463619810138,
+            0.0898958005601262
+          ],
+          "emitting_recordings": 54
+        },
+        "date": {
+          "tp": 124,
+          "fp": 4,
+          "fn": 104,
+          "precision": 0.96875,
+          "recall": 0.543859649122807,
+          "precision_ci95": [
+            0.922402368738641,
+            0.9877817347549464
+          ],
+          "recall_ci95": [
+            0.4790159371436812,
+            0.6072499106547836
+          ],
+          "emitting_recordings": 126
+        },
+        "venue": {
+          "tp": 47,
+          "fp": 5,
+          "fn": 175,
+          "precision": 0.9038461538461539,
+          "recall": 0.21171171171171171,
+          "precision_ci95": [
+            0.7939036987986873,
+            0.9582256489474265
+          ],
+          "recall_ci95": [
+            0.16311054739214392,
+            0.2701201770798178
+          ],
+          "emitting_recordings": 51
+        },
+        "city": {
+          "tp": 70,
+          "fp": 0,
+          "fn": 141,
+          "precision": 1.0,
+          "recall": 0.33175355450236965,
+          "precision_ci95": [
+            0.9479769375897358,
+            1
+          ],
+          "recall_ci95": [
+            0.27172997960692935,
+            0.3977937687899925
+          ],
+          "emitting_recordings": 70
+        }
+      },
+      "background": {
+        "lines": 5037,
+        "fp": 5,
+        "rate": 0.0009926543577526306,
+        "ci95": [
+          0.00042407479922265624,
+          0.002321787956780808
+        ],
+        "affected_recordings": 4
+      },
+      "coverage": {
+        "source_lines": 10612,
+        "nonblank_source_lines": 8827,
+        "runtime_error_lines": 0,
+        "emission_lines": 297,
+        "reviewed_nonblank_lines": 8692,
+        "unknown_role_lines": 135,
+        "reviewed_nonblank_fraction": 0.9847060156338507,
+        "role_abstention_lines": 10315,
+        "proposal_abstention_recordings": 124
+      },
+      "review_cohort_exact_ci95": [
+        0.05010810821214684,
+        0.16865330692221295
+      ],
+      "paired_review_cohort_improvement": 0.052083333333333336,
+      "paired_review_cohort_improvement_ci95": [
+        0.0,
+        0.10416666666666667
+      ],
+      "prediction_errors_by_type": {},
+      "paired_review_cohort_vs_section_aware_classifier": {
+        "improvement": -0.07291666666666667,
+        "improvement_ci95": [
+          -0.14583333333333334,
+          -0.010416666666666666
+        ]
+      },
+      "paired_review_cohort_vs_deterministic_span_control": {
+        "improvement": 0.041666666666666664,
+        "improvement_ci95": [
+          0.0,
+          0.09375
+        ]
+      }
+    },
+    "full_adapted": {
+      "recordings": {
+        "emitting_recordings": 81,
+        "reviewed_recordings": 199,
+        "review_cohort": 96,
+        "all_metadata_exact": 39,
+        "underlying_metadata_mapping_readiness_exact": 2,
+        "underlying_reference_required_reviews_accepted": 2,
+        "fields_repaired": 102,
+        "fields_degraded": 1,
+        "review_cohort_exact": 11,
+        "review_cohort_gains": 7,
+        "review_cohort_losses": 0
+      },
+      "requested_recordings": 200,
+      "prediction_failures": 0,
+      "eligible_recording_reference_fraction": 0.995,
+      "proposal_count": 111,
+      "proposal_assessment": {
+        "matches_role_and_value_no_annotated_offsets": 88,
+        "wrong_recording_value": 8,
+        "matches_role_value_and_annotated_offsets": 14,
+        "wrong_line_role": 1
+      },
+      "proposal_assessment_by_role": {
+        "artist": {
+          "wrong_line_role": 1,
+          "matches_role_and_value_no_annotated_offsets": 2
+        },
+        "date": {
+          "matches_role_and_value_no_annotated_offsets": 9,
+          "matches_role_value_and_annotated_offsets": 2
+        },
+        "venue": {
+          "matches_role_and_value_no_annotated_offsets": 20,
+          "wrong_recording_value": 6,
+          "matches_role_value_and_annotated_offsets": 4
+        },
+        "city": {
+          "matches_role_and_value_no_annotated_offsets": 57,
+          "matches_role_value_and_annotated_offsets": 8,
+          "wrong_recording_value": 2
+        }
+      },
+      "roles": {
+        "artist": {
+          "tp": 114,
+          "fp": 2,
+          "fn": 610,
+          "precision": 0.9827586206896551,
+          "recall": 0.1574585635359116,
+          "precision_ci95": [
+            0.9393090758931762,
+            0.9952589867968292
+          ],
+          "recall_ci95": [
+            0.13274363236946593,
+            0.1857892788998944
+          ],
+          "emitting_recordings": 115
+        },
+        "date": {
+          "tp": 147,
+          "fp": 1,
+          "fn": 81,
+          "precision": 0.9932432432432432,
+          "recall": 0.6447368421052632,
+          "precision_ci95": [
+            0.9627229544235395,
+            0.9988062691095935
+          ],
+          "recall_ci95": [
+            0.5806865751863277,
+            0.7039907225486057
+          ],
+          "emitting_recordings": 146
+        },
+        "venue": {
+          "tp": 43,
+          "fp": 0,
+          "fn": 179,
+          "precision": 1.0,
+          "recall": 0.19369369369369369,
+          "precision_ci95": [
+            0.917990196774213,
+            1
+          ],
+          "recall_ci95": [
+            0.1471000135589735,
+            0.25070763119248574
+          ],
+          "emitting_recordings": 43
+        },
+        "city": {
+          "tp": 95,
+          "fp": 0,
+          "fn": 116,
+          "precision": 1.0,
+          "recall": 0.45023696682464454,
+          "precision_ci95": [
+            0.9611351464605291,
+            1
+          ],
+          "recall_ci95": [
+            0.38459388614467943,
+            0.5176596169022976
+          ],
+          "emitting_recordings": 95
+        }
+      },
+      "background": {
+        "lines": 5037,
+        "fp": 2,
+        "rate": 0.0003970617431010522,
+        "ci95": [
+          0.00010889540571865769,
+          0.001446689883910432
+        ],
+        "affected_recordings": 2
+      },
+      "coverage": {
+        "source_lines": 10612,
+        "nonblank_source_lines": 8827,
+        "runtime_error_lines": 0,
+        "emission_lines": 395,
+        "reviewed_nonblank_lines": 8692,
+        "unknown_role_lines": 135,
+        "reviewed_nonblank_fraction": 0.9847060156338507,
+        "role_abstention_lines": 10217,
+        "proposal_abstention_recordings": 119
+      },
+      "review_cohort_exact_ci95": [
+        0.06519871993416533,
+        0.19362621237279143
+      ],
+      "paired_review_cohort_improvement": 0.07291666666666667,
+      "paired_review_cohort_improvement_ci95": [
+        0.020833333333333332,
+        0.125
+      ],
+      "prediction_errors_by_type": {},
+      "paired_review_cohort_vs_section_aware_classifier": {
+        "improvement": -0.052083333333333336,
+        "improvement_ci95": [
+          -0.11458333333333333,
+          0.010416666666666666
+        ]
+      },
+      "paired_review_cohort_vs_deterministic_span_control": {
+        "improvement": 0.0625,
+        "improvement_ci95": [
+          0.020833333333333332,
+          0.11458333333333333
+        ]
+      },
+      "paired_review_cohort_vs_head_only": {
+        "improvement": 0.020833333333333332,
+        "improvement_ci95": [
+          -0.03125,
+          0.07291666666666667
+        ]
+      }
+    },
+    "lora_adapted": {
+      "recordings": {
+        "emitting_recordings": 107,
+        "reviewed_recordings": 199,
+        "review_cohort": 96,
+        "all_metadata_exact": 53,
+        "underlying_metadata_mapping_readiness_exact": 2,
+        "underlying_reference_required_reviews_accepted": 2,
+        "fields_repaired": 140,
+        "fields_degraded": 5,
+        "review_cohort_exact": 14,
+        "review_cohort_gains": 11,
+        "review_cohort_losses": 1
+      },
+      "requested_recordings": 200,
+      "prediction_failures": 0,
+      "eligible_recording_reference_fraction": 0.995,
+      "proposal_count": 168,
+      "proposal_assessment": {
+        "wrong_line_role": 3,
+        "matches_role_and_value_no_annotated_offsets": 116,
+        "wrong_recording_value": 26,
+        "matches_role_value_and_annotated_offsets": 23
+      },
+      "proposal_assessment_by_role": {
+        "artist": {
+          "wrong_line_role": 2,
+          "matches_role_and_value_no_annotated_offsets": 3,
+          "wrong_recording_value": 1
+        },
+        "date": {
+          "matches_role_and_value_no_annotated_offsets": 9,
+          "matches_role_value_and_annotated_offsets": 1
+        },
+        "venue": {
+          "wrong_line_role": 1,
+          "wrong_recording_value": 16,
+          "matches_role_and_value_no_annotated_offsets": 40,
+          "matches_role_value_and_annotated_offsets": 8
+        },
+        "city": {
+          "matches_role_and_value_no_annotated_offsets": 64,
+          "wrong_recording_value": 9,
+          "matches_role_value_and_annotated_offsets": 14
+        }
+      },
+      "roles": {
+        "artist": {
+          "tp": 108,
+          "fp": 4,
+          "fn": 616,
+          "precision": 0.9642857142857143,
+          "recall": 0.14917127071823205,
+          "precision_ci95": [
+            0.9117533615468024,
+            0.9860253876053228
+          ],
+          "recall_ci95": [
+            0.12507501829680587,
+            0.1769707859871358
+          ],
+          "emitting_recordings": 111
+        },
+        "date": {
+          "tp": 141,
+          "fp": 2,
+          "fn": 87,
+          "precision": 0.986013986013986,
+          "recall": 0.618421052631579,
+          "precision_ci95": [
+            0.9504430359191728,
+            0.9961561133696598
+          ],
+          "recall_ci95": [
+            0.5538983397770674,
+            0.6790194492787873
+          ],
+          "emitting_recordings": 142
+        },
+        "venue": {
+          "tp": 85,
+          "fp": 1,
+          "fn": 137,
+          "precision": 0.9883720930232558,
+          "recall": 0.38288288288288286,
+          "precision_ci95": [
+            0.937035934107085,
+            0.9979444313347504
+          ],
+          "recall_ci95": [
+            0.32144752852440284,
+            0.44830245329233165
+          ],
+          "emitting_recordings": 86
+        },
+        "city": {
+          "tp": 120,
+          "fp": 0,
+          "fn": 91,
+          "precision": 1.0,
+          "recall": 0.5687203791469194,
+          "precision_ci95": [
+            0.9689808335812982,
+            1
+          ],
+          "recall_ci95": [
+            0.5012558493550687,
+            0.6337274083419633
+          ],
+          "emitting_recordings": 120
+        }
+      },
+      "background": {
+        "lines": 5037,
+        "fp": 3,
+        "rate": 0.0005955926146515784,
+        "ci95": [
+          0.00020257544521943757,
+          0.0017497689998677772
+        ],
+        "affected_recordings": 3
+      },
+      "coverage": {
+        "source_lines": 10612,
+        "nonblank_source_lines": 8827,
+        "runtime_error_lines": 0,
+        "emission_lines": 446,
+        "reviewed_nonblank_lines": 8692,
+        "unknown_role_lines": 135,
+        "reviewed_nonblank_fraction": 0.9847060156338507,
+        "role_abstention_lines": 10166,
+        "proposal_abstention_recordings": 93
+      },
+      "review_cohort_exact_ci95": [
+        0.08890205780138756,
+        0.2300181502644646
+      ],
+      "paired_review_cohort_improvement": 0.10416666666666667,
+      "paired_review_cohort_improvement_ci95": [
+        0.041666666666666664,
+        0.17708333333333334
+      ],
+      "prediction_errors_by_type": {},
+      "paired_review_cohort_vs_section_aware_classifier": {
+        "improvement": -0.020833333333333332,
+        "improvement_ci95": [
+          -0.08333333333333333,
+          0.041666666666666664
+        ]
+      },
+      "paired_review_cohort_vs_deterministic_span_control": {
+        "improvement": 0.09375,
+        "improvement_ci95": [
+          0.020833333333333332,
+          0.16666666666666666
+        ]
+      },
+      "paired_review_cohort_vs_head_only": {
+        "improvement": 0.052083333333333336,
+        "improvement_ci95": [
+          0.0,
+          0.10416666666666667
+        ]
+      }
+    }
+  }
+}

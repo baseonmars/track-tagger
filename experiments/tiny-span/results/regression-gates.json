@@ -1,0 +1,445 @@
+{
+  "requested": 200,
+  "complete_track_inventories": 199,
+  "all_joins_resolved": 134,
+  "arms": {
+    "current_rules": {
+      "suggestions": {
+        "all": {
+          "exact_value_and_current_role": {
+            "correct": 0,
+            "total": 0,
+            "rate": null,
+            "wilson95": null
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "artist": {
+          "exact_value_and_current_role": {
+            "correct": 0,
+            "total": 0,
+            "rate": null,
+            "wilson95": null
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "date": {
+          "exact_value_and_current_role": {
+            "correct": 0,
+            "total": 0,
+            "rate": null,
+            "wilson95": null
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "venue": {
+          "exact_value_and_current_role": {
+            "correct": 0,
+            "total": 0,
+            "rate": null,
+            "wilson95": null
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "city": {
+          "exact_value_and_current_role": {
+            "correct": 0,
+            "total": 0,
+            "rate": null,
+            "wilson95": null
+          },
+          "also_matching_explicit_offsets": 0
+        }
+      },
+      "gates": {
+        "complete_adjudicated_references": true,
+        "reviewed_nonblank_coverage": true,
+        "per_role_precision_and_support": false,
+        "background_false_positive_rate": true,
+        "review_cohort_improvement": false,
+        "complete_candidate_outputs": false,
+        "strict_application_parity": false,
+        "all_shown_proposals_valid_source_slices": true,
+        "all_shown_proposals_eligible_roles": true,
+        "newly_accepted_recordings": 0,
+        "newly_accepted_material_errors": 0
+      }
+    },
+    "section_aware_classifier": {
+      "suggestions": {
+        "all": {
+          "exact_value_and_current_role": {
+            "correct": 121,
+            "total": 148,
+            "rate": 0.8175675675675675,
+            "wilson95": [
+              0.7475822975615198,
+              0.8714844627954278
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "artist": {
+          "exact_value_and_current_role": {
+            "correct": 1,
+            "total": 3,
+            "rate": 0.3333333333333333,
+            "wilson95": [
+              0.061491944720396215,
+              0.7923403991979523
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "date": {
+          "exact_value_and_current_role": {
+            "correct": 12,
+            "total": 12,
+            "rate": 1.0,
+            "wilson95": [
+              0.7575059933447591,
+              1
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "venue": {
+          "exact_value_and_current_role": {
+            "correct": 38,
+            "total": 53,
+            "rate": 0.7169811320754716,
+            "wilson95": [
+              0.5842971358358297,
+              0.8203370955366142
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "city": {
+          "exact_value_and_current_role": {
+            "correct": 70,
+            "total": 80,
+            "rate": 0.875,
+            "wilson95": [
+              0.7849719790084033,
+              0.9306644238399513
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        }
+      },
+      "gates": {
+        "complete_adjudicated_references": true,
+        "reviewed_nonblank_coverage": true,
+        "per_role_precision_and_support": false,
+        "background_false_positive_rate": true,
+        "review_cohort_improvement": true,
+        "complete_candidate_outputs": false,
+        "strict_application_parity": false,
+        "all_shown_proposals_valid_source_slices": true,
+        "all_shown_proposals_eligible_roles": false,
+        "newly_accepted_recordings": 0,
+        "newly_accepted_material_errors": 0
+      }
+    },
+    "deterministic_span_control": {
+      "suggestions": {
+        "all": {
+          "exact_value_and_current_role": {
+            "correct": 10,
+            "total": 10,
+            "rate": 1.0,
+            "wilson95": [
+              0.7224672001371106,
+              0.9999999999999999
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "artist": {
+          "exact_value_and_current_role": {
+            "correct": 0,
+            "total": 0,
+            "rate": null,
+            "wilson95": null
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "date": {
+          "exact_value_and_current_role": {
+            "correct": 10,
+            "total": 10,
+            "rate": 1.0,
+            "wilson95": [
+              0.7224672001371106,
+              0.9999999999999999
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "venue": {
+          "exact_value_and_current_role": {
+            "correct": 0,
+            "total": 0,
+            "rate": null,
+            "wilson95": null
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "city": {
+          "exact_value_and_current_role": {
+            "correct": 0,
+            "total": 0,
+            "rate": null,
+            "wilson95": null
+          },
+          "also_matching_explicit_offsets": 0
+        }
+      },
+      "gates": {
+        "complete_adjudicated_references": true,
+        "reviewed_nonblank_coverage": true,
+        "per_role_precision_and_support": false,
+        "background_false_positive_rate": true,
+        "review_cohort_improvement": false,
+        "complete_candidate_outputs": false,
+        "strict_application_parity": false,
+        "all_shown_proposals_valid_source_slices": true,
+        "all_shown_proposals_eligible_roles": true,
+        "newly_accepted_recordings": 0,
+        "newly_accepted_material_errors": 0
+      }
+    },
+    "head_only": {
+      "suggestions": {
+        "all": {
+          "exact_value_and_current_role": {
+            "correct": 78,
+            "total": 104,
+            "rate": 0.75,
+            "wilson95": [
+              0.658885726367606,
+              0.823303596446168
+            ]
+          },
+          "also_matching_explicit_offsets": 16
+        },
+        "artist": {
+          "exact_value_and_current_role": {
+            "correct": 1,
+            "total": 7,
+            "rate": 0.14285714285714285,
+            "wilson95": [
+              0.025679624344743555,
+              0.5131278292743189
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "date": {
+          "exact_value_and_current_role": {
+            "correct": 8,
+            "total": 9,
+            "rate": 0.8888888888888888,
+            "wilson95": [
+              0.5650002944233439,
+              0.980109112361455
+            ]
+          },
+          "also_matching_explicit_offsets": 1
+        },
+        "venue": {
+          "exact_value_and_current_role": {
+            "correct": 26,
+            "total": 42,
+            "rate": 0.6190476190476191,
+            "wilson95": [
+              0.4681404026715268,
+              0.7500027423604485
+            ]
+          },
+          "also_matching_explicit_offsets": 3
+        },
+        "city": {
+          "exact_value_and_current_role": {
+            "correct": 43,
+            "total": 46,
+            "rate": 0.9347826086956522,
+            "wilson95": [
+              0.824972589180958,
+              0.9775721385707116
+            ]
+          },
+          "also_matching_explicit_offsets": 12
+        }
+      },
+      "gates": {
+        "complete_adjudicated_references": true,
+        "reviewed_nonblank_coverage": true,
+        "per_role_precision_and_support": false,
+        "background_false_positive_rate": true,
+        "review_cohort_improvement": true,
+        "complete_candidate_outputs": false,
+        "strict_application_parity": false,
+        "all_shown_proposals_valid_source_slices": true,
+        "all_shown_proposals_eligible_roles": false,
+        "newly_accepted_recordings": 0,
+        "newly_accepted_material_errors": 0
+      }
+    },
+    "full_adapted": {
+      "suggestions": {
+        "all": {
+          "exact_value_and_current_role": {
+            "correct": 102,
+            "total": 111,
+            "rate": 0.918918918918919,
+            "wilson95": [
+              0.8530540770306423,
+              0.9567579974154345
+            ]
+          },
+          "also_matching_explicit_offsets": 14
+        },
+        "artist": {
+          "exact_value_and_current_role": {
+            "correct": 2,
+            "total": 3,
+            "rate": 0.6666666666666666,
+            "wilson95": [
+              0.20765960080204768,
+              0.9385080552796037
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "date": {
+          "exact_value_and_current_role": {
+            "correct": 11,
+            "total": 11,
+            "rate": 1.0,
+            "wilson95": [
+              0.7411670330319683,
+              1
+            ]
+          },
+          "also_matching_explicit_offsets": 2
+        },
+        "venue": {
+          "exact_value_and_current_role": {
+            "correct": 24,
+            "total": 30,
+            "rate": 0.8,
+            "wilson95": [
+              0.6269430358685175,
+              0.9049489282271013
+            ]
+          },
+          "also_matching_explicit_offsets": 4
+        },
+        "city": {
+          "exact_value_and_current_role": {
+            "correct": 65,
+            "total": 67,
+            "rate": 0.9701492537313433,
+            "wilson95": [
+              0.8975344443664799,
+              0.9917753051611019
+            ]
+          },
+          "also_matching_explicit_offsets": 8
+        }
+      },
+      "gates": {
+        "complete_adjudicated_references": true,
+        "reviewed_nonblank_coverage": true,
+        "per_role_precision_and_support": true,
+        "background_false_positive_rate": true,
+        "review_cohort_improvement": true,
+        "complete_candidate_outputs": false,
+        "strict_application_parity": false,
+        "all_shown_proposals_valid_source_slices": true,
+        "all_shown_proposals_eligible_roles": false,
+        "newly_accepted_recordings": 0,
+        "newly_accepted_material_errors": 0
+      }
+    },
+    "lora_adapted": {
+      "suggestions": {
+        "all": {
+          "exact_value_and_current_role": {
+            "correct": 139,
+            "total": 168,
+            "rate": 0.8273809523809523,
+            "wilson95": [
+              0.763086216125093,
+              0.8770387034077315
+            ]
+          },
+          "also_matching_explicit_offsets": 23
+        },
+        "artist": {
+          "exact_value_and_current_role": {
+            "correct": 3,
+            "total": 6,
+            "rate": 0.5,
+            "wilson95": [
+              0.1876163064826506,
+              0.8123836935173494
+            ]
+          },
+          "also_matching_explicit_offsets": 0
+        },
+        "date": {
+          "exact_value_and_current_role": {
+            "correct": 10,
+            "total": 10,
+            "rate": 1.0,
+            "wilson95": [
+              0.7224672001371106,
+              0.9999999999999999
+            ]
+          },
+          "also_matching_explicit_offsets": 1
+        },
+        "venue": {
+          "exact_value_and_current_role": {
+            "correct": 48,
+            "total": 65,
+            "rate": 0.7384615384615385,
+            "wilson95": [
+              0.6204919730397745,
+              0.8298180658677862
+            ]
+          },
+          "also_matching_explicit_offsets": 8
+        },
+        "city": {
+          "exact_value_and_current_role": {
+            "correct": 78,
+            "total": 87,
+            "rate": 0.896551724137931,
+            "wilson95": [
+              0.8149501910373753,
+              0.9446148896621155
+            ]
+          },
+          "also_matching_explicit_offsets": 14
+        }
+      },
+      "gates": {
+        "complete_adjudicated_references": true,
+        "reviewed_nonblank_coverage": true,
+        "per_role_precision_and_support": true,
+        "background_false_positive_rate": true,
+        "review_cohort_improvement": true,
+        "complete_candidate_outputs": false,
+        "strict_application_parity": false,
+        "all_shown_proposals_valid_source_slices": true,
+        "all_shown_proposals_eligible_roles": false,
+        "newly_accepted_recordings": 0,
+        "newly_accepted_material_errors": 0
+      }
+    }
+  }
+}

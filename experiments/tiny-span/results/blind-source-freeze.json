@@ -1,0 +1,44 @@
+{
+  "acquired_unique_packages": 2762,
+  "additional_source_templates": {
+    "fixed_source_transfer_template": {
+      "new_members": 31,
+      "prior_members": 47,
+      "source_components": 1
+    },
+    "flac-fingerprint-only": {
+      "new_members": 22,
+      "prior_members": 6,
+      "source_components": 1
+    }
+  },
+  "blind_inputs_sha256": "e79c09c19cfd5994332374559e8072a21f7cf527fc0c3d2a0c55b0d7d02590fd",
+  "blind_manifest_sha256": "c76b51d543cbde6c6bb6710b09c48552eeda5a998973d228f88ef3bb41d9bd95",
+  "early_review_sources_supplied": 241,
+  "excluded_packages": {
+    "already_represented_component": 159,
+    "over_target": 13,
+    "related_to_prior_component": 2390
+  },
+  "largest_selected_artist_alias": 2,
+  "package_index_sha256": "c55fcc4b207cc5e6b6bfa73dd5f11513ee85a95d5d8563c814ee229598d56223",
+  "prior_cached_records": 2396,
+  "priority_packet_sha256": [
+    "691127e827dce667be5a4b5687578e2a83943f4190fbf9a8f22b4b84120a45ab",
+    "08d5dd6536adb107a643fe811ac13c023a897dd25162e163c05603cb1a369917",
+    "1477bbccd09cfe7f9b413907bb44172a05b0d4eabfbb003214cf4d1b7a2f802f",
+    "126ad774569206aed53a774242dce34bd0ab669cbc1efa18e71b4ec94d7b8ab4",
+    "4e47b4d24d32ba3349a6f4fd4cbf09690ac51b2aeec559ac3e5f8ab2c00716f4",
+    "8b3f28f7c103822ac79301601174e4be3475e47c15d1c0854240c5ef1be8d241",
+    "1bfc7d8eefc657ebf009745c37be298b24da57d239c10e01c778966a8e5fae19",
+    "adf25d5521011040c7c8d2716683d25373e39e256839feb30f355e317b9012e7",
+    "5f858f6c5d409e862f956df035fc62f73b43133bee0518201e91439d951e77e4",
+    "f0e22b584bec43be4e39fa5c198178d3aa6481abb5a7046cbc79ca6509592551",
+    "2bae062ccab9d63ef212504914dd78b1a2176ae79f902e2da6e03ae2f513101b",
+    "378bccf63e3282dec8abc7ac62cd8460ab12a23a5fe78c0b8b3db71c947e452c"
+  ],
+  "selected_early_review_sources": 199,
+  "selected_source_components": 200,
+  "source_grouping_revision": "1848decbea38a428a7e95e62c428cf7ffb1e6a73",
+  "target": 200
+}

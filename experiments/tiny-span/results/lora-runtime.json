@@ -1,0 +1,142 @@
+{
+  "cold": [
+    {
+      "model_import_and_load_cpu_ms": 481.624,
+      "model_import_and_load_wall_ms": 546.503,
+      "whole_process_wall_ms": 665.62
+    },
+    {
+      "model_import_and_load_cpu_ms": 481.933,
+      "model_import_and_load_wall_ms": 553.708,
+      "whole_process_wall_ms": 665.692
+    },
+    {
+      "model_import_and_load_cpu_ms": 483.143,
+      "model_import_and_load_wall_ms": 562.933,
+      "whole_process_wall_ms": 677.317
+    }
+  ],
+  "cpu": "Apple M2 Max",
+  "logical_cores": 12,
+  "package_bytes": 6161820,
+  "pilot_py_sha256": "ed4b4b279c0f11cae0e354bbd6258b40f1adae026637f8bf9ae903d33520d0c0",
+  "platform": "macOS-27.2.1-arm64-arm-64bit",
+  "policy_sha256": "bc2d85d10fc3b83da54c2e9ceecf7d5787019b2b1a077fe8e3dc8a74becbb222",
+  "prediction_replay_sha256": "1ec1af89558d715b04df0b2a9fb452422ecf0ce343434c48506b5a82677128e5",
+  "prediction_semantics_sha256": "334c16c70ef74515d145503fbc0402b162ef893291be16ea6b978a0773e42832",
+  "python": "3.12.2",
+  "quant_vs_fp32": {
+    "identical_recordings": 100,
+    "proposal_counts": {
+      "fp32_only": 0,
+      "quantized_only": 0,
+      "shared": 238
+    },
+    "recordings": 100
+  },
+  "recordings": 100,
+  "repetitions": 3,
+  "runtime_distributions": {
+    "certifi": {
+      "bytes": 232594,
+      "version": "2026.11.20"
+    },
+    "charset-normalizer": {
+      "bytes": 1237938,
+      "version": "3.5.3"
+    },
+    "coloredlogs": {
+      "bytes": 151661,
+      "version": "15.0.1"
+    },
+    "filelock": {
+      "bytes": 1128736,
+      "version": "4.3.2"
+    },
+    "flatbuffers": {
+      "bytes": 88178,
+      "version": "25.12.19"
+    },
+    "fsspec": {
+      "bytes": 810762,
+      "version": "2026.9.0"
+    },
+    "hf-xet": {
+      "bytes": 7798696,
+      "version": "1.8.0"
+    },
+    "huggingface-hub": {
+      "bytes": 2257325,
+      "version": "0.36.2"
+    },
+    "humanfriendly": {
+      "bytes": 299282,
+      "version": "10.0"
+    },
+    "idna": {
+      "bytes": 342661,
+      "version": "3.20"
+    },
+    "mpmath": {
+      "bytes": 1950371,
+      "version": "1.3.0"
+    },
+    "numpy": {
+      "bytes": 20768148,
+      "version": "2.5.5"
+    },
+    "onnxruntime": {
+      "bytes": 129398623,
+      "version": "1.22.1"
+    },
+    "packaging": {
+      "bytes": 533825,
+      "version": "26.4"
+    },
+    "protobuf": {
+      "bytes": 1662142,
+      "version": "7.36.2"
+    },
+    "pyyaml": {
+      "bytes": 608814,
+      "version": "6.0.4"
+    },
+    "requests": {
+      "bytes": 234577,
+      "version": "2.34.2"
+    },
+    "sympy": {
+      "bytes": 26842439,
+      "version": "1.14.0"
+    },
+    "tokenizers": {
+      "bytes": 8085996,
+      "version": "0.21.4"
+    },
+    "tqdm": {
+      "bytes": 234069,
+      "version": "4.70.1"
+    },
+    "typing-extensions": {
+      "bytes": 182965,
+      "version": "4.16.0"
+    },
+    "urllib3": {
+      "bytes": 450637,
+      "version": "2.8.0"
+    }
+  },
+  "runtime_distributions_bytes": 205300439,
+  "threads": 1,
+  "training_sample_sha256": "5e1e71dc73e0e4df6ce8556a49b4e38d2f3b56a5c3c50e6696e15c50686484c3",
+  "warm_cpu_ms": {
+    "p50": 3.01,
+    "p95": 6.725,
+    "p99": 11.855
+  },
+  "warm_wall_ms": {
+    "p50": 3.108,
+    "p95": 8.061,
+    "p99": 13.493
+  }
+}
