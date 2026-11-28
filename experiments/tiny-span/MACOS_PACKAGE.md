@@ -4,6 +4,8 @@ The research CLI packages the frozen LoRA candidate, Python and ONNX Runtime, Wo
 
 Each input row has an `id`, a `notes` array of `{"name":"note.txt","text":"…"}` entries, and a `baseline` with the application's `ready` and `metadata` or original scan error. A ready recording or scan failure abstains from display. The executable and `_internal` directory together form the distribution. PyInstaller uses ad hoc signing for the local build. The package has no notarization or cross-platform verification.
 
+The bundle occupies 111,131,126 bytes across 105 regular files. All 188 displayed proposals matched the sealed audit across 200 recordings, including abstention on all 11 catalog failures. Warm p95 added latency on this M2 Max was 6.068 ms CPU and 6.481 ms wall. Three fresh process launches took approximately 148, 148 and 1,113 ms, with a median of 148.45 ms.
+
 ## Build and verify
 
 Use CPython 3.12.2 on macOS arm64 and the pinned packaging dependencies. The venv and frozen model artifacts live under the external experiment data directory. The build checks the hashes of the frozen Python entrypoints, and the CLI checks the frozen graph, vocabulary, policy and validator hashes before inference.
@@ -11,6 +13,7 @@ Use CPython 3.12.2 on macOS arm64 and the pinned packaging dependencies. The ven
 ```sh
 export DATA="$(cd ../track-tagger-experiment-data && pwd)"
 package="$DATA/tiny-span/macos-package"
+mkdir -p "$package"
 uv venv --python 3.12.2 "$package/.venv"
 uv pip install --python "$package/.venv/bin/python" -r experiments/tiny-span/requirements-macos-package.txt
 bash experiments/tiny-span/package-macos.sh "$package/replay"
