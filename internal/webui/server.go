@@ -30,21 +30,27 @@ type Config struct {
 }
 
 type Recording struct {
-	Reviewed          bool
-	PlaybackOnly      bool
-	DateUnknown       bool
-	LastModified      int64 // Unix nanoseconds from cached file evidence; zero when unavailable.
-	ID, Path, Status  string
-	RelativePath      string
-	Fingerprint       string
-	Metadata          map[string]string
-	Tracks            []Track
-	Artwork           []string
-	SelectedArtwork   string
-	Reasons, Evidence []string
-	Notes             []Note
+	Reviewed              bool
+	PlaybackOnly          bool
+	DateUnknown           bool
+	LastModified          int64 // Unix nanoseconds from cached file evidence; zero when unavailable.
+	ID, Path, Status      string
+	RelativePath          string
+	Fingerprint           string
+	Metadata              map[string]string
+	Tracks                []Track
+	Artwork               []string
+	SelectedArtwork       string
+	Reasons, Evidence     []string
+	Notes                 []Note
+	NotesSignatureEnabled bool
+	AddNotesSignature     bool
+	NotesTarget           string
+	NotesPreview          NotesPreview
+	NotesChoices          []NotesPreview
 }
 type Note struct{ Path, Text string }
+type NotesPreview struct{ Source, Label, Target, Addition, Reason string }
 
 type Track struct {
 	PlaybackID          string
@@ -52,12 +58,15 @@ type Track struct {
 	Track, Disc         int
 }
 type Review struct {
-	Fingerprint string `json:"-"`
-	Approve     bool
-	DateUnknown bool
-	Metadata    map[string]string
-	Tracks      []Track
-	Artwork     string
+	Fingerprint           string `json:"-"`
+	Approve               bool
+	DateUnknown           bool
+	Metadata              map[string]string
+	Tracks                []Track
+	Artwork               string
+	NotesSignatureEnabled *bool
+	AddNotesSignature     bool
+	NotesTarget           string
 }
 type Job struct{ ID, RecordingID, Status, Summary string }
 
@@ -75,6 +84,10 @@ type statusBackend interface {
 	Status(context.Context) (Status, error)
 }
 type browseStopper interface{ StopBrowsing() }
+type notesSettingsBackend interface {
+	ShowNotesSignature(context.Context) (bool, error)
+	SaveShowNotesSignature(context.Context, bool) error
+}
 type Backend interface {
 	List(context.Context) ([]Recording, error)
 	Get(context.Context, string) (Recording, error)
@@ -95,16 +108,18 @@ type server struct {
 	templates *template.Template
 }
 type page struct {
-	Status      Status
-	ReviewReady bool
-	Writable    bool
-	CSRF        string
-	Recordings  []Recording
-	Recording   *Recording
-	Jobs        []Job
-	LibraryData []statusCard
-	Settings    bool
-	History     bool
+	Status                 Status
+	ReviewReady            bool
+	Writable               bool
+	CSRF                   string
+	Recordings             []Recording
+	Recording              *Recording
+	Jobs                   []Job
+	LibraryData            []statusCard
+	Settings               bool
+	NotesSettingsAvailable bool
+	ShowNotesSignature     bool
+	History                bool
 }
 
 func validate(c Config) (Config, error) {
@@ -304,6 +319,10 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		p.ReviewReady = rec.Fingerprint != "" && rec.Status != "loading" && rec.Status != "validating"
 	case "/settings":
 		p.Settings = true
+		if b, ok := s.backend.(notesSettingsBackend); ok {
+			p.NotesSettingsAvailable = true
+			p.ShowNotesSignature, err = b.ShowNotesSignature(r.Context())
+		}
 	case "/history":
 		p.History = true
 		p.Jobs, err = s.backend.History(r.Context())
@@ -379,6 +398,18 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 	id := r.PostForm.Get("id")
 	var err error
 	switch r.URL.Path {
+	case "/settings":
+		b, ok := s.backend.(notesSettingsBackend)
+		if !ok {
+			http.NotFound(w, r)
+			return
+		}
+		if err := b.SaveShowNotesSignature(r.Context(), r.PostForm.Get("notes_signature") == "yes"); err != nil {
+			http.Error(w, err.Error(), http.StatusConflict)
+			return
+		}
+		http.Redirect(w, r, "/settings", http.StatusSeeOther)
+		return
 	case "/review", "/apply":
 		if r.URL.Path == "/apply" && !s.cfg.Writable {
 			http.Error(w, "preview mode cannot change media; restart with --write or --copy", http.StatusForbidden)
@@ -440,6 +471,15 @@ func parseReview(form url.Values) (Review, error) {
 		}
 	}
 	review := Review{DateUnknown: dateUnknown, Metadata: map[string]string{"ARTIST": strings.TrimSpace(form.Get("artist")), "ALBUM": strings.TrimSpace(form.Get("album")), "DATE": date}, Artwork: form.Get("artwork")}
+	if value := form.Get("notes_signature_enabled"); value != "" {
+		enabled, err := strconv.ParseBool(value)
+		if err != nil {
+			return Review{}, errors.New("invalid show-notes setting; refresh before reviewing")
+		}
+		review.NotesSignatureEnabled = &enabled
+	}
+	review.AddNotesSignature = form.Get("notes_signature") == "yes"
+	review.NotesTarget = form.Get("notes_target")
 	files, titles := form["track_file"], form["track_title"]
 	discs, numbers := form["track_disc"], form["track_number"]
 	artists := form["track_artist"]

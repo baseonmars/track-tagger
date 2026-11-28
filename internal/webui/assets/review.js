@@ -39,6 +39,22 @@
   const apply = document.getElementById("apply-review");
   const help = document.getElementById("review-help");
   const approve = form.elements.namedItem("approve");
+  const notesSignature = form.elements.namedItem("notes_signature");
+  const notesTarget = form.elements.namedItem("notes_target");
+  function updateNotesPreview() {
+    if (!notesSignature) return;
+    document.getElementById("notes-signature-preview").hidden = !notesSignature.checked;
+    const selected = notesTarget?.selectedOptions[0];
+    const target = document.getElementById("notes-preview-target");
+    const addition = document.getElementById("notes-preview-addition");
+    const reason = document.getElementById("notes-preview-reason");
+    const addedText = selected?.dataset.addition || "";
+    target.hidden = addition.hidden = !addedText;
+    target.querySelector("code").textContent = selected?.dataset.target || "";
+    addition.textContent = addedText;
+    reason.textContent = selected?.dataset.reason ||
+      (notesTarget ? (selected?.value ? "" : "Choose which show-notes file to edit.") : "No local show-notes file is available.");
+  }
   const fields = Array.from(form.elements).filter(el => el.name && !["csrf", "id", "fingerprint", "approve"].includes(el.name));
   function snapshot() { return JSON.stringify(fields.map(el => el.type === "checkbox" ? el.checked : el.value)); }
   const baseline = snapshot();
@@ -63,6 +79,7 @@
     return form.checkValidity();
   }
   function update() {
+    updateNotesPreview();
     const state = actionState({ reviewed: form.dataset.reviewed === "true", writable: form.dataset.writable === "true", status: form.dataset.status, changed: snapshot() !== baseline, approved: approve.checked, valid: valid(), submitting, validated: form.dataset.validated !== "false" });
     save.disabled = !state.save;
     if (apply) { apply.disabled = !state.apply; apply.textContent = state.label; }

@@ -23,6 +23,9 @@ type FileJournal struct {
 	ID                                                   int64
 	JobID, Source, Target, BeforeHash, AfterHash, Status string
 	Metadata                                             []byte
+	Companion                                            bool
+	Mode                                                 os.FileMode
+	SourceHash                                           string
 }
 
 func OpenStore(path string) (*Store, error) {
@@ -41,6 +44,8 @@ func OpenStore(path string) (*Store, error) {
  CREATE TABLE IF NOT EXISTS outputs(path TEXT PRIMARY KEY,hash TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS holds(id TEXT PRIMARY KEY);
  CREATE TABLE IF NOT EXISTS completions(id TEXT PRIMARY KEY,evidence TEXT NOT NULL);
+ CREATE TABLE IF NOT EXISTS settings(name TEXT PRIMARY KEY,value INTEGER NOT NULL);
+ CREATE TABLE IF NOT EXISTS companion_details(file_id INTEGER PRIMARY KEY,mode INTEGER NOT NULL,source_hash TEXT NOT NULL);
  CREATE TABLE IF NOT EXISTS reviews(id TEXT PRIMARY KEY,evidence TEXT NOT NULL,plan BLOB NOT NULL);`)
 	if err != nil {
 		db.Close()
@@ -69,11 +74,25 @@ func (s *Store) jobStatus(id, status string) error {
 	return err
 }
 func (s *Store) journal(j FileJournal) (int64, error) {
-	r, err := s.db.Exec("INSERT INTO files(job,source,target,before_hash,after_hash,metadata,status,undo_of) VALUES(?,?,?,?,?,?,?,?)", j.JobID, j.Source, j.Target, j.BeforeHash, j.AfterHash, j.Metadata, journalStatus(j), j.UndoOf)
+	tx, err := s.db.Begin()
 	if err != nil {
 		return 0, err
 	}
-	return r.LastInsertId()
+	defer tx.Rollback()
+	r, err := tx.Exec("INSERT INTO files(job,source,target,before_hash,after_hash,metadata,status,undo_of) VALUES(?,?,?,?,?,?,?,?)", j.JobID, j.Source, j.Target, j.BeforeHash, j.AfterHash, j.Metadata, journalStatus(j), j.UndoOf)
+	if err != nil {
+		return 0, err
+	}
+	id, err := r.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	if j.Companion {
+		if _, err = tx.Exec("INSERT INTO companion_details VALUES(?,?,?)", id, j.Mode, j.SourceHash); err != nil {
+			return 0, err
+		}
+	}
+	return id, tx.Commit()
 }
 func (s *Store) finishFile(id int64, target, hash, status string) error {
 	tx, err := s.db.Begin()
@@ -122,7 +141,8 @@ func (s *Store) finishCompletion(id, evidence string, skipped map[string]string)
 func (s *Store) Files(job string) ([]FileJournal, error) { return s.files(job, false) }
 func (s *Store) pendingFiles() ([]FileJournal, error)    { return s.files("", true) }
 func (s *Store) files(job string, pending bool) ([]FileJournal, error) {
-	q := "SELECT id,job,source,target,before_hash,after_hash,metadata,status,undo_of FROM files"
+	q := `SELECT id,job,source,target,before_hash,after_hash,metadata,status,undo_of, file_id IS NOT NULL, coalesce(mode,0), coalesce(source_hash,'')
+		FROM files LEFT JOIN companion_details ON file_id=id`
 	var conds []string
 	args := []any{}
 	if job != "" {
@@ -144,12 +164,40 @@ func (s *Store) files(job string, pending bool) ([]FileJournal, error) {
 	var out []FileJournal
 	for rows.Next() {
 		var j FileJournal
-		if err = rows.Scan(&j.ID, &j.JobID, &j.Source, &j.Target, &j.BeforeHash, &j.AfterHash, &j.Metadata, &j.Status, &j.UndoOf); err != nil {
+		if err = rows.Scan(&j.ID, &j.JobID, &j.Source, &j.Target, &j.BeforeHash, &j.AfterHash, &j.Metadata, &j.Status, &j.UndoOf, &j.Companion, &j.Mode, &j.SourceHash); err != nil {
 			return nil, err
 		}
 		out = append(out, j)
 	}
 	return out, rows.Err()
+}
+
+func (s *Store) companionOutput(path, sourceHash, targetHash string) (bool, error) {
+	var same bool
+	err := s.db.QueryRow(`SELECT coalesce((SELECT source_hash=? AND after_hash=? AND file_id IS NOT NULL
+		FROM files LEFT JOIN companion_details ON file_id=id
+		WHERE target=? AND status IN ('committed','undo') ORDER BY id DESC LIMIT 1),0)`, sourceHash, targetHash, path).Scan(&same)
+	return same, err
+}
+
+func (s *Store) laterOutput(target string, fileID int64) (bool, error) {
+	var later bool
+	err := s.db.QueryRow("SELECT EXISTS(SELECT 1 FROM files WHERE target=? AND id>? AND status='committed')", target, fileID).Scan(&later)
+	return later, err
+}
+
+func (s *Store) setting(name string) (bool, error) {
+	var value bool
+	err := s.db.QueryRow("SELECT value FROM settings WHERE name=?", name).Scan(&value)
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
+	return value, err
+}
+
+func (s *Store) saveSetting(name string, value bool) error {
+	_, err := s.db.Exec("INSERT INTO settings VALUES(?,?) ON CONFLICT(name) DO UPDATE SET value=excluded.value", name, value)
+	return err
 }
 func (s *Store) History() ([]Job, error) {
 	rows, err := s.db.Query("SELECT id,recording,status,summary FROM jobs ORDER BY id DESC")

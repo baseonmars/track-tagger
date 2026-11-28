@@ -227,6 +227,13 @@ func printPlan(p app.Plan) {
 		if r.Artwork != "" {
 			fmt.Println("  artwork:", r.Artwork)
 		}
+		if r.NotesPreview != nil {
+			if r.NotesPreview.Addition != "" {
+				fmt.Printf("  show notes %s: append %q\n", r.NotesPreview.Target, r.NotesPreview.Addition)
+			} else if r.NotesPreview.Reason != "" {
+				fmt.Println("  show notes:", r.NotesPreview.Reason)
+			}
+		}
 		for _, reason := range r.ReviewReasons {
 			fmt.Println("  review:", reason)
 		}
