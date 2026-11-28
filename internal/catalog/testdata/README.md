@@ -6,7 +6,7 @@ The synthetic fixtures and their independently authored expectations are distrib
 
 See the [per-case credits](../../../docs/research/notes-corpus-credits.json) for the original recording item, performer, available taper and transferer credits, and source-note URLs and SHA-256 hashes. The [source manifest](../../../docs/research/notes-corpus-sources.json) records the selected show and split for each case; the [research report](../../../docs/research/notes-corpus.md) explains how the excerpts and expectations were prepared. License URLs found in item metadata and source notes are recorded separately. A difference is flagged without deciding which terms govern the original material; these URLs are source claims, not a licensing assurance.
 
-Bracketed duration expectations are normalized to song titles without the terminal
-`[mm:ss]`, `[h:mm:ss]`, or fractional-second annotation. Source notes remain intact.
+Titles omit bracketed and parenthesized duration suffixes and tab-separated duration
+columns. The fixtures retain the source note formatting.
 This expectation correction applies only to this synthetic regression corpus;
 previous experiment gold and published scores remain frozen.

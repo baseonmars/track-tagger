@@ -592,7 +592,7 @@ func setLocation(r *Recording, field string, target *string, value string) {
 }
 
 func addTitle(r *Recording, titles map[string]string, d, n int, title string) {
-	title = strings.TrimSpace(bracketedDuration.ReplaceAllString(title, ""))
+	title = strings.TrimSpace(title)
 	if titleUncertainty.MatchString(title) {
 		reason(r, "uncertain title for track "+fmt.Sprintf("%d:%d", d, n)+": "+title)
 	}
@@ -606,7 +606,7 @@ func addTitle(r *Recording, titles map[string]string, d, n int, title string) {
 		titles[key] = ""
 		return
 	}
-	titles[key] = strings.TrimSpace(title)
+	titles[key] = title
 }
 func technical(s string) bool {
 	if labelledTransfer.MatchString(s) {

@@ -32,11 +32,18 @@ func TestTitleAnnotationBoundaries(t *testing.T) {
 		{"Song [08:17]", "Song"}, {"Song > [03:53]", "Song >"},
 		{"Song [1:19:03]", "Song"}, {"Song (Live)", "Song (Live)"},
 		{"Who Are You?", "Who Are You?"}, {"Song (Unsure)", "Song (Unsure)"}, {"Probably", "Probably"}, {"Song (Probably)", "Song (Probably)"}, {"Song (New Song)", "Song (New Song)"},
+		{"Song (07:39)", "Song"}, {"Song (Night Version) (4:53)", "Song (Night Version)"},
+		{"Song [03:09.123]", "Song"}, {"Song (03:99)", "Song (03:99)"},
+		{"Song [100:03]", "Song"}, {"Song [1:60:03]", "Song [1:60:03]"},
+		{"Song (03:09]", "Song (03:09]"},
+		{"Song  03:09", "Song"}, {"Song\t1:09:15", "Song"},
+		{"Song 03:09", "Song 03:09"}, {"Meet Me at 5:00", "Meet Me at 5:00"},
+		{"4:33", "4:33"}, {"(4:33)", "(4:33)"}, {"(4:33) Song", "(4:33) Song"},
 		{"Song [03:99]", "Song [03:99]"}, {"Song [Part 2]", "Song [Part 2]"},
 	} {
 		r := Recording{}
 		titles := map[string]string{}
-		addTitle(&r, titles, 1, 1, tc.in)
+		parseNotes(&r, "01. "+tc.in, titles, map[string]bool{}, map[string]bool{})
 		if len(r.ReviewReasons) != 0 {
 			t.Errorf("literal title %q unexpectedly requires review: %v", tc.in, r.ReviewReasons)
 		}
