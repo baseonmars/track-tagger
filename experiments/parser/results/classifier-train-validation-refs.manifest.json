@@ -1,0 +1,13 @@
+{
+  "model_sha256": "5495b7b3f5cc8b8872db9450730bcc102ea9951be7ed4fcec9b9a25d8d35318c",
+  "partition_sha256": "f76442926bbf5d420ff6619ec882b0b30ddbd4045eace4b756aa4743f8014cfe",
+  "private_training_snapshot_sha256": "e141daf393f63e4ce18ecc5559b36b68be9e987c1633580b8a06152f559cca77",
+  "private_validation_labels_sha256": "afa54c8892b2d3a7abd8a2a1b384e07776755dd825457743cb00c6fc6d545721",
+  "public_training_annotations_sha256": "229256ee3ba18c246629bade0a230e231df43d824049d2d34b36ab1f8b5664bf",
+  "public_validation_labels_sha256": "b4f78e25d75db800402fb2789a4835b0f95e3b00ecea5c3d4f097f9c2f14f9a7",
+  "refs_sha256": "30ee6c7b3348cd972fcb1d1fd752f8c2af4ea2d78774cc11a3f728e7d1b36279",
+  "selection_trust": "Frozen reference digest binds selected labels; source and line/context hashes verify bytes but do not independently prove citation semantics.",
+  "source_manifest_sha256": "83934dc35b457b324af4387523005a19dd9fdd6f91cb0db69f5a0e0cf6a0921a",
+  "source_sha256": "23c48fec1482d85ff8aadfa3ccdff172afddadc02c38f2d0c6cd4e6f657178cf",
+  "stage": "train-validation"
+}

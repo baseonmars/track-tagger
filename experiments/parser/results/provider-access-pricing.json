@@ -1,0 +1,41 @@
+{
+  "access": {
+    "gpt-6-astra": true,
+    "gpt-6-luna": true,
+    "gpt-6.1-sol": true
+  },
+  "accounting_version": 2,
+  "cache_write_input_multipliers": {
+    "ttl_12h": 2.5,
+    "ttl_30m": 1.25
+  },
+  "cached_input_usd_per_million": {
+    "gpt-6-astra": 1,
+    "gpt-6-luna": 0.01,
+    "gpt-6.1-sol": 0.1
+  },
+  "cost_interpretation": "gross usage list-price estimates or conservative uncertain ceilings; not invoiced out-of-pocket spend or free-credit consumption",
+  "credential_source": "explicit original checkout .env file; no credential values exported",
+  "hosted_version_limit": "exact requested ID and returned model alias; no immutable weight/build snapshot exposed",
+  "input_output_usd_per_million": {
+    "gpt-6-astra": [
+      10,
+      50
+    ],
+    "gpt-6-luna": [
+      0.1,
+      0.5
+    ],
+    "gpt-6.1-sol": [
+      2,
+      10
+    ]
+  },
+  "missing_cache_breakdown_default30m_multiplier": 1.25,
+  "missing_cache_breakdown_explicit12h_multiplier": 2.5,
+  "pricing_source": "https://developers.openai.com/api/docs/pricing",
+  "prompt_caching_source": "https://developers.openai.com/api/docs/guides/prompt-caching",
+  "reservation_input_multiplier": 2.5,
+  "service_tier": "default",
+  "verified_date": "2026-11-03"
+}

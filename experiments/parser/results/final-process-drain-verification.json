@@ -1,0 +1,12 @@
+{
+  "verified_epoch": 1793782598.276333,
+  "owned_local_worker_pids_found": [],
+  "owned_model_loopback_ports_open": {
+    "18881": false,
+    "18882": false
+  },
+  "provider_reserved_calls": 0,
+  "provider_call_count": 3040,
+  "paid_dispatch_closed": true,
+  "no_pending_owned_inference_or_paid_jobs": true
+}

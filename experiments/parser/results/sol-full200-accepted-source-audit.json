@@ -1,0 +1,958 @@
+{
+  "scope": "Postfreeze audit of all Sol full200 validated accepted-nonexact cases, including all false-ready cases, plus disputed acceptances separately.",
+  "provenance": {
+    "reviewer": "gpt-6-astra agent",
+    "same_agent_helped_author_reference": true,
+    "independent_human_review": false,
+    "reviewed_after_labels_frozen": true,
+    "new_full_source_rereads": 4,
+    "identical_prior_outputs_reused": 13,
+    "changed_outputs_checked_against_previously_fully_reread_sources": 6,
+    "model_case_audits": 23,
+    "artifacts_sha256": {
+      "frozen-test-full200.json": "6102b07a348e08a342134b53d9d808fbc70eca6aff1d51003a8dbb58134c7b9f",
+      "posthoc-source-audit/sol-full200-packet.jsonl": "e04bb7d844c863d8b52913669c1b9295d186ea572525f8750d9eafeb75cf0bbd",
+      "scored-v3/candidate-sol-real-full200-r2.jsonl": "6a38e15c9c4e69762168bb8e96491959258a5514ef6c56d6bd0feec7b5060785",
+      "posthoc-source-audit/baseline-accepted-public-safe.json": "eb58fdbab768ef6aa62a989909e1494c178df9d4ba3a3ea6d9beef1b9694a1cc",
+      "posthoc-source-audit/luna-full200-adjudicated-private.jsonl": "e580491402202ea9ce8e0e927e85114815584526ee97c41a731d4fcc03eff70f",
+      "posthoc-source-audit/hosted-common40-adjudicated-private.jsonl": "d6e9f5891b041d3c548bd056bead61d2566e90f79cbfdddcf98717407aab6c37"
+    },
+    "original_notes_not_embedded_in_public_artifact": true
+  },
+  "counts": {
+    "requested": 200,
+    "valid_outputs": 200,
+    "eligible": 197,
+    "accepted_eligible": 67,
+    "accepted_exact": 46,
+    "accepted_nonexact": 21,
+    "false_ready_primary": 9,
+    "strict_accepted_mapping_differences_primary": 13,
+    "material_accepted_safeguard_cases": 9,
+    "metadata_mapping_scope_cases": 7,
+    "completeness_only_cases": 2,
+    "source_integrity_only_cases": 0,
+    "nonmaterial_representation_cases": 12,
+    "disputed_acceptances_separate": 2,
+    "material_case_categories": {
+      "missed_mixed_recording_provenance": 2,
+      "unknown_or_uncertain_title_accepted": 5,
+      "missed_recording_completeness_review": 2
+    },
+    "mapping_difference_categories": {
+      "unknown_or_uncertain_title_placeholders": 13,
+      "unsupported_positional_joins": 0,
+      "performer_footnote_only": 0,
+      "inventory_contradictions": 0
+    },
+    "confirmed_numeric_wrong_song_swaps": 0
+  },
+  "comparison": {
+    "cohort": "same197 eligible frozen test cases",
+    "baseline_material_accepted_cases": 4,
+    "sol_material_accepted_safeguard_cases": 9,
+    "sol_excluding_completeness_only_cases": 7,
+    "luna_material_accepted_safeguard_cases": 22,
+    "luna_excluding_completeness_and_integrity_only_cases": 18,
+    "caution": "These are observed case counts on the same fixed corpus; acceptance rates differ and these counts alone are not calibrated conditional risks."
+  },
+  "sensitivity_only": {
+    "gold_changed": false,
+    "primary_scores_changed": false,
+    "factual_reference_defects_found": 0,
+    "description": "All13 strict mapping differences involve unresolved title placeholders or descriptions: Showdown1, Josh Ritter2, Doodis1, Rumpke1, Papadosio8. Numeric identifiers match the source; no unsupported positional join or numeric wrong-song swap is demonstrated. Two of9 missed safeguards concern missing-recording completeness, with no demonstrated wrong metadata on existing files. Excluding those still leaves7 title/scope concerns versus baseline4."
+  },
+  "recommendation": "Reject automatic integration of Sol ready decisions under the no-increase-in-material-unsafe-acceptance criterion on this corpus. Retain review-assisted exploration. Copied uncertain descriptions are not invented song names; strict mismatch metrics must not all be called hallucinations.",
+  "limitations": "Posthoc selected-error audit by an agent who helped author the frozen reference, not independent human certification. Conservative source-only title/completeness policy is retained. No audio was acquired or heard. Disputed Toy and Domestic Problems acceptances remain separate and unresolved. Template-heldout generalization is not established.",
+  "cases": [
+    {
+      "model": "sol",
+      "id": "TMM1999-07-02",
+      "source_url": "https://archive.org/details/TMM1999-07-02",
+      "reference_status": "agent-reviewed",
+      "classification": "formatting_convention_only",
+      "material_accepted_issue": false,
+      "explanation": "Event and stage are both correct; the output joins them with a comma instead of a slash. All file mappings agree.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "High Sierra Music Festival / Main Stage",
+          "got": "High Sierra Music Festival, Main Stage"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 13,
+        "correct_titles": 13,
+        "exact": false,
+        "expected_mappings": 13,
+        "expected_titles": 13,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "dbb1999-06-20.akg.flac16",
+      "source_url": "https://archive.org/details/dbb1999-06-20.akg.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "formatting_convention_only",
+      "material_accepted_issue": false,
+      "explanation": "The source itself separates event and park with a semicolon. Both models preserve that separator while the reference uses a comma. Both representations state the same supported event and venue, and all13 track mappings agree. This is not invented information.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Gathering Of The Vibes, Seaside Park",
+          "got": "Gathering Of The Vibes; Seaside Park"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 13,
+        "correct_titles": 13,
+        "exact": false,
+        "expected_mappings": 13,
+        "expected_titles": 13,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "localh1999-06-24-fm103.flac16",
+      "source_url": "https://archive.org/details/localh1999-06-24-fm103.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_mixed_recording_provenance",
+      "material_accepted_issue": true,
+      "explanation": "The source separates three earlier studio/interview tracks and one commercial-album track from the dated concert. Sol marks ready without reviewing shared concert date/venue applicability to those four files. All22 numeric title mappings agree.",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 22,
+        "correct_titles": 22,
+        "exact": false,
+        "expected_mappings": 22,
+        "expected_titles": 22,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 0,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "abird1999-03-19",
+      "source_url": "https://archive.org/details/abird1999-03-19",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The output retains a source-supported event or physical venue while omitting the other contextual component. It does not assert a different location; all track mappings agree.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Jazz Bon Temps / SXSW Showcase",
+          "got": "Jazz Bon Temps"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 12,
+        "correct_titles": 12,
+        "exact": false,
+        "expected_mappings": 12,
+        "expected_titles": 12,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "showdownkids2020-02-15.sbd.flac16",
+      "source_url": "https://archive.org/details/showdownkids2020-02-15.sbd.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "The fifth title is only a track-number placeholder. The output accepts it as a resolved song title and marks ready. Event omission is a separate benign granularity difference.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "The Bell House / Freaks Ball XX",
+          "got": "The Bell House"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "unresolved song titles require review even when track IDs are explicit",
+          "got": "1 ready mappings containing unidentified title placeholders or descriptions",
+          "diagnostic_category": "unknown_or_uncertain_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 9,
+        "correct_titles": 9,
+        "exact": false,
+        "expected_mappings": 10,
+        "expected_titles": 9,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 1,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 1
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "ToyFactoryProject2026-05-19",
+      "source_url": "https://archive.org/details/ToyFactoryProject2026-05-19",
+      "reference_status": "disputed",
+      "classification": "accepted_disputed_reference_not_proven_error",
+      "material_accepted_issue": null,
+      "explanation": "The separated question mark on one title could be literal title punctuation or a source uncertainty marker. The reference was disputed before predictions. Both models preserve the supplied title and mark ready. This is acceptance with an unresolved reference, excluded from eligible accuracy and confirmed-error counts; source text alone does not settle it.",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {},
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "Jkb8x10BaltimoreMd2011-04-28",
+      "source_url": "https://archive.org/details/Jkb8x10BaltimoreMd2011-04-28",
+      "reference_status": "agent-reviewed",
+      "classification": "performer_abbreviation_only",
+      "material_accepted_issue": false,
+      "explanation": "The source header uses JKB and later explicitly expands it to John K Band. The output preserves the supported abbreviation; no different performer is asserted and all mappings agree.",
+      "findings": [
+        {
+          "field": "artist",
+          "expected": "John K Band",
+          "got": "JKB"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 19,
+        "correct_titles": 19,
+        "exact": false,
+        "expected_mappings": 19,
+        "expected_titles": 19,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": false,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "jritter2004-03-25.flac16",
+      "source_url": "https://archive.org/details/jritter2004-03-25.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "Two bracketed entries describe a song topic or a lyric fragment rather than supply identified song names. The output copies those descriptions and marks ready. Explicit track numbers support file association, but do not resolve the missing song names; no invented proper title or wrong numeric file ID is demonstrated.",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "unresolved song titles require review even when track IDs are explicit",
+          "got": "2 ready mappings containing unidentified title placeholders or descriptions",
+          "diagnostic_category": "unknown_or_uncertain_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 19,
+        "correct_titles": 19,
+        "exact": false,
+        "expected_mappings": 21,
+        "expected_titles": 19,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 2,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 2
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "TJB2009-02-14.Live_At_Cornell_Chi_Psi",
+      "source_url": "https://archive.org/details/TJB2009-02-14.Live_At_Cornell_Chi_Psi",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The output preserves the source-supported fraternity venue while omitting its university context. All track IDs and titles agree.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Chi Psi Fraternity, Cornell University",
+          "got": "Chi Psi Fraternity"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 32,
+        "correct_titles": 32,
+        "exact": false,
+        "expected_mappings": 32,
+        "expected_titles": 32,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "dp2002-01-25.dsbd.flac16",
+      "source_url": "https://archive.org/details/dp2002-01-25.dsbd.flac16",
+      "reference_status": "disputed",
+      "classification": "accepted_disputed_reference_not_proven_error",
+      "material_accepted_issue": null,
+      "explanation": "The literal word Untitled may be a song name or an unknown-title placeholder. This was disputed before predictions. Acceptance remains unresolved and excluded from confirmed-error counts.",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {},
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "gsand1996-02-03.flac16",
+      "source_url": "https://archive.org/details/gsand1996-02-03.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_mixed_recording_provenance",
+      "material_accepted_issue": true,
+      "explanation": "The source explicitly identifies five additional Calexico tracks within a Giant Sand release. A uniform Giant Sand artist is therefore not automatically established for all files. The model marks ready without reviewing shared-artist applicability. Titles and numeric IDs agree.",
+      "findings": [
+        {
+          "field": "artist",
+          "expected": "",
+          "got": "Giant Sand"
+        },
+        {
+          "field": "city",
+          "expected": "Marburg, Germany",
+          "got": "Marburg"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 20,
+        "correct_titles": 20,
+        "exact": false,
+        "expected_mappings": 20,
+        "expected_titles": 20,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": false,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "gl2018-10-28",
+      "source_url": "https://archive.org/details/gl2018-10-28",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The output retains the correct physical fairgrounds venue and omits the festival name. This is supported but less complete event context; all mappings agree.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Hangtown Music Festival / El Dorado County Fairgrounds",
+          "got": "El Dorado County Fairgrounds"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 11,
+        "correct_titles": 11,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 11,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "jmayer2008-07-29.flac",
+      "source_url": "https://archive.org/details/jmayer2008-07-29.flac",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The output retains a source-supported event or physical venue while omitting the other contextual component. It does not assert a different location; all track mappings agree.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Summer 2008 Tour / Cricket Wireless Amphitheatre",
+          "got": "Cricket Wireless Amphitheatre"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 15,
+        "correct_titles": 15,
+        "exact": false,
+        "expected_mappings": 15,
+        "expected_titles": 15,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "spintrav1990-10-31.flac16",
+      "source_url": "https://archive.org/details/spintrav1990-10-31.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_recording_completeness_review",
+      "material_accepted_issue": true,
+      "explanation": "The source explicitly identifies an entire final six-song set as missing. The output marks ready despite the predeclared missing-recording review requirement. Existing-file titles and identifiers agree; this is a missed completeness safeguard, not demonstrated incorrect metadata on an existing file.",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 25,
+        "correct_titles": 25,
+        "exact": false,
+        "expected_mappings": 25,
+        "expected_titles": 25,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 0,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "vteng2004-11-12.aud.moog.flacf",
+      "source_url": "https://archive.org/details/vteng2004-11-12.aud.moog.flacf",
+      "reference_status": "agent-reviewed",
+      "classification": "metadata_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The physical venue and municipality are correct. The output omits the festival name and state; no different event location or wrong-file title is asserted.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Kent State Folk Festival / The Kent Stage",
+          "got": "The Kent Stage"
+        },
+        {
+          "field": "city",
+          "expected": "Kent, Ohio",
+          "got": "Kent"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 10,
+        "correct_titles": 10,
+        "exact": false,
+        "expected_mappings": 10,
+        "expected_titles": 10,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "gd1966-11-29.152152.sbd.hance.sirmick.flac24",
+      "source_url": "https://archive.org/details/gd1966-11-29.152152.sbd.hance.sirmick.flac24",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_recording_completeness_review",
+      "material_accepted_issue": true,
+      "explanation": "The source explicitly identifies the first set as missing. The output marks ready despite the predeclared missing-recording review requirement. Existing-file titles and identifiers agree; this is a missed completeness safeguard, not demonstrated incorrect metadata on an existing file.",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 14,
+        "correct_titles": 14,
+        "exact": false,
+        "expected_mappings": 14,
+        "expected_titles": 14,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 0,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "sweetbacksisters2011-07-15.mk012.gmb.flac16",
+      "source_url": "https://archive.org/details/sweetbacksisters2011-07-15.mk012.gmb.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "formatting_convention_only",
+      "material_accepted_issue": false,
+      "explanation": "The festival, farm, and performance pavilion are all preserved, joined with commas instead of the reference slash. All mappings agree.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Grey Fox Bluegrass Festival, Walsh Farm / Dance Tent Pavilion",
+          "got": "Grey Fox Bluegrass Festival, Walsh Farm, Dance Tent Pavilion"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 35,
+        "correct_titles": 35,
+        "exact": false,
+        "expected_mappings": 35,
+        "expected_titles": 35,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "doodis2005-08-20",
+      "source_url": "https://archive.org/details/doodis2005-08-20",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "The fourth entry is the generic new-song placeholder New Tune. Under the predeclared source policy this does not establish an identified song title; the output nevertheless marks it ready. A literal song with that name is possible but not established by this source.",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "unresolved song titles require review even when track IDs are explicit",
+          "got": "1 ready mappings containing unidentified title placeholders or descriptions",
+          "diagnostic_category": "unknown_or_uncertain_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 10,
+        "correct_titles": 10,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 10,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 1,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 1
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "mrk2021-04-03.cmc622.cmc65xt.sbd.matrix.flac24",
+      "source_url": "https://archive.org/details/mrk2021-04-03.cmc622.cmc65xt.sbd.matrix.flac24",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The source explicitly identifies a private-residence venue. The output retains that physical setting while omitting the benefit-series name; all mappings agree.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Tree of Life Benefit / Private residence",
+          "got": "Private residence"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 11,
+        "correct_titles": 11,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 11,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "RumpkeMountainBoys2015-09-19.sbd.flac16",
+      "source_url": "https://archive.org/details/RumpkeMountainBoys2015-09-19.sbd.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "Track39 is explicitly labelled unknown with a descriptive parenthetical. The model treats it as a ready title. Omitting the event name while retaining the physical venue is a benign secondary difference.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "First Annual Hartford Boogie / Dogwood Camping Resort",
+          "got": "Dogwood Camping Resort"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "unresolved song titles require review even when track IDs are explicit",
+          "got": "1 ready mappings containing unidentified title placeholders or descriptions",
+          "diagnostic_category": "unknown_or_uncertain_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 39,
+        "correct_titles": 39,
+        "exact": false,
+        "expected_mappings": 40,
+        "expected_titles": 39,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 1,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 1
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "glf2025-07-31",
+      "source_url": "https://archive.org/details/glf2025-07-31",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "Sol retains the correct physical venue, full city, all title-footnote markers, and every numeric mapping. Its sole scored mismatch is omission of the event name; this is supported but less complete context.",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Heart Of Town Jams, Pier 48 - Building A",
+          "got": "Pier 48 - Building A"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 27,
+        "correct_titles": 27,
+        "exact": false,
+        "expected_mappings": 27,
+        "expected_titles": 27,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "papadosio2010-01-16.mtrack.sbd",
+      "source_url": "https://archive.org/details/papadosio2010-01-16.mtrack.sbd",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "Eight numbered track placeholders lack identified song names. The RTF-wrapped source still exposes their numbering, but that does not supply the missing titles. The output marks all eight ready.",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "unresolved song titles require review even when track IDs are explicit",
+          "got": "8 ready mappings containing unidentified title placeholders or descriptions",
+          "diagnostic_category": "unknown_or_uncertain_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 3,
+        "correct_titles": 3,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 3,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 8,
+        "invented_info": 8,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 8
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "sol",
+      "id": "StellarRoad2005-07-13.flac16",
+      "source_url": "https://archive.org/details/StellarRoad2005-07-13.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "performer_qualification_only",
+      "material_accepted_issue": false,
+      "explanation": "The source header explicitly adds Acoustic to the band name and the narrative describes an acoustic performance. Retaining that qualifier is supported; it does not name a different performer. All mappings agree.",
+      "findings": [
+        {
+          "field": "artist",
+          "expected": "Stellar Road",
+          "got": "Stellar Road Acoustic"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 27,
+        "correct_titles": 27,
+        "exact": false,
+        "expected_mappings": 27,
+        "expected_titles": 27,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": false,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    }
+  ]
+}

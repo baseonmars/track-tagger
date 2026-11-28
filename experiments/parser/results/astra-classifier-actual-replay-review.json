@@ -1,0 +1,43 @@
+{
+  "artifacts_sha256": {
+    "experiments/parser/classifier_refs.py": "8fc46d93646918a394a5aaeac5ce897fe63a811ca3a0c79f877c32945ee69332",
+    "experiments/parser/results/classifier-public-replay-proof.json": "b929b87a31f61d66b56016cb7e7c88d5be9d97ecd3553eb9801e64c2f1470ed5",
+    "experiments/parser/results/classifier-test-refs.jsonl": "3747b68d7d944b33747f82890416b1c70e09f3c39edef7fc47717c1d318b5264",
+    "experiments/parser/results/classifier-test-refs.manifest.json": "2e3f9b932b8d77b742807838f7ec36b11831afa224038faab8d18ba19ce61b4a",
+    "experiments/parser/results/classifier-train-validation-refs.jsonl": "30ee6c7b3348cd972fcb1d1fd752f8c2af4ea2d78774cc11a3f728e7d1b36279",
+    "experiments/parser/results/classifier-train-validation-refs.manifest.json": "92fe94dc89ac6ff805905dab1390c6b27b7ba732551a5ff582cbcf3c34e2828e"
+  },
+  "checks": {
+    "binary_identity": false,
+    "reference_model_sha256": "5495b7b3f5cc8b8872db9450730bcc102ea9951be7ed4fcec9b9a25d8d35318c",
+    "retrained_model_sha256": "97da473647012a42f3f90f557459135b0715122dfca7fd94b6deb0be91a09bc6",
+    "source_cases": 1200,
+    "source_context_partition_stage_and_reference_digest_checks_passed": true,
+    "source_identity_group_split_and_input_hashes_verified": true,
+    "test_confusion_and_classification_report_exactly_equal": true,
+    "test_reference_rows_rehydrated": 3655,
+    "train_report_exactly_equal": true,
+    "train_validation_reference_rows_rehydrated": 9895,
+    "validation_report_exactly_equal": true
+  },
+  "focused_regression_validation": {
+    "command": "/tmp/track-parser-venv/bin/python -m unittest experiments.parser.tests.test_classifier_refs -v",
+    "elapsed_seconds": 2.075,
+    "failures": 0,
+    "includes": "Actual disposable train/evaluate CLI; missing model binding, altered refs digest, stage, partition, source manifest and training refs rejected.",
+    "skipped": 0,
+    "tests": 4
+  },
+  "independent_human_review": false,
+  "reviewer": "gpt-6-astra agent",
+  "status": "actual-data public replay proof independently verified",
+  "timestamp_utc": "2026-11-04T07:20:45.229418+00:00",
+  "trust_limits": [
+    "Published reference digest authenticates consistency of selected labels, not semantic truth.",
+    "Source/context hashes verify supplied original text, not that a citation establishes the claimed value.",
+    "User-trusted manifests can be jointly rewritten; this is not an adversarial signing scheme.",
+    "Matching confusion metrics establishes reproduction in the tested environment, not binary-deterministic model serialization or general detection safety.",
+    "Positive cited lines only; no background false-positive estimate."
+  ],
+  "verified_fix": "Optional reference-model binding now requires a nonempty valid model digest; absent model and absent reference-model fields cannot match each other. Replayed training freezes bind the new serialized model to original reference model, training references, partition and source manifest."
+}

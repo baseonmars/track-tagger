@@ -1,0 +1,65 @@
+{
+  "additional_verified_bindings": [
+    "Public training emits a model/training-reference/partition/source-manifest freeze.",
+    "Public evaluation binds the current model, partition and source manifest to that freeze and the test-reference manifest to the training-reference and model digests.",
+    "Train replay rejects test rows; test replay rejects non-test rows."
+  ],
+  "fixed_findings": [
+    {
+      "finding": "Source/context hashes did not authenticate reference labels, annotation status or complete line selection.",
+      "severity": "P2",
+      "verified_fix": "Private replay regenerates authoritative references from original annotations and compares the entire reference set. Public replay verifies the published reference file digest and explicit trusted manifest bindings."
+    },
+    {
+      "finding": "Original-text output guard rejected only the current repository, permitting another Git checkout.",
+      "severity": "P2",
+      "verified_fix": "Resolved output paths reject any ancestor .git directory or worktree file."
+    },
+    {
+      "finding": "Published reconstructed sources could not satisfy the original private frozen file byte hash.",
+      "severity": "P2",
+      "verified_fix": "Dedicated public route verifies exact case IDs/groups/splits and every canonical source-input hash against the published source manifest, with reference, stage, partition and source-manifest digest bindings."
+    }
+  ],
+  "independent_human_review": false,
+  "limitations": [
+    "Public semantic labels and complete line selection are trusted published reference content, not independently regenerated from dequoted evidence hashes.",
+    "Digest consistency does not prevent jointly rewritten trusted manifests or certify annotation semantics.",
+    "The classifier evaluates only cited positive lines; no background false-positive or end-to-end tagging safety inference follows.",
+    "Uploader separation and known-template-family exclusion do not prove all unseen templates are independent.",
+    "Final real training/test references, documentation recipe and actual-data public retraining/evaluation proof were not yet available during this review."
+  ],
+  "optional_astra_guard_note": "Expansion code checks trusted approval/core-completion assertions, input hashes, measured-cost padding, remaining reserve and stage cap. Runtime feasibility is manually approved; the run deadline is enforced separately.",
+  "reviewed_file_sha256": {
+    "experiments/parser/classifier_partition.py": "aaf44cc957cc5d358de5f527fee9fa65b271c3f52fe8f76235eece13885ec493",
+    "experiments/parser/classifier_refs.py": "2932263305639a38ddd7966049852260305394864ba9298dff317b478bea5cf3",
+    "experiments/parser/real_line_classifier.py": "be2b91c32711b3ee8d9b2c50d2aef88db58c415ffb32730a341d2b4b1abf018f",
+    "experiments/parser/results/classifier-source-partition.json": "f76442926bbf5d420ff6619ec882b0b30ddbd4045eace4b756aa4743f8014cfe",
+    "experiments/parser/results/real-splits.json": "83934dc35b457b324af4387523005a19dd9fdd6f91cb0db69f5a0e0cf6a0921a",
+    "experiments/parser/tests/test_classifier_refs.py": "0609b2f6c31afed9760866e97d354a02b99d56acd2a966f7a7af2237fe38eb98"
+  },
+  "reviewer": "gpt-6-astra agent",
+  "scope": "Read-only bounded review of classifier references, private/public replay, partition and related documentation; no prediction, label, scorer or production changes.",
+  "status": "no remaining scoped code blocker; actual final classifier artifact reproduction remains pending",
+  "timestamp_utc": "2026-11-04T06:55:34.053927+00:00",
+  "validation": {
+    "actual_public_source_verification": {
+      "cases": 1200,
+      "check": "verify_public_source against published real-splits.json; exact IDs/group/split/canonical input hash equality passed; no refetch or audio access.",
+      "source": "External replayed-cases.jsonl from original acquisition manifest"
+    },
+    "command": "/tmp/track-parser-venv/bin/python -m unittest experiments.parser.tests.test_classifier_refs experiments.parser.tests.test_real_line_classifier experiments.parser.tests.test_classifier_partition -v",
+    "coverage": "Includes disposable actual train/evaluate CLI reproduction and rejected changed labels/status/selection, source content/identity, reference digest, stage, partition, training references and source-manifest bindings.",
+    "elapsed_seconds": 5.146,
+    "failures": 0,
+    "partition": {
+      "cross_split_groups": 0,
+      "pairwise_uploader_hash_overlap": 0,
+      "test": 200,
+      "train": 459,
+      "validation": 144
+    },
+    "skipped": 0,
+    "tests": 9
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "cases": 5000,
+  "command": "python experiments/parser/synthetic_v1.py --output experiments/parser/synthetic-v1.jsonl --count 5000",
+  "families": {
+    "annotated": 472,
+    "colon": 532,
+    "dash": 478,
+    "dot": 475,
+    "duration": 487,
+    "indented": 520,
+    "padded": 519,
+    "parenthesis": 502,
+    "plain": 505,
+    "set-heading": 510
+  },
+  "hypothesis": "6.141.1",
+  "labels": "generated, not agent-reviewed",
+  "note": "Augmented after generation; regeneration after renaming is unverified.",
+  "python": "3.9.6",
+  "sha256": "b9ddbcc29fc78aabf551956dc96c493a40e887b50a5cab1c98475ef7358b5057",
+  "splits": {
+    "test": 992,
+    "train": 3011,
+    "validation": 997
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "algorithm_sha256": "be2b91c32711b3ee8d9b2c50d2aef88db58c415ffb32730a341d2b4b1abf018f",
+  "draft_snapshot_sha256": "e141daf393f63e4ce18ecc5559b36b68be9e987c1633580b8a06152f559cca77",
+  "model_sha256": "5495b7b3f5cc8b8872db9450730bcc102ea9951be7ed4fcec9b9a25d8d35318c",
+  "model_size_bytes": 3562225,
+  "partition_sha256": "f76442926bbf5d420ff6619ec882b0b30ddbd4045eace4b756aa4743f8014cfe",
+  "source_manifest_sha256": "83934dc35b457b324af4387523005a19dd9fdd6f91cb0db69f5a0e0cf6a0921a",
+  "source_sha256": "23c48fec1482d85ff8aadfa3ccdff172afddadc02c38f2d0c6cd4e6f657178cf",
+  "test_evaluated": false,
+  "train_refs_sha256": "30ee6c7b3348cd972fcb1d1fd752f8c2af4ea2d78774cc11a3f728e7d1b36279",
+  "training_majority_class": "title",
+  "validation_labels_sha256": "afa54c8892b2d3a7abd8a2a1b384e07776755dd825457743cb00c6fc6d545721"
+}

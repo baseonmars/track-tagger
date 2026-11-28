@@ -1,0 +1,26 @@
+{
+  "cases": 5000,
+  "command": "python experiments/parser/synthetic.py --output experiments/parser/synthetic-v2.jsonl --count 5000",
+  "description": "Baseline-informed exploratory template revision; labels generated, not agent reviewed",
+  "families": {
+    "annotated": 477,
+    "colon": 524,
+    "dash": 478,
+    "dot": 472,
+    "duration": 485,
+    "indented": 521,
+    "padded": 533,
+    "parenthesis": 502,
+    "plain": 505,
+    "set-heading": 503
+  },
+  "generator_sha256": "95914ebde26753231c916b83c586d3a4e3aa7f0d16e6bc6377bf4e3d012a7700",
+  "regenerated_sha256_verified": true,
+  "sha256": "ada9a8110f9ddba7dceeb860e22430f1e2884d674e135cde3f4e69021944594d",
+  "splits": {
+    "test": 998,
+    "train": 3014,
+    "validation": 988
+  },
+  "splits_frozen_before_predictions": true
+}

@@ -1,0 +1,1840 @@
+{
+  "scope": "Postfreeze audit of all Luna full200 validated accepted-nonexact cases, including all false-ready cases, plus disputed acceptances separately.",
+  "provenance": {
+    "reviewer": "gpt-6-astra agent",
+    "same_agent_helped_author_reference": true,
+    "independent_human_review": false,
+    "reviewed_after_labels_frozen": true,
+    "new_cases_full_source_and_inventory_reread": 34,
+    "prior_common40_cases_reused_after_output_equality_and_evidence_checks": 8,
+    "model_case_audits": 42,
+    "artifacts_sha256": {
+      "frozen-test-full200.json": "6102b07a348e08a342134b53d9d808fbc70eca6aff1d51003a8dbb58134c7b9f",
+      "posthoc-source-audit/luna-full200-packet.jsonl": "60e9da368e417e74181931b8afbe5f0335c9c86f816c5ee25e570ceca4d84bfc",
+      "scored-v3/candidate-luna-real-full200-r2.jsonl": "0d173077a6a3fbb721b413f243b45cfd852e4a0556bb5157ca2b03e5f7c02a21",
+      "posthoc-source-audit/baseline-accepted-public-safe.json": "eb58fdbab768ef6aa62a989909e1494c178df9d4ba3a3ea6d9beef1b9694a1cc",
+      "posthoc-source-audit/hosted-common40-adjudicated-private.jsonl": "d6e9f5891b041d3c548bd056bead61d2566e90f79cbfdddcf98717407aab6c37"
+    },
+    "original_notes_not_embedded_in_public_artifact": true
+  },
+  "counts": {
+    "requested": 200,
+    "valid_outputs": 199,
+    "eligible": 197,
+    "accepted_eligible": 72,
+    "accepted_exact": 32,
+    "accepted_nonexact": 40,
+    "false_ready_primary": 22,
+    "strict_accepted_mapping_differences_primary": 123,
+    "material_accepted_safeguard_cases": 22,
+    "metadata_mapping_scope_cases": 18,
+    "completeness_only_cases": 3,
+    "source_integrity_only_cases": 1,
+    "nonmaterial_representation_cases": 18,
+    "disputed_acceptances_separate": 2,
+    "material_case_categories": {
+      "unsupported_positional_assignment": 3,
+      "unresolved_date_conflict": 1,
+      "missed_mixed_recording_provenance": 2,
+      "unknown_or_uncertain_title_accepted": 10,
+      "unsupported_ordinal_set_assignment": 1,
+      "missed_recording_completeness_review": 3,
+      "missed_source_integrity_conflict_review": 1,
+      "source_inventory_conflict_accepted": 1
+    },
+    "mapping_difference_categories": {
+      "unsupported_positional_or_ordinal_joins": 61,
+      "unknown_or_conflicting_titles": 31,
+      "performer_footnote_only": 29,
+      "inventory_contradicted_mappings": 2
+    },
+    "confirmed_numeric_wrong_song_swaps": 0
+  },
+  "comparison": {
+    "cohort": "same197 eligible frozen test cases",
+    "baseline_material_accepted_cases": 4,
+    "luna_material_accepted_safeguard_cases": 22,
+    "luna_excluding_completeness_and_fingerprint_only_cases": 18,
+    "caution": "These are observed case counts on the fixed corpus. Acceptance rates differ; neither count alone is a calibrated conditional risk estimate. Baseline and Luna material accepted cases need not overlap."
+  },
+  "sensitivity_only": {
+    "gold_changed": false,
+    "primary_scores_changed": false,
+    "factual_reference_defects_found": 0,
+    "description": "29 of123 strict accepted mapping differences only remove performer-footnote symbols. The other94 comprise61 unsupported positional or ordinal-set joins,31 unknown/guessed/conflicting title mappings, and2 mappings with source-inventory contradictions. Four unknown entries inside the11 Eric McFadden positional joins are not counted twice. Four of22 accepted safeguard violations concern recording completeness or source fingerprint consistency, with no demonstrated metadata error on existing files. Even excluding those four leaves18 metadata/mapping/scope concerns versus baseline4. No audio was inspected and no numeric wrong-song swap is demonstrated."
+  },
+  "recommendation": "Reject automatic integration of Luna ready decisions under the no-increase-in-material-unsafe-acceptance criterion on this corpus. Retain review-assisted exploration only. Do not call every strict mismatch a hallucination or represent copied uncertain placeholders as invented names.",
+  "limitations": "Posthoc selected-error audit by an agent who helped author the reference, not independent human certification. Predeclared conservative policies drive ordinal-set, uncertainty, and completeness safeguards. Unseen-template generalization is not established by this corpus. Disputed references remain excluded. Public findings paraphrase source reasoning; exact evidence and original notes remain external.",
+  "cases": [
+    {
+      "model": "luna",
+      "id": "bhp2008-01-09",
+      "source_url": "https://archive.org/details/bhp2008-01-09",
+      "reference_status": "agent-reviewed",
+      "classification": "metadata_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The municipality is source-supported; only the region/country is omitted. Numeric file identifiers and song titles agree. This is incomplete representation, not an invented place.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "San Francisco, CA",
+          "got": "San Francisco"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 17,
+        "correct_titles": 17,
+        "exact": false,
+        "expected_mappings": 17,
+        "expected_titles": 17,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "rainer1986-04-08.flac16",
+      "source_url": "https://archive.org/details/rainer1986-04-08.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "metadata_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The city is correct but omits the source state abbreviation. This is a strict completeness mismatch, not an unsupported municipality or wrong-file mapping.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "Tucson, AZ",
+          "got": "Tucson"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 24,
+        "correct_titles": 24,
+        "exact": false,
+        "expected_mappings": 24,
+        "expected_titles": 24,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "spin1989-04-15.flac16",
+      "source_url": "https://archive.org/details/spin1989-04-15.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unsupported_positional_assignment",
+      "material_accepted_issue": true,
+      "explanation": "The song lists have no explicit track numbers. A disc2 heading and a separate fingerprint inventory do not identify which song belongs to each file. The16 numbered mappings are obtained by list position, violating the predeclared identifier-only rule. They may be plausible, but source evidence does not authorize automatic mapping; no audio was heard to prove a particular song is assigned to the wrong file. Including city in venue is a secondary representation difference.",
+      "mapping_category": "unsupported_positional_or_ordinal_joins",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Reality Festival - SUNY",
+          "got": "Reality Festival - SUNY @ Albany, NY"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "16 strict mapping differences",
+          "diagnostic_category": "unsupported_positional_or_ordinal_joins"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 0,
+        "correct_titles": 0,
+        "exact": false,
+        "expected_mappings": 16,
+        "expected_titles": 0,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 16,
+        "invented_info": 17,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 16
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "dbb1999-06-20.akg.flac16",
+      "source_url": "https://archive.org/details/dbb1999-06-20.akg.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "formatting_convention_only",
+      "material_accepted_issue": false,
+      "explanation": "The source itself separates event and park with a semicolon. Both models preserve that separator while the reference uses a comma. Both representations state the same supported event and venue, and all13 track mappings agree. This is not invented information.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Gathering Of The Vibes, Seaside Park",
+          "got": "Gathering Of The Vibes; Seaside Park"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 13,
+        "correct_titles": 13,
+        "exact": false,
+        "expected_mappings": 13,
+        "expected_titles": 13,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "tugg2004-10-10.flac16",
+      "source_url": "https://archive.org/details/tugg2004-10-10.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unresolved_date_conflict",
+      "material_accepted_issue": true,
+      "explanation": "The note header dates the show September19, while every original audio filename and fingerprint path dates it October10. The output chooses the header date and marks ready without resolving this conflict. Track IDs/titles agree; this is unsupported certainty about the date, not proof which date is correct.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "date",
+          "expected": "",
+          "got": "2004-09-19"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 26,
+        "correct_titles": 26,
+        "exact": false,
+        "expected_mappings": 26,
+        "expected_titles": 26,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": false,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "localh1999-06-24-fm103.flac16",
+      "source_url": "https://archive.org/details/localh1999-06-24-fm103.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_mixed_recording_provenance",
+      "material_accepted_issue": true,
+      "explanation": "The source explicitly distinguishes three earlier studio/interview tracks and a commercial album track from the dated live performance. A single concert date/venue cannot be automatically treated as applying to all22 files without reviewing that scope. Both models mark ready despite this evidence. All file-to-title IDs match. Luna also retains a trailing venue separator, which is harmless and not the material issue.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Levis L2 Lazer Rock Stage ~ Summerfest",
+          "got": "Levis L2 Lazer Rock Stage ~ Summerfest -"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 22,
+        "correct_titles": 22,
+        "exact": false,
+        "expected_mappings": 22,
+        "expected_titles": 22,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "abird1999-03-19",
+      "source_url": "https://archive.org/details/abird1999-03-19",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The output retains a source-supported event or physical venue while omitting the other contextual component. It does not assert a different location; all track mappings agree.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Jazz Bon Temps / SXSW Showcase",
+          "got": "Jazz Bon Temps"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 12,
+        "correct_titles": 12,
+        "exact": false,
+        "expected_mappings": 12,
+        "expected_titles": 12,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "showdownkids2020-02-15.sbd.flac16",
+      "source_url": "https://archive.org/details/showdownkids2020-02-15.sbd.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "The fifth title is only a track-number placeholder. The output accepts it as a resolved song title and marks ready. Event omission is a separate benign granularity difference.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "The Bell House / Freaks Ball XX",
+          "got": "The Bell House"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "1 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 9,
+        "correct_titles": 9,
+        "exact": false,
+        "expected_mappings": 10,
+        "expected_titles": 9,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 1,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 1
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "ToyFactoryProject2026-05-19",
+      "source_url": "https://archive.org/details/ToyFactoryProject2026-05-19",
+      "reference_status": "disputed",
+      "classification": "accepted_disputed_reference_not_proven_error",
+      "material_accepted_issue": null,
+      "explanation": "The separated question mark on one title could be literal title punctuation or a source uncertainty marker. The reference was disputed before predictions. Both models preserve the supplied title and mark ready. This is acceptance with an unresolved reference, excluded from eligible accuracy and confirmed-error counts; source text alone does not settle it.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {},
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "llb2005-08-13.flacf",
+      "source_url": "https://archive.org/details/llb2005-08-13.flacf",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "The source explicitly calls four starred new-song titles guesses. The output preserves those guesses but declares ready; copying uncertainty verbatim does not resolve it.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "4 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 11,
+        "correct_titles": 11,
+        "exact": false,
+        "expected_mappings": 15,
+        "expected_titles": 11,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 4,
+        "invented_info": 4,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 4
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "Jkb8x10BaltimoreMd2011-04-28",
+      "source_url": "https://archive.org/details/Jkb8x10BaltimoreMd2011-04-28",
+      "reference_status": "agent-reviewed",
+      "classification": "metadata_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The municipality is source-supported; only the region/country is omitted. Numeric file identifiers and song titles agree. This is incomplete representation, not an invented place.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "Baltimore, MD",
+          "got": "Baltimore"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 19,
+        "correct_titles": 19,
+        "exact": false,
+        "expected_mappings": 19,
+        "expected_titles": 19,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "ca1993-05-11.flac16",
+      "source_url": "https://archive.org/details/ca1993-05-11.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "The numbered list assigns one song to track11 while the later narrative explicitly calls track11 another song. Narrative ordering makes a typo plausible, but source-only identifier rules require review rather than silently selecting one account. This does not prove the chosen song is wrong.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "The Practice Sessions / Tom's Studio",
+          "got": "Tom's Studio"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "1 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 23,
+        "correct_titles": 23,
+        "exact": false,
+        "expected_mappings": 24,
+        "expected_titles": 23,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 1,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 1
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "pppp2018-03-01",
+      "source_url": "https://archive.org/details/pppp2018-03-01",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "All eleven titles are track-number placeholders, and the source explicitly says the song titles are unknown. The model marks the placeholder mappings ready.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "11 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 0,
+        "correct_titles": 0,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 0,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 11,
+        "invented_info": 11,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 11
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "df2006-07-15.mbho.flac16",
+      "source_url": "https://archive.org/details/df2006-07-15.mbho.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "A parenthesized uncertainty marker follows the sixth song name. The model retains it but marks ready rather than preserving unresolved title status. Event omission is not the material issue.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Allgood Festival / Marvin's Mountaintop",
+          "got": "Marvin's Mountaintop"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "1 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 10,
+        "correct_titles": 10,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 10,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 1,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 1
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "colmeda2004-12-17.at831.flac16",
+      "source_url": "https://archive.org/details/colmeda2004-12-17.at831.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "footnote_decoration_only",
+      "material_accepted_issue": false,
+      "explanation": "Four removed asterisks refer to the guest-vocalist footnote. The song identities and every numeric mapping are unchanged; these four strict differences do not establish unsafe assignments.",
+      "mapping_category": "performer_footnote_only",
+      "findings": [
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "4 strict mapping differences",
+          "diagnostic_category": "performer_footnote_only"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 12,
+        "correct_titles": 12,
+        "exact": false,
+        "expected_mappings": 16,
+        "expected_titles": 16,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 4,
+        "invented_info": 4,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 4
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "2sj-2005-07-22.flac16",
+      "source_url": "https://archive.org/details/2sj-2005-07-22.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "metadata_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The city is correct but omits the state abbreviation. Every24 track assignment agrees. A few seconds of audio lost during recorder change do not themselves invalidate known metadata under the predeclared policy.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "Baltimore, MD",
+          "got": "Baltimore"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 24,
+        "correct_titles": 24,
+        "exact": false,
+        "expected_mappings": 24,
+        "expected_titles": 24,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "sc1997-03-12.flac16",
+      "source_url": "https://archive.org/details/sc1997-03-12.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "One title is explicitly unidentified and another has an unidentified ending. The model copies both incomplete identifications as ready mappings.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "2 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 15,
+        "correct_titles": 15,
+        "exact": false,
+        "expected_mappings": 17,
+        "expected_titles": 15,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 2,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 2
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "amt2006-05-16.flac16",
+      "source_url": "https://archive.org/details/amt2006-05-16.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unsupported_positional_assignment",
+      "material_accepted_issue": true,
+      "explanation": "Disc headings and durations accompany unnumbered song lists. Luna supplies11 sequential title IDs and joins them to files without explicit song-to-ID evidence. This violates identifier-only mapping even if the inferred ordering could be right. It is not merely duration stripping, and source/audio does not independently prove any particular swap.",
+      "mapping_category": "unsupported_positional_or_ordinal_joins",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "11 strict mapping differences",
+          "diagnostic_category": "unsupported_positional_or_ordinal_joins"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 0,
+        "correct_titles": 0,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 0,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 11,
+        "invented_info": 11,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 11
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "dp2002-01-25.dsbd.flac16",
+      "source_url": "https://archive.org/details/dp2002-01-25.dsbd.flac16",
+      "reference_status": "disputed",
+      "classification": "accepted_disputed_reference_not_proven_error",
+      "material_accepted_issue": null,
+      "explanation": "The literal word Untitled may be a song name or an unknown-title placeholder. This was disputed before predictions. Acceptance remains unresolved and excluded from confirmed-error counts.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {},
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "gsand1996-02-03.flac16",
+      "source_url": "https://archive.org/details/gsand1996-02-03.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_mixed_recording_provenance",
+      "material_accepted_issue": true,
+      "explanation": "The source explicitly identifies five additional Calexico tracks within a Giant Sand release. A uniform Giant Sand artist is therefore not automatically established for all files. The model marks ready without reviewing shared-artist applicability. Titles and numeric IDs agree.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "artist",
+          "expected": "",
+          "got": "Giant Sand"
+        },
+        {
+          "field": "city",
+          "expected": "Marburg, Germany",
+          "got": "Marburg"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 20,
+        "correct_titles": 20,
+        "exact": false,
+        "expected_mappings": 20,
+        "expected_titles": 20,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": false,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "dittybops2006-02-17.dpa4061.flac16",
+      "source_url": "https://archive.org/details/dittybops2006-02-17.dpa4061.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "formatting_convention_only",
+      "material_accepted_issue": false,
+      "explanation": "The output drops the terminal period after the state abbreviation. It preserves the same source city and region, and every mapping agrees.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "Santa Monica, CA.",
+          "got": "Santa Monica, CA"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 20,
+        "correct_titles": 20,
+        "exact": false,
+        "expected_mappings": 20,
+        "expected_titles": 20,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "gl2018-10-28",
+      "source_url": "https://archive.org/details/gl2018-10-28",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The output retains a source-supported event or physical venue while omitting the other contextual component. It does not assert a different location; all track mappings agree.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Hangtown Music Festival / El Dorado County Fairgrounds",
+          "got": "Hangtown Music Festival"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 11,
+        "correct_titles": 11,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 11,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "jmayer2008-07-29.flac",
+      "source_url": "https://archive.org/details/jmayer2008-07-29.flac",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The output retains a source-supported event or physical venue while omitting the other contextual component. It does not assert a different location; all track mappings agree.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Summer 2008 Tour / Cricket Wireless Amphitheatre",
+          "got": "Cricket Wireless Amphitheatre"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 15,
+        "correct_titles": 15,
+        "exact": false,
+        "expected_mappings": 15,
+        "expected_titles": 15,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "toddandfriends2018-08-11.ak40.sbd.flac16",
+      "source_url": "https://archive.org/details/toddandfriends2018-08-11.ak40.sbd.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unsupported_ordinal_set_assignment",
+      "material_accepted_issue": true,
+      "explanation": "The source labels its numbered sections Acoustic and Electric, without assigning either a numeric set identifier. The inventory uses s1 and s2 and both sections restart track numbering. The model assigns section ordinals and makes23 joins without explicit section-to-ID evidence. Plausible order and matching section lengths do not satisfy the predeclared identifier-only rule; no wrong-song swap is proven.",
+      "mapping_category": "unsupported_positional_or_ordinal_joins",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "23 strict mapping differences",
+          "diagnostic_category": "unsupported_positional_or_ordinal_joins"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 0,
+        "correct_titles": 0,
+        "exact": false,
+        "expected_mappings": 23,
+        "expected_titles": 0,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 23,
+        "invented_info": 23,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 23
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "garaj2005-04-10_16bit",
+      "source_url": "https://archive.org/details/garaj2005-04-10_16bit",
+      "reference_status": "agent-reviewed",
+      "classification": "metadata_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The municipality is source-supported; only the region/country is omitted. Numeric file identifiers and song titles agree. This is incomplete representation, not an invented place.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "San Diego, CA",
+          "got": "San Diego"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 12,
+        "correct_titles": 12,
+        "exact": false,
+        "expected_mappings": 12,
+        "expected_titles": 12,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "spintrav1990-10-31.flac16",
+      "source_url": "https://archive.org/details/spintrav1990-10-31.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_recording_completeness_review",
+      "material_accepted_issue": true,
+      "explanation": "The source explicitly identifies an entire final six-song set as missing. The output marks ready despite the predeclared missing-recording review requirement. Existing-file titles and identifiers agree; this is a missed completeness safeguard, not demonstrated incorrect metadata on an existing file.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 25,
+        "correct_titles": 25,
+        "exact": false,
+        "expected_mappings": 25,
+        "expected_titles": 25,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 0,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "vteng2004-11-12.aud.moog.flacf",
+      "source_url": "https://archive.org/details/vteng2004-11-12.aud.moog.flacf",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The output retains a source-supported event or physical venue while omitting the other contextual component. It does not assert a different location; all track mappings agree.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Kent State Folk Festival / The Kent Stage",
+          "got": "The Kent Stage"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 10,
+        "correct_titles": 10,
+        "exact": false,
+        "expected_mappings": 10,
+        "expected_titles": 10,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "gd1966-11-29.152152.sbd.hance.sirmick.flac24",
+      "source_url": "https://archive.org/details/gd1966-11-29.152152.sbd.hance.sirmick.flac24",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_recording_completeness_review",
+      "material_accepted_issue": true,
+      "explanation": "The source explicitly identifies the first set as missing. The output marks ready despite the predeclared missing-recording review requirement. Existing-file titles and identifiers agree; this is a missed completeness safeguard, not demonstrated incorrect metadata on an existing file.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 14,
+        "correct_titles": 14,
+        "exact": false,
+        "expected_mappings": 14,
+        "expected_titles": 14,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 0,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "um1998-01-29.sbd.flac16",
+      "source_url": "https://archive.org/details/um1998-01-29.sbd.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_recording_completeness_review",
+      "material_accepted_issue": true,
+      "explanation": "The source explicitly identifies the final song as missing. The output marks ready despite the predeclared missing-recording review requirement. Existing-file titles and identifiers agree; this is a missed completeness safeguard, not demonstrated incorrect metadata on an existing file.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "South Bend, Indiana",
+          "got": "South Bend"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 25,
+        "correct_titles": 25,
+        "exact": false,
+        "expected_mappings": 25,
+        "expected_titles": 25,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "doodis2005-08-20",
+      "source_url": "https://archive.org/details/doodis2005-08-20",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "The fourth entry is the generic new-song placeholder New Tune. Under the predeclared source policy this does not establish an identified song title; the output nevertheless marks it ready. A literal song with that name is possible but not established by this source.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "1 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 10,
+        "correct_titles": 10,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 10,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 1,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 1
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "ymsb2004-04-17.sbd.flac16",
+      "source_url": "https://archive.org/details/ymsb2004-04-17.sbd.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "metadata_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The municipality is source-supported; only the region/country is omitted. Numeric file identifiers and song titles agree. This is incomplete representation, not an invented place.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "San Francisco, CA",
+          "got": "San Francisco"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 33,
+        "correct_titles": 33,
+        "exact": false,
+        "expected_mappings": 33,
+        "expected_titles": 33,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "toad1992-09-01.flac16",
+      "source_url": "https://archive.org/details/toad1992-09-01.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "missed_source_integrity_conflict_review",
+      "material_accepted_issue": true,
+      "explanation": "One fingerprint note contains two different fingerprints for every identical file path, in the same colon-delimited format with no explanation or distinct algorithm labels. The output marks ready without reviewing this source conflict. No audio was acquired, so neither content corruption nor a wrong title is demonstrated; all23 metadata mappings agree.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 23,
+        "correct_titles": 23,
+        "exact": false,
+        "expected_mappings": 23,
+        "expected_titles": 23,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 0,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "Mraz2007-07-15.jm2007-07-15",
+      "source_url": "https://archive.org/details/Mraz2007-07-15.jm2007-07-15",
+      "reference_status": "agent-reviewed",
+      "classification": "source_inventory_conflict_accepted",
+      "material_accepted_issue": true,
+      "explanation": "Two explicitly numbered songs are described as withheld from the archive upload, yet both corresponding file paths occur in the acquired inventory. The model accepts both mappings without reviewing that contradiction. Their titles are source-supported; which recording the files contain is unresolved.",
+      "mapping_category": "inventory_contradicted_mappings",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "2 strict mapping differences",
+          "diagnostic_category": "inventory_contradicted_mappings"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 23,
+        "correct_titles": 25,
+        "exact": false,
+        "expected_mappings": 25,
+        "expected_titles": 25,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 2,
+        "invented_info": 0,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 2
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "mrk2021-04-03.cmc622.cmc65xt.sbd.matrix.flac24",
+      "source_url": "https://archive.org/details/mrk2021-04-03.cmc622.cmc65xt.sbd.matrix.flac24",
+      "reference_status": "agent-reviewed",
+      "classification": "event_venue_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The output retains a source-supported event or physical venue while omitting the other contextual component. It does not assert a different location; all track mappings agree.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Tree of Life Benefit / Private residence",
+          "got": "Tree of Life Benefit"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 11,
+        "correct_titles": 11,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 11,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "RumpkeMountainBoys2015-09-19.sbd.flac16",
+      "source_url": "https://archive.org/details/RumpkeMountainBoys2015-09-19.sbd.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "Track39 is explicitly labelled unknown with a descriptive parenthetical. The model treats it as a ready title. Event omission and city comma spacing are benign secondary differences.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "First Annual Hartford Boogie / Dogwood Camping Resort",
+          "got": "Dogwood Camping Resort"
+        },
+        {
+          "field": "city",
+          "expected": "Dunmor,KY",
+          "got": "Dunmor, KY"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "1 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 39,
+        "correct_titles": 39,
+        "exact": false,
+        "expected_mappings": 40,
+        "expected_titles": 39,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 1,
+        "invented_info": 3,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 1
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "glf2025-07-31",
+      "source_url": "https://archive.org/details/glf2025-07-31",
+      "reference_status": "agent-reviewed",
+      "classification": "representation_and_metadata_granularity",
+      "material_accepted_issue": false,
+      "explanation": "The event name is omitted but the physical venue remains correct. Luna also omits the region and strips25 leading symbols that refer to performer footnotes; every numeric file ID, song identity, and segue still agrees. These are representation/completeness differences, not hallucinated songs or wrong-file assignments. Sol preserves all title markers and the full city, differing only in event omission.",
+      "mapping_category": "performer_footnote_only",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "Heart Of Town Jams, Pier 48 - Building A",
+          "got": "Pier 48 - Building A"
+        },
+        {
+          "field": "city",
+          "expected": "San Francisco, California",
+          "got": "San Francisco"
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "25 strict mapping differences",
+          "diagnostic_category": "performer_footnote_only"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 2,
+        "correct_titles": 2,
+        "exact": false,
+        "expected_mappings": 27,
+        "expected_titles": 27,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 25,
+        "invented_info": 27,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 25
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "Dawes2010-11-12",
+      "source_url": "https://archive.org/details/Dawes2010-11-12",
+      "reference_status": "agent-reviewed",
+      "classification": "metadata_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The municipality is source-supported; only the region/country is omitted. Numeric file identifiers and song titles agree. This is incomplete representation, not an invented place.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "Madison WI USA",
+          "got": "Madison"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 20,
+        "correct_titles": 20,
+        "exact": false,
+        "expected_mappings": 20,
+        "expected_titles": 20,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "papadosio2010-01-16.mtrack.sbd",
+      "source_url": "https://archive.org/details/papadosio2010-01-16.mtrack.sbd",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "Eight numbered track placeholders lack identified song names. The RTF-wrapped source still exposes their numbering, but that does not supply the missing titles. The output marks all eight ready.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "8 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 3,
+        "correct_titles": 3,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 3,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 8,
+        "invented_info": 8,
+        "metadata_fields": {
+          "artist": true,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 8
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "StellarRoad2005-07-13.flac16",
+      "source_url": "https://archive.org/details/StellarRoad2005-07-13.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "performer_qualification_only",
+      "material_accepted_issue": false,
+      "explanation": "The header explicitly adds Acoustic to the band name and the narrative describes an acoustic performance. Retaining that qualifier is supported; it does not name a different performer. All track mappings agree after the frozen whitespace-only comparison.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "artist",
+          "expected": "Stellar Road",
+          "got": "Stellar Road Acoustic"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 27,
+        "correct_titles": 27,
+        "exact": false,
+        "expected_mappings": 27,
+        "expected_titles": 27,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": false,
+          "city": true,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "em2006-12-03",
+      "source_url": "https://archive.org/details/em2006-12-03",
+      "reference_status": "agent-reviewed",
+      "classification": "unsupported_positional_assignment",
+      "material_accepted_issue": true,
+      "explanation": "The song list has no numeric IDs; the model supplies eleven sequential identifiers. Duration correlations and list order may make the association plausible but do not meet the predeclared identifier-only requirement. Four of these entries are also explicitly unknown. They are counted once within the eleven unsupported joins, not added again. Venue capitalization and region omission are separate benign differences.",
+      "mapping_category": "unsupported_positional_or_ordinal_joins",
+      "findings": [
+        {
+          "field": "venue",
+          "expected": "molly malone's",
+          "got": "Molly Malone's"
+        },
+        {
+          "field": "city",
+          "expected": "los angeles, ca",
+          "got": "los angeles"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "11 strict mapping differences",
+          "diagnostic_category": "unsupported_positional_or_ordinal_joins"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 0,
+        "correct_titles": 0,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 0,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 11,
+        "invented_info": 13,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": false
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 11
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "fugazi1989-10-08.flac16",
+      "source_url": "https://archive.org/details/fugazi1989-10-08.flac16",
+      "reference_status": "agent-reviewed",
+      "classification": "metadata_granularity_only",
+      "material_accepted_issue": false,
+      "explanation": "The municipality is source-supported; only the region/country is omitted. Numeric file identifiers and song titles agree. This is incomplete representation, not an invented place.",
+      "mapping_category": null,
+      "findings": [
+        {
+          "field": "city",
+          "expected": "Hoboken, NJ",
+          "got": "Hoboken"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 21,
+        "correct_titles": 21,
+        "exact": false,
+        "expected_mappings": 21,
+        "expected_titles": 21,
+        "false_ready": false,
+        "incorrect_accepted_mappings": 0,
+        "invented_info": 1,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": false,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 0
+      },
+      "reference_factual_defect_found": false
+    },
+    {
+      "model": "luna",
+      "id": "zero1991-01-23",
+      "source_url": "https://archive.org/details/zero1991-01-23",
+      "reference_status": "agent-reviewed",
+      "classification": "unknown_or_uncertain_title_accepted",
+      "material_accepted_issue": true,
+      "explanation": "The third track of disc2 is only an unknown marker. The model copies it and marks ready. Adding a comma to the city-region value is benign.",
+      "mapping_category": "unknown_or_conflicting_titles",
+      "findings": [
+        {
+          "field": "city",
+          "expected": "Breckenridge Colorado",
+          "got": "Breckenridge, Colorado"
+        },
+        {
+          "field": "review",
+          "expected": true,
+          "got": false
+        },
+        {
+          "field": "mappings",
+          "expected": "source-supported identifiers and resolved song titles; retain unresolved mappings where evidence is insufficient",
+          "got": "1 strict mapping differences",
+          "diagnostic_category": "unknown_or_conflicting_titles"
+        }
+      ],
+      "primary_score": {
+        "correct_mappings": 10,
+        "correct_titles": 10,
+        "exact": false,
+        "expected_mappings": 11,
+        "expected_titles": 10,
+        "false_ready": true,
+        "incorrect_accepted_mappings": 1,
+        "invented_info": 2,
+        "metadata_fields": {
+          "artist": true,
+          "city": false,
+          "date": true,
+          "venue": true
+        },
+        "missed_ambiguity": true,
+        "review": false,
+        "score_version": 3,
+        "unresolved_ids_match": true,
+        "wrong_mappings": 1
+      },
+      "reference_factual_defect_found": false
+    }
+  ]
+}

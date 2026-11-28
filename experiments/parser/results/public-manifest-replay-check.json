@@ -1,0 +1,11 @@
+{
+  "all_input_hashes_verified": true,
+  "audio_downloads": 0,
+  "discovery_requests": 0,
+  "failures": [],
+  "reconstructed": 1200,
+  "requested": 1200,
+  "source_manifest_sha256": "62f029fa422ef2aba19cf46f596668ec4eb5afb0eba59d1e740280c15a952616",
+  "split_manifest_sha256": "83934dc35b457b324af4387523005a19dd9fdd6f91cb0db69f5a0e0cf6a0921a",
+  "verification_mode": "all1200 previously acquired original note bytes reconstructed from committed manifests; cached byte/hash verification, not a fresh remote availability test"
+}

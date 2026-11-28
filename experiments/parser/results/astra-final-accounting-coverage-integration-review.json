@@ -1,0 +1,82 @@
+{
+  "accounting_verification": {
+    "all_computed_report_fields_match_final_export": true,
+    "interpretation": "Gross estimates and conservative ceilings, not an invoice or net spending after credit. No original notes, provider response bodies or credentials are exported.",
+    "paid_drain_audit_digest_matches": true,
+    "public_export_matches_external_bytes": true,
+    "remaining_headroom_usd": 18.444007,
+    "reserved_calls": 0,
+    "retained_unknown_maxima_usd": 16.848992,
+    "rounding_or_retention_excess_usd": 0.001015575,
+    "settled_calls": 2698,
+    "settled_missing_usage_conservative_usd": 0.002017,
+    "total_budget_footprint_usd": 61.555993,
+    "total_cap_usd": 80,
+    "uncertain_calls": 342,
+    "usage_derived_gross_list_price_usd": 44.703968425
+  },
+  "ci_verification": {
+    "explicit_pins": 10,
+    "full_requirements_used_by_workflow": true,
+    "limitation": "Wheel resolution proof is not Linux execution; remote CI remains separate.",
+    "linux312_resolution_proof_exit_code": 0,
+    "proof_digest_current": true
+  },
+  "coverage_verification": {
+    "all_published_feature_counts_recomputed_equal": true,
+    "candidates": [
+      "baseline",
+      "luna",
+      "sol",
+      "astra"
+    ],
+    "eligible": 197,
+    "expected_mappings_each": 3888,
+    "expected_titles_each": 3153,
+    "full_test_requested": 200,
+    "interpretation": "Overlapping frozen source-only signals, not exclusive curated format/template families. Failed and unattempted requests retain expected-field denominators.",
+    "same_requested_ids_across_candidates_verified": true,
+    "source_feature_strata_each": 11
+  },
+  "delivery_limitations": [
+    "Main report still contained stale pending-result/accounting wording at review time; final report refresh remains necessary.",
+    "No heavy builds, model fits or broad tests were run during dedicated Q4 timing.",
+    "This scope does not repeat previous source audits or certify full end-to-end media-write safety."
+  ],
+  "external_drain_audit_sha256": "6f041dee7b5508c61d8b01acd68b9222fb703d0aeac7e705934b8fff06a64e0a",
+  "fixed_finding": {
+    "issue": "attrs was resolved transitively but not pinned.",
+    "location": "experiments/parser/requirements.txt",
+    "resolution": "attrs==26.1.0 now explicitly pinned, matching the ten-wheel CPython3.12 Linux resolution proof; refreshed requirements digest matches current file.",
+    "severity": "minor reproducibility gap"
+  },
+  "reviewed_file_sha256": {
+    ".github/workflows/ci.yml": "4fda63acfff21256fb4ecd86252716f922f799e88c8f4c40cf92cd00037da415",
+    "experiments/parser/billing_report.py": "797c77c617426e3c97bc26c964a723b9ffd1a8e3c8fa4add2941121ef235d013",
+    "experiments/parser/budget.py": "d886d008ab316aa4af0cabfe6be5557fcc6c607c19dbfd561682005e4919caad",
+    "experiments/parser/cohort_report.py": "c39679e4f4b6e2fd038512cf32a19fe96b1f61cc4bbd8f69845b4d58aa82d92a",
+    "experiments/parser/feature_report.py": "3815ee65d2665c67cd9f0641327be86b7b688cb2898b334ab5441d4d60a67748",
+    "experiments/parser/hosted.py": "4562c9ac72136ac2f4528f154aed5e060c2a092e8231d7fa283f70239202eb5c",
+    "experiments/parser/requirements.txt": "1ee1f1db84675535a91d85abaee4c4b9e6cb976761e292720157994492aec82b",
+    "experiments/parser/results/budget-accounting-final.json": "b00d14804d890cacd65d1acaa3fe736f93fceb2f5b51dd7a246e77f1c9b3d77b",
+    "experiments/parser/results/ci-python312-linux-wheel-check.json": "8b451a81f642ea8487e0f7cab6940fbbb74e55fd09680d0a7cf3a8f06f780ed7"
+  },
+  "reviewer": "gpt-6-astra agent",
+  "scope": "Bounded read-only review of final accounting export, source feature strata, cohort denominators, CI dependencies and terminal paid-dispatch hold. No provider calls, prediction/scorer/label changes or production edits.",
+  "status": "no remaining scoped code blocker",
+  "terminal_hold_verification": {
+    "active_reservations": 0,
+    "actual_ledger_hold_present": true,
+    "disposable_completion_hold_blocks_reservation": true,
+    "disposable_probe_new_calls": 0,
+    "drain_audit_reports_owned_paid_jobs_stopped": true,
+    "interpretation": "Fresh paid dispatch is blocked through the shared ledger; cached reads and local/baseline work remain available. No provider was invoked during review."
+  },
+  "tests": {
+    "command": "python3 -m unittest experiments.parser.tests.test_billing_report experiments.parser.tests.test_cohort_reporting experiments.parser.tests.test_feature_report -v",
+    "elapsed_seconds": 0.015,
+    "failures": 0,
+    "tests": 5
+  },
+  "timestamp_utc": "2026-11-04T08:11:29.824408+00:00"
+}
