@@ -4,6 +4,7 @@ package e2e
 import (
 	"bytes"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -291,4 +292,68 @@ func TestSavedPlanRequiresModeAndRejectsStaleInputs(t *testing.T) {
 	changed := snapshot(t, f.source)
 	run(t, false, "apply", plan, "--write", "--state", f.state, "--settle", "0s")
 	unchanged(t, f.source, changed)
+}
+
+func TestRenameCLIResumesWithoutVisibleAudio(t *testing.T) {
+	for _, retry := range []string{"scan", "apply"} {
+		t.Run(retry, func(t *testing.T) {
+			f := setup(t)
+			show := filepath.Join(f.source, "show")
+			if err := os.Remove(filepath.Join(show, "checksums.md5")); err != nil {
+				t.Fatal(err)
+			}
+			preview := run(t, true, "scan", f.source, "--json", "--state", f.state, "--settle", "0s")
+			var plan app.Plan
+			if err := json.Unmarshal(preview, &plan); err != nil {
+				t.Fatal(err)
+			}
+			plan.Recordings[0].RenameFiles = true
+			plan.Recordings[0].Reviewed = true
+			path := filepath.Join(filepath.Dir(f.source), "approved.json")
+			if err := app.SavePlan(path, plan, plan.Source, ""); err != nil {
+				t.Fatal(err)
+			}
+			store, err := app.OpenStore(f.state)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err = store.Close(); err != nil {
+				t.Fatal(err)
+			}
+			db, err := sql.Open("sqlite", filepath.Join(f.state, "history.sqlite"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer db.Close()
+			_, err = db.Exec("CREATE TRIGGER stop_move BEFORE UPDATE OF plan ON rename_batches BEGIN SELECT RAISE(FAIL, 'interrupted'); END")
+			if err != nil {
+				t.Fatal(err)
+			}
+			run(t, false, "apply", path, "--write", "--state", f.state, "--settle", "0s")
+			audio, err := filepath.Glob(filepath.Join(show, "*.flac"))
+			if err != nil || len(audio) != 0 {
+				t.Fatalf("expected originals to be journaled and evacuated: %v, %v", audio, err)
+			}
+			if _, err = db.Exec("DROP TRIGGER stop_move"); err != nil {
+				t.Fatal(err)
+			}
+			target := path
+			if retry == "scan" {
+				target = f.source
+			}
+			run(t, true, retry, target, "--write", "--state", f.state, "--settle", "0s")
+			got := jobs(t, f.state)
+			if len(got) != 1 || got[0].Status != "completed" {
+				t.Fatalf("expected one completed original job: %+v", got)
+			}
+			audio, err = filepath.Glob(filepath.Join(show, "*.flac"))
+			want := []string{
+				filepath.Join(show, "01 Opening [intro].flac"),
+				filepath.Join(show, "02 Finale _ Encore.flac"),
+			}
+			if err != nil || !reflect.DeepEqual(audio, want) {
+				t.Fatalf("approval lost during retry: %v %v", audio, err)
+			}
+		})
+	}
 }

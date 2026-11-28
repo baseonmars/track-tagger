@@ -31,7 +31,25 @@
     else if (approved) help = "Save your review, or save it and apply now.";
     return { save, apply, label: !approved && saved ? "Apply saved review" : "Save and apply", help };
   }
-  if (typeof module !== "undefined") module.exports = { actionState, validDate };
+  // Match the portable component used by renameFilename in internal/app/rename.go.
+  function proposedFilename(number, title) {
+    const digits = String(number).replace(/^0+(?=\d)/, "");
+    const clean = title
+      .replace(/^[\x09-\x0d \u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+|[\x09-\x0d \u0085\u00a0\u1680\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]+$/g, "")
+      .replace(/[\x00-\x1f<>:"/\\|?*]/g, "_");
+    if (!/^[1-9]\d*$/.test(digits) || !clean) return "";
+    const prefix = digits.padStart(2, "0") + " ";
+    let remaining = 255 - prefix.length - ".flac".length;
+    let fitting = "";
+    for (const char of clean) {
+      const point = char.codePointAt(0);
+      remaining -= point < 0x80 ? 1 : point < 0x800 ? 2 : point < 0x10000 ? 3 : 4;
+      if (remaining < 0) break;
+      fitting += char;
+    }
+    return prefix + fitting + ".flac";
+  }
+  if (typeof module !== "undefined") module.exports = { actionState, validDate, proposedFilename };
   if (typeof document === "undefined") return;
   const form = document.getElementById("review-form");
   if (!form) return;
@@ -56,7 +74,37 @@
       (notesTarget ? (selected?.value ? "" : "Choose which show-notes file to edit.") : "No local show-notes file is available.");
   }
   const fields = Array.from(form.elements).filter(el => el.name && !["csrf", "id", "fingerprint", "approve"].includes(el.name));
+  const rename = form.elements.namedItem("rename_files");
+  const renameNotice = document.getElementById("rename-notice");
+  const titles = fields.filter(el => el.name === "track_title");
+  const discs = fields.filter(el => el.name === "track_disc");
+  const numbers = fields.filter(el => el.name === "track_number");
+  const skips = fields.filter(el => el.name === "track_skip");
+  const files = fields.filter(el => el.name === "track_file");
   function snapshot() { return JSON.stringify(fields.map(el => el.type === "checkbox" ? el.checked : el.value)); }
+  const previewMD5 = document.getElementById("preview-md5");
+  const md5Result = document.getElementById("md5-preview");
+  if (previewMD5) {
+    let request = 0;
+    const clear = () => { request++; md5Result.textContent = ""; };
+    form.addEventListener("input", clear);
+    form.addEventListener("change", clear);
+    const preview = async () => {
+      const current = ++request;
+      md5Result.textContent = "Checking whole-file checksums…";
+      try {
+        const response = await fetch("/preview-md5", { method: "POST", body: new URLSearchParams(new FormData(form)) });
+        const message = await response.text();
+        if (current === request) md5Result.textContent = message;
+      } catch {
+        if (current === request) md5Result.textContent = "Could not load the checksum preview. Try again.";
+      }
+    };
+    previewMD5.addEventListener("click", preview);
+    form.elements.namedItem("cleanup_md5").addEventListener("change", event => {
+      if (event.target.checked) queueMicrotask(preview);
+    });
+  }
   const baseline = snapshot();
   let submitting = false;
   let navigationApproved = false;
@@ -65,22 +113,42 @@
     const date = value("date");
     if (form.elements.namedItem("date_unknown").checked ? date !== "" : !validDate(date)) return false;
     if (!value("artist") || !value("album")) return false;
-    const titles = fields.filter(el => el.name === "track_title");
-    if (!titles.length || titles.some(el => !el.value.trim())) return false;
-    const discs = fields.filter(el => el.name === "track_disc");
-    const numbers = fields.filter(el => el.name === "track_number");
     const keys = new Set();
     for (let i = 0; i < discs.length; i++) {
-      if (!/^\d+$/.test(discs[i].value) || !/^\d+$/.test(numbers[i].value) || Number(discs[i].value) < 1 || Number(numbers[i].value) < 1) return false;
-      const key = Number(discs[i].value) + "/" + Number(numbers[i].value);
+      if (skips[i]?.checked) continue;
+      if (!/^\d+$/.test(discs[i].value) || !/^\d+$/.test(numbers[i].value) || !titles[i].value.trim()) return false;
+      const disc = BigInt(discs[i].value);
+      const number = BigInt(numbers[i].value);
+      if (disc < 1 || number < 1 || disc > 9223372036854775807n || number > 9223372036854775807n) return false;
+      const key = disc + "/" + number;
       if (keys.has(key)) return false;
       keys.add(key);
     }
-    return form.checkValidity();
+    return keys.size > 0 && form.checkValidity();
   }
   function update() {
     updateNotesPreview();
+    let movesFile = false;
+    skips.forEach((el, i) => {
+      for (const field of [titles[i], discs[i], numbers[i]]) {
+        field.required = !el.checked;
+        field.readOnly = el.checked;
+      }
+      const name = files[i].closest("td");
+      const preview = name.querySelector(".proposed-filename");
+      const original = preview.dataset.original;
+      const proposed = el.checked ? original : proposedFilename(numbers[i].value, titles[i].value);
+      preview.hidden = !rename.checked;
+      preview.textContent = proposed ? "Proposed: " + proposed : "Enter a track number and title";
+      movesFile ||= Boolean(proposed && proposed !== original);
+    });
+    const renameBlocked = renameNotice && rename.checked && movesFile;
+    if (renameNotice) renameNotice.hidden = !renameBlocked;
     const state = actionState({ reviewed: form.dataset.reviewed === "true", writable: form.dataset.writable === "true", status: form.dataset.status, changed: snapshot() !== baseline, approved: approve.checked, valid: valid(), submitting, validated: form.dataset.validated !== "false" });
+    if (renameBlocked) {
+      state.apply = false;
+      state.help = renameNotice.textContent;
+    }
     save.disabled = !state.save;
     if (apply) { apply.disabled = !state.apply; apply.textContent = state.label; }
     help.textContent = state.help;

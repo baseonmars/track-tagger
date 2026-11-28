@@ -195,17 +195,7 @@ func (e *Engine) changeCompanion(j FileJournal, replacement []byte, remove bool,
 		}
 		stage = f.Name()
 		defer os.Remove(stage)
-		err = f.Chmod(j.Mode)
-		if err == nil {
-			_, err = f.Write(replacement)
-		}
-		if err == nil {
-			err = f.Sync()
-		}
-		if closeErr := f.Close(); err == nil {
-			err = closeErr
-		}
-		if err != nil {
+		if err = writeCompanionFile(f, replacement, j.Mode); err != nil {
 			return "", err
 		}
 	}
@@ -228,6 +218,25 @@ func (e *Engine) changeCompanion(j FileJournal, replacement []byte, remove bool,
 		return j.AfterHash, e.store.finishUndo(fid, j.UndoOf, j.Target, j.AfterHash)
 	}
 	return j.AfterHash, e.store.finishFile(fid, j.Target, j.AfterHash, "committed")
+}
+
+func writeCompanionStage(path string, data []byte, mode os.FileMode) error {
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0600)
+	if err != nil {
+		return err
+	}
+	return writeCompanionFile(f, data, mode)
+}
+
+func writeCompanionFile(f *os.File, data []byte, mode os.FileMode) error {
+	err := f.Chmod(mode)
+	if err == nil {
+		_, err = f.Write(data)
+	}
+	if err == nil {
+		err = f.Sync()
+	}
+	return errors.Join(err, f.Close())
 }
 
 func (e *Engine) undoCompanion(j FileJournal) error {

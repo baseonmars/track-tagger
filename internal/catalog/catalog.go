@@ -38,6 +38,7 @@ type Track struct {
 	Title        string            `json:"title"`
 	Disc         int               `json:"disc"`
 	Number       int               `json:"number"`
+	Skip         bool              `json:"skip,omitempty"`
 	DiscTotal    int               `json:"disc_total"`
 	TrackTotal   int               `json:"track_total"`
 	Tags         map[string]string `json:"tags"`
@@ -53,6 +54,7 @@ type Recording struct {
 	Album             string     `json:"album"`
 	Date              string     `json:"date"`
 	DateUnknown       bool       `json:"date_unknown,omitempty"`
+	RenameFiles       bool       `json:"rename_files,omitempty"`
 	Venue             string     `json:"venue"`
 	City              string     `json:"city"`
 	Tracks            []Track    `json:"tracks"`
@@ -179,15 +181,21 @@ func scan(source string, fingerprint func(string) (Evidence, error)) ([]Recordin
 // Validate reads the contents of one discovered recording. Callers must not use
 // cached fingerprints for review approval or media changes.
 func Validate(source string, d Discovery, fingerprint func(string) (Evidence, error)) (Recording, error) {
-	return scanRecording(source, d.Path, fingerprint)
+	return scanRecording(source, d.Path, fingerprint, false)
+}
+
+// ValidateRenameInputs also fingerprints a recording while its audio files are
+// in journaled temporary paths and therefore absent from discovery.
+func ValidateRenameInputs(source, dir string, fingerprint func(string) (Evidence, error)) (Recording, error) {
+	return scanRecording(source, dir, fingerprint, true)
 }
 
 // ScanRecording freshly discovers and validates one recording, retaining paths
 // relative to the original collection. Independent nested recordings are skipped.
 func ScanRecording(source, dir string) (Recording, error) {
-	return scanRecording(source, dir, Fingerprint)
+	return scanRecording(source, dir, Fingerprint, false)
 }
-func scanRecording(source, dir string, fingerprint func(string) (Evidence, error)) (Recording, error) {
+func scanRecording(source, dir string, fingerprint func(string) (Evidence, error), allowEmpty bool) (Recording, error) {
 	root, err := filepath.Abs(source)
 	if err != nil {
 		return Recording{}, err
@@ -227,7 +235,7 @@ func scanRecording(source, dir string, fingerprint func(string) (Evidence, error
 	if err != nil {
 		return Recording{}, err
 	}
-	if len(files) == 0 {
+	if len(files) == 0 && !allowEmpty {
 		return Recording{}, fmt.Errorf("recording disappeared")
 	}
 	return build(root, dir, files, fingerprint)
@@ -505,7 +513,13 @@ func parseUnlabelledHeader(r *Recording, source []noteLine, artists map[string]b
 		venue := strings.TrimSpace(strings.TrimSuffix(lines[2].text, ","))
 		if event != "" && venue != "" {
 			artists[lines[0].text] = true
-			setLocation(r, "venue", &r.Venue, event+", "+venue)
+			if strings.HasPrefix(strings.ToLower(event), "aka ") || strings.HasPrefix(strings.ToLower(event), "a.k.a. ") {
+				event = ""
+			}
+			if event != "" {
+				venue = event + ", " + venue
+			}
+			setLocation(r, "venue", &r.Venue, venue)
 			setLocation(r, "city", &r.City, lines[3].text)
 			return
 		}
@@ -516,6 +530,11 @@ func parseUnlabelledHeader(r *Recording, source []noteLine, artists map[string]b
 	if len(lines) >= 4 && headerDate(lines[3]) && plainHeaderLine(lines[1]) && plainHeaderLine(lines[2]) && strings.Contains(lines[2].text, ",") {
 		venue := strings.TrimSpace(strings.TrimSuffix(lines[1].text, ","))
 		city := lines[2].text
+		if strings.Contains(strings.ToLower(venue), "festival") {
+			reason(r, "event and venue/city header needs review")
+			// The comma may separate a venue from a municipality, not city from region.
+			city = ""
+		}
 		if venue != "" {
 			artists[lines[0].text] = true
 			setLocation(r, "venue", &r.Venue, venue)
@@ -538,6 +557,12 @@ func parseUnlabelledHeader(r *Recording, source []noteLine, artists map[string]b
 	if city == "" || venue == "" || strings.ContainsAny(city+venue, ":>") {
 		return
 	}
+	if len(lines) >= 4 && plainHeaderLine(lines[3]) && explicitCityRegion.MatchString(lines[3].text) {
+		// An explicit following location distinguishes event @ venue from city @ venue.
+		reason(r, "event or location before venue needs review")
+		venue = city + ", " + venue
+		city = lines[3].text
+	}
 	artists[lines[0].text] = true
 	setLocation(r, "city", &r.City, city)
 	setLocation(r, "venue", &r.Venue, venue)
@@ -552,6 +577,9 @@ func headerDate(line noteLine) bool {
 }
 
 func setLocation(r *Recording, field string, target *string, value string) {
+	if locationUncertainty.MatchString(value) {
+		reason(r, "uncertain "+field+" in concert notes: "+value)
+	}
 	if *target != "" && value != "" && *target != value {
 		reason(r, "conflicting "+field+" in concert notes")
 	}
@@ -561,6 +589,10 @@ func setLocation(r *Recording, field string, target *string, value string) {
 }
 
 func addTitle(r *Recording, titles map[string]string, d, n int, title string) {
+	title = strings.TrimSpace(bracketedDuration.ReplaceAllString(title, ""))
+	if titleUncertainty.MatchString(title) {
+		reason(r, "uncertain title for track "+fmt.Sprintf("%d:%d", d, n)+": "+title)
+	}
 	if otherPerformer.MatchString(title) {
 		reason(r, "possible other performer in track "+fmt.Sprintf("%d:%d", d, n)+": "+strings.TrimSpace(title))
 	}
@@ -607,6 +639,9 @@ func chooseArt(r *Recording) {
 		reason(r, "artwork selection requires review")
 	}
 }
+
+var bsdChecksum = regexp.MustCompile(`(?i)^MD5 \((.+\.flac)\) = [0-9a-f]{32}$`)
+
 func checkManifest(r *Recording, path string) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -629,7 +664,9 @@ func checkManifest(r *Recording, path string) {
 			continue
 		}
 		var name string
-		if i := strings.Index(strings.ToLower(line), ".flac"); i >= 0 {
+		if match := bsdChecksum.FindStringSubmatch(line); match != nil {
+			name = match[1]
+		} else if i := strings.Index(strings.ToLower(line), ".flac"); i >= 0 {
 			part := strings.TrimSpace(line[:i+5])
 			fields := strings.Fields(part)
 			if len(fields) > 1 && len(fields[0]) == 32 {
@@ -651,6 +688,9 @@ func RefreshPlan(r *Recording) {
 	counts := map[int]int{}
 	maxDisc := 0
 	for _, t := range r.Tracks {
+		if t.Skip {
+			continue
+		}
 		counts[t.Disc]++
 		if t.Disc > maxDisc {
 			maxDisc = t.Disc
@@ -658,6 +698,11 @@ func RefreshPlan(r *Recording) {
 	}
 	for i := range r.Tracks {
 		t := &r.Tracks[i]
+		if t.Skip {
+			t.Tags = nil
+			t.TrackTotal, t.DiscTotal = 0, 0
+			continue
+		}
 		t.TrackTotal = counts[t.Disc]
 		t.DiscTotal = maxDisc
 		artist := t.Artist

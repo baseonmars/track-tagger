@@ -297,9 +297,31 @@ func StageInspected(src, temp string, original Info, tags map[string]string, art
 	if original.FileHash == "" || original.AudioHash == "" || len(original.Metadata) == 0 {
 		return Info{}, errors.New("staging requires a full source inspection")
 	}
-	blocks, _, err := readMetadata(bytes.NewReader(original.Metadata))
+	blocks, err := taggedBlocks(original, tags, artwork, replace)
 	if err != nil {
 		return Info{}, err
+	}
+	return stage(src, temp, blocks, original)
+}
+
+// MetadataWillChange compares the exact header produced by staging with the
+// existing header. Audio frames are copied verbatim by StageInspected.
+func MetadataWillChange(original Info, tags map[string]string, artwork string, replace bool) (bool, error) {
+	blocks, err := taggedBlocks(original, tags, artwork, replace)
+	if err != nil {
+		return false, err
+	}
+	var header bytes.Buffer
+	if err = writeFLAC(&header, blocks, bytes.NewReader(nil)); err != nil {
+		return false, err
+	}
+	return !bytes.Equal(header.Bytes(), original.Metadata), nil
+}
+
+func taggedBlocks(original Info, tags map[string]string, artwork string, replace bool) ([]*flac.MetaDataBlock, error) {
+	blocks, _, err := readMetadata(bytes.NewReader(original.Metadata))
+	if err != nil {
+		return nil, err
 	}
 	var comment *flac.MetaDataBlock
 	vendor := "Track Tagger"
@@ -315,11 +337,11 @@ func StageInspected(src, temp string, original Info, tags map[string]string, art
 	for k, v := range tags {
 		k = strings.ToUpper(k)
 		if k == "" || !utf8.ValidString(v) {
-			return Info{}, errors.New("invalid tag")
+			return nil, errors.New("invalid tag")
 		}
 		for _, c := range k {
 			if c < 32 || c > 125 || c == '=' {
-				return Info{}, errors.New("invalid tag name")
+				return nil, errors.New("invalid tag name")
 			}
 		}
 		normalized[k] = v
@@ -342,7 +364,7 @@ func StageInspected(src, temp string, original Info, tags map[string]string, art
 	}
 	data := encodeComments(vendor, vals)
 	if len(data) > maxBlock {
-		return Info{}, errors.New("comments too large")
+		return nil, errors.New("comments too large")
 	}
 	if comment != nil {
 		comment.Data = data
@@ -352,7 +374,7 @@ func StageInspected(src, temp string, original Info, tags map[string]string, art
 	if artwork != "" && (!original.HasArtwork || replace) {
 		b, err := picture(artwork)
 		if err != nil {
-			return Info{}, err
+			return nil, err
 		}
 		if replace {
 			out := blocks[:0]
@@ -365,7 +387,7 @@ func StageInspected(src, temp string, original Info, tags map[string]string, art
 		}
 		blocks = append(blocks, b)
 	}
-	return stage(src, temp, blocks, original)
+	return blocks, nil
 }
 func picture(path string) (*flac.MetaDataBlock, error) {
 	if err := CheckLocal(path); err != nil {

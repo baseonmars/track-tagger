@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -32,6 +33,7 @@ type Options struct {
 	Settle                     time.Duration
 }
 type Item struct {
+	CleanupMD5 bool `json:"cleanup_md5,omitempty"`
 	catalog.Recording
 	Reviewed              bool          `json:"Reviewed"`
 	AddNotesSignature     bool          `json:"add_notes_signature,omitempty"`
@@ -224,15 +226,40 @@ func (e *Engine) decorate(r catalog.Recording, browse bool) (Item, error) {
 			paths := []string{}
 			if e.Mode == Copy {
 				for _, ev := range item.Evidence {
+					if item.CleanupMD5 && strings.EqualFold(filepath.Ext(ev.Path), ".md5") {
+						target, x := e.destination(ev.Path)
+						if x != nil {
+							return Item{}, x
+						}
+						if _, x = os.Lstat(target); os.IsNotExist(x) {
+							owned, x := e.store.companionOutput(target, ev.SHA256, "")
+							if x != nil {
+								return Item{}, x
+							}
+							if owned {
+								continue
+							}
+						}
+					}
 					paths = append(paths, ev.Path)
 				}
 			} else {
 				for _, t := range item.Tracks {
-					paths = append(paths, t.Path)
+					if !t.Skip {
+						paths = append(paths, t.Path)
+					}
 				}
 			}
 			for _, path := range paths {
 				target, x := e.destination(path)
+				if e.Mode == Copy && item.RenameFiles {
+					for _, t := range item.Tracks {
+						if t.Path == path {
+							target = renameDestination(target, t, true)
+							break
+						}
+					}
+				}
 				if x != nil {
 					unchanged = false
 					break
@@ -307,7 +334,7 @@ func validateReview(base catalog.Recording, item *Item) error {
 	for _, t := range base.Tracks {
 		files[t.Path] = true
 	}
-	keys := map[string]bool{}
+	keys := map[string]string{}
 	if strings.TrimSpace(item.Artist) == "" || strings.TrimSpace(item.Album) == "" {
 		return errors.New("artist and album are required")
 	}
@@ -329,14 +356,20 @@ func validateReview(base catalog.Recording, item *Item) error {
 			return fmt.Errorf("duplicate or unknown file %s", t.Path)
 		}
 		delete(files, t.Path)
+		if t.Skip {
+			continue
+		}
 		if t.Number < 1 || t.Disc < 1 || strings.TrimSpace(t.Title) == "" {
-			return errors.New("every file needs a title and positive disc/track numbers")
+			return fmt.Errorf("%s needs a title and positive disc/track numbers, or select Leave this file untouched", filepath.Base(t.Path))
 		}
 		key := fmt.Sprintf("%d/%d", t.Disc, t.Number)
-		if keys[key] {
-			return errors.New("duplicate disc/track mapping")
+		if other := keys[key]; other != "" {
+			return fmt.Errorf("duplicate disc/track mapping for %s and %s", filepath.Base(other), filepath.Base(t.Path))
 		}
-		keys[key] = true
+		keys[key] = t.Path
+	}
+	if len(keys) == 0 {
+		return errors.New("map at least one audio file")
 	}
 	if item.Artwork != "" {
 		found := false
@@ -422,6 +455,13 @@ func (e *Engine) strictRecording(id, path string) (catalog.Recording, error) {
 	return r, nil
 }
 func (e *Engine) saveReview(r catalog.Recording, item Item) error {
+	pending, err := e.store.renamePending(e.Source, r.ID)
+	if err != nil {
+		return err
+	}
+	if pending {
+		return errors.New("a rename job is pending; finish it with the same source, mode and state directory before saving another review")
+	}
 	if evidence(r) != evidence(item.Recording) {
 		return errors.New("inputs changed; refresh before reviewing")
 	}
@@ -487,10 +527,36 @@ func (e *Engine) applyLocked(p Plan, check func(Item) error) ([]string, error) {
 	if err = e.recover(); err != nil {
 		return nil, err
 	}
+	var resumed map[string]renameBatch
+	if ids := planIDs(p); len(ids) > 0 {
+		resumed, err = e.resumeRenames("", ids...)
+		if err != nil {
+			return nil, err
+		}
+	}
 	var ids []string
 	for _, item := range p.Recordings {
 		if item.Status != "ready" {
 			continue
+		}
+		if b, ok := resumed[item.ID]; ok {
+			if check != nil {
+				if err = check(b.Item); err != nil {
+					return ids, err
+				}
+				ids = append(ids, b.Job)
+				continue
+			}
+			if b.Item.Reviewed == item.Reviewed && SameInputs(b.Item.Recording, item.Recording) && sameItemProposal(b.Item, item) {
+				ids = append(ids, b.Job)
+				continue
+			}
+		}
+		if check != nil && item.Path == "" {
+			item.Path, err = e.recordingPath(item.ID)
+			if err != nil {
+				return ids, err
+			}
 		}
 		base, err := e.strictRecording(item.ID, item.Path)
 		if err != nil || (check == nil && evidence(base) != evidence(item.Recording)) {
@@ -586,30 +652,82 @@ func (e *Engine) targetAllowed(target string) (string, error) {
 	return h, nil
 }
 func (e *Engine) applyItem(item Item) (id string, err error) {
+	rename, err := e.renameMoves(item)
+	if err != nil {
+		return "", err
+	}
+	if len(rename) > 0 {
+		if !item.Reviewed {
+			return "", errors.New("approve a review before changing filenames")
+		}
+		if err = checkRenameManifests(item); err != nil {
+			return "", err
+		}
+		return e.applyRename(item, rename)
+	}
 	type output struct {
 		src, target string
 		tags        map[string]string
 		art         string
 		audio       bool
+		skipTags    bool
 	}
 	var outputs []output
+	removals, err := planMD5(item)
+	if err != nil {
+		return "", err
+	}
+	omitted := map[string]bool{}
+	if e.Mode == Copy && item.CleanupMD5 {
+		for _, ev := range item.Evidence {
+			if !strings.EqualFold(filepath.Ext(ev.Path), ".md5") {
+				continue
+			}
+			target, err := e.destination(ev.Path)
+			if err != nil {
+				return "", err
+			}
+			hash, err := e.targetAllowed(target)
+			if err != nil {
+				return "", err
+			}
+			if hash != "" {
+				continue
+			}
+			omitted[ev.Path], err = e.store.companionOutput(target, ev.SHA256, "")
+			if err != nil {
+				return "", err
+			}
+		}
+	}
+	removals = slices.DeleteFunc(removals, func(path string) bool { return omitted[path] })
+	var lines []string
+	for _, path := range removals {
+		lines = append(lines, cleanupLine(item.Path, path))
+	}
 	var note notesEdit
 	if item.Reviewed && item.AddNotesSignature && item.NotesSignatureEnabled {
-		note = e.planNotesEdit(item, notesTarget(item), notesSignature)
+		lines = append(lines, notesSignature)
+	}
+	if len(lines) > 0 {
+		note = e.planNotesEdit(item, notesTarget(item), lines...)
 		if note.replacement == nil && !note.alreadyPresent {
 			return "", errors.New(note.Reason)
 		}
 	}
 	for _, t := range item.Tracks {
+		if t.Skip && e.Mode == Write {
+			continue
+		}
 		dest, x := e.destination(t.Path)
 		if x != nil {
 			return "", x
 		}
-		outputs = append(outputs, output{t.Path, dest, t.Tags, item.Artwork, true})
+		outputs = append(outputs, output{t.Path, dest, t.Tags, item.Artwork, true, t.Skip})
 	}
 	if e.Mode == Copy {
 		for _, ev := range item.Evidence {
-			if strings.EqualFold(filepath.Ext(ev.Path), ".flac") {
+			if omitted[ev.Path] || strings.EqualFold(filepath.Ext(ev.Path), ".flac") {
 				continue
 			}
 			dest, x := e.destination(ev.Path)
@@ -639,7 +757,19 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 			}
 		}
 	}
-	id, err = e.store.newJob(item.ID, "metadata update; original checksum documents retained; whole-file MD5 changes")
+	summary := "Metadata update."
+	if len(removals) > 0 {
+		names := make([]string, 0, len(removals))
+		for _, path := range removals {
+			name, err := filepath.Rel(item.Path, path)
+			if err != nil {
+				return "", err
+			}
+			names = append(names, filepath.ToSlash(name))
+		}
+		summary += " Approved MD5 cleanup for " + strings.Join(names, ", ") + "."
+	}
+	id, err = e.store.newJob(item.ID, summary)
 	if err != nil {
 		return "", err
 	}
@@ -710,6 +840,10 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 				}
 				original = prior.Metadata
 			}
+			if o.skipTags && before != "" {
+				skipped[o.target] = before
+				continue
+			}
 		}
 		if err = os.MkdirAll(filepath.Dir(o.target), 0755); err != nil {
 			return id, err
@@ -724,13 +858,14 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 		var after string
 		x = func() error {
 			defer os.Remove(tempName)
-			if o.audio {
+			if o.audio && !o.skipTags {
 				staged, x := media.StageInspected(o.src, tempName, in, o.tags, o.art, item.Reviewed)
 				if x != nil {
 					return x
 				}
 				after = staged.FileHash
 			} else {
+				original = nil
 				if x := copyFile(o.src, tempName); x != nil {
 					return x
 				}
@@ -780,6 +915,9 @@ func (e *Engine) applyItem(item Item) (id string, err error) {
 				}
 			}
 		}
+	}
+	if err = e.removeMD5(id, &item, removals, skipped); err != nil {
+		return id, err
 	}
 	if note.replacement != nil {
 		if err = e.commitCompanion(id, &item, note.Source, note.Target, note.beforeHash, note.replacement, false); err != nil {
@@ -924,9 +1062,19 @@ func (e *Engine) Undo(job string, write bool) ([]FileJournal, error) {
 	if err = e.recover(); err != nil {
 		return nil, err
 	}
+	if _, err = e.resumeRenames(job); err != nil {
+		return nil, err
+	}
 	files, err = e.store.Files(job)
 	if err != nil {
 		return nil, err
+	}
+	source, path, err := e.store.renameLocation(job)
+	if err != nil {
+		return nil, err
+	}
+	if source != "" {
+		return files, e.undoRename(job, source, path, files)
 	}
 	for _, j := range files {
 		if j.Status != "committed" || (!j.Companion && len(j.Metadata) == 0) {
@@ -1001,10 +1149,10 @@ func (e *Engine) Undo(job string, write bool) ([]FileJournal, error) {
 func SameInputs(a, b catalog.Recording) bool { return reflect.DeepEqual(a.Evidence, b.Evidence) }
 
 func sameProposal(a, b catalog.Recording) bool {
-	return a.Artist == b.Artist && a.Album == b.Album && a.Date == b.Date && a.DateUnknown == b.DateUnknown && a.Artwork == b.Artwork && reflect.DeepEqual(a.Tracks, b.Tracks)
+	return a.Artist == b.Artist && a.Album == b.Album && a.Date == b.Date && a.DateUnknown == b.DateUnknown && a.Artwork == b.Artwork && a.RenameFiles == b.RenameFiles && reflect.DeepEqual(a.Tracks, b.Tracks)
 }
 func sameItemProposal(a, b Item) bool {
-	return sameProposal(a.Recording, b.Recording) && a.AddNotesSignature == b.AddNotesSignature && a.NotesTarget == b.NotesTarget
+	return a.CleanupMD5 == b.CleanupMD5 && sameProposal(a.Recording, b.Recording) && a.AddNotesSignature == b.AddNotesSignature && a.NotesTarget == b.NotesTarget
 }
 func (e *Engine) revalidate(item Item) error {
 	_, err := e.revalidateRecording(item)

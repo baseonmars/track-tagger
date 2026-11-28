@@ -40,3 +40,8 @@ html[data-layout=compact] main:has(#recording-library)>.intro{margin:0 0 6px;fon
 .notes-edit{min-inline-size:0;margin:1rem 0 0;border:1px solid var(--line)}
 .notes-edit legend{font-size:.85rem;font-weight:600}
 .notes-edit p{overflow-wrap:anywhere;font-size:.8rem}
+.rename-option, .skip-track { display:block; }
+.rename-option { margin: .65rem 0; }
+.skip-track { margin-top: .3rem; }
+.proposed-filename { display:block; overflow-wrap:anywhere; }
+.proposed-filename[hidden] { display:none; }

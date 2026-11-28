@@ -80,7 +80,7 @@ jobs:
   binaries:
     needs: [test, plan-release]
     if: always() && needs.test.result == 'success' && (needs.plan-release.result == 'success' || needs.plan-release.result == 'skipped')
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.goos == 'darwin' && 'macos-latest' || 'ubuntu-latest' }}
     strategy:
       matrix:
         goos: [linux, darwin, windows]
@@ -123,6 +123,10 @@ jobs:
             mkdir -p dist/docs
             cp docs/windows.md docs/windows-signing.md dist/docs/
             (cd dist && zip "$base.zip" "$name" track-tagger-gui.exe LICENSE README.md docs/windows.md docs/windows-signing.md)
+          elif [ "$GOOS" = darwin ]; then
+            ./packaging/macos/build.sh dist "$build_version"
+            COPYFILE_DISABLE=1 tar -czf "dist/$base.tar.gz" -C dist "Track Tagger.app" "$name" LICENSE README.md
+            rm -r "dist/Track Tagger.app"
           else
             tar -czf "dist/$base.tar.gz" -C dist "$name" LICENSE README.md
           fi

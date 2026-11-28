@@ -6733,37 +6733,37 @@
       "sample2031-04-12t11.flac"
     ],
     "titles": {
-      "1:7": "Signal Lantern                        [12:02.150]",
-      "1:8": "Meridian Velvet *                      [10:14.021]",
-      "1:9": "Cobalt Orchard                         [04:46.951]",
-      "1:10": "Paper Signal > #                [12:34.263]",
-      "1:11": "Amber Meridian                              [09:08.464]"
+      "1:7": "Signal Lantern",
+      "1:8": "Meridian Velvet *",
+      "1:9": "Cobalt Orchard",
+      "1:10": "Paper Signal > #",
+      "1:11": "Amber Meridian"
     },
     "mappings": {
       "sample2031-04-12t07.flac": {
         "disc": 1,
         "number": 7,
-        "title": "Signal Lantern                        [12:02.150]"
+        "title": "Signal Lantern"
       },
       "sample2031-04-12t08.flac": {
         "disc": 1,
         "number": 8,
-        "title": "Meridian Velvet *                      [10:14.021]"
+        "title": "Meridian Velvet *"
       },
       "sample2031-04-12t09.flac": {
         "disc": 1,
         "number": 9,
-        "title": "Cobalt Orchard                         [04:46.951]"
+        "title": "Cobalt Orchard"
       },
       "sample2031-04-12t10.flac": {
         "disc": 1,
         "number": 10,
-        "title": "Paper Signal > #                [12:34.263]"
+        "title": "Paper Signal > #"
       },
       "sample2031-04-12t11.flac": {
         "disc": 1,
         "number": 11,
-        "title": "Amber Meridian                              [09:08.464]"
+        "title": "Amber Meridian"
       }
     },
     "unresolved": [],
@@ -6924,37 +6924,37 @@
       "sample2031-04-12t05.flac"
     ],
     "titles": {
-      "1:1": "Marble Signal         [07:44.567]",
-      "1:2": "Silver Meridian           [04:32.552]",
-      "1:3": "Harbor Cobalt >              [11:13.956]",
-      "1:4": "Window Paper           [09:53.006]",
-      "1:5": "Northbound Amber           [04:07.280]"
+      "1:1": "Marble Signal",
+      "1:2": "Silver Meridian",
+      "1:3": "Harbor Cobalt >",
+      "1:4": "Window Paper",
+      "1:5": "Northbound Amber"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "Marble Signal         [07:44.567]"
+        "title": "Marble Signal"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Silver Meridian           [04:32.552]"
+        "title": "Silver Meridian"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Harbor Cobalt >              [11:13.956]"
+        "title": "Harbor Cobalt >"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Window Paper           [09:53.006]"
+        "title": "Window Paper"
       },
       "sample2031-04-12t05.flac": {
         "disc": 1,
         "number": 5,
-        "title": "Northbound Amber           [04:07.280]"
+        "title": "Northbound Amber"
       }
     },
     "unresolved": [],
@@ -7057,31 +7057,31 @@
       "sample2031-04-12t04.flac"
     ],
     "titles": {
-      "1:1": "Harbor Marble >                     [08:04.901]",
-      "1:2": "Window Silver >                [05:40.275]",
-      "1:3": "Northbound Harbor > Copper Window >    [09:41.318]",
-      "1:4": "Copper Window                  [08:57.432]"
+      "1:1": "Harbor Marble >",
+      "1:2": "Window Silver >",
+      "1:3": "Northbound Harbor > Copper Window >",
+      "1:4": "Copper Window"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "Harbor Marble >                     [08:04.901]"
+        "title": "Harbor Marble >"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Window Silver >                [05:40.275]"
+        "title": "Window Silver >"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Northbound Harbor > Copper Window >    [09:41.318]"
+        "title": "Northbound Harbor > Copper Window >"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Copper Window                  [08:57.432]"
+        "title": "Copper Window"
       }
     },
     "unresolved": [],
@@ -7249,31 +7249,31 @@
       "sample2031-04-12t04.flac"
     ],
     "titles": {
-      "1:1": "Copper Signal >                         [07:09.43]",
-      "1:2": "Lantern Meridian >                    [04:29.35]",
-      "1:3": "Velvet Cobalt                [09:47.27]",
-      "1:4": "Orchard Paper                      [12:06.64]"
+      "1:1": "Copper Signal >",
+      "1:2": "Lantern Meridian >",
+      "1:3": "Velvet Cobalt",
+      "1:4": "Orchard Paper"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "Copper Signal >                         [07:09.43]"
+        "title": "Copper Signal >"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Lantern Meridian >                    [04:29.35]"
+        "title": "Lantern Meridian >"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Velvet Cobalt                [09:47.27]"
+        "title": "Velvet Cobalt"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Orchard Paper                      [12:06.64]"
+        "title": "Orchard Paper"
       }
     },
     "unresolved": [],
@@ -7306,37 +7306,37 @@
       "sample2031-04-12t07.flac"
     ],
     "titles": {
-      "1:3": "Lantern Paper >        [09:01.71]",
-      "1:4": "Velvet Amber                [11:57.24]",
-      "1:5": "Orchard River *              [05:22.21]",
-      "1:6": "Signal Marble         [07:09.41]",
-      "1:7": "Meridian Silver > #        [12:31.51]"
+      "1:3": "Lantern Paper >",
+      "1:4": "Velvet Amber",
+      "1:5": "Orchard River *",
+      "1:6": "Signal Marble",
+      "1:7": "Meridian Silver > #"
     },
     "mappings": {
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Lantern Paper >        [09:01.71]"
+        "title": "Lantern Paper >"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Velvet Amber                [11:57.24]"
+        "title": "Velvet Amber"
       },
       "sample2031-04-12t05.flac": {
         "disc": 1,
         "number": 5,
-        "title": "Orchard River *              [05:22.21]"
+        "title": "Orchard River *"
       },
       "sample2031-04-12t06.flac": {
         "disc": 1,
         "number": 6,
-        "title": "Signal Marble         [07:09.41]"
+        "title": "Signal Marble"
       },
       "sample2031-04-12t07.flac": {
         "disc": 1,
         "number": 7,
-        "title": "Meridian Silver > #        [12:31.51]"
+        "title": "Meridian Silver > #"
       }
     },
     "unresolved": [],
@@ -7497,37 +7497,37 @@
       "sample2031-04-12t10.flac"
     ],
     "titles": {
-      "1:6": "Paper Marble                      [06:26.55]",
-      "1:7": "Amber Silver >              [03:11.57]",
-      "1:8": "River Harbor >                     [04:05.54]",
-      "1:9": "Marble Window                [02:13.06]",
-      "1:10": "Silver Northbound                      [07:02.36]"
+      "1:6": "Paper Marble",
+      "1:7": "Amber Silver >",
+      "1:8": "River Harbor >",
+      "1:9": "Marble Window",
+      "1:10": "Silver Northbound"
     },
     "mappings": {
       "sample2031-04-12t06.flac": {
         "disc": 1,
         "number": 6,
-        "title": "Paper Marble                      [06:26.55]"
+        "title": "Paper Marble"
       },
       "sample2031-04-12t07.flac": {
         "disc": 1,
         "number": 7,
-        "title": "Amber Silver >              [03:11.57]"
+        "title": "Amber Silver >"
       },
       "sample2031-04-12t08.flac": {
         "disc": 1,
         "number": 8,
-        "title": "River Harbor >                     [04:05.54]"
+        "title": "River Harbor >"
       },
       "sample2031-04-12t09.flac": {
         "disc": 1,
         "number": 9,
-        "title": "Marble Window                [02:13.06]"
+        "title": "Marble Window"
       },
       "sample2031-04-12t10.flac": {
         "disc": 1,
         "number": 10,
-        "title": "Silver Northbound                      [07:02.36]"
+        "title": "Silver Northbound"
       }
     },
     "unresolved": [],
@@ -7561,43 +7561,43 @@
       "sample2031-04-12t17.flac"
     ],
     "titles": {
-      "1:12": "Amber Window >                          [05:28.36]",
-      "1:13": "River Northbound     [08:31.44]",
-      "1:14": "Marble Copper >                   [10:34.21]",
-      "1:15": "Silver Lantern >                            [02:13.15]",
-      "1:16": "Harbor Velvet                               [09:56.07]",
-      "1:17": "E: Window Orchard                 [05:52.53]"
+      "1:12": "Amber Window >",
+      "1:13": "River Northbound",
+      "1:14": "Marble Copper >",
+      "1:15": "Silver Lantern >",
+      "1:16": "Harbor Velvet",
+      "1:17": "E: Window Orchard"
     },
     "mappings": {
       "sample2031-04-12t12.flac": {
         "disc": 1,
         "number": 12,
-        "title": "Amber Window >                          [05:28.36]"
+        "title": "Amber Window >"
       },
       "sample2031-04-12t13.flac": {
         "disc": 1,
         "number": 13,
-        "title": "River Northbound     [08:31.44]"
+        "title": "River Northbound"
       },
       "sample2031-04-12t14.flac": {
         "disc": 1,
         "number": 14,
-        "title": "Marble Copper >                   [10:34.21]"
+        "title": "Marble Copper >"
       },
       "sample2031-04-12t15.flac": {
         "disc": 1,
         "number": 15,
-        "title": "Silver Lantern >                            [02:13.15]"
+        "title": "Silver Lantern >"
       },
       "sample2031-04-12t16.flac": {
         "disc": 1,
         "number": 16,
-        "title": "Harbor Velvet                               [09:56.07]"
+        "title": "Harbor Velvet"
       },
       "sample2031-04-12t17.flac": {
         "disc": 1,
         "number": 17,
-        "title": "E: Window Orchard                 [05:52.53]"
+        "title": "E: Window Orchard"
       }
     },
     "unresolved": [],
@@ -7629,31 +7629,31 @@
       "sample2031-04-12t04.flac"
     ],
     "titles": {
-      "1:1": "River Lantern >                       [05:10.311]",
-      "1:2": "Marble Velvet              [06:56.783]",
-      "1:3": "Silver Orchard                       [05:18.640]",
-      "1:4": "Harbor Signal >                [03:51.429]"
+      "1:1": "River Lantern >",
+      "1:2": "Marble Velvet",
+      "1:3": "Silver Orchard",
+      "1:4": "Harbor Signal >"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "River Lantern >                       [05:10.311]"
+        "title": "River Lantern >"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Marble Velvet              [06:56.783]"
+        "title": "Marble Velvet"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Silver Orchard                       [05:18.640]"
+        "title": "Silver Orchard"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Harbor Signal >                [03:51.429]"
+        "title": "Harbor Signal >"
       }
     },
     "unresolved": [],
@@ -8014,31 +8014,31 @@
       "sample2031-04-12t04.flac"
     ],
     "titles": {
-      "1:1": "Orchard Window                      [04:58.69]",
-      "1:2": "Signal Northbound           [04:32.68]",
-      "1:3": "Meridian Copper  [04:03.55]",
-      "1:4": "Cobalt Lantern                   [03:33.68]"
+      "1:1": "Orchard Window",
+      "1:2": "Signal Northbound",
+      "1:3": "Meridian Copper",
+      "1:4": "Cobalt Lantern"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "Orchard Window                      [04:58.69]"
+        "title": "Orchard Window"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Signal Northbound           [04:32.68]"
+        "title": "Signal Northbound"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Meridian Copper  [04:03.55]"
+        "title": "Meridian Copper"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Cobalt Lantern                   [03:33.68]"
+        "title": "Cobalt Lantern"
       }
     },
     "unresolved": [],
@@ -8204,31 +8204,31 @@
       "sample2031-04-12t04.flac"
     ],
     "titles": {
-      "1:1": "Cobalt Paper           [05:01.52]",
-      "1:2": "Paper Amber                      [08:15.10]",
-      "1:3": "Amber River >                    [09:46.58]",
-      "1:4": "River Marble                      [06:24.19]"
+      "1:1": "Cobalt Paper",
+      "1:2": "Paper Amber",
+      "1:3": "Amber River >",
+      "1:4": "River Marble"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "Cobalt Paper           [05:01.52]"
+        "title": "Cobalt Paper"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Paper Amber                      [08:15.10]"
+        "title": "Paper Amber"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Amber River >                    [09:46.58]"
+        "title": "Amber River >"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "River Marble                      [06:24.19]"
+        "title": "River Marble"
       }
     },
     "unresolved": [],
@@ -10152,37 +10152,37 @@
       "sample2031-04-12t12.flac"
     ],
     "titles": {
-      "1:8": "Paper Marble\t\t                 [09:15]",
-      "1:9": "Amber Silver\t\t [01:04]",
-      "1:10": "River Harbor #\t                         [06:47]",
-      "1:11": "Marble Window #\t                         [08:36]",
-      "1:12": "Silver Northbound #\t\t\t [11:03]"
+      "1:8": "Paper Marble",
+      "1:9": "Amber Silver",
+      "1:10": "River Harbor #",
+      "1:11": "Marble Window #",
+      "1:12": "Silver Northbound #"
     },
     "mappings": {
       "sample2031-04-12t08.flac": {
         "disc": 1,
         "number": 8,
-        "title": "Paper Marble\t\t                 [09:15]"
+        "title": "Paper Marble"
       },
       "sample2031-04-12t09.flac": {
         "disc": 1,
         "number": 9,
-        "title": "Amber Silver\t\t [01:04]"
+        "title": "Amber Silver"
       },
       "sample2031-04-12t10.flac": {
         "disc": 1,
         "number": 10,
-        "title": "River Harbor #\t                         [06:47]"
+        "title": "River Harbor #"
       },
       "sample2031-04-12t11.flac": {
         "disc": 1,
         "number": 11,
-        "title": "Marble Window #\t                         [08:36]"
+        "title": "Marble Window #"
       },
       "sample2031-04-12t12.flac": {
         "disc": 1,
         "number": 12,
-        "title": "Silver Northbound #\t\t\t [11:03]"
+        "title": "Silver Northbound #"
       }
     },
     "unresolved": [],
@@ -11884,31 +11884,31 @@
       "sample2031-04-12t04.flac"
     ],
     "titles": {
-      "1:1": "River Lantern >           [06:04.847]",
-      "1:2": "Marble Velvet >  [02:16.472]",
-      "1:3": "Silver Orchard >                      [04:39.799]",
-      "1:4": "Harbor Signal    [01:38.660]"
+      "1:1": "River Lantern >",
+      "1:2": "Marble Velvet >",
+      "1:3": "Silver Orchard >",
+      "1:4": "Harbor Signal"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "River Lantern >           [06:04.847]"
+        "title": "River Lantern >"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Marble Velvet >  [02:16.472]"
+        "title": "Marble Velvet >"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Silver Orchard >                      [04:39.799]"
+        "title": "Silver Orchard >"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Harbor Signal    [01:38.660]"
+        "title": "Harbor Signal"
       }
     },
     "unresolved": [],
@@ -12010,31 +12010,31 @@
       "sample2031-04-12t04.flac"
     ],
     "titles": {
-      "1:1": "Orchard Window >  [03:03.45]",
-      "1:2": "Signal Northbound >                      [05:35.24]",
-      "1:3": "Meridian Copper                        [08:15.30]",
-      "1:4": "Cobalt Lantern                        [08:17.00]"
+      "1:1": "Orchard Window >",
+      "1:2": "Signal Northbound >",
+      "1:3": "Meridian Copper",
+      "1:4": "Cobalt Lantern"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "Orchard Window >  [03:03.45]"
+        "title": "Orchard Window >"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Signal Northbound >                      [05:35.24]"
+        "title": "Signal Northbound >"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Meridian Copper                        [08:15.30]"
+        "title": "Meridian Copper"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Cobalt Lantern                        [08:17.00]"
+        "title": "Cobalt Lantern"
       }
     },
     "unresolved": [],
@@ -12067,37 +12067,37 @@
       "sample2031-04-12t05.flac"
     ],
     "titles": {
-      "1:1": "Signal Lantern                              [07:01.41]",
-      "1:2": "Meridian Velvet >   [02:20.11]",
-      "1:3": "Cobalt Orchard >                       [05:45.55]",
-      "1:4": "Paper Signal >  [03:55.72]",
-      "1:5": "Amber Meridian >                          [04:36.15]"
+      "1:1": "Signal Lantern",
+      "1:2": "Meridian Velvet >",
+      "1:3": "Cobalt Orchard >",
+      "1:4": "Paper Signal >",
+      "1:5": "Amber Meridian >"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "Signal Lantern                              [07:01.41]"
+        "title": "Signal Lantern"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Meridian Velvet >   [02:20.11]"
+        "title": "Meridian Velvet >"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Cobalt Orchard >                       [05:45.55]"
+        "title": "Cobalt Orchard >"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Paper Signal >  [03:55.72]"
+        "title": "Paper Signal >"
       },
       "sample2031-04-12t05.flac": {
         "disc": 1,
         "number": 5,
-        "title": "Amber Meridian >                          [04:36.15]"
+        "title": "Amber Meridian >"
       }
     },
     "unresolved": [],
@@ -12129,31 +12129,31 @@
       "sample2031-04-12t04.flac"
     ],
     "titles": {
-      "1:1": "Harbor Marble >                   [07:45.47]",
-      "1:2": "Window Silver >                [05:01.68]",
-      "1:3": "Northbound Harbor                       [09:52.09]",
-      "1:4": "Copper Window >                     [09:05.14]"
+      "1:1": "Harbor Marble >",
+      "1:2": "Window Silver >",
+      "1:3": "Northbound Harbor",
+      "1:4": "Copper Window >"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "Harbor Marble >                   [07:45.47]"
+        "title": "Harbor Marble >"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Window Silver >                [05:01.68]"
+        "title": "Window Silver >"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Northbound Harbor                       [09:52.09]"
+        "title": "Northbound Harbor"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Copper Window >                     [09:05.14]"
+        "title": "Copper Window >"
       }
     },
     "unresolved": [],
@@ -12186,37 +12186,37 @@
       "sample2031-04-12t11.flac"
     ],
     "titles": {
-      "1:7": "Window Window            [04:54.50]",
-      "1:8": "Northbound Northbound >                  [05:45.48]",
-      "1:9": "Copper Copper                [07:34.27]",
-      "1:10": "Lantern Lantern > *          [13:14.63]",
-      "1:11": "Velvet Velvet                        [06:19.62]"
+      "1:7": "Window Window",
+      "1:8": "Northbound Northbound >",
+      "1:9": "Copper Copper",
+      "1:10": "Lantern Lantern > *",
+      "1:11": "Velvet Velvet"
     },
     "mappings": {
       "sample2031-04-12t07.flac": {
         "disc": 1,
         "number": 7,
-        "title": "Window Window            [04:54.50]"
+        "title": "Window Window"
       },
       "sample2031-04-12t08.flac": {
         "disc": 1,
         "number": 8,
-        "title": "Northbound Northbound >                  [05:45.48]"
+        "title": "Northbound Northbound >"
       },
       "sample2031-04-12t09.flac": {
         "disc": 1,
         "number": 9,
-        "title": "Copper Copper                [07:34.27]"
+        "title": "Copper Copper"
       },
       "sample2031-04-12t10.flac": {
         "disc": 1,
         "number": 10,
-        "title": "Lantern Lantern > *          [13:14.63]"
+        "title": "Lantern Lantern > *"
       },
       "sample2031-04-12t11.flac": {
         "disc": 1,
         "number": 11,
-        "title": "Velvet Velvet                        [06:19.62]"
+        "title": "Velvet Velvet"
       }
     },
     "unresolved": [],
@@ -12320,37 +12320,37 @@
       "sample2031-04-12t10.flac"
     ],
     "titles": {
-      "1:6": "Paper Marble*                [10:29.18]",
-      "1:7": "Amber Silver >                   [10:10.15]",
-      "1:8": "River Harbor  [04:31.37]",
-      "1:9": "Marble Window                       [05:14.74]",
-      "1:10": "Silver Northbound > Harbor Copper >        [09:33.13]"
+      "1:6": "Paper Marble*",
+      "1:7": "Amber Silver >",
+      "1:8": "River Harbor",
+      "1:9": "Marble Window",
+      "1:10": "Silver Northbound > Harbor Copper >"
     },
     "mappings": {
       "sample2031-04-12t06.flac": {
         "disc": 1,
         "number": 6,
-        "title": "Paper Marble*                [10:29.18]"
+        "title": "Paper Marble*"
       },
       "sample2031-04-12t07.flac": {
         "disc": 1,
         "number": 7,
-        "title": "Amber Silver >                   [10:10.15]"
+        "title": "Amber Silver >"
       },
       "sample2031-04-12t08.flac": {
         "disc": 1,
         "number": 8,
-        "title": "River Harbor  [04:31.37]"
+        "title": "River Harbor"
       },
       "sample2031-04-12t09.flac": {
         "disc": 1,
         "number": 9,
-        "title": "Marble Window                       [05:14.74]"
+        "title": "Marble Window"
       },
       "sample2031-04-12t10.flac": {
         "disc": 1,
         "number": 10,
-        "title": "Silver Northbound > Harbor Copper >        [09:33.13]"
+        "title": "Silver Northbound > Harbor Copper >"
       }
     },
     "unresolved": [],
@@ -12509,31 +12509,31 @@
       "sample2031-04-12t04.flac"
     ],
     "titles": {
-      "1:1": "//Harbor Marble >  [00:42.36]",
-      "1:2": "Window Silver >             [05:43.70]",
-      "1:3": "Northbound Harbor >                     [05:07.20]",
-      "1:4": "Copper Window > Lantern Northbound >                  [10:52.36]"
+      "1:1": "//Harbor Marble >",
+      "1:2": "Window Silver >",
+      "1:3": "Northbound Harbor >",
+      "1:4": "Copper Window > Lantern Northbound >"
     },
     "mappings": {
       "sample2031-04-12t01.flac": {
         "disc": 1,
         "number": 1,
-        "title": "//Harbor Marble >  [00:42.36]"
+        "title": "//Harbor Marble >"
       },
       "sample2031-04-12t02.flac": {
         "disc": 1,
         "number": 2,
-        "title": "Window Silver >             [05:43.70]"
+        "title": "Window Silver >"
       },
       "sample2031-04-12t03.flac": {
         "disc": 1,
         "number": 3,
-        "title": "Northbound Harbor >                     [05:07.20]"
+        "title": "Northbound Harbor >"
       },
       "sample2031-04-12t04.flac": {
         "disc": 1,
         "number": 4,
-        "title": "Copper Window > Lantern Northbound >                  [10:52.36]"
+        "title": "Copper Window > Lantern Northbound >"
       }
     },
     "unresolved": [],
