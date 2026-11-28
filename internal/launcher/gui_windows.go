@@ -697,7 +697,7 @@ func Run(version string, resumeServer bool, packagePath string) {
 		id = 6
 	}
 	check(id, true)
-	add(33, "STATIC", "Copy and Update automatically process eligible recordings after they settle.\r\nAmbiguous recordings wait for review. Start is required on ordinary launches.", 0, 20, 343, 700, 44)
+	add(33, "STATIC", "Copy and Update automatically process eligible recordings after they settle.\r\nConflicting evidence requires review. Start is required on ordinary launches.", 0, 20, 343, 700, 44)
 	label := "Start preview"
 	if id == 5 {
 		label = "Start copying eligible recordings"

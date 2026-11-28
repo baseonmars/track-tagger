@@ -17,7 +17,10 @@ import (
 	"track-tagger/internal/notesmodel"
 )
 
-const maxSuggestionBytes = 4 << 20
+const (
+	maxSuggestionBytes = 4 << 20
+	maxSuggestionLines = 16 << 10
+)
 
 type contextNotePredictor interface {
 	PredictContext(context.Context, map[string][]string) ([]notesmodel.Span, error)
@@ -43,6 +46,10 @@ func (w WebBackend) Suggestions(ctx context.Context, id, fingerprint string) ([]
 	if fingerprint == "" {
 		return nil, catalog.ErrStaleNoteSuggestion
 	}
+	if !w.E.noteSuggestionsBusy.CompareAndSwap(false, true) {
+		return nil, catalog.ErrNoteSuggestionsBusy
+	}
+	defer w.E.noteSuggestionsBusy.Store(false)
 	snapshot, err := w.noteSuggestionInput(ctx, id, fingerprint)
 	if err != nil {
 		return nil, err
@@ -119,6 +126,8 @@ func readSuggestionNotes(ctx context.Context, root string, recording catalog.Rec
 	}
 	notes := make(map[string][]string, len(recording.Notes))
 	remaining := maxSuggestionBytes
+	remainingLines := maxSuggestionLines
+	newline := strings.NewReplacer("\r\n", "\n", "\r", "\n")
 	for _, path := range recording.Notes {
 		if err := ctx.Err(); err != nil {
 			return nil, err
@@ -155,11 +164,18 @@ func readSuggestionNotes(ctx context.Context, root string, recording catalog.Rec
 		if !utf8.Valid(data) {
 			text, _ = charmap.Windows1252.NewDecoder().String(text)
 		}
-		lines := strings.Split(strings.NewReplacer("\r\n", "\n", "\r", "\n").Replace(strings.TrimPrefix(text, "\uFEFF")), "\n")
-		if lines[len(lines)-1] == "" {
-			lines = lines[:len(lines)-1]
+		text = newline.Replace(strings.TrimPrefix(text, "\uFEFF"))
+		if text == "" {
+			notes[name] = nil
+			continue
 		}
-		notes[name] = lines
+		text = strings.TrimSuffix(text, "\n")
+		lineCount := strings.Count(text, "\n") + 1
+		if lineCount > remainingLines {
+			return nil, nil // Abstain if all lines cannot be checked together.
+		}
+		remainingLines -= lineCount
+		notes[name] = strings.Split(text, "\n")
 	}
 	return notes, nil
 }

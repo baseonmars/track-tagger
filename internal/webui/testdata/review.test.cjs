@@ -179,3 +179,20 @@ test('a stale suggestion response leaves the draft unchanged', async () => {
  assert.deepEqual(nodes['note-suggestion-results'].children,[]);
  assert.equal(fields.namedItem('album').value,'Concert');
 });
+
+test('date suggestion updates an untouched generated album and preserves a custom album', () => {
+ const date = {field:'DATE', current:'1999-10-23', value:'1999-10-24', albumSafe:true, currentAlbum:'1999-10-23 - Theatre, Montréal', album:'1999-10-24 - Theatre, Montréal', albumVenue:'Theatre', albumCity:'Montréal'};
+ const draft = {date:date.current, dateUnknown:false, album:date.currentAlbum};
+ assert.equal(suggestionEdit(date,draft,{album:null}).album,'1999-10-24 - Theatre, Montréal');
+ assert.equal(suggestionEdit(date,{...draft,album:'My album'},{album:null}).album,undefined);
+ assert.equal(suggestionEdit({...date,albumVenue:'',currentAlbum:date.current,album:date.value},{...draft,album:draft.date},{album:null}).album,date.value);
+});
+
+test('a busy suggestion response allows retry without editing the draft', async () => {
+ const {fields,nodes}=setup({reviewed:'false'},async()=>({ok:false,status:429}));
+ const request = nodes['find-note-suggestions'];
+ await request.events.click();
+ assert.match(nodes['note-suggestion-status'].textContent,/Try again/);
+ assert.equal(request.disabled,false);
+ assert.equal(fields.namedItem('album').value,'Concert');
+});

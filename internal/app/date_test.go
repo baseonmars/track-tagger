@@ -51,6 +51,34 @@ func TestOptingOutOfUSDatesRequiresReviewBeforeWrite(t *testing.T) {
 	}
 }
 
+func TestSaveReviewRejectsOldDatePolicy(t *testing.T) {
+	e, _ := engineFixture(t, Write)
+	if err := os.WriteFile(filepath.Join(e.Source, "notes.txt"), []byte("Artist: Band\nDate: 10/09/1969\nVenue: Hall\nCity: London\n01. First Song\n"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	old := fixturePlan(t, e).Recordings[0]
+	b := WebBackend{E: e}
+	b.SetUSDates(false)
+	if err := e.SaveReview(old.ID, old); err == nil || !strings.Contains(err.Error(), "refresh before reviewing") {
+		t.Fatalf("saving a review from the old date policy: %v", err)
+	}
+	p, err := e.Scan()
+	if err != nil || len(p.Recordings) != 1 || p.Recordings[0].Status != "needs-review" {
+		t.Fatalf("strict date plan: %v, %v", p, err)
+	}
+	current := p.Recordings[0]
+	current.Date = "1969-09-10"
+	current.Album = "1969-09-10 - Hall, London"
+	if err := e.SaveReview(current.ID, current); err != nil {
+		t.Fatal(err)
+	}
+	b.SetUSDates(true)
+	saved := fixturePlan(t, e).Recordings[0]
+	if !saved.Reviewed || saved.Date != current.Date || saved.Album != current.Album || saved.Fingerprint != old.Fingerprint {
+		t.Fatalf("saved review after changing date policy: %+v", saved)
+	}
+}
+
 func TestReviewedDateWriteAndCopy(t *testing.T) {
 	for _, mode := range []Mode{Write, Copy} {
 		for _, date := range []string{"", "1970", "1970-02", "1972-02-29"} {

@@ -51,6 +51,7 @@ type Plan struct {
 }
 type Engine struct {
 	reviewAmbiguousDates atomic.Bool
+	noteSuggestionsBusy  atomic.Bool
 	strictFingerprint    func(string) (catalog.Evidence, error)
 	Options
 	store        *Store
@@ -468,7 +469,7 @@ func (e *Engine) saveReview(r catalog.Recording, item Item) error {
 	if pending {
 		return errors.New("a rename job is pending; finish it with the same source, mode and state directory before saving another review")
 	}
-	if evidence(r) != evidence(item.Recording) {
+	if r.Fingerprint != item.Fingerprint || evidence(r) != evidence(item.Recording) {
 		return errors.New("inputs changed; refresh before reviewing")
 	}
 	if err := validateReview(r, &item); err != nil {

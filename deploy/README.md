@@ -58,7 +58,7 @@ The task runs at logon under the current interactive user, using that user’s p
 
 ## Docker Compose
 
-The image is a single static executable and defaults to preview (`scan /music`). The supplied Compose file runs an in-place polling watcher.
+The image contains a static executable and the optional show-notes model pack. It defaults to preview (`scan /music`). The supplied Compose file runs an in-place polling watcher.
 
 Create writable music and state directories before starting; set your own UID/GID:
 
@@ -76,6 +76,8 @@ docker compose -f deploy/compose.yml down
 ```
 
 Container metadata history persists in the state bind mount. Staged media is written to the writable music mount; the container root remains read-only. A remote UI needs `serve /music --write --state /state --poll --remote --addr 0.0.0.0:8787` as its command, an explicitly set `TRACK_TAGGER_TOKEN` environment secret of at least 16 characters, and a host port binding such as `127.0.0.1:8787:8787`. Do not commit the token; connect with an authenticated client. If exposing the service beyond the host, use TLS termination and authentication; prefer SSH tunneling to a host-local published port.
+
+To enable offline show-notes suggestions in the container's review UI, add `--note-suggestions /note-suggestions/bert-agreement.bin.gz` to the `serve` command.
 
 ## Proxmox and Synology
 

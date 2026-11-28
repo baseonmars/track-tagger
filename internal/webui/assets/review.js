@@ -62,17 +62,19 @@
       else city = proposal.value;
       const location = [venue, city].filter(Boolean).join(", ");
       album = [date, location].filter(Boolean).join(" - ");
-      return { target: "album", value: album, selection: { album, venue, city } };
+      return { target: "album", value: album, selection: { album, venue, city, location } };
     }
     if (proposal.field === "ARTIST") return { target: "artist", value: proposal.value };
     if (proposal.field !== "DATE") return null;
-    if (albumManaged) {
-      const location = [venue, city].filter(Boolean).join(", ");
-      album = [proposal.value, location].filter(Boolean).join(" - ");
+    const originalLocation = proposal.albumVenue ? [proposal.albumVenue, proposal.albumCity].filter(Boolean).join(", ") : "";
+    const albumCanFollowDate = albumManaged || (proposal.albumSafe && selected.album === null && draft.album === (proposal.currentAlbum ?? ""));
+    const location = albumManaged ? selected.location : originalLocation;
+    if (albumCanFollowDate) {
+      album = albumManaged ? [proposal.value, location].filter(Boolean).join(" - ") : proposal.album;
     }
     return {
       target: "date", value: proposal.value, album,
-      selection: albumManaged ? { album, venue, city } : undefined,
+      selection: albumCanFollowDate ? { album, venue, city, location } : undefined,
     };
   }
   function initNoteSuggestions(form, panel) {
@@ -182,6 +184,10 @@
       for (const name of ["id", "csrf", "fingerprint"]) body.set(name, input(name).value);
       try {
         const response = await fetch("/note-suggestions", { method: "POST", body });
+        if (response.status === 429) {
+          status.textContent = "Another note check is running. Try again in a moment.";
+          return;
+        }
         if (response.status === 409) {
           status.textContent = "This recording changed. Refresh the review before checking suggestions again.";
           return;

@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 
@@ -134,6 +135,14 @@ func TestWebSuggestionsRejectDatePolicyChangeDuringInference(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("model did not start")
 	}
+	if _, err := backend.Suggestions(t.Context(), view.ID, view.Fingerprint); !errors.Is(err, catalog.ErrNoteSuggestionsBusy) {
+		t.Fatalf("second request during inference: %v", err)
+	}
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	if _, err := backend.Suggestions(ctx, view.ID, view.Fingerprint); !errors.Is(err, context.Canceled) {
+		t.Fatalf("already canceled request during inference: %v", err)
+	}
 	toggled := make(chan struct{})
 	go func() {
 		backend.SetUSDates(false)
@@ -153,5 +162,34 @@ func TestWebSuggestionsRejectDatePolicyChangeDuringInference(t *testing.T) {
 		}
 	case <-time.After(2 * time.Second):
 		t.Fatal("inference did not return")
+	}
+}
+
+func TestReadSuggestionNotesBoundsTotalLineCount(t *testing.T) {
+	root := t.TempDir()
+	var recording catalog.Recording
+	recording.Path = root
+	add := func(name, content string) {
+		t.Helper()
+		path := filepath.Join(root, name)
+		if err := os.WriteFile(path, []byte(content), 0600); err != nil {
+			t.Fatal(err)
+		}
+		evidence, err := catalog.Fingerprint(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		recording.Evidence = append(recording.Evidence, evidence)
+		recording.Notes = append(recording.Notes, path)
+	}
+	add("first.txt", strings.Repeat("x\r\n", maxSuggestionLines))
+	got, err := readSuggestionNotes(t.Context(), root, recording)
+	if err != nil || len(got["first.txt"]) != maxSuggestionLines {
+		t.Fatalf("at line limit, got %d lines and error %v", len(got["first.txt"]), err)
+	}
+	add("second.txt", "y")
+	got, err = readSuggestionNotes(t.Context(), root, recording)
+	if err != nil || got != nil {
+		t.Fatalf("over line limit, got %d notes and error %v", len(got), err)
 	}
 }

@@ -122,3 +122,17 @@ func TestNeedsReviewOnlyNoteSuggestionControl(t *testing.T) {
 		}
 	}
 }
+
+func TestBusyNoteSuggestionsReturnRetryInstruction(t *testing.T) {
+	b := &suggestionBackend{err: catalog.ErrNoteSuggestionsBusy}
+	h, err := New(Config{NoteSuggestions: true}, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	form := url.Values{"csrf": {csrfFrom(t, h)}, "id": {"one"}, "fingerprint": {"source"}}
+	w := post(h, "/note-suggestions", form, "http://localhost")
+	if w.Code != http.StatusTooManyRequests || w.Header().Get("Retry-After") == "" ||
+		!strings.Contains(w.Body.String(), "Try again") {
+		t.Fatalf("busy response: %d, %v, %s", w.Code, w.Header(), w.Body)
+	}
+}

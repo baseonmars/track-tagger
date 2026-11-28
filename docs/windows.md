@@ -23,7 +23,7 @@ The app checks GitHub for the latest stable release at startup when **Check auto
 
 **Use US format for ambiguous dates** defaults on. Clear it before Start to require review when the notes and filenames leave both readings possible. Select **Offer suggestions from show notes** for optional offline assistance in the browser review.
 
-Copy keeps source files unchanged and writes owned outputs to the destination. Update originals changes metadata in the source music folder. Both modes automatically process eligible recordings after they settle; ambiguous recordings and other exceptions wait for review. The browser opens to the local review page when the service starts. Closing the browser leaves processing active.
+Copy keeps source files unchanged and writes owned outputs to the destination. Update originals changes metadata in the source music folder. Both modes automatically process eligible recordings after they settle. Conflicting evidence and other review issues hold a recording for approval. The browser opens to the local review page when the service starts. Closing the browser leaves processing active.
 
 For a network share or mapped drive, Track Tagger selects polling automatically for UNC paths. You can also check **Use polling** for a mapped drive or other filesystem that does not report changes reliably. Polling observes changes every 15 seconds. Filesystem watches otherwise observe changes and reconcile periodically.
 

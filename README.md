@@ -65,7 +65,7 @@ Use `--state DIR` to select application storage (default: your OS user configura
 
 ## Suggestions from show notes
 
-In the desktop launcher, select **Offer suggestions from show notes** before starting. On the command line, run `track-tagger serve SOURCE --note-suggestions PATH`, pointing to the bundled `note-suggestions/bert-agreement.bin.gz`. On macOS the pack is inside `Track Tagger.app/Contents/Resources/note-suggestions/`.
+In the desktop launcher, select **Offer suggestions from show notes** before starting. On the command line, run `track-tagger serve SOURCE --note-suggestions PATH`, pointing to the bundled `note-suggestions/bert-agreement.bin.gz`. On macOS the pack is inside `Track Tagger.app/Contents/Resources/note-suggestions/`. In the container image, pass `--note-suggestions /note-suggestions/bert-agreement.bin.gz` to `serve`.
 
 Open a recording that needs review and choose **Check notes**. Where two local models agree, the page highlights the original words and shows the proposed field value. **Use in draft** updates the editable form. For a venue or city, check the proposed album name. If you have entered a custom album, you can copy the suggestion into it yourself. Save the edit through the usual review approval. Suggestions are optional and run offline.
 

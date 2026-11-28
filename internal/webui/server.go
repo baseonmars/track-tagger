@@ -453,6 +453,11 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		suggestions, err := backend.Suggestions(r.Context(), id, fingerprint)
+		if errors.Is(err, catalog.ErrNoteSuggestionsBusy) {
+			w.Header().Set("Retry-After", "1")
+			http.Error(w, "Another note check is running. Try again in a moment.", http.StatusTooManyRequests)
+			return
+		}
 		if errors.Is(err, catalog.ErrStaleNoteSuggestion) {
 			http.Error(w, "This recording changed. Refresh the review before checking suggestions again.", http.StatusConflict)
 			return

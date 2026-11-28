@@ -17,24 +17,28 @@ import (
 // ErrStaleNoteSuggestion asks the review client to reload its source snapshot.
 var ErrStaleNoteSuggestion = errors.New("inputs changed since this page was loaded; refresh and review again")
 
+// ErrNoteSuggestionsBusy indicates that another suggestion check is running.
+var ErrNoteSuggestionsBusy = errors.New("another note suggestion check is running")
+
 type NotePredictor interface {
 	Predict(notes map[string][]string) ([]notesmodel.Span, error)
 }
 
 type NoteSuggestion struct {
-	Field      string `json:"field"`
-	Value      string `json:"value"`
-	Current    string `json:"current"`
-	Note       string `json:"note"`
-	Line       int    `json:"line"`
-	Start      int    `json:"start"`
-	End        int    `json:"end"`
-	Quote      string `json:"quote"`
-	Context    string `json:"context"`
-	Album      string `json:"album,omitempty"`
-	AlbumVenue string `json:"albumVenue,omitempty"`
-	AlbumCity  string `json:"albumCity,omitempty"`
-	AlbumSafe  bool   `json:"albumSafe,omitempty"`
+	Field        string `json:"field"`
+	Value        string `json:"value"`
+	Current      string `json:"current"`
+	CurrentAlbum string `json:"currentAlbum,omitempty"`
+	Note         string `json:"note"`
+	Line         int    `json:"line"`
+	Start        int    `json:"start"`
+	End          int    `json:"end"`
+	Quote        string `json:"quote"`
+	Context      string `json:"context"`
+	Album        string `json:"album,omitempty"`
+	AlbumVenue   string `json:"albumVenue,omitempty"`
+	AlbumCity    string `json:"albumCity,omitempty"`
+	AlbumSafe    bool   `json:"albumSafe,omitempty"`
 }
 
 var secondaryNoteScope = regexp.MustCompile(`(?i)\b(?:histor(?:y|ical)|previous(?:ly)?|recreation|re-?creat(?:e|ed)|opening for|opened for|opening act|support act|headliner|guest(?:s)?|featur(?:e|es|ing)|seem(?:s|ed)|suspect(?:ed)?|likely|maybe|unknown|unconfirmed|conflicting|not sure|front of house|soundboard|recorded by|taped by|mastering)\b`)
@@ -194,6 +198,7 @@ func GuardNoteSuggestions(recording Recording, notes map[string][]string, spans 
 			candidate.Current = recording.Artist
 		case "DATE":
 			candidate.Current = recording.Date
+			candidate.CurrentAlbum = recording.Album
 			candidate.AlbumVenue, candidate.AlbumCity = recording.Venue, recording.City
 			candidate.AlbumSafe = recording.Album == concertAlbum(recording.Date, recording.Venue, recording.City)
 			candidate.Album = concertAlbum(value, recording.Venue, recording.City)
