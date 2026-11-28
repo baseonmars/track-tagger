@@ -15,6 +15,21 @@ Open http://127.0.0.1:8787. Review source notes, metadata, file-to-title mapping
 
 The running browser interface has an illustrated **Help** manual covering the full review, copy, undo, and recovery workflow. It is embedded with its screenshots for offline reading; the Windows desktop app also opens a local copy when processing is stopped. The [manual source](internal/manual/manual.html) is maintained in this repository.
 
+## macOS desktop app
+
+On macOS 13 or later, extract the release archive for your Mac (`darwin-arm64` for Apple silicon or `darwin-amd64` for Intel). Open **Track Tagger.app** from Finder. The archive also includes the `track-tagger` command-line executable. The app bundle uses an ad-hoc signature. If macOS blocks the first launch, verify the GitHub release download against its `SHA256SUMS` before following [Apple's instructions for opening a trusted app](https://support.apple.com/en-us/102445).
+
+Choose a music folder and keep **Preview** selected to review tags without changing media. Choose **Write** to tag files in place or **Copy** to tag copies in a separate destination folder. Click **Start** to start processing and open the review page in your default browser. Closing the browser leaves processing active. Click **Open review** to return to the running instance or **Stop** to stop processing with the launcher open. Closing the launcher window or choosing **Quit Track Tagger** waits for active work to finish and closes the app.
+
+The app remembers the selected folders and mode and always opens stopped. The launcher and command line share review decisions, job history, and undo metadata in `~/Library/Application Support/track-tagger`.
+
+To build and launch from the repository on a Mac with Go and the Xcode Command Line Tools installed:
+
+```sh
+./packaging/macos/build.sh
+open "dist/Track Tagger.app"
+```
+
 ## Windows desktop app
 
 Download the Windows x64 installer for Windows 10/11 x64, or the ARM64 installer for Windows 11 ARM64. Each installer includes the desktop app and `track-tagger.exe` command line tool. The standalone Windows ZIPs include both executables. Installers are per-user and place the application in `%LOCALAPPDATA%\Programs\Track Tagger`; they do not require administrator access. Windows may show a warning when installing an unsigned release. Continue only if you obtained the installer from this project's GitHub Release; check that release's notes and signature status before installing.
