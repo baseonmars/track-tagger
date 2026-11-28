@@ -7,7 +7,7 @@ require (
 	github.com/go-flac/flacpicture/v2 v2.0.2
 	github.com/go-flac/go-flac/v2 v2.0.4
 	github.com/gofrs/flock v0.13.2
-	golang.org/x/sys v0.49.0
+	golang.org/x/sys v0.50.0
 	golang.org/x/text v0.44.0
 	modernc.org/sqlite v1.61.0
 )
