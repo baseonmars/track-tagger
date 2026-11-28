@@ -48,6 +48,10 @@ def wilson(correct, shown):
     return [max(0, middle - radius), min(1, middle + radius)]
 
 
+def p95(samples):
+    return sorted(samples)[ceil(0.95 * len(samples)) - 1] if samples else None
+
+
 def rate(numerator, denominator):
     return {
         "numerator": numerator,
@@ -97,6 +101,7 @@ def policy_score(app, cases, gold, labels, prior):
     statuses = Counter()
     failures = Counter()
     wall_ms = []
+    cpu_ms = []
     for identifier, case in cases.items():
         row, ref = app[identifier], gold[identifier]
         cohort = ref["review_required"]
@@ -117,6 +122,8 @@ def policy_score(app, cases, gold, labels, prior):
         counts["eligible"] += row["eligible"]
         if row["eligible"]:
             wall_ms.append(row["request_wall_ns"] / 1e6)
+            if "request_cpu_ns" in row:
+                cpu_ms.append(row["request_cpu_ns"] / 1e6)
         counts["request_errors"] += bool(row.get("error"))
         statuses[row["status"]] += 1
         counts["equal_metadata_plan"] += row["metadata_plan_equal"]
@@ -132,6 +139,12 @@ def policy_score(app, cases, gold, labels, prior):
             shown_lines.add(line_key)
             if outcome == "correct":
                 shown_correct_lines[role].add(line_key)
+                field_counts[role]["matching_annotated_boundaries"] += any(
+                    role in span["roles"]
+                    and span["start"] == proposal["start"]
+                    and span["end"] == proposal["end"]
+                    for span in labels[line_key]["spans"]
+                )
             role_counts[role][outcome] += 1
             field_counts[role]["shown_exact_value"] += clean(proposal["value"]) == clean(ref["metadata"][role])
             role_counts[role]["draft_action_available"] += role in ("artist", "date") or proposal.get("albumSafe", False)
@@ -181,6 +194,7 @@ def policy_score(app, cases, gold, labels, prior):
             "exact_value_precision": rate(fields["shown_exact_value"], shown),
             "joint_recall_over_safe_source_role_lines": rate(len(shown_correct_lines[role]), safe_source_roles[role]),
             "eligible_known_field_recovery_recall": rate(fields["eligible_known_repairs"], fields["eligible_known_repair_opportunities"]),
+            "matching_annotated_boundaries": fields["matching_annotated_boundaries"],
             "field_repairs": fields["field_repairs"],
             "field_degradations": fields["field_degradations"],
             "correctly_unknown_degradations": fields["correctly_unknown_degradations"],
@@ -199,6 +213,7 @@ def policy_score(app, cases, gold, labels, prior):
         "overall_joint_precision": joint_correct / joint_shown if joint_shown else None,
         "overall_wilson_95": wilson(joint_correct, joint_shown),
         "overall_exact_value_precision": rate(sum(v["shown_exact_value"] for v in field_counts.values()), joint_shown),
+        "matching_annotated_boundaries": sum(v["matching_annotated_boundaries"] for v in field_counts.values()),
         "field_repairs": sum(v["field_repairs"] for v in field_counts.values()),
         "field_degradations": sum(v["field_degradations"] for v in field_counts.values()),
         "correctly_unknown_degradations": sum(v["correctly_unknown_degradations"] for v in field_counts.values()),
@@ -211,7 +226,14 @@ def policy_score(app, cases, gold, labels, prior):
         "cohort_exact4_baseline_wilson_95": wilson(counts["cohort_base_exact4"], counts["source_review_cohort"]),
         "cohort_exact4_overlay_wilson_95": wilson(counts["cohort_shown_overlay_exact4"], counts["source_review_cohort"]),
         "cohort_exact4_paired_family_bootstrap_95": paired_interval(family_deltas),
-        "eligible_request_wall_p95_ms": sorted(wall_ms)[ceil(0.95 * len(wall_ms)) - 1] if wall_ms else None,
+        "eligible_request_wall_p95_ms": p95(wall_ms),
+        "warm_request_samples": max(0, len(wall_ms) - 1),
+        "warm_request_wall_p95_ms": p95(wall_ms[1:]),
+        "warm_request_cpu_p95_ms": p95(cpu_ms[1:]) if len(cpu_ms) == len(wall_ms) else None,
+        "eligible_request_cpu_samples": len(cpu_ms),
+        "eligible_request_cpu_p95_ms": (
+            p95(cpu_ms) if len(cpu_ms) == len(wall_ms) else None
+        ),
     }
 
 
@@ -233,6 +255,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for arg in ("cases", "seal", "prior", "us", "strict", "pack", "binary", "fixture", "prior_binary"):
         parser.add_argument(arg, type=Path)
+    parser.add_argument("--us-timing", type=Path)
+    parser.add_argument("--strict-timing", type=Path)
     args = parser.parse_args()
     expected = sealed_inputs(args.cases, args.seal)
     cases, gold, prior, us, strict = (
@@ -262,6 +286,9 @@ def main():
         "us_assumption_on": policy_score(us, cases, gold, labels, prior),
         "us_assumption_off": policy_score(strict, cases, gold, labels, prior),
     }
+    for key, path in (("us_assumption_on", args.us_timing), ("us_assumption_off", args.strict_timing)):
+        if path is not None:
+            result[key]["startup_timing"] = json.loads(path.read_bytes())
     print(json.dumps(result, indent=2, sort_keys=True))
 
 

@@ -23,9 +23,10 @@ ffmpeg -nostdin -hide_banner -loglevel error -f lavfi -i 'anullsrc=r=44100:cl=mo
 go build -trimpath -tags review_evaluation -o "$out/app-evaluation" ./tools/review-evaluation
 go version > "$out/go-version.txt"
 "$prior" < "$cases" > "$out/prior-catalog.jsonl"
-"$out/app-evaluation" --pack "$pack" --synthetic-flac "$out/synthetic.flac" --scratch "$out" \
+GOMAXPROCS=1 "$out/app-evaluation" --timing "$out/us-timing.json" --pack "$pack" --synthetic-flac "$out/synthetic.flac" --scratch "$out" \
     < "$cases" > "$out/us.jsonl"
-"$out/app-evaluation" --review-ambiguous --pack "$pack" --synthetic-flac "$out/synthetic.flac" \
+GOMAXPROCS=1 "$out/app-evaluation" --timing "$out/strict-timing.json" --review-ambiguous --pack "$pack" --synthetic-flac "$out/synthetic.flac" \
     --scratch "$out" < "$cases" > "$out/strict.jsonl"
 python3 -B tools/review-evaluation/score.py "$cases" "$seal" "$out/prior-catalog.jsonl" "$out/us.jsonl" \
-    "$out/strict.jsonl" "$pack" "$out/app-evaluation" "$out/synthetic.flac" "$prior" > "$out/results.json"
+    "$out/strict.jsonl" "$pack" "$out/app-evaluation" "$out/synthetic.flac" "$prior" \
+    --us-timing "$out/us-timing.json" --strict-timing "$out/strict-timing.json" > "$out/results.json"

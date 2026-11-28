@@ -15,6 +15,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"sort"
 	"strings"
 	"time"
@@ -37,6 +38,41 @@ type mapping struct {
 	Title  string `json:"title"`
 }
 
+type measurement struct {
+	WallNS int64  `json:"wall_ns"`
+	CPUNS  *int64 `json:"cpu_ns"`
+}
+
+type measurementStart struct {
+	wall time.Time
+	cpu  int64
+	ok   bool
+}
+
+func startMeasurement() measurementStart {
+	cpu, ok := processCPU()
+	return measurementStart{wall: time.Now(), cpu: cpu, ok: ok}
+}
+
+func (start measurementStart) elapsed() measurement {
+	wall := time.Since(start.wall).Nanoseconds()
+	cpu, ok := processCPU()
+	var elapsed *int64
+	if start.ok && ok {
+		delta := cpu - start.cpu
+		elapsed = &delta
+	}
+	return measurement{WallNS: wall, CPUNS: elapsed}
+}
+
+type startupReport struct {
+	Startup    measurement `json:"startup"`
+	ModelLoad  measurement `json:"model_load"`
+	GoMaxProcs int         `json:"gomaxprocs"`
+	GOOS       string      `json:"goos"`
+	GOARCH     string      `json:"goarch"`
+}
+
 type result struct {
 	SourcePrefix       string                   `json:"source_prefix,omitempty"`
 	ScopedNoteCount    int                      `json:"scoped_note_count"`
@@ -55,6 +91,7 @@ type result struct {
 	BrowserRecordEqual bool                     `json:"browser_record_equal"`
 	FixtureBytesEqual  bool                     `json:"fixture_bytes_equal"`
 	RequestWallNS      int64                    `json:"request_wall_ns,omitempty"`
+	RequestCPUNS       *int64                   `json:"request_cpu_ns,omitempty"`
 }
 
 func writeFixture(root, name string, data []byte) error {
@@ -177,9 +214,10 @@ func replay(caseInput input, fixture []byte, scratch string, model *notesmodel.M
 	out.Status, out.ReviewReasons = view.Status, view.Reasons
 	out.Eligible = view.Status == "needs-review" && !view.PlaybackOnly && !view.Reviewed
 	if out.Eligible {
-		started := time.Now()
+		started := startMeasurement()
 		out.Proposals, err = backend.Suggestions(ctx, view.ID, view.Fingerprint)
-		out.RequestWallNS = time.Since(started).Nanoseconds()
+		timing := started.elapsed()
+		out.RequestWallNS, out.RequestCPUNS = timing.WallNS, timing.CPUNS
 		if err != nil {
 			out.Error = err.Error()
 		}
@@ -213,11 +251,13 @@ func replay(caseInput input, fixture []byte, scratch string, model *notesmodel.M
 }
 
 func run() error {
-	var pack, audio, scratch string
+	started := startMeasurement()
+	var pack, audio, scratch, timingPath string
 	var reviewAmbiguous bool
 	flag.StringVar(&pack, "pack", "", "approved notes model pack")
 	flag.StringVar(&audio, "synthetic-flac", "", "synthetic FLAC generated for this replay")
 	flag.StringVar(&scratch, "scratch", "", "external disposable fixture parent")
+	flag.StringVar(&timingPath, "timing", "", "external startup timing JSON path")
 	flag.BoolVar(&reviewAmbiguous, "review-ambiguous", false, "use review mode for ambiguous numeric dates")
 	flag.Parse()
 	if scratch == "" || pack == "" || audio == "" {
@@ -241,9 +281,24 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	modelStarted := startMeasurement()
 	model, err := notesmodel.Load(pack)
 	if err != nil {
 		return err
+	}
+	loadTiming, startupTiming := modelStarted.elapsed(), started.elapsed()
+	if timingPath != "" {
+		report := startupReport{
+			Startup: startupTiming, ModelLoad: loadTiming, GoMaxProcs: runtime.GOMAXPROCS(0),
+			GOOS: runtime.GOOS, GOARCH: runtime.GOARCH,
+		}
+		data, err := json.MarshalIndent(report, "", "  ")
+		if err != nil {
+			return err
+		}
+		if err := os.WriteFile(timingPath, append(data, '\n'), 0600); err != nil {
+			return err
+		}
 	}
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Buffer(make([]byte, 4096), 16<<20)
