@@ -28,15 +28,19 @@
 <label class="date-unknown"><input id="date-unknown" name="date_unknown" type="checkbox" value="yes" {{if $r.DateUnknown}}checked{{end}}> Date unknown</label></div>
 <label class="wide" for="album">Album<input id="album" name="album" value="{{index $r.Metadata "ALBUM"}}" required></label>
 </div><div class="artwork"><label for="artwork">Artwork<select id="artwork" name="artwork"><option value="">Keep existing artwork</option>{{range $r.Artwork}}<option value="{{.}}" {{if eq . $r.SelectedArtwork}}selected{{end}}>{{base .}}</option>{{end}}</select></label>{{if not $r.Artwork}}<p>No local cover image found.</p>{{end}}</div>
-{{if $r.NotesSignatureEnabled}}<fieldset class="notes-edit">
+{{if or $r.NotesSignatureEnabled $r.HasMD5}}<fieldset class="notes-edit">
 <legend>Show notes</legend>
-<label class="date-unknown"><input type="checkbox" name="notes_signature" value="yes" {{if $r.AddNotesSignature}}checked{{end}}> Add ‘Tagged with Track Tagger’ to show notes</label>
-<div id="notes-signature-preview" {{if not $r.AddNotesSignature}}hidden{{end}}>
+{{if $r.NotesSignatureEnabled}}<label class="date-unknown"><input type="checkbox" name="notes_signature" value="yes" {{if $r.AddNotesSignature}}checked{{end}}> Add ‘Tagged with Track Tagger’ to show notes</label>{{end}}
 {{if $r.NotesChoices}}<label for="notes-target">Show-notes file<select id="notes-target" name="notes_target">{{if gt (len $r.NotesChoices) 1}}<option value="">Choose a file</option>{{end}}{{range $r.NotesChoices}}<option value="{{.Source}}" data-target="{{.Target}}" data-addition="{{.Addition}}" data-reason="{{.Reason}}" {{if eq .Source $r.NotesTarget}}selected{{end}}>{{.Label}}</option>{{end}}</select></label>{{end}}
+<div id="notes-signature-preview" {{if not $r.AddNotesSignature}}hidden{{end}}>
 <div aria-live="polite"><p id="notes-preview-target" {{if not $r.NotesPreview.Addition}}hidden{{end}}>Append to <code>{{$r.NotesPreview.Target}}</code></p>
 <pre id="notes-preview-addition" {{if not $r.NotesPreview.Addition}}hidden{{end}}>{{$r.NotesPreview.Addition}}</pre>
 <p id="notes-preview-reason">{{$r.NotesPreview.Reason}}</p></div>
 </div></fieldset>{{end}}</section>
+{{if $r.HasMD5}}<section><h2>Whole-file MD5 manifests</h2>
+<label><input type="checkbox" name="cleanup_md5" value="yes" {{if $r.CleanupMD5}}checked{{end}}> Remove manifests invalidated by tagging</label>
+<button type="button" id="preview-md5">Preview checksum cleanup</button>
+<pre id="md5-preview" aria-live="polite"></pre></section>{{end}}
 <section id="track-list"><h2><span class="step">2</span> Track titles <span class="count">{{len $r.Tracks}} files</span></h2><p>Each row is one audio file. Check its title and numbering against the notes.</p>
 <div class="table-scroll"><table class="mapping"><thead><tr><th>Audio file</th><th>Disc</th><th>Track</th><th>Title &amp; performer</th></tr></thead><tbody>{{range $i,$t := $r.Tracks}}<tr id="track-{{$t.Disc}}-{{$t.Track}}" {{if performerReview $r $t}}class="needs-performer"{{end}}>
 <td class="filename">{{base $t.File}}{{if $t.PlaybackID}}<button type="button" class="play-track" data-audio-url="/audio?recording={{$r.ID}}&amp;track={{$t.PlaybackID}}" data-title="{{if $t.Title}}{{$t.Title}}{{else}}{{base $t.File}}{{end}}" aria-label="Play {{base $t.File}}" disabled>Play</button>{{end}}<input type="hidden" name="track_file" value="{{$t.File}}"></td>

@@ -607,6 +607,9 @@ func chooseArt(r *Recording) {
 		reason(r, "artwork selection requires review")
 	}
 }
+
+var bsdChecksum = regexp.MustCompile(`(?i)^MD5 \((.+\.flac)\) = [0-9a-f]{32}$`)
+
 func checkManifest(r *Recording, path string) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -629,7 +632,9 @@ func checkManifest(r *Recording, path string) {
 			continue
 		}
 		var name string
-		if i := strings.Index(strings.ToLower(line), ".flac"); i >= 0 {
+		if match := bsdChecksum.FindStringSubmatch(line); match != nil {
+			name = match[1]
+		} else if i := strings.Index(strings.ToLower(line), ".flac"); i >= 0 {
 			part := strings.TrimSpace(line[:i+5])
 			fields := strings.Fields(part)
 			if len(fields) > 1 && len(fields[0]) == 32 {

@@ -27,14 +27,14 @@ type watchSchedule map[string]*watchEntry
 // than trusting copied or backdated source mtimes.
 func (s watchSchedule) observe(item Item, now time.Time) *watchEntry {
 	b, _ := json.Marshal(struct {
-		Fingerprint                  string
-		Reviewed                     bool
-		DateUnknown                  bool
-		Tracks                       any
-		Artwork, Artist, Album, Date string
-		NotesEnabled, NotesSignature bool
-		NotesTarget                  string
-	}{item.Fingerprint, item.Reviewed, item.DateUnknown, item.Tracks, item.Artwork, item.Artist, item.Album, item.Date, item.NotesSignatureEnabled, item.AddNotesSignature, item.NotesTarget})
+		Fingerprint                              string
+		Reviewed                                 bool
+		DateUnknown                              bool
+		Tracks                                   any
+		Artwork, Artist, Album, Date             string
+		NotesEnabled, NotesSignature, CleanupMD5 bool
+		NotesTarget                              string
+	}{item.Fingerprint, item.Reviewed, item.DateUnknown, item.Tracks, item.Artwork, item.Artist, item.Album, item.Date, item.NotesSignatureEnabled, item.AddNotesSignature, item.CleanupMD5, item.NotesTarget})
 	h := sha256.Sum256(b)
 	key := hex.EncodeToString(h[:])
 	entry := s[item.ID]
