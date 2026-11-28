@@ -33,13 +33,13 @@ type noteLine struct {
 
 var notesSection = regexp.MustCompile(`(?i)^-*(?:disc|disk|cd|set)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten|I|II|III|IV|V|VI|VII|VIII|IX|X)\s*(?:[:.-]|\(\d+:\d{2}\)|-\s*\d+:\d{2})?\s*-*$`)
 var notesSectionStart = regexp.MustCompile(`(?i)^-*(?:disc|disk|cd|set)\b`)
-var notesTrailingTime = regexp.MustCompile(`\s+\(?\d+:\d{2}(?:\.\d+)?\)?$`)
 var notesChecksum = regexp.MustCompile(`(?i)^(?:.+\.[a-z0-9]{1,8}:\s*(?:[a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})|(?:[a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})\s+\*?.+\.[a-z0-9]{1,8}|.+\.[a-z0-9]{1,8}\s+[a-f0-9]{8})$`)
 
 var explicitCityRegion = regexp.MustCompile(`^.+,\s*[A-Z]{2}$`)
 
-// Restrict duration stripping to a trailing bracketed time annotation.
-var bracketedDuration = regexp.MustCompile(`\s+\[(?:\d+:)?\d{1,2}:[0-5]\d(?:\.\d+)?\]$`)
+const noteDuration = `(?:[0-9]+:[0-5][0-9]|[0-9]+):[0-5][0-9](?:\.[0-9]+)?`
+
+var noteDurationSuffix = regexp.MustCompile(`([ \t]+)(?:\[` + noteDuration + `\]|\(` + noteDuration + `\)|` + noteDuration + `)$`)
 var locationUncertainty = regexp.MustCompile(`(?i)\b(?:probably|possibly|perhaps|unsure|uncertain)\b|\bmay(?:\s+be|\s+have\s+been)\b`)
 var titleUncertainty = regexp.MustCompile(`(?i)[(\[][^)\]]*\b(?:unsure (?:on|of|about) (?:the )?title|uncertain (?:on|of|about) (?:the )?title|unknown title|title unknown|working title|provisional title)[^)\]]*[)\]]`)
 
@@ -125,8 +125,20 @@ func technicalSection(s string) bool {
 	return strings.HasPrefix(s, "length expanded size") || strings.HasPrefix(s, "length     expanded size")
 }
 
+func noteTitleWithoutDuration(title string, singleSpaceColumn bool) string {
+	match := noteDurationSuffix.FindStringSubmatchIndex(title)
+	if match == nil || match[0] == 0 {
+		return title
+	}
+	separator := title[match[2]:match[3]]
+	if separator == " " && title[match[3]] != '[' && title[match[3]] != '(' && !singleSpaceColumn {
+		return title
+	}
+	return title[:match[0]]
+}
+
 func noteSegue(s string) bool {
-	s = strings.TrimSpace(notesTrailingTime.ReplaceAllString(s, ""))
+	s = noteTitleWithoutDuration(s, true)
 	return strings.HasSuffix(s, ">") || strings.HasSuffix(s, "→")
 }
 
@@ -219,13 +231,13 @@ func parseNotesCandidates(r *Recording, s string, titles map[string]string, date
 			copy := *line
 			copy.disc = disc
 			pending = &copy
-			parts = []string{line.title}
+			parts = []string{noteTitleWithoutDuration(line.title, false)}
 			header = false
 			continue
 		}
 		if !blocked && pending != nil && line.indent > 0 {
 			if line.indent > pending.indent && noteSegue(parts[len(parts)-1]) {
-				parts = append(parts, line.text)
+				parts = append(parts, noteTitleWithoutDuration(line.text, false))
 				continue
 			}
 			if !continuationReview {
