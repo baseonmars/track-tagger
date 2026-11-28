@@ -35,6 +35,14 @@ var notesSection = regexp.MustCompile(`(?i)^-*(?:disc|disk|cd|set)\s*(\d+|one|tw
 var notesSectionStart = regexp.MustCompile(`(?i)^-*(?:disc|disk|cd|set)\b`)
 var notesTrailingTime = regexp.MustCompile(`\s+\(?\d+:\d{2}(?:\.\d+)?\)?$`)
 var notesChecksum = regexp.MustCompile(`(?i)^(?:.+\.[a-z0-9]{1,8}:\s*(?:[a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})|(?:[a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})\s+\*?.+\.[a-z0-9]{1,8}|.+\.[a-z0-9]{1,8}\s+[a-f0-9]{8})$`)
+
+var explicitCityRegion = regexp.MustCompile(`^.+,\s*[A-Z]{2}$`)
+
+// Restrict duration stripping to a trailing bracketed time annotation.
+var bracketedDuration = regexp.MustCompile(`\s+\[(?:\d+:)?\d{1,2}:[0-5]\d(?:\.\d+)?\]$`)
+var locationUncertainty = regexp.MustCompile(`(?i)\b(?:probably|possibly|perhaps|unsure|uncertain)\b|\bmay(?:\s+be|\s+have\s+been)\b`)
+var titleUncertainty = regexp.MustCompile(`(?i)[(\[][^)\]]*\b(?:unsure (?:on|of|about) (?:the )?title|uncertain (?:on|of|about) (?:the )?title|unknown title|title unknown|working title|provisional title)[^)\]]*[)\]]`)
+
 var spacedDash = regexp.MustCompile(`\s+[-–—]\s+`)
 
 func classifyNoteLine(raw string, number int) noteLine {
