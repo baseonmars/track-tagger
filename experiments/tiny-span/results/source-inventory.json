@@ -1,0 +1,63 @@
+{
+  "available_development_regression_gold": {
+    "legacy_200": {
+      "agent-reviewed": 197,
+      "disputed": 3
+    },
+    "prior_context": {
+      "nonblank_lines": 9232,
+      "recording_statuses": {
+        "agent-reviewed": 4,
+        "unresolved": 207
+      },
+      "reviewed_nondisputed_nonblank_lines": 181,
+      "source_lines": 10978
+    },
+    "study_v2": {
+      "test": {
+        "nonblank_lines": 8827,
+        "recording_statuses": {
+          "agent-reviewed": 199,
+          "unresolved": 1
+        },
+        "reviewed_nondisputed_nonblank_lines": 8692,
+        "source_lines": 10612
+      },
+      "validation": {
+        "nonblank_lines": 2440,
+        "recording_statuses": {
+          "agent-reviewed": 50
+        },
+        "reviewed_nondisputed_nonblank_lines": 2440,
+        "source_lines": 2889
+      }
+    },
+    "study_v2_package_splits": {
+      "test": 200,
+      "train": 250,
+      "validation": 50
+    }
+  },
+  "cached_discovery_only_identifiers": 12297,
+  "eligible_unexposed_cached_components": 0,
+  "eligible_unexposed_complete_recording_references": 0,
+  "prior_context_inference_artifact_sha256": "59a4b763179cc4d44e191428e850f7de6ca1e34887b9267535b2414b5d1a5199",
+  "prior_context_inference_recordings": 211,
+  "prior_context_source_screen": {
+    "eligible": 211,
+    "exclusions": {
+      "prior_identifier": 548,
+      "prior_source_component": 374,
+      "within_fresh_source_component": 63
+    },
+    "limitations": "Cache inventory uses recorded prior exposure and heuristic family predicates. Unrecorded prior exposure, alternate metadata and paraphrased source templates may evade the screen.",
+    "manifest_sha256": "bb800f1b3eb71cb895a28d8a54560057e98ec50afa98faa36e68fbc8993b6423",
+    "old_cache_unusable": 4,
+    "old_cache_usable": 1200,
+    "policy": "Exclude prior legacy and v2 selected and source-reviewed IDs and their connected components. Components use prior study uploader, performance, note, technical templates, source emails and existing manual relationships. Select one package per remaining component by identifier.",
+    "v2_cache_unusable": 6,
+    "v2_cache_usable": 1196,
+    "v2_previous_neighbor_review": 485,
+    "v2_previous_selected": 500
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "bundle": {
+    "asset_sha256": {
+      "date-catalog": "c75f5cfd46bd7c9d31631be6b99d8ce30e80b10bcf3e84d3bdfc57ccd05ee58f",
+      "execution-freeze.json": "5a66ceacd7568b369b56ccc83196c53c1bc74bbb7b139686e764c5ab680ca23b",
+      "lora/model.onnx": "214311b9fb1ea2a6b601bc3473b4e9efd34acad07ec7bdba5b6dcda8ad12f098",
+      "lora/policy.json": "bc2d85d10fc3b83da54c2e9ceecf7d5787019b2b1a077fe8e3dc8a74becbb222",
+      "lora/vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    },
+    "distribution": "macOS arm64 onedir, regular files plus relative symlinks",
+    "entry_executable_bytes": 4512016,
+    "entry_executable_sha256": "e89942c22f246950c7613c75582c2b259982e97501038c0a3967d251d7c0c5c0",
+    "platform": "macOS-27.2.1-arm64-arm-64bit",
+    "pyinstaller": "6.16.0",
+    "python": "3.12.2",
+    "regular_file_count": 105,
+    "smoke": {
+      "cases": 5,
+      "date_validator_exercised": true,
+      "interpreted_and_bundled_outputs_byte_identical": true,
+      "network_denied": true,
+      "ready_and_background_rows_abstained": true,
+      "relocated_and_build_python_access_denied": true,
+      "sha256": "da2c7ba37121a695f8e4971cb60b0ef5e771f9ba0ecb663cd5c2538f45e04ad2"
+    },
+    "symlink_count": 0,
+    "symlink_target_string_bytes": 0,
+    "uncompressed_regular_file_bytes": 111131126
+  },
+  "fresh_parity": {
+    "cold_process_median_wall_ms": 148.45,
+    "cold_process_wall_ms": [
+      1113.122,
+      147.979,
+      148.45
+    ],
+    "displayed_proposals_with_exact_match": 188,
+    "executable_sha256": "e89942c22f246950c7613c75582c2b259982e97501038c0a3967d251d7c0c5c0",
+    "failed_catalog_scans_with_identical_abstention": 11,
+    "network_denied": true,
+    "private_audit_sha256": "5a1576147abfb3742b337409f93d68b64786009a34747eecb043fb2ed69647eb",
+    "recordings": 200,
+    "sealed_source_sha256": "e79c09c19cfd5994332374559e8072a21f7cf527fc0c3d2a0c55b0d7d02590fd",
+    "timing_scope": "Per recording includes parsing input, proposal validation and output, including date child CPU. Catalog scan and model startup are outside warm samples. Fresh process startup uses the warm OS filesystem cache.",
+    "warm_recording_latency": {
+      "cpu_ms": {
+        "p50": 4.925,
+        "p95": 6.068,
+        "p99": 8.343
+      },
+      "wall_ms": {
+        "p50": 5.331,
+        "p95": 6.481,
+        "p99": 8.344
+      }
+    }
+  }
+}

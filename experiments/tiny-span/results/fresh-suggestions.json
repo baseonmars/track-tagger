@@ -1,0 +1,2646 @@
+{
+  "evaluation_sha256": "06d0ba51201c2ceba2bc32ac429fd342fd477c936f00ef3705124bc3d64c07ab",
+  "private_audit_sha256": "5a1576147abfb3742b337409f93d68b64786009a34747eecb043fb2ed69647eb",
+  "recordings": 200,
+  "recordings_with_reviewed_reference": 200,
+  "successful_catalog_scans": 189,
+  "failed_catalog_scans": 11,
+  "failed_catalog_scans_with_reviewed_reference": 11,
+  "confidence_method": "95% Wilson intervals, descriptive and unadjusted for recording-family dependence",
+  "arms": {
+    "current_rules": {
+      "all": {
+        "shown_suggestions": 0,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 69,
+        "known_fields_behind_catalog_failure": 39,
+        "known_fields_on_successful_scans": 692,
+        "baseline_missing_known_on_successful_scans": 341,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 29,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 0,
+          "total": 370,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.010275636182279632
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 366,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.010386771761455046
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 366,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.010386771761455046
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 322,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.011789349441895376
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "artist": {
+        "shown_suggestions": 0,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 7,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 183,
+        "baseline_missing_known_on_successful_scans": 12,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 17,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 0,
+          "total": 29,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.11696979849974075
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 29,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.11696979849974075
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 29,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.11696979849974075
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 154,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.024337451322329538
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "date": {
+        "shown_suggestions": 0,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 23,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 167,
+        "baseline_missing_known_on_successful_scans": 38,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 2,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 0,
+          "total": 40,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.08762160119728664
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 40,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.08762160119728664
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 40,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.08762160119728664
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 127,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.029359645293763368
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "venue": {
+        "shown_suggestions": 0,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 25,
+        "known_fields_behind_catalog_failure": 9,
+        "known_fields_on_successful_scans": 166,
+        "baseline_missing_known_on_successful_scans": 139,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 7,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 0,
+          "total": 146,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.025636822084673896
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 143,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.026160587422281553
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 143,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.026160587422281553
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 20,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.16112515805281938
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "city": {
+        "shown_suggestions": 0,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 14,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 176,
+        "baseline_missing_known_on_successful_scans": 152,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 3,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 0,
+          "total": 155,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.024184232814371848
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 154,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.024337451322329538
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 154,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.024337451322329538
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 21,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.154639018924847
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      }
+    },
+    "section_aware_classifier": {
+      "all": {
+        "shown_suggestions": 152,
+        "shown_with_unknown_reference": 2,
+        "exact_value_among_shown": {
+          "correct": 125,
+          "total": 152,
+          "rate": 0.8223684210526315,
+          "wilson95": [
+            0.753891534387076,
+            0.874952681661719
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 124,
+          "total": 152,
+          "rate": 0.8157894736842105,
+          "wilson95": [
+            0.7466466374702757,
+            0.8693640231489522
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 124,
+          "total": 152,
+          "rate": 0.8157894736842105,
+          "wilson95": [
+            0.7466466374702757,
+            0.8693640231489522
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 124,
+          "total": 124,
+          "rate": 1.0,
+          "wilson95": [
+            0.9699513846593222,
+            0.9999999999999998
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 69,
+        "known_fields_behind_catalog_failure": 39,
+        "known_fields_on_successful_scans": 692,
+        "baseline_missing_known_on_successful_scans": 341,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 29,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 125,
+          "total": 370,
+          "rate": 0.33783783783783783,
+          "wilson95": [
+            0.2915305007791145,
+            0.3874778136583816
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 125,
+          "total": 366,
+          "rate": 0.34153005464480873,
+          "wilson95": [
+            0.2948173640637709,
+            0.3915347275327557
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 124,
+          "total": 366,
+          "rate": 0.33879781420765026,
+          "wilson95": [
+            0.2922064171231793,
+            0.38873795191466676
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 1,
+          "total": 322,
+          "rate": 0.003105590062111801,
+          "wilson95": [
+            0.0005484234204456462,
+            0.017378880372742305
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 1,
+          "total": 1,
+          "rate": 1.0,
+          "wilson95": [
+            0.20654931437723742,
+            1
+          ]
+        }
+      },
+      "artist": {
+        "shown_suggestions": 5,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 4,
+          "total": 5,
+          "rate": 0.8,
+          "wilson95": [
+            0.37553462976252533,
+            0.9637758913675698
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 4,
+          "total": 5,
+          "rate": 0.8,
+          "wilson95": [
+            0.37553462976252533,
+            0.9637758913675698
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 4,
+          "total": 5,
+          "rate": 0.8,
+          "wilson95": [
+            0.37553462976252533,
+            0.9637758913675698
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 4,
+          "total": 4,
+          "rate": 1.0,
+          "wilson95": [
+            0.5101091635454027,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 7,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 183,
+        "baseline_missing_known_on_successful_scans": 12,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 17,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 4,
+          "total": 29,
+          "rate": 0.13793103448275862,
+          "wilson95": [
+            0.054974399641119644,
+            0.30558993720352023
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 4,
+          "total": 29,
+          "rate": 0.13793103448275862,
+          "wilson95": [
+            0.054974399641119644,
+            0.30558993720352023
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 4,
+          "total": 29,
+          "rate": 0.13793103448275862,
+          "wilson95": [
+            0.054974399641119644,
+            0.30558993720352023
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 1,
+          "total": 154,
+          "rate": 0.006493506493506494,
+          "wilson95": [
+            0.0011471844874949779,
+            0.035861209025453665
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 1,
+          "total": 1,
+          "rate": 1.0,
+          "wilson95": [
+            0.20654931437723742,
+            1
+          ]
+        }
+      },
+      "date": {
+        "shown_suggestions": 7,
+        "shown_with_unknown_reference": 1,
+        "exact_value_among_shown": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 6,
+          "total": 6,
+          "rate": 1.0,
+          "wilson95": [
+            0.6096657120978346,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 23,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 167,
+        "baseline_missing_known_on_successful_scans": 38,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 2,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 6,
+          "total": 40,
+          "rate": 0.15,
+          "wilson95": [
+            0.0706118771732036,
+            0.2907232436648971
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 6,
+          "total": 40,
+          "rate": 0.15,
+          "wilson95": [
+            0.0706118771732036,
+            0.2907232436648971
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 6,
+          "total": 40,
+          "rate": 0.15,
+          "wilson95": [
+            0.0706118771732036,
+            0.2907232436648971
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 127,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.029359645293763368
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "venue": {
+        "shown_suggestions": 50,
+        "shown_with_unknown_reference": 1,
+        "exact_value_among_shown": {
+          "correct": 37,
+          "total": 50,
+          "rate": 0.74,
+          "wilson95": [
+            0.6044684273515116,
+            0.8412847250644762
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 37,
+          "total": 50,
+          "rate": 0.74,
+          "wilson95": [
+            0.6044684273515116,
+            0.8412847250644762
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 37,
+          "total": 50,
+          "rate": 0.74,
+          "wilson95": [
+            0.6044684273515116,
+            0.8412847250644762
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 37,
+          "total": 37,
+          "rate": 1.0,
+          "wilson95": [
+            0.9059421741627975,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 25,
+        "known_fields_behind_catalog_failure": 9,
+        "known_fields_on_successful_scans": 166,
+        "baseline_missing_known_on_successful_scans": 139,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 7,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 37,
+          "total": 146,
+          "rate": 0.2534246575342466,
+          "wilson95": [
+            0.18981422508545728,
+            0.3296779063535601
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 37,
+          "total": 143,
+          "rate": 0.25874125874125875,
+          "wilson95": [
+            0.19393814475156687,
+            0.33616731351512846
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 37,
+          "total": 143,
+          "rate": 0.25874125874125875,
+          "wilson95": [
+            0.19393814475156687,
+            0.33616731351512846
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 20,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.16112515805281938
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "city": {
+        "shown_suggestions": 90,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 78,
+          "total": 90,
+          "rate": 0.8666666666666667,
+          "wilson95": [
+            0.7812606949930235,
+            0.9220531795931369
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 77,
+          "total": 90,
+          "rate": 0.8555555555555555,
+          "wilson95": [
+            0.768401220798642,
+            0.9136001121333922
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 77,
+          "total": 90,
+          "rate": 0.8555555555555555,
+          "wilson95": [
+            0.768401220798642,
+            0.9136001121333922
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 77,
+          "total": 77,
+          "rate": 1.0,
+          "wilson95": [
+            0.9524815747175658,
+            0.9999999999999998
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 14,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 176,
+        "baseline_missing_known_on_successful_scans": 152,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 3,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 78,
+          "total": 155,
+          "rate": 0.5032258064516129,
+          "wilson95": [
+            0.42539296894203876,
+            0.5809026166527071
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 78,
+          "total": 154,
+          "rate": 0.5064935064935064,
+          "wilson95": [
+            0.42833956349827546,
+            0.5843313786923435
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 77,
+          "total": 154,
+          "rate": 0.5,
+          "wilson95": [
+            0.4219976741976088,
+            0.5780023258023912
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 21,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.154639018924847
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      }
+    },
+    "deterministic_span_control": {
+      "all": {
+        "shown_suggestions": 7,
+        "shown_with_unknown_reference": 1,
+        "exact_value_among_shown": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 6,
+          "total": 6,
+          "rate": 1.0,
+          "wilson95": [
+            0.6096657120978346,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 69,
+        "known_fields_behind_catalog_failure": 39,
+        "known_fields_on_successful_scans": 692,
+        "baseline_missing_known_on_successful_scans": 341,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 29,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 6,
+          "total": 370,
+          "rate": 0.016216216216216217,
+          "wilson95": [
+            0.007452683940310092,
+            0.034922120798219936
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 6,
+          "total": 366,
+          "rate": 0.01639344262295082,
+          "wilson95": [
+            0.007534363607403727,
+            0.03529874350613476
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 6,
+          "total": 366,
+          "rate": 0.01639344262295082,
+          "wilson95": [
+            0.007534363607403727,
+            0.03529874350613476
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 322,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.011789349441895376
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "artist": {
+        "shown_suggestions": 0,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 7,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 183,
+        "baseline_missing_known_on_successful_scans": 12,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 17,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 0,
+          "total": 29,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.11696979849974075
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 29,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.11696979849974075
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 29,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.11696979849974075
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 154,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.024337451322329538
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "date": {
+        "shown_suggestions": 7,
+        "shown_with_unknown_reference": 1,
+        "exact_value_among_shown": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 6,
+          "total": 6,
+          "rate": 1.0,
+          "wilson95": [
+            0.6096657120978346,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 23,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 167,
+        "baseline_missing_known_on_successful_scans": 38,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 2,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 6,
+          "total": 40,
+          "rate": 0.15,
+          "wilson95": [
+            0.0706118771732036,
+            0.2907232436648971
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 6,
+          "total": 40,
+          "rate": 0.15,
+          "wilson95": [
+            0.0706118771732036,
+            0.2907232436648971
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 6,
+          "total": 40,
+          "rate": 0.15,
+          "wilson95": [
+            0.0706118771732036,
+            0.2907232436648971
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 127,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.029359645293763368
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "venue": {
+        "shown_suggestions": 0,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 25,
+        "known_fields_behind_catalog_failure": 9,
+        "known_fields_on_successful_scans": 166,
+        "baseline_missing_known_on_successful_scans": 139,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 7,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 0,
+          "total": 146,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.025636822084673896
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 143,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.026160587422281553
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 143,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.026160587422281553
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 20,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.16112515805281938
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "city": {
+        "shown_suggestions": 0,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 14,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 176,
+        "baseline_missing_known_on_successful_scans": 152,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 3,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 0,
+          "total": 155,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.024184232814371848
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 154,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.024337451322329538
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 0,
+          "total": 154,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.024337451322329538
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 21,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.154639018924847
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      }
+    },
+    "head_only": {
+      "all": {
+        "shown_suggestions": 100,
+        "shown_with_unknown_reference": 2,
+        "exact_value_among_shown": {
+          "correct": 81,
+          "total": 100,
+          "rate": 0.81,
+          "wilson95": [
+            0.7222115462093562,
+            0.8748524849023127
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 80,
+          "total": 100,
+          "rate": 0.8,
+          "wilson95": [
+            0.7111708344068411,
+            0.8666330666689674
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 79,
+          "total": 100,
+          "rate": 0.79,
+          "wilson95": [
+            0.7002003116591013,
+            0.858343459380847
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 79,
+          "total": 80,
+          "rate": 0.9875,
+          "wilson95": [
+            0.9325372992233133,
+            0.9977900244795476
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 69,
+        "known_fields_behind_catalog_failure": 39,
+        "known_fields_on_successful_scans": 692,
+        "baseline_missing_known_on_successful_scans": 341,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 29,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 81,
+          "total": 370,
+          "rate": 0.21891891891891893,
+          "wilson95": [
+            0.17979044210736997,
+            0.26382396958429
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 81,
+          "total": 366,
+          "rate": 0.22131147540983606,
+          "wilson95": [
+            0.18179907904604306,
+            0.2666132199685384
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 80,
+          "total": 366,
+          "rate": 0.2185792349726776,
+          "wilson95": [
+            0.1792810933445459,
+            0.263723483111355
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 2,
+          "total": 322,
+          "rate": 0.006211180124223602,
+          "wilson95": [
+            0.0017049854726585395,
+            0.022360272671821987
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 2,
+          "total": 2,
+          "rate": 1.0,
+          "wilson95": [
+            0.3423802275066531,
+            1
+          ]
+        }
+      },
+      "artist": {
+        "shown_suggestions": 3,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 1,
+          "total": 3,
+          "rate": 0.3333333333333333,
+          "wilson95": [
+            0.061491944720396215,
+            0.7923403991979523
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 1,
+          "total": 3,
+          "rate": 0.3333333333333333,
+          "wilson95": [
+            0.061491944720396215,
+            0.7923403991979523
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 1,
+          "total": 3,
+          "rate": 0.3333333333333333,
+          "wilson95": [
+            0.061491944720396215,
+            0.7923403991979523
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 1,
+          "total": 1,
+          "rate": 1.0,
+          "wilson95": [
+            0.20654931437723742,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 7,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 183,
+        "baseline_missing_known_on_successful_scans": 12,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 17,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 1,
+          "total": 29,
+          "rate": 0.034482758620689655,
+          "wilson95": [
+            0.006113214292762649,
+            0.17175521879320288
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 1,
+          "total": 29,
+          "rate": 0.034482758620689655,
+          "wilson95": [
+            0.006113214292762649,
+            0.17175521879320288
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 1,
+          "total": 29,
+          "rate": 0.034482758620689655,
+          "wilson95": [
+            0.006113214292762649,
+            0.17175521879320288
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 2,
+          "total": 154,
+          "rate": 0.012987012987012988,
+          "wilson95": [
+            0.003568762647733807,
+            0.04611057305583393
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 2,
+          "total": 2,
+          "rate": 1.0,
+          "wilson95": [
+            0.3423802275066531,
+            1
+          ]
+        }
+      },
+      "date": {
+        "shown_suggestions": 8,
+        "shown_with_unknown_reference": 1,
+        "exact_value_among_shown": {
+          "correct": 7,
+          "total": 8,
+          "rate": 0.875,
+          "wilson95": [
+            0.5291118177871466,
+            0.9775825085499433
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 7,
+          "total": 8,
+          "rate": 0.875,
+          "wilson95": [
+            0.5291118177871466,
+            0.9775825085499433
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 6,
+          "total": 8,
+          "rate": 0.75,
+          "wilson95": [
+            0.40927543031016894,
+            0.928520787247891
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 23,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 167,
+        "baseline_missing_known_on_successful_scans": 38,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 2,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 7,
+          "total": 40,
+          "rate": 0.175,
+          "wilson95": [
+            0.0874541374603592,
+            0.31949990331787714
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 7,
+          "total": 40,
+          "rate": 0.175,
+          "wilson95": [
+            0.0874541374603592,
+            0.31949990331787714
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 7,
+          "total": 40,
+          "rate": 0.175,
+          "wilson95": [
+            0.0874541374603592,
+            0.31949990331787714
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 127,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.029359645293763368
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "venue": {
+        "shown_suggestions": 36,
+        "shown_with_unknown_reference": 1,
+        "exact_value_among_shown": {
+          "correct": 23,
+          "total": 36,
+          "rate": 0.6388888888888888,
+          "wilson95": [
+            0.47575075485558044,
+            0.7752440705348462
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 23,
+          "total": 36,
+          "rate": 0.6388888888888888,
+          "wilson95": [
+            0.47575075485558044,
+            0.7752440705348462
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 23,
+          "total": 36,
+          "rate": 0.6388888888888888,
+          "wilson95": [
+            0.47575075485558044,
+            0.7752440705348462
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 23,
+          "total": 23,
+          "rate": 1.0,
+          "wilson95": [
+            0.8568833815495732,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 25,
+        "known_fields_behind_catalog_failure": 9,
+        "known_fields_on_successful_scans": 166,
+        "baseline_missing_known_on_successful_scans": 139,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 7,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 23,
+          "total": 146,
+          "rate": 0.15753424657534246,
+          "wilson95": [
+            0.10732642924119823,
+            0.2253015310907702
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 23,
+          "total": 143,
+          "rate": 0.16083916083916083,
+          "wilson95": [
+            0.10963172449996238,
+            0.2297918907445223
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 23,
+          "total": 143,
+          "rate": 0.16083916083916083,
+          "wilson95": [
+            0.10963172449996238,
+            0.2297918907445223
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 20,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.16112515805281938
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "city": {
+        "shown_suggestions": 53,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 50,
+          "total": 53,
+          "rate": 0.9433962264150944,
+          "wilson95": [
+            0.846297916898191,
+            0.9805633385150642
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 49,
+          "total": 53,
+          "rate": 0.9245283018867925,
+          "wilson95": [
+            0.8214152251634678,
+            0.9702604449130534
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 49,
+          "total": 53,
+          "rate": 0.9245283018867925,
+          "wilson95": [
+            0.8214152251634678,
+            0.9702604449130534
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 49,
+          "total": 49,
+          "rate": 1.0,
+          "wilson95": [
+            0.9273021807795035,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 14,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 176,
+        "baseline_missing_known_on_successful_scans": 152,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 3,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 50,
+          "total": 155,
+          "rate": 0.3225806451612903,
+          "wilson95": [
+            0.2540482784113044,
+            0.3996945138776663
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 50,
+          "total": 154,
+          "rate": 0.3246753246753247,
+          "wilson95": [
+            0.25576805606969,
+            0.40211650478359445
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 49,
+          "total": 154,
+          "rate": 0.3181818181818182,
+          "wilson95": [
+            0.2498098345872583,
+            0.39540378407540705
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 21,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.154639018924847
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      }
+    },
+    "full_adapted": {
+      "all": {
+        "shown_suggestions": 118,
+        "shown_with_unknown_reference": 2,
+        "exact_value_among_shown": {
+          "correct": 113,
+          "total": 118,
+          "rate": 0.9576271186440678,
+          "wilson95": [
+            0.9046306149442866,
+            0.9817671764588544
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 112,
+          "total": 118,
+          "rate": 0.9491525423728814,
+          "wilson95": [
+            0.8934926488552369,
+            0.9764903686330311
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 112,
+          "total": 118,
+          "rate": 0.9491525423728814,
+          "wilson95": [
+            0.8934926488552369,
+            0.9764903686330311
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 112,
+          "total": 112,
+          "rate": 1.0,
+          "wilson95": [
+            0.9668386529330562,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 69,
+        "known_fields_behind_catalog_failure": 39,
+        "known_fields_on_successful_scans": 692,
+        "baseline_missing_known_on_successful_scans": 341,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 29,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 113,
+          "total": 370,
+          "rate": 0.3054054054054054,
+          "wilson95": [
+            0.26067385037655444,
+            0.3541361269484409
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 113,
+          "total": 366,
+          "rate": 0.3087431693989071,
+          "wilson95": [
+            0.2636054094844056,
+            0.3578540114079542
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 112,
+          "total": 366,
+          "rate": 0.30601092896174864,
+          "wilson95": [
+            0.2610164847274554,
+            0.35503521360622375
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 1,
+          "total": 322,
+          "rate": 0.003105590062111801,
+          "wilson95": [
+            0.0005484234204456462,
+            0.017378880372742305
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 1,
+          "total": 1,
+          "rate": 1.0,
+          "wilson95": [
+            0.20654931437723742,
+            1
+          ]
+        }
+      },
+      "artist": {
+        "shown_suggestions": 3,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 2,
+          "total": 3,
+          "rate": 0.6666666666666666,
+          "wilson95": [
+            0.20765960080204768,
+            0.9385080552796037
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 2,
+          "total": 3,
+          "rate": 0.6666666666666666,
+          "wilson95": [
+            0.20765960080204768,
+            0.9385080552796037
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 2,
+          "total": 3,
+          "rate": 0.6666666666666666,
+          "wilson95": [
+            0.20765960080204768,
+            0.9385080552796037
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 2,
+          "total": 2,
+          "rate": 1.0,
+          "wilson95": [
+            0.3423802275066531,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 7,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 183,
+        "baseline_missing_known_on_successful_scans": 12,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 17,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 2,
+          "total": 29,
+          "rate": 0.06896551724137931,
+          "wilson95": [
+            0.01912126616943336,
+            0.21964580150275695
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 2,
+          "total": 29,
+          "rate": 0.06896551724137931,
+          "wilson95": [
+            0.01912126616943336,
+            0.21964580150275695
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 2,
+          "total": 29,
+          "rate": 0.06896551724137931,
+          "wilson95": [
+            0.01912126616943336,
+            0.21964580150275695
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 1,
+          "total": 154,
+          "rate": 0.006493506493506494,
+          "wilson95": [
+            0.0011471844874949779,
+            0.035861209025453665
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 1,
+          "total": 1,
+          "rate": 1.0,
+          "wilson95": [
+            0.20654931437723742,
+            1
+          ]
+        }
+      },
+      "date": {
+        "shown_suggestions": 10,
+        "shown_with_unknown_reference": 1,
+        "exact_value_among_shown": {
+          "correct": 9,
+          "total": 10,
+          "rate": 0.9,
+          "wilson95": [
+            0.5958499732047616,
+            0.9821237869049271
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 9,
+          "total": 10,
+          "rate": 0.9,
+          "wilson95": [
+            0.5958499732047616,
+            0.9821237869049271
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 9,
+          "total": 10,
+          "rate": 0.9,
+          "wilson95": [
+            0.5958499732047616,
+            0.9821237869049271
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 9,
+          "total": 9,
+          "rate": 1.0,
+          "wilson95": [
+            0.700854951580456,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 23,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 167,
+        "baseline_missing_known_on_successful_scans": 38,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 2,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 9,
+          "total": 40,
+          "rate": 0.225,
+          "wilson95": [
+            0.12316091323540744,
+            0.37503096742310027
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 9,
+          "total": 40,
+          "rate": 0.225,
+          "wilson95": [
+            0.12316091323540744,
+            0.37503096742310027
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 9,
+          "total": 40,
+          "rate": 0.225,
+          "wilson95": [
+            0.12316091323540744,
+            0.37503096742310027
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 127,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.029359645293763368
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "venue": {
+        "shown_suggestions": 19,
+        "shown_with_unknown_reference": 1,
+        "exact_value_among_shown": {
+          "correct": 18,
+          "total": 19,
+          "rate": 0.9473684210526315,
+          "wilson95": [
+            0.753612688331012,
+            0.9906480059376995
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 18,
+          "total": 19,
+          "rate": 0.9473684210526315,
+          "wilson95": [
+            0.753612688331012,
+            0.9906480059376995
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 18,
+          "total": 19,
+          "rate": 0.9473684210526315,
+          "wilson95": [
+            0.753612688331012,
+            0.9906480059376995
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 18,
+          "total": 18,
+          "rate": 1.0,
+          "wilson95": [
+            0.8241207763533424,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 25,
+        "known_fields_behind_catalog_failure": 9,
+        "known_fields_on_successful_scans": 166,
+        "baseline_missing_known_on_successful_scans": 139,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 7,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 18,
+          "total": 146,
+          "rate": 0.1232876712328767,
+          "wilson95": [
+            0.07942622694565882,
+            0.18646452941950648
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 18,
+          "total": 143,
+          "rate": 0.1258741258741259,
+          "wilson95": [
+            0.08112491035257627,
+            0.1901980466696904
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 18,
+          "total": 143,
+          "rate": 0.1258741258741259,
+          "wilson95": [
+            0.08112491035257627,
+            0.1901980466696904
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 20,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.16112515805281938
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "city": {
+        "shown_suggestions": 86,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 84,
+          "total": 86,
+          "rate": 0.9767441860465116,
+          "wilson95": [
+            0.9191198543736794,
+            0.9935990737957291
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 83,
+          "total": 86,
+          "rate": 0.9651162790697675,
+          "wilson95": [
+            0.9023912889743925,
+            0.9880662019225916
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 83,
+          "total": 86,
+          "rate": 0.9651162790697675,
+          "wilson95": [
+            0.9023912889743925,
+            0.9880662019225916
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 83,
+          "total": 83,
+          "rate": 1.0,
+          "wilson95": [
+            0.9557646903580262,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 14,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 176,
+        "baseline_missing_known_on_successful_scans": 152,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 3,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 84,
+          "total": 155,
+          "rate": 0.5419354838709678,
+          "wilson95": [
+            0.4634322314249475,
+            0.6184103813067504
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 84,
+          "total": 154,
+          "rate": 0.5454545454545454,
+          "wilson95": [
+            0.46666108749448737,
+            0.6220355078398463
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 83,
+          "total": 154,
+          "rate": 0.538961038961039,
+          "wilson95": [
+            0.4602418898571749,
+            0.6157837632865397
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 21,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.154639018924847
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      }
+    },
+    "lora_adapted": {
+      "all": {
+        "shown_suggestions": 188,
+        "shown_with_unknown_reference": 5,
+        "exact_value_among_shown": {
+          "correct": 171,
+          "total": 188,
+          "rate": 0.9095744680851063,
+          "wilson95": [
+            0.8599699243147287,
+            0.9427762648911046
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 167,
+          "total": 188,
+          "rate": 0.8882978723404256,
+          "wilson95": [
+            0.8352749417436618,
+            0.9257701467242062
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 166,
+          "total": 188,
+          "rate": 0.8829787234042553,
+          "wilson95": [
+            0.8291812792911782,
+            0.9214385339921984
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 166,
+          "total": 167,
+          "rate": 0.9940119760479041,
+          "wilson95": [
+            0.9668655375013077,
+            0.998942183522516
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 69,
+        "known_fields_behind_catalog_failure": 39,
+        "known_fields_on_successful_scans": 692,
+        "baseline_missing_known_on_successful_scans": 341,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 29,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 171,
+          "total": 370,
+          "rate": 0.46216216216216216,
+          "wilson95": [
+            0.4120104064224112,
+            0.5130915336130045
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 171,
+          "total": 366,
+          "rate": 0.4672131147540984,
+          "wilson95": [
+            0.41670444297929293,
+            0.5184028863165401
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 167,
+          "total": 366,
+          "rate": 0.4562841530054645,
+          "wilson95": [
+            0.40597357421477726,
+            0.5075028648463334
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 322,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.011789349441895376
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "artist": {
+        "shown_suggestions": 3,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 3,
+          "total": 3,
+          "rate": 1.0,
+          "wilson95": [
+            0.4385029682449545,
+            1
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 3,
+          "total": 3,
+          "rate": 1.0,
+          "wilson95": [
+            0.4385029682449545,
+            1
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 3,
+          "total": 3,
+          "rate": 1.0,
+          "wilson95": [
+            0.4385029682449545,
+            1
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 3,
+          "total": 3,
+          "rate": 1.0,
+          "wilson95": [
+            0.4385029682449545,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 7,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 183,
+        "baseline_missing_known_on_successful_scans": 12,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 17,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 3,
+          "total": 29,
+          "rate": 0.10344827586206896,
+          "wilson95": [
+            0.03581489135067708,
+            0.26385081090773804
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 3,
+          "total": 29,
+          "rate": 0.10344827586206896,
+          "wilson95": [
+            0.03581489135067708,
+            0.26385081090773804
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 3,
+          "total": 29,
+          "rate": 0.10344827586206896,
+          "wilson95": [
+            0.03581489135067708,
+            0.26385081090773804
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 154,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.024337451322329538
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "date": {
+        "shown_suggestions": 8,
+        "shown_with_unknown_reference": 1,
+        "exact_value_among_shown": {
+          "correct": 7,
+          "total": 8,
+          "rate": 0.875,
+          "wilson95": [
+            0.5291118177871466,
+            0.9775825085499433
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 7,
+          "total": 8,
+          "rate": 0.875,
+          "wilson95": [
+            0.5291118177871466,
+            0.9775825085499433
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 6,
+          "total": 8,
+          "rate": 0.75,
+          "wilson95": [
+            0.40927543031016894,
+            0.928520787247891
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 6,
+          "total": 7,
+          "rate": 0.8571428571428571,
+          "wilson95": [
+            0.48687217072568106,
+            0.9743203756552565
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 23,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 167,
+        "baseline_missing_known_on_successful_scans": 38,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 2,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 7,
+          "total": 40,
+          "rate": 0.175,
+          "wilson95": [
+            0.0874541374603592,
+            0.31949990331787714
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 7,
+          "total": 40,
+          "rate": 0.175,
+          "wilson95": [
+            0.0874541374603592,
+            0.31949990331787714
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 7,
+          "total": 40,
+          "rate": 0.175,
+          "wilson95": [
+            0.0874541374603592,
+            0.31949990331787714
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 127,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.029359645293763368
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "venue": {
+        "shown_suggestions": 67,
+        "shown_with_unknown_reference": 4,
+        "exact_value_among_shown": {
+          "correct": 55,
+          "total": 67,
+          "rate": 0.8208955223880597,
+          "wilson95": [
+            0.7125251075208199,
+            0.8944640866011805
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 54,
+          "total": 67,
+          "rate": 0.8059701492537313,
+          "wilson95": [
+            0.6958088777455581,
+            0.8829482608358841
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 54,
+          "total": 67,
+          "rate": 0.8059701492537313,
+          "wilson95": [
+            0.6958088777455581,
+            0.8829482608358841
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 54,
+          "total": 54,
+          "rate": 1.0,
+          "wilson95": [
+            0.9335864119091036,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 25,
+        "known_fields_behind_catalog_failure": 9,
+        "known_fields_on_successful_scans": 166,
+        "baseline_missing_known_on_successful_scans": 139,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 7,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 55,
+          "total": 146,
+          "rate": 0.3767123287671233,
+          "wilson95": [
+            0.3022230507316627,
+            0.457523014987846
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 55,
+          "total": 143,
+          "rate": 0.38461538461538464,
+          "wilson95": [
+            0.3088876979580042,
+            0.46638012990867617
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 54,
+          "total": 143,
+          "rate": 0.3776223776223776,
+          "wilson95": [
+            0.30234704948670676,
+            0.4593006467355299
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 20,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.16112515805281938
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      },
+      "city": {
+        "shown_suggestions": 110,
+        "shown_with_unknown_reference": 0,
+        "exact_value_among_shown": {
+          "correct": 106,
+          "total": 110,
+          "rate": 0.9636363636363636,
+          "wilson95": [
+            0.910213207186402,
+            0.985769689173482
+          ]
+        },
+        "joint_current_role_and_exact_value_among_shown": {
+          "correct": 103,
+          "total": 110,
+          "rate": 0.9363636363636364,
+          "wilson95": [
+            0.874442538117898,
+            0.9688354819855224
+          ]
+        },
+        "joint_exact_annotated_offsets_among_shown": {
+          "correct": 103,
+          "total": 110,
+          "rate": 0.9363636363636364,
+          "wilson95": [
+            0.874442538117898,
+            0.9688354819855224
+          ]
+        },
+        "joint_exact_offsets_when_role_value_match_and_annotated": {
+          "correct": 103,
+          "total": 103,
+          "rate": 1.0,
+          "wilson95": [
+            0.9640452417713519,
+            1
+          ]
+        },
+        "matching_role_value_without_offset_reference": 0,
+        "reference_unknown_fields": 14,
+        "known_fields_behind_catalog_failure": 10,
+        "known_fields_on_successful_scans": 176,
+        "baseline_missing_known_on_successful_scans": 152,
+        "baseline_incorrect_nonempty_known_on_successful_scans": 3,
+        "wrong_or_missing_fields_behind_prediction_failure": 0,
+        "review_eligible_fields_behind_prediction_failure": 0,
+        "exact_field_repair_recall_successful_scans": {
+          "correct": 106,
+          "total": 155,
+          "rate": 0.6838709677419355,
+          "wilson95": [
+            0.606979737537473,
+            0.7518686413630482
+          ]
+        },
+        "exact_field_repair_recall_review_eligible": {
+          "correct": 106,
+          "total": 154,
+          "rate": 0.6883116883116883,
+          "wilson95": [
+            0.6113247288863867,
+            0.7561325946415671
+          ]
+        },
+        "joint_field_repair_recall_review_eligible": {
+          "correct": 103,
+          "total": 154,
+          "rate": 0.6688311688311688,
+          "wilson95": [
+            0.5911863237119915,
+            0.7382581732441049
+          ]
+        },
+        "degradation_among_correct_baseline_fields": {
+          "correct": 0,
+          "total": 21,
+          "rate": 0.0,
+          "wilson95": [
+            0,
+            0.154639018924847
+          ]
+        },
+        "degradation_among_shown_overwrites_of_correct_fields": {
+          "correct": 0,
+          "total": 0,
+          "rate": null,
+          "wilson95": null
+        }
+      }
+    }
+  }
+}

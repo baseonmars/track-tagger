@@ -1,0 +1,108 @@
+{
+  "accepted_recordings": 57,
+  "baseline_scan_failures": 15,
+  "catalog_binary_sha256": "48342ce2c4f322bc6270924f65d912b6c4a29f9b471f300347b7eeee73922561",
+  "cohort_date_cache": {
+    "go_date_processes": 68,
+    "operations": 300,
+    "timings": {
+      "date_process_cpu_ms": {
+        "p50": 0.0,
+        "p95": 2.884,
+        "p99": 2.975
+      },
+      "python_cpu_ms": {
+        "p50": 1.141,
+        "p95": 3.189,
+        "p99": 4.776
+      },
+      "total_cpu_ms": {
+        "p50": 1.141,
+        "p95": 5.566,
+        "p99": 6.696
+      },
+      "wall_ms": {
+        "p50": 1.143,
+        "p95": 5.846,
+        "p99": 7.015
+      }
+    },
+    "with_date_subprocess": {
+      "date_process_cpu_ms": {
+        "p50": 2.792,
+        "p95": 2.975,
+        "p99": 3.358
+      },
+      "python_cpu_ms": {
+        "p50": 2.52,
+        "p95": 3.693,
+        "p99": 6.003
+      },
+      "total_cpu_ms": {
+        "p50": 5.319,
+        "p95": 6.696,
+        "p99": 8.86
+      },
+      "wall_ms": {
+        "p50": 5.613,
+        "p95": 7.015,
+        "p99": 9.199
+      }
+    }
+  },
+  "date_validator_binary_bytes": 5151698,
+  "date_validator_binary_sha256": "c75f5cfd46bd7c9d31631be6b99d8ce30e80b10bcf3e84d3bdfc57ccd05ee58f",
+  "evaluate_py_sha256": "265e3a9457d4089d94d944312e0d748cd2ebd5d23d37e967667442fc88feb8e9",
+  "notes": "Production scan excluded. Existing catalog date parsing runs via a separate Go executable.",
+  "package_bytes": 6161820,
+  "recordings": 100,
+  "threads": 1,
+  "without_date_cache": {
+    "go_date_processes": 204,
+    "operations": 300,
+    "timings": {
+      "date_process_cpu_ms": {
+        "p50": 2.721,
+        "p95": 3.033,
+        "p99": 3.306
+      },
+      "python_cpu_ms": {
+        "p50": 2.389,
+        "p95": 3.82,
+        "p99": 5.158
+      },
+      "total_cpu_ms": {
+        "p50": 5.114,
+        "p95": 6.477,
+        "p99": 7.589
+      },
+      "wall_ms": {
+        "p50": 5.417,
+        "p95": 6.856,
+        "p99": 7.775
+      }
+    },
+    "with_date_subprocess": {
+      "date_process_cpu_ms": {
+        "p50": 2.781,
+        "p95": 3.165,
+        "p99": 3.377
+      },
+      "python_cpu_ms": {
+        "p50": 2.515,
+        "p95": 3.609,
+        "p99": 5.854
+      },
+      "total_cpu_ms": {
+        "p50": 5.327,
+        "p95": 6.783,
+        "p99": 8.582
+      },
+      "wall_ms": {
+        "p50": 5.644,
+        "p95": 6.974,
+        "p99": 8.881
+      }
+    }
+  }
+}

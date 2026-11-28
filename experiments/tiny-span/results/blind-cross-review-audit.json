@@ -1,0 +1,40 @@
+{
+  "considered_recordings": 49,
+  "cohort_sha256": "e79c09c19cfd5994332374559e8072a21f7cf527fc0c3d2a0c55b0d7d02590fd",
+  "method": "Independent primary and second readings of original notes and supplied filenames. Cross-review sample uses the preassigned ID hash bucket and retained final-v3 membership.",
+  "uses_candidate_predictions": false,
+  "pre_adjudication_disagreements": {
+    "metadata_values": {
+      "artist": 2,
+      "date": 3,
+      "venue": 2,
+      "city": 1
+    },
+    "metadata_evidence": {
+      "artist": 2,
+      "date": 4,
+      "venue": 2,
+      "city": 1
+    },
+    "scope_flags": {
+      "mixed_scope": 0,
+      "uncertainty": 33,
+      "conflict": 14
+    },
+    "recordings_different_review_required": 4,
+    "recordings_different_titles": 5,
+    "recordings_different_mappings": 5,
+    "lines": 1700,
+    "line_role_disagreements": 84,
+    "metadata_role_disagreements": 9
+  },
+  "adjudication_changes_from_primary": {
+    "primary_artist": 2,
+    "primary_date": 3,
+    "primary_venue": 2,
+    "primary_city": 1,
+    "primary_review_required": 3,
+    "primary_titles": 2,
+    "primary_mappings": 2
+  }
+}
