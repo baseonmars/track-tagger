@@ -26,14 +26,16 @@ import (
 
 // The AppKit main thread owns the launcher state.
 var macLauncher struct {
-	state    int
-	cancel   context.CancelFunc
-	session  *service.Session
-	quitting bool
+	state               int
+	cancel              context.CancelFunc
+	session             *service.Session
+	quitting            bool
+	noteSuggestionsPath string
 }
 
 // RunMac runs AppKit on the process's initial OS thread.
-func RunMac() {
+func RunMac(noteSuggestionsPath string) {
+	macLauncher.noteSuggestionsPath = noteSuggestionsPath
 	C.ttRun()
 }
 
@@ -59,11 +61,11 @@ func macUpdate(state int, url, message string) {
 }
 
 //export ttStart
-func ttStart(src, dst *C.char, selectedMode C.int) {
+func ttStart(src, dst *C.char, selectedMode, usDates, noteSuggestions C.int) {
 	if macLauncher.state != C.TTStopped || macLauncher.quitting {
 		return
 	}
-	s := Settings{Source: C.GoString(src), Mode: app.DryRun}
+	s := Settings{USDates: usDates != 0, NoteSuggestions: noteSuggestions != 0, Source: C.GoString(src), Mode: app.DryRun}
 	switch selectedMode {
 	case C.TTWrite:
 		s.Mode = app.Write
@@ -78,8 +80,9 @@ func ttStart(src, dst *C.char, selectedMode C.int) {
 	ctx, cancel := context.WithCancel(context.Background())
 	macLauncher.cancel = cancel
 	macUpdate(C.TTStarting, "", "")
+	noteSuggestionsPath := resolveNoteSuggestionsPath(macLauncher.noteSuggestionsPath, s.NoteSuggestions)
 	go func() {
-		session, err := startMacSession(ctx, s)
+		session, err := startMacSession(ctx, s, noteSuggestionsPath)
 		if err != nil {
 			macPost(func() { macFinished(err, ctx.Err() != nil) })
 			return
@@ -87,7 +90,11 @@ func ttStart(src, dst *C.char, selectedMode C.int) {
 		macPost(func() {
 			macLauncher.session = session
 			if ctx.Err() == nil {
-				macUpdate(C.TTRunning, session.URL(), "")
+				message := ""
+				if noteSuggestionsPath != "" && !session.NoteSuggestionsAvailable() {
+					message = "Show-notes suggestions are unavailable. Check the optional model pack and restart."
+				}
+				macUpdate(C.TTRunning, session.URL(), message)
 				ttOpenReview()
 			}
 		})
@@ -96,7 +103,7 @@ func ttStart(src, dst *C.char, selectedMode C.int) {
 	}()
 }
 
-func startMacSession(ctx context.Context, s Settings) (*service.Session, error) {
+func startMacSession(ctx context.Context, s Settings, noteSuggestionsPath string) (*service.Session, error) {
 	if err := checkMacFolder(s.Source, s.Mode == app.Write); err != nil {
 		if s.Mode == app.Write {
 			return nil, fmt.Errorf("cannot use music folder: %w. Choose a readable, writable music folder", err)
@@ -109,8 +116,9 @@ func startMacSession(ctx context.Context, s Settings) (*service.Session, error) 
 		}
 	}
 	session, err := service.Start(ctx, service.Options{
-		Options:      app.Options{Source: s.Source, Destination: s.Destination, Mode: s.Mode, Settle: 2 * time.Minute},
-		FallbackPort: true,
+		Options:             app.Options{ReviewAmbiguousDates: !s.USDates, Source: s.Source, Destination: s.Destination, Mode: s.Mode, Settle: 2 * time.Minute},
+		FallbackPort:        true,
+		NoteSuggestionsPath: noteSuggestionsPath,
 	}, func(line string) { fmt.Fprintln(os.Stderr, line) })
 	if err != nil {
 		return nil, fmt.Errorf("could not start: %w. Check folders and permissions", err)

@@ -2,7 +2,7 @@ const {test} = require('node:test');
 const assert = require('node:assert/strict');
 const {readFileSync} = require('node:fs');
 const {runInNewContext} = require('node:vm');
-const {actionState, validDate, proposedFilename} = require('../assets/review.js');
+const {actionState, validDate, proposedFilename, suggestionEdit} = require('../assets/review.js');
 const base = {reviewed:true,writable:true,status:'ready',changed:false,approved:false,valid:true,submitting:false};
 test('saved review and approval govern actions', () => {
   assert.equal(actionState(base).apply,true);
@@ -27,16 +27,31 @@ test('filename preview uses portable names and preserves valid punctuation and U
  assert.equal(proposedFilename('0', 'No mapped song'), '');
  assert.equal(proposedFilename('99', '🎶'.repeat(70)), '99 ' + '🎶'.repeat(61) + '.flac');
 });
-function setup(options={}) {
- const node = () => ({disabled:true,textContent:'',events:{},addEventListener(name,fn){this.events[name]=fn;}});
+function setup(options={}, fetch) {
+ const node = tag => ({tag, disabled:true, textContent:'', events:{}, children:[],
+   addEventListener(name,fn){
+    const earlier=this.events[name];
+    this.events[name]=earlier ? event=>{ earlier(event); return fn(event); } : fn;
+   },
+   append(...nodes){this.children.push(...nodes);},
+   replaceChildren(){this.children=[];},
+ });
  const input = (name,value,type='text') => ({name,value,type,checked:false});
  const fields = [input('artist','Band'),input('album','Concert'),input('date','1970'),input('date_unknown','yes','checkbox'),input('track_file','t01.flac'),input('track_title','Song'),input('track_artist',''),input('track_disc','1'),input('track_number','1'),input('approve','yes','checkbox')];
+ if (fetch) fields.push(input('csrf','token'),input('id','one'),input('fingerprint','source'));
  fields.namedItem = name => fields.find(f=>f.name===name);
  const form = Object.assign(node(),{elements:fields,dataset:{reviewed:'true',writable:'true',status:'ready',...options},checkValidity:()=>true});
  const nodes = {'review-form':form,'save-review':node(),'apply-review':node(),'review-help':node()};
+ if (fetch) {
+  for (const id of ['note-suggestions','find-note-suggestions','note-suggestion-status','note-suggestion-results']) nodes[id]=node();
+  for (const el of fields) {
+   el.focus = ()=>{};
+   el.dispatchEvent = event=>form.events[event.type]({target:el});
+  }
+ }
  const window = Object.assign(node(),{location:{href:'http://localhost/recording?id=1',origin:'http://localhost',pathname:'/recording',search:'?id=1'},confirm:()=>false});
- const document = Object.assign(node(),{getElementById:id=>nodes[id]});
- runInNewContext(readFileSync(require('node:path').join(__dirname,'../assets/review.js'),'utf8'),{document,window,URL});
+ const document = Object.assign(node(),{getElementById:id=>nodes[id],createElement:node});
+ runInNewContext(readFileSync(require('node:path').join(__dirname,'../assets/review.js'),'utf8'),{document,window,URL,URLSearchParams,Event,navigator:{},fetch});
  return {form,fields,nodes,window,document};
 }
 test('dirty in-app links require confirmation and avoid a second unload prompt', () => {
@@ -106,4 +121,61 @@ test('DOM keeps actions disabled before library validation',()=>{
  assert.equal(nodes['save-review'].disabled,true);
  assert.equal(nodes['apply-review'].disabled,true);
  assert.match(nodes['review-help'].textContent,/validation is still running/);
+});
+
+test('city-only suggestion can build an album and retain chosen parts through later edits', () => {
+ const draft = {date:'1999-10-23', dateUnknown:false, album:'1999-10-23'};
+ const city = {field:'CITY', value:'Montréal', albumSafe:true, current:draft.album};
+ const first = suggestionEdit(city,draft,{album:null});
+ assert.equal(first.value,'1999-10-23 - Montréal');
+ const venue = {...city,field:'VENUE',value:'Theatre'};
+ const second = suggestionEdit(venue,{...draft,album:first.value},first.selection);
+ assert.equal(second.value,'1999-10-23 - Theatre, Montréal');
+ const date = suggestionEdit({field:'DATE',value:'1999-10-24'},{...draft,album:second.value},second.selection);
+ assert.equal(date.album,'1999-10-24 - Theatre, Montréal');
+ assert.equal(suggestionEdit(venue,{...draft,album:'My album'},second.selection),null);
+ assert.equal(suggestionEdit({...city,albumSafe:false},draft,{album:null}),null);
+ assert.equal(suggestionEdit(city,{...draft,dateUnknown:true},{album:null}).value,'Montréal');
+ assert.equal(suggestionEdit(city,{...draft,date:'2000-03-15'},{album:null}).value,'2000-03-15 - Montréal');
+});
+
+test('fetching suggestions shows source evidence and does not edit or approve the form', async () => {
+ const calls=[];
+ const fetch = async (path, options) => {
+  calls.push([path,options.method,Object.fromEntries(options.body)]);
+  return {ok:true,status:200,json:async()=>[{
+   field:'CITY',value:'Montréal',note:'info.txt',line:1,quote:'Montréal',context:'🎶 Montréal <literal>',
+   start:2,end:10,albumSafe:true,current:'Concert',
+  }]};
+ };
+ const {form,fields,nodes}=setup({reviewed:'false',status:'needs-review'},fetch);
+ const approve = fields.namedItem('approve');
+ approve.checked=true;
+ form.events.change({target:approve});
+ const request=nodes['find-note-suggestions'];
+ assert.equal(calls.length,0);
+ await request.events.click();
+ assert.deepEqual(calls,[['/note-suggestions','POST',{id:'one',csrf:'token',fingerprint:'source'}]]);
+ assert.equal(fields.namedItem('album').value,'Concert');
+ assert.equal(approve.checked,true);
+ const card=nodes['note-suggestion-results'].children[0];
+ const evidence=card.children.find(node=>node.tag==='pre');
+ assert.equal(evidence.children[0],'🎶 ');
+ assert.equal(evidence.children[1].tag,'mark');
+ assert.equal(evidence.children[1].textContent,'Montréal');
+ assert.equal(evidence.children[2],' <literal>');
+ const use=card.children.find(node=>node.textContent==='Use in draft');
+ use.events.click();
+ assert.equal(fields.namedItem('album').value,'1970 - Montréal');
+ assert.equal(approve.checked,false);
+ assert.equal(nodes['save-review'].disabled,true);
+ assert.equal(calls.length,1);
+});
+
+test('a stale suggestion response leaves the draft unchanged', async () => {
+ const {fields,nodes}=setup({reviewed:'false'},async()=>({ok:false,status:409}));
+ await nodes['find-note-suggestions'].events.click();
+ assert.match(nodes['note-suggestion-status'].textContent,/Refresh the review/);
+ assert.deepEqual(nodes['note-suggestion-results'].children,[]);
+ assert.equal(fields.namedItem('album').value,'Concert');
 });

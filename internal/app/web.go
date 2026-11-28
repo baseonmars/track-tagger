@@ -18,7 +18,10 @@ import (
 	"track-tagger/internal/webui"
 )
 
-type WebBackend struct{ E *Engine }
+type WebBackend struct {
+	E         *Engine
+	NoteModel catalog.NotePredictor
+}
 
 func (w WebBackend) ShowNotesSignature(ctx context.Context) (bool, error) {
 	w.E.mu.Lock()

@@ -10,7 +10,7 @@ import (
 	"track-tagger/internal/media"
 )
 
-func TestAmbiguousDateSuggestionRequiresReviewBeforeWrite(t *testing.T) {
+func TestOptingOutOfUSDatesRequiresReviewBeforeWrite(t *testing.T) {
 	e, audio := engineFixture(t, Write)
 	if err := os.WriteFile(filepath.Join(e.Source, "notes.txt"), []byte("Artist: Band\nDate: 10/09/1969\nVenue: Hall\nCity: London\n01. First Song\n"), 0644); err != nil {
 		t.Fatal(err)
@@ -18,6 +18,15 @@ func TestAmbiguousDateSuggestionRequiresReviewBeforeWrite(t *testing.T) {
 	before, err := os.ReadFile(audio)
 	if err != nil {
 		t.Fatal(err)
+	}
+	first, err := e.Scan()
+	if err != nil || len(first.Recordings) != 1 || first.Recordings[0].Status != "ready" {
+		t.Fatalf("default US parsing: %v, %v", first, err)
+	}
+	b := WebBackend{E: e}
+	b.SetUSDates(false)
+	if _, err := e.Apply(first); err == nil {
+		t.Fatal("old ready plan accepted under strict date policy")
 	}
 	p, err := e.Scan()
 	if err != nil {

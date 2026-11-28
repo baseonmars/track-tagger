@@ -63,7 +63,15 @@ func (c *noteDateCandidates) collect(line string) {
 	}
 }
 
-func (c noteDateCandidates) resolve(r *Recording, dates, filenames map[string]bool) bool {
+// DatePolicy controls numeric concert dates left ambiguous by the recording evidence.
+type DatePolicy uint8
+
+const (
+	AssumeUS DatePolicy = iota
+	ReviewAmbiguous
+)
+
+func (policy DatePolicy) resolve(c noteDateCandidates, r *Recording, dates, filenames map[string]bool) bool {
 	resolved := true
 	for _, candidate := range c {
 		switch len(candidate.options) {
@@ -88,10 +96,11 @@ func (c noteDateCandidates) resolve(r *Recording, dates, filenames map[string]bo
 				}
 				continue
 			}
-			// Keep the month-first interpretation as a reviewable suggestion.
-			// Filename evidence alone cannot settle a tie or supply a date.
+			// Use month-first when both calendar readings remain possible.
 			dates[candidate.options[0]] = true
-			reason(r, "ambiguous numeric concert date: "+candidate.text)
+			if policy == ReviewAmbiguous || len(filenames) > 0 {
+				reason(r, "ambiguous numeric concert date: "+candidate.text)
+			}
 			if len(filenames) > 0 {
 				reason(r, "conflicting filename evidence for concert date")
 			}

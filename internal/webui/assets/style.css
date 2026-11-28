@@ -45,3 +45,16 @@ html[data-layout=compact] main:has(#recording-library)>.intro{margin:0 0 6px;fon
 .skip-track { margin-top: .3rem; }
 .proposed-filename { display:block; overflow-wrap:anywhere; }
 .proposed-filename[hidden] { display:none; }
+
+.note-suggestions{margin:1rem 0;padding:.8rem 1rem;border:1px solid var(--line);border-left:3px solid var(--green);background:#f8faf5}
+.note-suggestions-head{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+.note-suggestions-head h3{margin:0}
+.note-suggestions button{padding:.4rem .7rem}
+#note-suggestion-status:empty{display:none}
+.note-suggestion{padding:.85rem 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.note-suggestion h4{margin:0 0 .3rem}
+.note-suggestion dl{display:grid;grid-template-columns:auto 1fr;gap:.15rem .75rem;margin:.35rem 0;font-size:.85rem}
+.note-suggestion dt{color:var(--muted)}
+.note-suggestion dd{margin:0}
+.note-suggestion pre{margin:.35rem 0 .6rem;padding:.5rem .7rem;background:#eef2e8}
+.note-suggestion mark{background:#f3e4b4;color:inherit}

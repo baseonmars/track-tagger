@@ -357,3 +357,24 @@ func TestRenameCLIResumesWithoutVisibleAudio(t *testing.T) {
 		})
 	}
 }
+
+func TestAmbiguousDateOption(t *testing.T) {
+	f := setup(t)
+	show := filepath.Join(f.source, "show")
+	write(t, filepath.Join(show, "notes.txt"), []byte("Artist: Trio\nDate: 03/04/1970\nVenue: Hall\nCity: London\n01. Opening\n02. Finale\n"))
+	before := snapshot(t, f.source)
+	for _, tc := range []struct{ flag, status string }{{"", "ready"}, {"--us-dates=false", "needs-review"}} {
+		args := []string{"scan", f.source, "--json", "--state", f.state, "--settle", "0s"}
+		if tc.flag != "" {
+			args = append(args, tc.flag)
+		}
+		var plan app.Plan
+		if err := json.Unmarshal(run(t, true, args...), &plan); err != nil {
+			t.Fatal(err)
+		}
+		if len(plan.Recordings) != 1 || plan.Recordings[0].Date != "1970-03-04" || plan.Recordings[0].Status != tc.status {
+			t.Fatalf("%q: unexpected date or readiness: %+v", tc.flag, plan.Recordings)
+		}
+	}
+	unchanged(t, f.source, before)
+}

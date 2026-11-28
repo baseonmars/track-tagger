@@ -1,0 +1,27 @@
+#include "textflag.h"
+
+// Accumulate four independent vectors to avoid an FMA dependency chain.
+TEXT ·dot(SB), NOSPLIT, $0-52
+	MOVD x_base+0(FP), R0
+	MOVD y_base+24(FP), R1
+	MOVD x_len+8(FP), R2
+	VEOR V0.B16, V0.B16, V0.B16
+	VEOR V1.B16, V1.B16, V1.B16
+	VEOR V2.B16, V2.B16, V2.B16
+	VEOR V3.B16, V3.B16, V3.B16
+loop:
+	VLD1.P 64(R0), [V4.S4, V5.S4, V6.S4, V7.S4]
+	VLD1.P 64(R1), [V8.S4, V9.S4, V10.S4, V11.S4]
+	VFMLA V4.S4, V8.S4, V0.S4
+	VFMLA V5.S4, V9.S4, V1.S4
+	VFMLA V6.S4, V10.S4, V2.S4
+	VFMLA V7.S4, V11.S4, V3.S4
+	SUBS $16, R2
+	BNE loop
+	VFADD V0.S4, V1.S4, V0.S4
+	VFADD V2.S4, V3.S4, V2.S4
+	VFADD V0.S4, V2.S4, V0.S4
+	VFADDP V0.S4, V0.S4, V0.S4
+	VFADDP V0.S4, V0.S4, V0.S4
+	FMOVS F0, ret+48(FP)
+	RET

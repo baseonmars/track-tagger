@@ -102,7 +102,11 @@ func CanTag(path string) bool {
 	return strings.EqualFold(filepath.Ext(path), ".flac")
 }
 
-func Scan(source string) ([]Recording, error) { return scan(source, Fingerprint) }
+func Scan(source string) ([]Recording, error) { return AssumeUS.Scan(source) }
+
+func (policy DatePolicy) Scan(source string) ([]Recording, error) {
+	return policy.scan(source, Fingerprint)
+}
 
 // Discovery describes a recording without opening its file contents.
 type Discovery struct {
@@ -162,14 +166,14 @@ func Discover(source string) ([]Discovery, error) {
 	return out, nil
 }
 
-func scan(source string, fingerprint func(string) (Evidence, error)) ([]Recording, error) {
+func (policy DatePolicy) scan(source string, fingerprint func(string) (Evidence, error)) ([]Recording, error) {
 	discovered, err := Discover(source)
 	if err != nil {
 		return nil, err
 	}
 	var out []Recording
 	for _, d := range discovered {
-		r, err := Validate(source, d, fingerprint)
+		r, err := policy.Validate(source, d, fingerprint)
 		if err != nil {
 			return nil, err
 		}
@@ -181,21 +185,25 @@ func scan(source string, fingerprint func(string) (Evidence, error)) ([]Recordin
 // Validate reads the contents of one discovered recording. Callers must not use
 // cached fingerprints for review approval or media changes.
 func Validate(source string, d Discovery, fingerprint func(string) (Evidence, error)) (Recording, error) {
-	return scanRecording(source, d.Path, fingerprint, false)
+	return AssumeUS.Validate(source, d, fingerprint)
+}
+
+func (policy DatePolicy) Validate(source string, d Discovery, fingerprint func(string) (Evidence, error)) (Recording, error) {
+	return policy.scanRecording(source, d.Path, fingerprint, false)
 }
 
 // ValidateRenameInputs also fingerprints a recording while its audio files are
 // in journaled temporary paths and therefore absent from discovery.
-func ValidateRenameInputs(source, dir string, fingerprint func(string) (Evidence, error)) (Recording, error) {
-	return scanRecording(source, dir, fingerprint, true)
+func (policy DatePolicy) ValidateRenameInputs(source, dir string, fingerprint func(string) (Evidence, error)) (Recording, error) {
+	return policy.scanRecording(source, dir, fingerprint, true)
 }
 
 // ScanRecording freshly discovers and validates one recording, retaining paths
 // relative to the original collection. Independent nested recordings are skipped.
 func ScanRecording(source, dir string) (Recording, error) {
-	return scanRecording(source, dir, Fingerprint, false)
+	return AssumeUS.scanRecording(source, dir, Fingerprint, false)
 }
-func scanRecording(source, dir string, fingerprint func(string) (Evidence, error), allowEmpty bool) (Recording, error) {
+func (policy DatePolicy) scanRecording(source, dir string, fingerprint func(string) (Evidence, error), allowEmpty bool) (Recording, error) {
 	root, err := filepath.Abs(source)
 	if err != nil {
 		return Recording{}, err
@@ -238,7 +246,7 @@ func scanRecording(source, dir string, fingerprint func(string) (Evidence, error
 	if len(files) == 0 && !allowEmpty {
 		return Recording{}, fmt.Errorf("recording disappeared")
 	}
-	return build(root, dir, files, fingerprint)
+	return policy.build(root, dir, files, fingerprint)
 }
 func reason(r *Recording, s string) {
 	for _, v := range r.ReviewReasons {
@@ -254,7 +262,7 @@ func within(root, path string) bool {
 	rel, err := filepath.Rel(root, path)
 	return err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator))
 }
-func build(root, dir string, files []string, fingerprint func(string) (Evidence, error)) (Recording, error) {
+func (policy DatePolicy) build(root, dir string, files []string, fingerprint func(string) (Evidence, error)) (Recording, error) {
 	rel, _ := filepath.Rel(root, dir)
 	id := sha256.Sum256([]byte(dir))
 	r := Recording{ID: hex.EncodeToString(id[:12]), Path: dir, RelativePath: rel, Status: "ready"}
@@ -345,7 +353,7 @@ func build(root, dir string, files []string, fingerprint func(string) (Evidence,
 			checkManifest(&r, p)
 		}
 	}
-	resolved := candidates.resolve(&r, dates, filenameDates(dir, r.Notes, files))
+	resolved := policy.resolve(candidates, &r, dates, filenameDates(dir, r.Notes, files))
 	if len(dates) == 1 && resolved {
 		for d := range dates {
 			r.Date = d
@@ -416,22 +424,17 @@ func build(root, dir string, files []string, fingerprint func(string) (Evidence,
 		return a.Path < b.Path
 	})
 	chooseArt(&r)
-	r.Album = r.Date
-	if r.Venue != "" {
-		if r.Album != "" {
-			r.Album += " - "
-		}
-		r.Album += r.Venue
-		if r.City != "" {
-			r.Album += ", " + r.City
-		}
-	} else {
+	r.Album = concertAlbum(r.Date, r.Venue, r.City)
+	if r.Venue == "" {
 		reason(&r, "venue is missing")
 	}
 	h := sha256.New()
 	for _, e := range r.Evidence {
 		rel, _ := filepath.Rel(dir, e.Path)
 		fmt.Fprintf(h, "%s\x00%s\x00%d\x00%d\n", filepath.ToSlash(rel), e.SHA256, e.Size, e.ModTime)
+	}
+	if policy == ReviewAmbiguous {
+		h.Write([]byte("\x00review-ambiguous-dates"))
 	}
 	r.Fingerprint = hex.EncodeToString(h.Sum(nil))
 	RefreshPlan(&r)
@@ -619,7 +622,7 @@ func technical(s string) bool {
 func parseDates(r *Recording, line string, dates map[string]bool) {
 	var candidates noteDateCandidates
 	candidates.collect(line)
-	candidates.resolve(r, dates, nil)
+	ReviewAmbiguous.resolve(candidates, r, dates, nil)
 }
 func chooseArt(r *Recording) {
 	var preferred []string

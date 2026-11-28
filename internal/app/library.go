@@ -283,7 +283,7 @@ func (e *Engine) validateLibrary(ctx context.Context, generation uint64, hook fu
 				r, err = hook(ctx, d)
 			} else {
 				if err = safePath(e.Source, d.Path); err == nil {
-					r, err = catalog.Validate(e.Source, d, func(path string) (catalog.Evidence, error) {
+					r, err = e.DatePolicy().Validate(e.Source, d, func(path string) (catalog.Evidence, error) {
 						if err := ctx.Err(); err != nil {
 							return catalog.Evidence{}, err
 						}

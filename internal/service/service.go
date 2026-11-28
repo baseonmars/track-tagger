@@ -11,25 +11,28 @@ import (
 	"time"
 
 	"track-tagger/internal/app"
+	"track-tagger/internal/notesmodel"
 	"track-tagger/internal/webui"
 )
 
 type Options struct {
 	app.Options
-	Addr         string
-	Remote       bool
-	Token        string
-	Poll         bool
-	Reconcile    time.Duration
-	FallbackPort bool
+	Addr                string
+	Remote              bool
+	Token               string
+	Poll                bool
+	Reconcile           time.Duration
+	FallbackPort        bool
+	NoteSuggestionsPath string
 }
 
 type Session struct {
-	url    string
-	cancel context.CancelFunc
-	done   chan struct{}
-	mu     sync.Mutex
-	err    error
+	url                      string
+	noteSuggestionsAvailable bool
+	cancel                   context.CancelFunc
+	done                     chan struct{}
+	mu                       sync.Mutex
+	err                      error
 }
 
 // Start validates configuration and binds before starting any watcher work.
@@ -48,7 +51,19 @@ func Start(ctx context.Context, opts Options, log func(string)) (*Session, error
 		return nil, err
 	}
 	cfg := webui.Config{Addr: opts.Addr, Remote: opts.Remote, Token: opts.Token, Writable: e.Mode != app.DryRun}
-	h, err := webui.New(cfg, app.WebBackend{E: e})
+	backend := app.WebBackend{E: e}
+	if opts.NoteSuggestionsPath != "" {
+		model, loadErr := notesmodel.Load(opts.NoteSuggestionsPath)
+		if loadErr != nil {
+			if log != nil {
+				log("Show-notes suggestions unavailable: " + loadErr.Error())
+			}
+		} else {
+			backend.NoteModel = model
+			cfg.NoteSuggestions = true
+		}
+	}
+	h, err := webui.New(cfg, backend)
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +76,9 @@ func Start(ctx context.Context, opts Options, log func(string)) (*Session, error
 		_ = e.Close()
 		return nil, err
 	}
-	return startSession(ctx, opts, e, listener, h, log), nil
+	session := startSession(ctx, opts, e, listener, h, log)
+	session.noteSuggestionsAvailable = cfg.NoteSuggestions
+	return session, nil
 }
 
 func startSession(ctx context.Context, opts Options, e *app.Engine, listener net.Listener, h http.Handler, log func(string)) *Session {
@@ -105,6 +122,9 @@ func normalError(err error) error {
 }
 
 func (s *Session) URL() string { return s.url }
+
+// NoteSuggestionsAvailable reports whether the requested model pack was loaded.
+func (s *Session) NoteSuggestionsAvailable() bool { return s.noteSuggestionsAvailable }
 
 // Stop waits without a forced timeout so active media work retains its storage.
 // It is safe to call concurrently or more than once.

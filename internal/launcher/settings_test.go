@@ -14,6 +14,9 @@ func TestPreferences(t *testing.T) {
 	if e != nil || s.Mode != app.DryRun {
 		t.Fatalf("defaults: %+v %v", s, e)
 	}
+	if !s.USDates {
+		t.Fatal("US date preference should default on")
+	}
 	if !s.AutoCheckUpdates {
 		t.Fatal("startup checks should default on")
 	}
@@ -35,12 +38,16 @@ func TestPreferences(t *testing.T) {
 	}
 	s.Mode = app.Write
 	s.AutoCheckUpdates = false
+	s.USDates = false
 	if e = Save(d, s); e != nil {
 		t.Fatal(e)
 	}
 	got, e := Load(d)
 	if e != nil || got.Mode != app.Write {
 		t.Fatalf("roundtrip: %+v %v", got, e)
+	}
+	if got.USDates {
+		t.Fatal("disabled US date preference was not saved")
 	}
 	if got.AutoCheckUpdates {
 		t.Fatal("disabled startup checks were not saved")
@@ -49,7 +56,7 @@ func TestPreferences(t *testing.T) {
 		t.Fatal(e)
 	}
 	got, e = Load(d)
-	if e != nil || !got.AutoCheckUpdates {
+	if e != nil || !got.AutoCheckUpdates || !got.USDates {
 		t.Fatalf("old settings should default startup checks on: %+v %v", got, e)
 	}
 }

@@ -27,7 +27,14 @@
 <p id="date-hint" class="count">Use YYYY, YYYY-MM, or YYYY-MM-DD. Mark Date unknown if the concert date is not known.</p>
 <label class="date-unknown"><input id="date-unknown" name="date_unknown" type="checkbox" value="yes" {{if $r.DateUnknown}}checked{{end}}> Date unknown</label></div>
 <label class="wide" for="album">Album<input id="album" name="album" value="{{index $r.Metadata "ALBUM"}}" required></label>
-</div><div class="artwork"><label for="artwork">Artwork<select id="artwork" name="artwork"><option value="">Keep existing artwork</option>{{range $r.Artwork}}<option value="{{.}}" {{if eq . $r.SelectedArtwork}}selected{{end}}>{{base .}}</option>{{end}}</select></label>{{if not $r.Artwork}}<p>No local cover image found.</p>{{end}}</div>
+</div>
+{{if .NoteSuggestions}}<div class="note-suggestions" id="note-suggestions" hidden>
+<div class="note-suggestions-head"><h3>Suggestions from show notes</h3><button id="find-note-suggestions" type="button">Check notes</button></div>
+<p class="count">Check the source before copying a suggestion into your editable draft.</p>
+<p id="note-suggestion-status" role="status"></p>
+<div id="note-suggestion-results"></div>
+</div>{{end}}
+<div class="artwork"><label for="artwork">Artwork<select id="artwork" name="artwork"><option value="">Keep existing artwork</option>{{range $r.Artwork}}<option value="{{.}}" {{if eq . $r.SelectedArtwork}}selected{{end}}>{{base .}}</option>{{end}}</select></label>{{if not $r.Artwork}}<p>No local cover image found.</p>{{end}}</div>
 {{if or $r.NotesSignatureEnabled $r.HasMD5}}<fieldset class="notes-edit">
 <legend>Show notes</legend>
 {{if $r.NotesSignatureEnabled}}<label class="date-unknown"><input type="checkbox" name="notes_signature" value="yes" {{if $r.AddNotesSignature}}checked{{end}}> Add ‘Tagged with Track Tagger’ to show notes</label>{{end}}
@@ -54,6 +61,7 @@
 <section class="technical"><details><summary>Source details &amp; diagnostics</summary><h3>Recording folder</h3><pre>{{$r.Path}}</pre>{{if $r.Reasons}}<h3>All diagnostics</h3><ul>{{range $r.Reasons}}<li>{{.}}</li>{{end}}</ul>{{end}}{{if $r.Evidence}}<h3>Source files and fingerprints</h3>{{range $r.Evidence}}<pre>{{.}}</pre>{{end}}{{end}}</details></section>
 {{else if .Settings}}
 <h1>Settings</h1><section><h2>Layout</h2><p>Choose the presentation for recordings and reviews in this browser.</p><label for="layout-choice">Presentation<select id="layout-choice"><option value="compact">Compact</option><option value="classic">Classic</option></select></label><p id="layout-feedback" role="status"></p></section>
+{{if .DateSettingsAvailable}}<section><h2>Concert dates</h2><form action="/settings/date-format" method="post"><input type="hidden" name="csrf" value="{{.CSRF}}"><label class="date-unknown"><input type="checkbox" name="us_dates" value="yes" {{if .UseUSDates}}checked{{end}}> Use US format for ambiguous dates</label><p>When either order is possible, read 03/04/1970 as March 4. Turn this off to require review. This applies to the current server session.</p><button>Save date setting</button></form></section>{{end}}
 {{if .NotesSettingsAvailable}}<section><h2>Show notes</h2><p>Approve the signature in each recording’s review. This setting is saved in application storage.</p><form action="/settings" method="post"><input type="hidden" name="csrf" value="{{.CSRF}}"><label class="date-unknown"><input type="checkbox" name="notes_signature" value="yes" {{if .ShowNotesSignature}}checked{{end}}> Add ‘Tagged with Track Tagger’ to show notes</label><button>Save show-notes setting</button></form></section>{{end}}
 {{else if .History}}
 <p class="eyebrow">YOUR CHANGES</p><h1>History &amp; undo</h1><p>Undo restores the prior tags and show notes when the files still match the job’s output.</p><section>{{if .Jobs}}<div class="table-scroll"><table><thead><tr><th>Job</th><th>Status</th><th>Summary</th><th>Restore</th></tr></thead><tbody>{{range .Jobs}}<tr><td>{{.ID}}</td><td>{{status .Status}}</td><td>{{.Summary}}</td><td>{{if $.Writable}}<form action="/undo" method="post"><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="id" value="{{.ID}}"><button>Undo changes</button></form>{{else}}Available in write or copy mode{{end}}</td></tr>{{end}}</tbody></table></div>{{else}}<h2>No changes yet</h2><p>Once you apply tags, the jobs will appear here.</p><a href="/">Return to recordings</a>{{end}}</section>

@@ -119,18 +119,20 @@ jobs:
           fi
           base="track-tagger-$GOOS-$GOARCH"
           cp LICENSE README.md dist/
+          if [ "$GOOS" != darwin ]; then cp -R internal/notesmodel/assets dist/note-suggestions; fi
           if [ "$GOOS" = windows ]; then
             mkdir -p dist/docs
             cp docs/windows.md docs/windows-signing.md dist/docs/
-            (cd dist && zip "$base.zip" "$name" track-tagger-gui.exe LICENSE README.md docs/windows.md docs/windows-signing.md)
+            (cd dist && zip -r "$base.zip" note-suggestions "$name" track-tagger-gui.exe LICENSE README.md docs/windows.md docs/windows-signing.md)
           elif [ "$GOOS" = darwin ]; then
             ./packaging/macos/build.sh dist "$build_version"
             COPYFILE_DISABLE=1 tar -czf "dist/$base.tar.gz" -C dist "Track Tagger.app" "$name" LICENSE README.md
             rm -r "dist/Track Tagger.app"
           else
-            tar -czf "dist/$base.tar.gz" -C dist "$name" LICENSE README.md
+            tar -czf "dist/$base.tar.gz" -C dist "$name" LICENSE README.md note-suggestions
           fi
           rm "dist/$name" dist/LICENSE dist/README.md
+          if [ "$GOOS" != darwin ]; then rm -r dist/note-suggestions; fi
           if [ "$GOOS" = windows ]; then rm dist/track-tagger-gui.exe dist/docs/windows.md dist/docs/windows-signing.md; rmdir dist/docs; fi
       - uses: actions/upload-artifact@v7
         with:
@@ -277,6 +279,7 @@ jobs:
             ./tools/release/sign-windows.ps1 -File $file
           }
           Copy-Item LICENSE,README.md payload/
+          Copy-Item -Recurse internal/notesmodel/assets payload/note-suggestions
           Copy-Item docs/windows.md,docs/windows-signing.md payload/docs/
           Compress-Archive -Path payload/* -DestinationPath "dist/track-tagger-windows-$env:TARGET_ARCH.zip"
           $version = (Get-Content -LiteralPath unsigned/installer-version.txt -Raw).Trim()

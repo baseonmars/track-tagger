@@ -13,6 +13,8 @@
 @property(nonatomic, strong) NSButton *start;
 @property(nonatomic, strong) NSButton *stop;
 @property(nonatomic, strong) NSButton *review;
+@property(nonatomic, strong) NSButton *usDates;
+@property(nonatomic, strong) NSButton *noteSuggestions;
 @property(nonatomic, strong) NSTextField *status;
 @property(nonatomic, strong) NSTextField *details;
 @property(nonatomic, strong) NSTextField *reviewURL;
@@ -39,7 +41,7 @@ static TTLauncher *launcher;
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification {
-    self.window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 660, 267)
+    self.window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 660, 340)
                                              styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable
                                                backing:NSBackingStoreBuffered
                                                  defer:NO];
@@ -64,6 +66,11 @@ static TTLauncher *launcher;
         [self.mode selectItemWithTitle:mode];
     }
 
+    [NSUserDefaults.standardUserDefaults registerDefaults:@{@"USDates": @YES}];
+    self.usDates = [NSButton checkboxWithTitle:@"Use US format for ambiguous dates" target:self action:@selector(changeDatePreference:)];
+    self.usDates.state = [NSUserDefaults.standardUserDefaults boolForKey:@"USDates"] ? NSControlStateValueOn : NSControlStateValueOff;
+    self.noteSuggestions = [NSButton checkboxWithTitle:@"Offer suggestions from show notes" target:self action:@selector(changeNoteSuggestionPreference:)];
+    self.noteSuggestions.state = [NSUserDefaults.standardUserDefaults boolForKey:@"NoteSuggestions"] ? NSControlStateValueOn : NSControlStateValueOff;
     NSGridView *folders = [NSGridView gridViewWithViews:@[
         @[[NSTextField labelWithString:@"Music folder"], self.source, self.chooseSource],
         @[[NSTextField labelWithString:@"Copy destination"], self.destination, self.chooseDestination],
@@ -95,7 +102,7 @@ static TTLauncher *launcher;
     self.details.textColor = NSColor.secondaryLabelColor;
     self.details.selectable = YES;
 
-    NSStackView *layout = [NSStackView stackViewWithViews:@[folders, actions, state, self.details]];
+    NSStackView *layout = [NSStackView stackViewWithViews:@[folders, self.usDates, self.noteSuggestions, actions, state, self.details]];
     layout.orientation = NSUserInterfaceLayoutOrientationVertical;
     layout.alignment = NSLayoutAttributeLeading;
     layout.spacing = 14;
@@ -128,6 +135,8 @@ static TTLauncher *launcher;
     self.details.toolTip = message;
     BOOL stopped = state == TTStopped;
     BOOL canChooseDestination = stopped && self.mode.indexOfSelectedItem == TTCopy;
+    self.usDates.enabled = stopped;
+    self.noteSuggestions.enabled = stopped;
     self.mode.enabled = stopped;
     self.source.enabled = stopped;
     self.chooseSource.enabled = stopped;
@@ -136,6 +145,14 @@ static TTLauncher *launcher;
     self.start.enabled = stopped;
     self.stop.enabled = state == TTStarting || state == TTRunning;
     self.review.enabled = state == TTRunning;
+}
+
+- (void)changeDatePreference:(id)sender {
+    [NSUserDefaults.standardUserDefaults setBool:self.usDates.state == NSControlStateValueOn forKey:@"USDates"];
+}
+
+- (void)changeNoteSuggestionPreference:(id)sender {
+    [NSUserDefaults.standardUserDefaults setBool:self.noteSuggestions.state == NSControlStateValueOn forKey:@"NoteSuggestions"];
 }
 
 - (void)modeChanged:(id)sender {
@@ -175,7 +192,8 @@ static TTLauncher *launcher;
     NSString *destination = self.destination.stringValue;
     ttStart((char *)(source.length ? source.fileSystemRepresentation : ""),
             (char *)(destination.length ? destination.fileSystemRepresentation : ""),
-            (int)self.mode.indexOfSelectedItem);
+            (int)self.mode.indexOfSelectedItem, self.usDates.state == NSControlStateValueOn,
+            self.noteSuggestions.state == NSControlStateValueOn);
 }
 
 - (void)stopService:(id)sender { ttStop(); }

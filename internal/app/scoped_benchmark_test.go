@@ -20,7 +20,7 @@ func BenchmarkScopedOperations(b *testing.B) {
 			b.Run(fmt.Sprintf("%s/unrelated=%d", operation, unrelated), func(b *testing.B) {
 				e, selected, id, review := scopedBenchmarkFixture(b, unrelated+1)
 				defer e.Close()
-				backend := WebBackend{e}
+				backend := WebBackend{E: e}
 				ctx := context.Background()
 				b.ResetTimer()
 				for i := 0; i < b.N; i++ {

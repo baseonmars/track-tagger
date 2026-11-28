@@ -149,9 +149,9 @@ func toggleDetails() {
 	set(15, title)
 	var bounds rect
 	call(user, "GetWindowRect", win, unsafe.Pointer(&bounds))
-	height := int(650 * scale)
+	height := int(680 * scale)
 	if details {
-		height = int(780 * scale)
+		height = int(810 * scale)
 	}
 	available := int(call(user, "GetSystemMetrics", 1)) - 60
 	if height > available {
@@ -167,9 +167,9 @@ func toggleDetails() {
 	call(user, "SetWindowPos", win, 0, int(bounds.left), y, int(bounds.right-bounds.left), height, 0x14)
 	var client rect
 	call(user, "GetClientRect", win, unsafe.Pointer(&client))
-	content := 605
+	content := 635
 	if details {
-		content = 730
+		content = 760
 	}
 	scrollMaximum = int(float64(content)*scale) - int(client.bottom)
 	if scrollMaximum < 0 {
@@ -217,7 +217,7 @@ func box(s string) { call(user, "MessageBoxW", win, ptr(s), ptr("Track Tagger"),
 func refresh() {
 	set(20, status)
 	active := session != nil || busy || updates != nil && updates.installing
-	for _, id := range []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10} {
+	for _, id := range []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 17} {
 		v := uintptr(1)
 		if active {
 			v = 0
@@ -284,6 +284,8 @@ func readSettings() {
 	if checked(6) {
 		config.Mode = app.Write
 	}
+	config.USDates = checked(9)
+	config.NoteSuggestions = checked(17)
 	config.Poll = checked(7)
 	config.AutoCheckUpdates = checked(42)
 }
@@ -304,13 +306,14 @@ func start(openReview bool) {
 	status = "Starting"
 	refresh()
 	s := config
+	pack := resolveNoteSuggestionsPath(noteSuggestionsPath, s.NoteSuggestions)
 	if s.Mode != app.Copy {
 		s.Destination = ""
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	startCancel = cancel
 	go func() {
-		started, e := service.Start(ctx, service.Options{Options: app.Options{Source: s.Source, Destination: s.Destination, State: directory, Mode: s.Mode, Settle: 2 * time.Minute}, Poll: s.UsePolling(), FallbackPort: true}, logline)
+		started, e := service.Start(ctx, service.Options{Options: app.Options{ReviewAmbiguousDates: !s.USDates, Source: s.Source, Destination: s.Destination, State: directory, Mode: s.Mode, Settle: 2 * time.Minute}, Poll: s.UsePolling(), FallbackPort: true, NoteSuggestionsPath: pack}, logline)
 		post(func() {
 			busy = false
 			if e != nil {
@@ -329,7 +332,11 @@ func start(openReview bool) {
 			}
 			session = started
 			status = "Running"
-			set(21, started.URL())
+			if pack != "" && !started.NoteSuggestionsAvailable() {
+				set(21, started.URL()+"\r\nShow-notes suggestions unavailable. See details.")
+			} else {
+				set(21, started.URL())
+			}
 			refresh()
 			if quitting || ctx.Err() != nil {
 				stop(quitting)
@@ -527,6 +534,11 @@ func proc(h uintptr, m uint32, w, l uintptr) uintptr {
 			toggleDetails()
 		case 16:
 			showHelp()
+		case 17:
+			config.NoteSuggestions = checked(17)
+			if e := Save(directory, config); e != nil {
+				set(21, "Could not save note suggestions preference: "+e.Error())
+			}
 		case 41:
 			if updates != nil {
 				updates.Check()
@@ -566,7 +578,11 @@ func proc(h uintptr, m uint32, w, l uintptr) uintptr {
 	}
 	return call(user, "DefWindowProcW", h, uintptr(m), w, l)
 }
-func Run(version string, resumeServer bool) {
+
+var noteSuggestionsPath string
+
+func Run(version string, resumeServer bool, packagePath string) {
+	noteSuggestionsPath = packagePath
 	appVersion = version
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
@@ -629,7 +645,7 @@ func Run(version string, resumeServer bool) {
 	scale = float64(call(gdi, "GetDeviceCaps", dc, 88)) / 96
 	call(user, "ReleaseDC", 0, dc)
 	px := func(n int) uintptr { return uintptr(float64(n) * scale) }
-	height := px(650)
+	height := px(680)
 	screen := call(user, "GetSystemMetrics", 1)
 	if height > screen-60 {
 		height = screen - 60
@@ -666,7 +682,11 @@ func Run(version string, resumeServer bool) {
 	add(32, "STATIC", "Copy destination", 0, 20, 211, 690, 22)
 	add(2, "EDIT", config.Destination, 0x810080, 20, 236, 590, 27)
 	add(8, "BUTTON", "Browse…", 0x10000, 620, 236, 100, 28)
-	add(7, "BUTTON", "Use polling (network shares and mapped drives)", 0x10003, 20, 278, 700, 26)
+	add(7, "BUTTON", "Use polling (network shares and mapped drives)", 0x10003, 20, 278, 355, 26)
+	add(9, "BUTTON", "Use US format for ambiguous dates", 0x10003, 385, 278, 340, 26)
+	add(17, "BUTTON", "Offer suggestions from show notes", 0x10003, 20, 307, 700, 26)
+	check(17, config.NoteSuggestions)
+	check(9, config.USDates)
 	check(7, config.UsePolling())
 	id := 4
 	if config.Mode == app.Copy {
@@ -676,7 +696,7 @@ func Run(version string, resumeServer bool) {
 		id = 6
 	}
 	check(id, true)
-	add(33, "STATIC", "Copy and Update automatically process eligible recordings after they settle.\r\nAmbiguous recordings wait for review. Start is required on ordinary launches.", 0, 20, 313, 700, 44)
+	add(33, "STATIC", "Copy and Update automatically process eligible recordings after they settle.\r\nAmbiguous recordings wait for review. Start is required on ordinary launches.", 0, 20, 343, 700, 44)
 	label := "Start preview"
 	if id == 5 {
 		label = "Start copying eligible recordings"
@@ -684,21 +704,21 @@ func Run(version string, resumeServer bool) {
 	if id == 6 {
 		label = "Start updating originals"
 	}
-	add(10, "BUTTON", label, 0x10001, 20, 372, 350, 32)
-	add(11, "BUTTON", "Stop", 0x10000, 380, 372, 90, 32)
-	add(12, "BUTTON", "Open browser", 0x10000, 480, 372, 140, 32)
-	add(14, "BUTTON", "Quit", 0x10000, 630, 372, 90, 32)
-	add(20, "STATIC", "Stopped", 0, 20, 418, 700, 24)
-	add(21, "EDIT", "Choose folders and click Start.", 0x808080, 20, 447, 700, 36)
-	add(15, "BUTTON", "Show details", 0x10000, 20, 492, 140, 28)
-	add(16, "BUTTON", "Help", 0x10000, 170, 492, 100, 28)
-	add(22, "EDIT", "", 0xa10844, 20, 530, 700, 65)
-	add(13, "BUTTON", "Copy details", 0x10000, 580, 603, 140, 28)
+	add(10, "BUTTON", label, 0x10001, 20, 402, 350, 32)
+	add(11, "BUTTON", "Stop", 0x10000, 380, 402, 90, 32)
+	add(12, "BUTTON", "Open browser", 0x10000, 480, 402, 140, 32)
+	add(14, "BUTTON", "Quit", 0x10000, 630, 402, 90, 32)
+	add(20, "STATIC", "Stopped", 0, 20, 448, 700, 24)
+	add(21, "EDIT", "Choose folders and click Start.", 0x808080, 20, 477, 700, 36)
+	add(15, "BUTTON", "Show details", 0x10000, 20, 522, 140, 28)
+	add(16, "BUTTON", "Help", 0x10000, 170, 522, 100, 28)
+	add(22, "EDIT", "", 0xa10844, 20, 560, 700, 65)
+	add(13, "BUTTON", "Copy details", 0x10000, 580, 633, 140, 28)
 	call(user, "ShowWindow", controls[22], 0)
 	call(user, "ShowWindow", controls[13], 0)
 	var client rect
 	call(user, "GetClientRect", win, unsafe.Pointer(&client))
-	scrollMaximum = int(px(605)) - int(client.bottom)
+	scrollMaximum = int(px(635)) - int(client.bottom)
 	if scrollMaximum < 0 {
 		scrollMaximum = 0
 	}

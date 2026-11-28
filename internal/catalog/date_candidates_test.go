@@ -28,7 +28,11 @@ func dateFixture(t *testing.T, dirName string, noteFiles map[string]string, audi
 			t.Fatal(err)
 		}
 	}
-	return only(t, dir)
+	recordings, err := ReviewAmbiguous.Scan(dir)
+	if err != nil || len(recordings) != 1 {
+		t.Fatalf("strict date scan: %v, %v", recordings, err)
+	}
+	return recordings[0]
 }
 
 func dateNotes(date string) string {
@@ -269,5 +273,26 @@ func TestFilenameDatesUseOnlySuppliedBasenames(t *testing.T) {
 	want := map[string]bool{"1989-09-05": true}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("duplicate corroboration = %v, want %v", got, want)
+	}
+}
+
+func TestUSDateDefaultAndReviewOptOut(t *testing.T) {
+	for _, tc := range []struct {
+		note, audio, want      string
+		reviewUS, reviewStrict bool
+	}{
+		{"03/04/1970", "t01.flac", "1970-03-04", false, true},
+		{"13/04/1970", "t01.flac", "1970-04-13", false, false},
+		{"03/04/1970", "band1970-04-03t01.flac", "1970-04-03", false, false},
+		{"03/04/1970", "band1970-05-19t01.flac", "1970-03-04", true, true},
+		{"02/30/1970", "t01.flac", "", true, true},
+	} {
+		t.Run(tc.note+tc.audio, func(t *testing.T) {
+			strict := dateFixture(t, "show", map[string]string{"info.txt": dateNotes(tc.note)}, tc.audio)
+			us := only(t, strict.Path)
+			if us.Date != tc.want || strict.Date != tc.want || (us.Status == "needs-review") != tc.reviewUS || (strict.Status == "needs-review") != tc.reviewStrict {
+				t.Fatalf("US %q %v; strict %q %v", us.Date, us.ReviewReasons, strict.Date, strict.ReviewReasons)
+			}
+		})
 	}
 }

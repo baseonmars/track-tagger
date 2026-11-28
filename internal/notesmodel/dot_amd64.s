@@ -1,0 +1,34 @@
+#include "textflag.h"
+
+// All model dot products have equal input lengths, multiples of 32.
+TEXT ·vectorDot(SB), NOSPLIT, $0-52
+	MOVQ x_base+0(FP), AX
+	MOVQ y_base+24(FP), CX
+	MOVQ x_len+8(FP), DX
+	VXORPS Y0, Y0, Y0
+	VXORPS Y1, Y1, Y1
+	VXORPS Y2, Y2, Y2
+	VXORPS Y3, Y3, Y3
+loop:
+	VMOVUPS (AX), Y4
+	VMOVUPS 32(AX), Y5
+	VMOVUPS 64(AX), Y6
+	VMOVUPS 96(AX), Y7
+	VFMADD231PS (CX), Y4, Y0
+	VFMADD231PS 32(CX), Y5, Y1
+	VFMADD231PS 64(CX), Y6, Y2
+	VFMADD231PS 96(CX), Y7, Y3
+	ADDQ $128, AX
+	ADDQ $128, CX
+	SUBQ $32, DX
+	JNE loop
+	VADDPS Y1, Y0, Y0
+	VADDPS Y3, Y2, Y2
+	VADDPS Y2, Y0, Y0
+	VEXTRACTF128 $1, Y0, X1
+	VADDPS X1, X0, X0
+	VHADDPS X0, X0, X0
+	VHADDPS X0, X0, X0
+	VMOVSS X0, ret+48(FP)
+	VZEROUPPER
+	RET

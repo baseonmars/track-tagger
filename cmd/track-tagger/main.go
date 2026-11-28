@@ -30,11 +30,11 @@ func usage() {
 
   track-tagger scan SOURCE [--dry-run | --write | --copy DEST] [--json] [--plan FILE]
   track-tagger watch SOURCE [--dry-run | --write | --copy DEST] [--poll]
-  track-tagger serve SOURCE [--dry-run | --write | --copy DEST] [--addr 127.0.0.1:8787]
+  track-tagger serve SOURCE [--dry-run | --write | --copy DEST] [--addr 127.0.0.1:8787] [--note-suggestions PATH]
   track-tagger apply PLAN [--dry-run | --write | --copy DEST]
   track-tagger undo JOB_ID [--write] [--state DIR]
 
-Common: --state DIR --settle 2m --reconcile 5m
+Common: --state DIR --settle 2m --reconcile 5m --us-dates=false
 Remote UI: --remote --addr 0.0.0.0:8787 and TRACK_TAGGER_TOKEN (16+ characters).
 Preview is the default. Select --write or --copy DEST to apply tags.`)
 }
@@ -60,12 +60,17 @@ func run(args []string) error {
 	planFile := f.String("plan", "", "save preview plan")
 	settle := f.Duration("settle", 2*time.Minute, "quiet interval")
 	reconcile := f.Duration("reconcile", 5*time.Minute, "full reconciliation interval")
+	usDates := f.Bool("us-dates", true, "use month/day/year for ambiguous numeric concert dates")
 	poll := f.Bool("poll", false, "use polling for network shares")
 	addr := f.String("addr", "127.0.0.1:8787", "web listen address")
 	remote := f.Bool("remote", false, "enable authenticated remote access")
+	var noteSuggestions string
+	if cmd == "serve" {
+		f.StringVar(&noteSuggestions, "note-suggestions", "", "local package for optional show-notes suggestions")
+	}
 	// Standard flag stops at the first positional argument; accept both documented orders.
 	var positional, flags []string
-	valueFlags := map[string]bool{"copy": true, "state": true, "plan": true, "settle": true, "reconcile": true, "addr": true}
+	valueFlags := map[string]bool{"copy": true, "state": true, "plan": true, "settle": true, "reconcile": true, "addr": true, "note-suggestions": true}
 	for i := 1; i < len(args); i++ {
 		v := args[i]
 		if strings.HasPrefix(v, "-") {
@@ -160,9 +165,9 @@ func run(args []string) error {
 		}
 		source = p.Source
 	}
-	opts := app.Options{Source: source, Destination: *dest, State: *state, Mode: mode, Settle: *settle}
+	opts := app.Options{ReviewAmbiguousDates: !*usDates, Source: source, Destination: *dest, State: *state, Mode: mode, Settle: *settle}
 	if cmd == "serve" {
-		s, err := service.Start(ctx, service.Options{Options: opts, Addr: *addr, Remote: *remote, Token: os.Getenv("TRACK_TAGGER_TOKEN"), Poll: *poll, Reconcile: *reconcile}, func(s string) { fmt.Fprintln(os.Stderr, s) })
+		s, err := service.Start(ctx, service.Options{Options: opts, Addr: *addr, Remote: *remote, Token: os.Getenv("TRACK_TAGGER_TOKEN"), NoteSuggestionsPath: noteSuggestions, Poll: *poll, Reconcile: *reconcile}, func(s string) { fmt.Fprintln(os.Stderr, s) })
 		if err != nil {
 			return err
 		}
