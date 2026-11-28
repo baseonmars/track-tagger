@@ -451,3 +451,35 @@ func TestUnifiedReviewFormAndApproval(t *testing.T) {
 		}
 	}
 }
+
+type dateSettingBackend struct {
+	fakeBackend
+	usDates bool
+}
+
+func (b *dateSettingBackend) UseUSDates() bool        { return b.usDates }
+func (b *dateSettingBackend) SetUSDates(enabled bool) { b.usDates = enabled }
+
+func TestDatePreferenceRequiresSettingsForm(t *testing.T) {
+	b := &dateSettingBackend{usDates: true}
+	h, err := New(Config{}, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	settings := httptest.NewRecorder()
+	h.ServeHTTP(settings, httptest.NewRequest(http.MethodGet, "http://localhost/settings", nil))
+	if !strings.Contains(settings.Body.String(), `name="us_dates" value="yes" checked`) {
+		t.Fatal("current date policy missing from Settings")
+	}
+	form := url.Values{"csrf": {csrfFrom(t, h)}}
+	if w := post(h, "/settings/date-format", form, "https://another.example"); w.Code != 403 || !b.usDates {
+		t.Fatal("cross-origin request changed date policy")
+	}
+	if w := post(h, "/settings/date-format", form, "http://localhost"); w.Code != 303 || b.usDates {
+		t.Fatal("unchecked date preference was not applied")
+	}
+	form.Set("us_dates", "yes")
+	if w := post(h, "/settings/date-format", form, "http://localhost"); w.Code != 303 || !b.usDates {
+		t.Fatal("checked date preference was not applied")
+	}
+}

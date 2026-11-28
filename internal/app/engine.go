@@ -13,6 +13,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"track-tagger/internal/catalog"
@@ -31,6 +32,7 @@ type Options struct {
 	Source, Destination, State string
 	Mode                       Mode
 	Settle                     time.Duration
+	ReviewAmbiguousDates       bool
 }
 type Item struct {
 	CleanupMD5 bool `json:"cleanup_md5,omitempty"`
@@ -48,7 +50,9 @@ type Plan struct {
 	Recordings []Item
 }
 type Engine struct {
-	strictFingerprint func(string) (catalog.Evidence, error)
+	reviewAmbiguousDates atomic.Bool
+	noteSuggestionsBusy  atomic.Bool
+	strictFingerprint    func(string) (catalog.Evidence, error)
 	Options
 	store        *Store
 	streams      map[string]playbackFile
@@ -112,7 +116,9 @@ func New(o Options) (*Engine, error) {
 			return nil, err
 		}
 	}
-	return &Engine{Options: o}, nil
+	e := &Engine{Options: o}
+	e.reviewAmbiguousDates.Store(o.ReviewAmbiguousDates)
+	return e, nil
 }
 func (e *Engine) OpenStorage() error {
 	if e.store != nil {
@@ -149,10 +155,10 @@ func (e *Engine) scan(browse bool) (Plan, error) {
 	var err error
 	if browse {
 		e.previewMu.Lock()
-		rs, err = catalog.ScanCached(e.Source, &e.browseCache)
+		rs, err = e.DatePolicy().ScanCached(e.Source, &e.browseCache)
 		e.previewMu.Unlock()
 	} else {
-		rs, err = catalog.Scan(e.Source)
+		rs, err = e.DatePolicy().Scan(e.Source)
 	}
 	p := Plan{Version: 1, Source: e.Source}
 	if err != nil {
@@ -181,6 +187,7 @@ func (e *Engine) decorate(r catalog.Recording, browse bool) (Item, error) {
 			if ev == evidence(r) && sameTrackFiles(saved.Tracks, r.Tracks) {
 				item = saved
 				item.Evidence = r.Evidence
+				item.Fingerprint = r.Fingerprint
 			} else {
 				item.ReviewReasons = append(item.ReviewReasons, "saved review is stale: inputs changed")
 				item.Status = "needs-review"
@@ -445,7 +452,7 @@ func (e *Engine) strictRecording(id, path string) (catalog.Recording, error) {
 	if fingerprint == nil {
 		fingerprint = catalog.Fingerprint
 	}
-	r, err := catalog.Validate(e.Source, catalog.Discovery{ID: id, Path: path}, fingerprint)
+	r, err := e.DatePolicy().Validate(e.Source, catalog.Discovery{ID: id, Path: path}, fingerprint)
 	if err != nil {
 		return r, err
 	}
@@ -462,7 +469,7 @@ func (e *Engine) saveReview(r catalog.Recording, item Item) error {
 	if pending {
 		return errors.New("a rename job is pending; finish it with the same source, mode and state directory before saving another review")
 	}
-	if evidence(r) != evidence(item.Recording) {
+	if r.Fingerprint != item.Fingerprint || evidence(r) != evidence(item.Recording) {
 		return errors.New("inputs changed; refresh before reviewing")
 	}
 	if err := validateReview(r, &item); err != nil {

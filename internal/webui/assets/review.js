@@ -49,7 +49,160 @@
     }
     return prefix + fitting + ".flac";
   }
-  if (typeof module !== "undefined") module.exports = { actionState, validDate, proposedFilename };
+  function suggestionEdit(proposal, draft, selected) {
+    const locations = proposal.field === "VENUE" || proposal.field === "CITY";
+    const albumManaged = selected.album !== null && selected.album === draft.album;
+    const date = draft.dateUnknown ? "" : draft.date.trim();
+    let album;
+    let venue = selected.venue ?? proposal.albumVenue ?? "";
+    let city = selected.city ?? proposal.albumCity ?? "";
+    if (locations) {
+      if (!proposal.albumSafe || (!albumManaged && (selected.album !== null || draft.album !== proposal.current))) return null;
+      if (proposal.field === "VENUE") venue = proposal.value;
+      else city = proposal.value;
+      const location = [venue, city].filter(Boolean).join(", ");
+      album = [date, location].filter(Boolean).join(" - ");
+      return { target: "album", value: album, selection: { album, venue, city, location } };
+    }
+    if (proposal.field === "ARTIST") return { target: "artist", value: proposal.value };
+    if (proposal.field !== "DATE") return null;
+    const originalLocation = proposal.albumVenue ? [proposal.albumVenue, proposal.albumCity].filter(Boolean).join(", ") : "";
+    const albumCanFollowDate = albumManaged || (proposal.albumSafe && selected.album === null && draft.album === (proposal.currentAlbum ?? ""));
+    const location = albumManaged ? selected.location : originalLocation;
+    if (albumCanFollowDate) {
+      album = albumManaged ? [proposal.value, location].filter(Boolean).join(" - ") : proposal.album;
+    }
+    return {
+      target: "date", value: proposal.value, album,
+      selection: albumCanFollowDate ? { album, venue, city, location } : undefined,
+    };
+  }
+  function initNoteSuggestions(form, panel) {
+    const request = document.getElementById("find-note-suggestions");
+    const status = document.getElementById("note-suggestion-status");
+    const results = document.getElementById("note-suggestion-results");
+    const fields = form.elements;
+    const input = name => fields.namedItem(name);
+    const snapshot = () => ({
+      artist: input("artist").value, date: input("date").value, album: input("album").value,
+      dateUnknown: input("date_unknown").checked,
+    });
+    const labels = { ARTIST: "Artist", DATE: "Concert date", VENUE: "Venue", CITY: "City" };
+    let selected = { album: null };
+    let updates = [];
+    const refresh = () => updates.forEach(update => update());
+    function element(tag, text) {
+      const node = document.createElement(tag);
+      node.textContent = text;
+      return node;
+    }
+    function asDraft(name, value) {
+      const control = input(name);
+      control.value = value;
+      control.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    function show(proposal) {
+      if (!Object.hasOwn(labels, proposal.field) || !proposal.value || !proposal.quote) return;
+      const location = proposal.field === "VENUE" || proposal.field === "CITY";
+      const card = element("article", "");
+      card.className = "note-suggestion";
+      card.append(element("h4", labels[proposal.field]), element("p", proposal.note + " · line " + (proposal.line + 1)));
+      const evidence = element("pre", "");
+      const letters = Array.from(proposal.context || "");
+      if (letters.slice(proposal.start, proposal.end).join("") === proposal.quote) {
+        evidence.append(letters.slice(0, proposal.start).join(""), element("mark", proposal.quote),
+          letters.slice(proposal.end).join(""));
+      } else {
+        evidence.append(element("mark", proposal.quote));
+      }
+      const details = element("dl", "");
+      const current = element("dd", "");
+      const proposed = element("dd", "");
+      const album = element("dd", "");
+      const albumLabel = element("dt", "Proposed album");
+      const currentAlbum = element("dd", "");
+      details.append(element("dt", "Current"), current, element("dt", "Suggestion"), proposed);
+      if (location) details.append(element("dt", "Current album"), currentAlbum);
+      details.append(albumLabel, album);
+      const use = element("button", "Use in draft");
+      use.type = "button";
+      const copy = element("button", "Copy suggestion");
+      copy.type = "button";
+      const preserved = element("p", "Your album stays as entered. You can copy the location and edit the album yourself.");
+      preserved.className = "count";
+      const canCopy = Boolean(navigator.clipboard?.writeText);
+      const update = () => {
+        const draft = snapshot();
+        const edit = suggestionEdit(proposal, draft, selected);
+        const currentValue = location ? draft.album : draft[proposal.field.toLowerCase()];
+        const currentLocation = proposal.field === "VENUE"
+          ? (selected.venue ?? proposal.albumVenue) : (selected.city ?? proposal.albumCity);
+        current.textContent = (location ? currentLocation : currentValue) ||
+          (proposal.field === "DATE" && draft.dateUnknown ? "Date unknown" : "Empty");
+        currentAlbum.textContent = draft.album || "Empty";
+        proposed.textContent = proposal.value;
+        const albumPreview = location ? edit?.value : edit?.album;
+        album.hidden = albumLabel.hidden = albumPreview === undefined;
+        album.textContent = albumPreview || "";
+        use.hidden = !edit;
+        use.disabled = !edit || (edit.value === currentValue && edit.album === undefined);
+        preserved.hidden = !location || Boolean(edit);
+        copy.hidden = !canCopy || !location || Boolean(edit);
+      };
+      use.addEventListener("click", () => {
+        const edit = suggestionEdit(proposal, snapshot(), selected);
+        if (!edit) return;
+        if (edit.selection) selected = edit.selection;
+        if (edit.target === "date") input("date_unknown").checked = false;
+        asDraft(edit.target, edit.value);
+        if (edit.album !== undefined) asDraft("album", edit.album);
+        input(edit.target).focus();
+        status.textContent = "Copied into your draft. Review and approve your changes before saving.";
+      });
+      copy.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(proposal.value);
+          status.textContent = "Copied suggestion to the clipboard.";
+        } catch {
+          status.textContent = "Clipboard unavailable. Select the suggestion text to copy it.";
+        }
+      });
+      card.append(details, evidence, use, preserved, copy);
+      results.append(card);
+      updates.push(update);
+      update();
+    }
+    panel.hidden = false;
+    form.addEventListener("input", refresh);
+    form.addEventListener("change", refresh);
+    request.addEventListener("click", async () => {
+      request.disabled = true;
+      results.replaceChildren();
+      updates = [];
+      status.textContent = "Checking show notes…";
+      const body = new URLSearchParams();
+      for (const name of ["id", "csrf", "fingerprint"]) body.set(name, input(name).value);
+      try {
+        const response = await fetch("/note-suggestions", { method: "POST", body });
+        if (response.status === 429) {
+          status.textContent = "Another note check is running. Try again in a moment.";
+          return;
+        }
+        if (response.status === 409) {
+          status.textContent = "This recording changed. Refresh the review before checking suggestions again.";
+          return;
+        }
+        if (!response.ok) throw new Error("suggestions unavailable");
+        for (const proposal of await response.json()) show(proposal);
+        status.textContent = updates.length ? "" : "No suggestions for these notes.";
+      } catch {
+        status.textContent = "Could not check note suggestions. You can continue editing the review.";
+      } finally {
+        request.disabled = false;
+      }
+    });
+  }
+  if (typeof module !== "undefined") module.exports = { actionState, validDate, proposedFilename, suggestionEdit };
   if (typeof document === "undefined") return;
   const form = document.getElementById("review-form");
   if (!form) return;
@@ -185,4 +338,6 @@
   });
   window.addEventListener("pageshow", () => { submitting = false; navigationApproved = false; update(); });
   update();
+  const suggestionPanel = document.getElementById("note-suggestions");
+  if (suggestionPanel) initNoteSuggestions(form, suggestionPanel);
 })();

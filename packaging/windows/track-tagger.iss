@@ -44,6 +44,7 @@ SignedUninstaller=yes
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"; Flags: unchecked
 
 [Files]
+Source: "..\..\internal\notesmodel\assets\*"; DestDir: "{app}\note-suggestions"; Flags: ignoreversion
 Source: "{#BuildDir}\track-tagger.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#BuildDir}\track-tagger-gui.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\LICENSE"; DestDir: "{app}"; Flags: ignoreversion

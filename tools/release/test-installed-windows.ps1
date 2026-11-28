@@ -8,6 +8,13 @@ try {
     foreach ($name in @('track-tagger.exe', 'track-tagger-gui.exe', 'unins000.exe')) {
         & "$PSScriptRoot/sign-windows.ps1" -VerifyOnly -File (Join-Path $installDir $name)
     }
+    $modelAssets = Join-Path $PSScriptRoot '../../internal/notesmodel/assets'
+    $installedModelDir = Join-Path $installDir 'note-suggestions'
+    foreach ($name in @('bert-agreement.bin.gz', 'LICENSE-APACHE-2.0.txt', 'NOTICE.txt')) {
+        $expected = Get-FileHash -LiteralPath (Join-Path $modelAssets $name)
+        $installed = Get-FileHash -LiteralPath (Join-Path $installedModelDir $name)
+        if ($installed.Hash -ne $expected.Hash) { throw "Installed note suggestions asset differs from the source: $name" }
+    }
     & (Join-Path $installDir 'track-tagger.exe') --version
     if ($LASTEXITCODE -ne 0) { throw 'Installed CLI version check failed' }
 } finally {

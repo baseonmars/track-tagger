@@ -1,0 +1,14 @@
+Track Tagger Tiny BERT notes suggestion model pack
+
+Contains adaptations of the Google uncased two-layer BERT checkpoint
+google/bert_uncased_L-2_H-128_A-2, released under Apache License 2.0.
+Upstream revision: 30b0a37ccaaa32f332884b96992754e246e48c5f
+https://huggingface.co/google/bert_uncased_L-2_H-128_A-2/tree/30b0a37ccaaa32f332884b96992754e246e48c5f
+
+Track Tagger contributors adapted the checkpoint for exact source span
+inference, added task heads, quantized the word embeddings and assembled
+this model pack. Both full and merged LoRA adaptations are included.
+The vocabulary is from the pinned upstream checkpoint.
+
+The model pack is distributed under the Apache License 2.0. See
+LICENSE-APACHE-2.0.txt. The Track Tagger application has its own license.

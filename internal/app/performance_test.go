@@ -86,7 +86,7 @@ func TestBrowseRefreshesChangedAndAddedInputs(t *testing.T) {
 
 func TestPlaybackDoesNotWaitForScanLock(t *testing.T) {
 	e, _ := engineFixture(t, DryRun)
-	w := WebBackend{e}
+	w := WebBackend{E: e}
 	awaitWebLibrary(t, e)
 	rs, err := w.List(context.Background())
 	if err != nil || len(rs) != 1 {

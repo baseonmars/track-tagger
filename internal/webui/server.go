@@ -23,10 +23,11 @@ import (
 )
 
 type Config struct {
-	Addr     string
-	Token    string
-	Remote   bool
-	Writable bool
+	Addr            string
+	Token           string
+	Remote          bool
+	Writable        bool
+	NoteSuggestions bool
 }
 
 type Recording struct {
@@ -89,7 +90,14 @@ type Status struct {
 type statusBackend interface {
 	Status(context.Context) (Status, error)
 }
+type noteSuggestionsBackend interface {
+	Suggestions(context.Context, string, string) ([]catalog.NoteSuggestion, error)
+}
 type browseStopper interface{ StopBrowsing() }
+type dateSettingsBackend interface {
+	UseUSDates() bool
+	SetUSDates(bool)
+}
 type notesSettingsBackend interface {
 	ShowNotesSignature(context.Context) (bool, error)
 	SaveShowNotesSignature(context.Context, bool) error
@@ -116,6 +124,7 @@ type server struct {
 type page struct {
 	Status                 Status
 	ReviewReady            bool
+	NoteSuggestions        bool
 	Writable               bool
 	CSRF                   string
 	Recordings             []Recording
@@ -123,6 +132,8 @@ type page struct {
 	Jobs                   []Job
 	LibraryData            []statusCard
 	Settings               bool
+	DateSettingsAvailable  bool
+	UseUSDates             bool
 	NotesSettingsAvailable bool
 	ShowNotesSignature     bool
 	History                bool
@@ -323,8 +334,13 @@ func (s *server) handle(w http.ResponseWriter, r *http.Request) {
 		rec, err = s.backend.Get(r.Context(), r.URL.Query().Get("id"))
 		p.Recording = &rec
 		p.ReviewReady = rec.Fingerprint != "" && rec.Status != "loading" && rec.Status != "validating"
+		_, supportsSuggestions := s.backend.(noteSuggestionsBackend)
+		p.NoteSuggestions = s.cfg.NoteSuggestions && supportsSuggestions && p.ReviewReady && !rec.PlaybackOnly && !rec.Reviewed && rec.Status == "needs-review"
 	case "/settings":
 		p.Settings = true
+		if b, ok := s.backend.(dateSettingsBackend); ok {
+			p.DateSettingsAvailable, p.UseUSDates = true, b.UseUSDates()
+		}
 		if b, ok := s.backend.(notesSettingsBackend); ok {
 			p.NotesSettingsAvailable = true
 			p.ShowNotesSignature, err = b.ShowNotesSignature(r.Context())
@@ -404,6 +420,15 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 	id := r.PostForm.Get("id")
 	var err error
 	switch r.URL.Path {
+	case "/settings/date-format":
+		b, ok := s.backend.(dateSettingsBackend)
+		if !ok {
+			http.NotFound(w, r)
+			return
+		}
+		b.SetUSDates(r.PostForm.Get("us_dates") == "yes")
+		http.Redirect(w, r, "/settings", http.StatusSeeOther)
+		return
 	case "/settings":
 		b, ok := s.backend.(notesSettingsBackend)
 		if !ok {
@@ -415,6 +440,37 @@ func (s *server) mutate(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		http.Redirect(w, r, "/settings", http.StatusSeeOther)
+		return
+	case "/note-suggestions":
+		backend, ok := s.backend.(noteSuggestionsBackend)
+		if !s.cfg.NoteSuggestions || !ok {
+			http.NotFound(w, r)
+			return
+		}
+		fingerprint := r.PostForm.Get("fingerprint")
+		if id == "" || fingerprint == "" {
+			http.Error(w, "recording and review fingerprint are required", http.StatusBadRequest)
+			return
+		}
+		suggestions, err := backend.Suggestions(r.Context(), id, fingerprint)
+		if errors.Is(err, catalog.ErrNoteSuggestionsBusy) {
+			w.Header().Set("Retry-After", "1")
+			http.Error(w, "Another note check is running. Try again in a moment.", http.StatusTooManyRequests)
+			return
+		}
+		if errors.Is(err, catalog.ErrStaleNoteSuggestion) {
+			http.Error(w, "This recording changed. Refresh the review before checking suggestions again.", http.StatusConflict)
+			return
+		}
+		if err != nil {
+			http.Error(w, "Could not check note suggestions. You can continue editing the review.", http.StatusServiceUnavailable)
+			return
+		}
+		if suggestions == nil {
+			suggestions = []catalog.NoteSuggestion{}
+		}
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		_ = json.NewEncoder(w).Encode(suggestions)
 		return
 	case "/preview-md5":
 		backend, ok := s.backend.(interface {

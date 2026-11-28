@@ -16,6 +16,8 @@ type Settings struct {
 	Destination      string   `json:"destination"`
 	Mode             app.Mode `json:"mode"`
 	Poll             bool     `json:"poll"`
+	USDates          bool     `json:"usDates"`
+	NoteSuggestions  bool     `json:"noteSuggestions,omitempty"`
 	PollOverride     bool     `json:"pollOverride"`
 	CloseExplained   bool     `json:"closeExplained"`
 	AutoCheckUpdates bool     `json:"autoCheckUpdates"`
@@ -28,7 +30,9 @@ func ConfigDir() (string, error) {
 
 // defaultSettings returns the safe fallback: preview mode with the update
 // check enabled but not started.
-func defaultSettings() Settings { return Settings{Mode: app.DryRun, AutoCheckUpdates: true} }
+func defaultSettings() Settings {
+	return Settings{Mode: app.DryRun, USDates: true, AutoCheckUpdates: true}
+}
 
 func Load(dir string) (Settings, error) {
 	s := defaultSettings()

@@ -50,7 +50,11 @@ func (c *BrowseCache) FingerprintContext(ctx context.Context, path string) (Evid
 }
 
 func ScanCached(source string, cache *BrowseCache) ([]Recording, error) {
-	recordings, err := scan(source, cache.Fingerprint)
+	return AssumeUS.ScanCached(source, cache)
+}
+
+func (policy DatePolicy) ScanCached(source string, cache *BrowseCache) ([]Recording, error) {
+	recordings, err := policy.scan(source, cache.Fingerprint)
 	if err != nil {
 		return nil, err
 	}

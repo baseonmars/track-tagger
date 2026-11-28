@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -275,5 +276,37 @@ func TestShutdownKeepsStorageOpenForActiveReview(t *testing.T) {
 	got, err := os.ReadFile(filepath.Join(opts.Source, "t01.flac"))
 	if err != nil || !bytes.Equal(got, audio.Bytes()) {
 		t.Fatal("preview service altered fixture media")
+	}
+}
+
+func TestMissingOptionalNotePackLeavesServiceAvailable(t *testing.T) {
+	opts := testOptions(t)
+	opts.NoteSuggestionsPath = filepath.Join(t.TempDir(), "absent.pack")
+	warnings := make(chan string, 1)
+	s, err := Start(context.Background(), opts, func(message string) {
+		if strings.Contains(message, "Show-notes suggestions unavailable") {
+			warnings <- message
+		}
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s.Stop()
+	if s.NoteSuggestionsAvailable() {
+		t.Fatal("missing model pack marked available")
+	}
+	select {
+	case <-warnings:
+	default:
+		t.Fatal("missing pack warning was not reported")
+	}
+	client := &http.Client{Timeout: 5 * time.Second}
+	resp, err := client.Get(s.URL())
+	if err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("review service status = %d", resp.StatusCode)
 	}
 }

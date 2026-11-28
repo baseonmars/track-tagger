@@ -433,7 +433,7 @@ func TestMilesStyleWhitespaceNotesKeepDuplicateUnresolved(t *testing.T) {
 	if r.Date != "1989-09-05" || r.Status != "needs-review" || !strings.HasPrefix(r.Album, "1989-09-05") {
 		t.Fatalf("ambiguous date suggestion lost review: %+v", r)
 	}
-	for _, want := range []string{"ambiguous numeric concert date", "duplicate numbering in notes: 1:2", "track count mismatch: 10 listed titles, 9 audio files"} {
+	for _, want := range []string{"duplicate numbering in notes: 1:2", "track count mismatch: 10 listed titles, 9 audio files"} {
 		if !hasReason(r, want) {
 			t.Fatalf("missing %q: %v", want, r.ReviewReasons)
 		}

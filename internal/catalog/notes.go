@@ -133,7 +133,7 @@ func noteSegue(s string) bool {
 func parseNotes(r *Recording, s string, titles map[string]string, dates, artists map[string]bool) int {
 	var candidates noteDateCandidates
 	count := parseNotesCandidates(r, s, titles, &candidates, artists)
-	candidates.resolve(r, dates, nil)
+	AssumeUS.resolve(candidates, r, dates, nil)
 	return count
 }
 

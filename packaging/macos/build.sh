@@ -28,6 +28,8 @@ cp "$root/packaging/macos/Info.plist" "$app/Contents/Info.plist"
     GOOS=darwin CGO_ENABLED=1 MACOSX_DEPLOYMENT_TARGET=13.0 \
         go build -trimpath -ldflags="-s -w" -o "$app/Contents/MacOS/track-tagger-gui" ./cmd/track-tagger-gui
 )
+mkdir -p "$app/Contents/Resources/note-suggestions"
+cp "$root"/internal/notesmodel/assets/* "$app/Contents/Resources/note-suggestions/"
 codesign --force --sign - "$app"
 codesign --verify --strict "$app"
 rm -rf "$output/Track Tagger.app"

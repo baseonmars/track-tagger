@@ -652,7 +652,7 @@ func (e *Engine) checkRenameEvidence(b *renameBatch, want map[string]catalog.Evi
 	if fingerprint == nil {
 		fingerprint = catalog.Fingerprint
 	}
-	fresh, err := catalog.ValidateRenameInputs(b.Source, b.Item.Path, fingerprint)
+	fresh, err := e.DatePolicy().ValidateRenameInputs(b.Source, b.Item.Path, fingerprint)
 	if err != nil {
 		return fresh, err
 	}
